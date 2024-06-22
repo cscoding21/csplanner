@@ -1,0 +1,4 @@
+type Query {
+    findAllLists: ListResults!
+    getList(nameOrID: String!): List
+}

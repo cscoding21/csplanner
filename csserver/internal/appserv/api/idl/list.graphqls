@@ -1,0 +1,15 @@
+type List {
+    id: String!
+    name: String!
+    values: [ListItem!]!
+}
+
+
+type ListItem {
+    value: String!
+    name: String!
+}
+
+type ListResults {
+  results: [List!]
+}

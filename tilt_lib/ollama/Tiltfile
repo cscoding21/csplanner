@@ -1,0 +1,23 @@
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+load('ext://namespace', 'namespace_create')
+
+NAMESPACE = 'ollama'
+
+# https://github.com/nats-io/k8s/blob/main/helm/charts/nats/values.yaml
+
+def setup_ollama():
+    namespace_create(NAMESPACE)
+
+    helm_repo(
+        'ollama-helm-repo', 
+        'https://otwld.github.io/ollama-helm/',
+        labels=["HelmRepos"]
+    )
+
+    helm_resource(
+        'ollama', 
+        'ollama-helm/ollama', 
+        namespace = NAMESPACE, 
+        flags=['--values=tilt_lib/ollama/values.local.yaml'],
+        labels=["Ollama"]
+    )

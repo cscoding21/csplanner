@@ -1,0 +1,11 @@
+load('ext://helm_resource', 'helm_resource')
+
+
+def setup_debug():
+    docker_build(
+        'debug', 
+        './deploy/tools/debug', 
+        dockerfile = './deploy/tools/debug/Dockerfile'
+    )
+
+    k8s_yaml('./deploy/tools/debug/debug.yaml')

@@ -1,0 +1,22 @@
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+load('ext://namespace', 'namespace_create')
+
+NAMESPACE = 'database'
+
+def setup_surrealdb():
+    namespace_create(NAMESPACE)
+
+    helm_repo(
+        'surrealdb-repo', 
+        'https://helm.surrealdb.com',
+        labels=["HelmRepos"]
+    )
+
+    helm_resource(
+        'surrealdb', 
+        'surrealdb/surrealdb', 
+        namespace = NAMESPACE, 
+        flags=['--values=tilt_lib/surrealdb/values.local.yaml'],
+        labels=["Database"]
+        # resource_deps=['tikv']
+    )
