@@ -3,8 +3,7 @@ package surreal
 import (
 	"strings"
 
-	common "csserver/internal/common"
-	commonInterfaces "csserver/internal/interfaces"
+	"csserver/internal/common"
 
 	"github.com/surrealdb/surrealdb.go"
 )
@@ -26,14 +25,14 @@ func getPageSql(sql string) string {
 }
 
 // parseCountFromSurrealResult take the results of a scalar query that returns an int and parse the returned value
-func parseCountFromSurrealResult(logger commonInterfaces.Logger, raw interface{}) (*int, error) {
+func parseCountFromSurrealResult(raw interface{}) (*int, error) {
 	var countSlice []map[string]int
 
 	_, err := surrealdb.UnmarshalRaw(raw, &countSlice)
 	if err != nil {
-		return common.HandleReturnWithValue[int](logger, nil, err)
+		return common.HandleReturnWithValue[int](nil, err)
 	} else if len(countSlice) == 0 {
-		return common.HandleReturnWithValue[int](logger, common.ValToRef(0), nil)
+		return common.HandleReturnWithValue[int](common.ValToRef(0), nil)
 	}
 
 	countMap := countSlice[0]

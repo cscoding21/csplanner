@@ -1,16 +1,14 @@
 package common
 
 import (
-	"csserver/internal/interfaces"
+	log "github.com/sirupsen/logrus"
 )
 
 // HandleReturn passthrough function that logs an error if needed.
-func HandleReturn(
-	l interfaces.Logger,
-	err error) error {
+func HandleReturn(err error) error {
 
 	if err != nil {
-		l.Error(err)
+		log.Error(err)
 		return err
 	}
 
@@ -18,9 +16,9 @@ func HandleReturn(
 }
 
 // HandleReturnWithValue passthrough function that logs an error and value if needed.
-func HandleReturnWithValue[T any](l interfaces.Logger, ret *T, err error) (*T, error) {
+func HandleReturnWithValue[T any](ret *T, err error) (*T, error) {
 	if err != nil {
-		l.Error(err)
+		log.Error(err)
 		return nil, err
 	}
 

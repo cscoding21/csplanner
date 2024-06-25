@@ -18,7 +18,7 @@ const (
 )
 
 // NewPagedResults helper method for generating a paged results object
-func NewPagedResults[T any](paging Pagination, filters []FilterOperation) PagedResults[T] {
+func NewPagedResults[T any](paging Pagination, filters QueryFilters) PagedResults[T] {
 	out := PagedResults[T]{
 		Pagination: paging,
 		Filters:    filters,
@@ -33,7 +33,7 @@ func NewPagedResultsForAllRecords[T any]() PagedResults[T] {
 	maxInt := math.MaxInt32
 	one := 1
 
-	filters := []FilterOperation{}
+	filters := QueryFilters{Filters: []QueryFilter{}}
 
 	paging := Pagination{
 		ResultsPerPage: &maxInt,
@@ -45,7 +45,7 @@ func NewPagedResultsForAllRecords[T any]() PagedResults[T] {
 
 type PagedResults[T any] struct {
 	Pagination Pagination
-	Filters    []FilterOperation
+	Filters    QueryFilters
 	Results    []T
 }
 
@@ -105,6 +105,22 @@ func (filters *QueryFilters) GetFiltersAsMap() map[string]interface{} {
 	}
 
 	return out
+}
+
+func (filters *QueryFilters) AddFilter(filterToAdd QueryFilter) {
+	existingFilter := filters.GetFilter(filterToAdd.Key)
+
+	if existingFilter == nil {
+		filters.Filters = append(filters.Filters, filterToAdd)
+		return
+	}
+
+	for i, f := range filters.Filters {
+		if f.Key == filterToAdd.Key {
+			filters.Filters[i] = filterToAdd
+			return
+		}
+	}
 }
 
 func (filters *QueryFilters) HasFilters() bool {

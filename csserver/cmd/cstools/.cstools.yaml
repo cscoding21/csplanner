@@ -1,0 +1,9 @@
+services_dir: /home/jeph/projects/cscoding21/csplanner/csserver/internal/services
+
+services:
+  - name: List
+    path: ""
+  - name: User
+    path: iam
+  - name: Auth
+    path: iam

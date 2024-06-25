@@ -1,0 +1,41 @@
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  profileImage: String
+  controlFields: ControlFields
+}
+
+type LoginResult {
+  token: String
+  status: Status
+  user: User
+  resource: Resource
+}
+
+type CreateUserResult {
+  status: Status
+  user: User
+}
+
+type UserResults {
+  paging: Pagination
+  filters: Filters!
+  results: [User!]
+}
+
+
+input UpdateUser {
+  name: String!
+  email: String!
+  password: String!
+  confirmPassword: String!
+  profileImage: String
+}
+
+
+input UpdateLogin {
+  email: String!
+  password: String!
+}

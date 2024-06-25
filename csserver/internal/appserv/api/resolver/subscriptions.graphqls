@@ -1,0 +1,11 @@
+"""
+`Subscription` is where all the subscriptions your clients can
+request. You can use Schema Directives like normal to restrict
+access.
+"""
+type Subscription {
+  """
+  `currentTime` will return a stream of `Time` objects.
+  """
+  currentTime: TimeResponse!
+}

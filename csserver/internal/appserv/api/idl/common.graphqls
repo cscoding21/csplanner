@@ -1,0 +1,63 @@
+scalar Time
+scalar Upload
+type TimeResponse {
+  unixTime: Int!
+  timeStamp: String!
+}
+
+type Status {
+  success: Boolean!
+  message: [String!]!
+}
+
+
+type ControlFields {
+  createdAt: Time!
+  updatedAt: Time!
+  createdBy: String!
+  createByUser: User
+  updatedBy: String!
+  updateByUser: User
+  deletedAt: Time
+  deletedBy: String
+  deleteByUser: User
+}
+
+
+type Pagination {
+    totalResults: Int
+    resultsPerPage: Int
+    pageNumber: Int
+    after: String
+}
+
+type Filter {
+  key: String!
+  value: String!
+  operation: String!
+}
+
+type Filters {
+  filters: [Filter]
+}
+
+
+input PageAndFilter {
+  paging: InputPagination
+  filters: InputFilters
+}
+
+input InputPagination {
+  resultsPerPage: Int
+  pageNumber: Int
+}
+
+input InputFilter {
+  key: String!
+  value: String!
+  operation: String!
+}
+
+input InputFilters {
+  filters: [InputFilter]
+}

@@ -54,13 +54,15 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		}
 
 		if allowAnonomousOperation(r) {
-			// anonEmail := config.Config.Default.BotUserEmail
+			anonEmail := config.Config.Default.BotUserEmail
 			log.Warn("AI Bot credentials set")
-			bctx := r.Context()
+			bctx := config.NewContext()
+
+			log.Infof("Anon email used: %s", anonEmail)
 
 			// anonID, _ := users.GetUser(bctx, anonEmail)
 
-			// bctx = context.WithValue(bctx, config.UserEmailKey, anonEmail)
+			bctx = context.WithValue(bctx, config.UserEmailKey, anonEmail)
 			// bctx = context.WithValue(bctx, config.UserIDKey, anonID)
 			r = r.WithContext(bctx)
 

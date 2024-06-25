@@ -2,6 +2,57 @@
 
 package idl
 
+import (
+	"time"
+)
+
+type ControlFields struct {
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    time.Time  `json:"updatedAt"`
+	CreatedBy    string     `json:"createdBy"`
+	CreateByUser *User      `json:"createByUser,omitempty"`
+	UpdatedBy    string     `json:"updatedBy"`
+	UpdateByUser *User      `json:"updateByUser,omitempty"`
+	DeletedAt    *time.Time `json:"deletedAt,omitempty"`
+	DeletedBy    *string    `json:"deletedBy,omitempty"`
+	DeleteByUser *User      `json:"deleteByUser,omitempty"`
+}
+
+type CreateResourceResult struct {
+	Status   *Status   `json:"status"`
+	Resource *Resource `json:"resource,omitempty"`
+}
+
+type CreateUserResult struct {
+	Status *Status `json:"status,omitempty"`
+	User   *User   `json:"user,omitempty"`
+}
+
+type Filter struct {
+	Key       string `json:"key"`
+	Value     string `json:"value"`
+	Operation string `json:"operation"`
+}
+
+type Filters struct {
+	Filters []*Filter `json:"filters,omitempty"`
+}
+
+type InputFilter struct {
+	Key       string `json:"key"`
+	Value     string `json:"value"`
+	Operation string `json:"operation"`
+}
+
+type InputFilters struct {
+	Filters []*InputFilter `json:"filters,omitempty"`
+}
+
+type InputPagination struct {
+	ResultsPerPage *int `json:"resultsPerPage,omitempty"`
+	PageNumber     *int `json:"pageNumber,omitempty"`
+}
+
 type List struct {
 	ID     string      `json:"id"`
 	Name   string      `json:"name"`
@@ -17,5 +68,130 @@ type ListResults struct {
 	Results []*List `json:"results,omitempty"`
 }
 
+type LoginResult struct {
+	Token    *string   `json:"token,omitempty"`
+	Status   *Status   `json:"status,omitempty"`
+	User     *User     `json:"user,omitempty"`
+	Resource *Resource `json:"resource,omitempty"`
+}
+
+type Mutation struct {
+}
+
+type Notification struct {
+	ID                    string         `json:"id"`
+	UserID                string         `json:"userId"`
+	UserName              string         `json:"userName"`
+	RecipientIsBot        bool           `json:"recipientIsBot"`
+	Type                  int            `json:"type"`
+	ContextID             string         `json:"contextId"`
+	Text                  *string        `json:"text,omitempty"`
+	IsRead                bool           `json:"isRead"`
+	InitiatorName         string         `json:"initiatorName"`
+	InitiatorID           string         `json:"initiatorId"`
+	InitiatorProfileImage *string        `json:"initiatorProfileImage,omitempty"`
+	ControlFields         *ControlFields `json:"controlFields"`
+}
+
+type NotificationResults struct {
+	Paging  *Pagination     `json:"paging,omitempty"`
+	Filters *Filters        `json:"filters"`
+	Results []*Notification `json:"results"`
+}
+
+type PageAndFilter struct {
+	Paging  *InputPagination `json:"paging,omitempty"`
+	Filters *InputFilters    `json:"filters,omitempty"`
+}
+
+type Pagination struct {
+	TotalResults   *int    `json:"totalResults,omitempty"`
+	ResultsPerPage *int    `json:"resultsPerPage,omitempty"`
+	PageNumber     *int    `json:"pageNumber,omitempty"`
+	After          *string `json:"after,omitempty"`
+}
+
 type Query struct {
+}
+
+type Resource struct {
+	ID            *string        `json:"id,omitempty"`
+	Name          string         `json:"name"`
+	Role          string         `json:"role"`
+	User          *User          `json:"user,omitempty"`
+	ProfileImage  *string        `json:"profileImage,omitempty"`
+	Skills        []*Skill       `json:"skills,omitempty"`
+	IsBot         bool           `json:"isBot"`
+	ControlFields *ControlFields `json:"controlFields"`
+}
+
+type ResourceResults struct {
+	Paging  *Pagination `json:"paging,omitempty"`
+	Filters *Filters    `json:"filters"`
+	Results []*Resource `json:"results,omitempty"`
+}
+
+type Skill struct {
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Proficiency *float64 `json:"proficiency,omitempty"`
+}
+
+type Status struct {
+	Success bool     `json:"success"`
+	Message []string `json:"message"`
+}
+
+// `Subscription` is where all the subscriptions your clients can
+// request. You can use Schema Directives like normal to restrict
+// access.
+type Subscription struct {
+}
+
+type TimeResponse struct {
+	UnixTime  int    `json:"unixTime"`
+	TimeStamp string `json:"timeStamp"`
+}
+
+type UpdateLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type UpdateResource struct {
+	ID           *string        `json:"id,omitempty"`
+	Name         string         `json:"name"`
+	Role         *string        `json:"role,omitempty"`
+	UserID       *string        `json:"userID,omitempty"`
+	Email        *string        `json:"email,omitempty"`
+	ProfileImage *string        `json:"profileImage,omitempty"`
+	Skills       []*UpdateSkill `json:"skills,omitempty"`
+}
+
+type UpdateSkill struct {
+	ResourceID  string  `json:"resourceID"`
+	ID          string  `json:"id"`
+	Proficiency float64 `json:"proficiency"`
+}
+
+type UpdateUser struct {
+	Name            string  `json:"name"`
+	Email           string  `json:"email"`
+	Password        string  `json:"password"`
+	ConfirmPassword string  `json:"confirmPassword"`
+	ProfileImage    *string `json:"profileImage,omitempty"`
+}
+
+type User struct {
+	ID            string         `json:"id"`
+	Name          string         `json:"name"`
+	Email         string         `json:"email"`
+	ProfileImage  *string        `json:"profileImage,omitempty"`
+	ControlFields *ControlFields `json:"controlFields,omitempty"`
+}
+
+type UserResults struct {
+	Paging  *Pagination `json:"paging,omitempty"`
+	Filters *Filters    `json:"filters"`
+	Results []*User     `json:"results,omitempty"`
 }

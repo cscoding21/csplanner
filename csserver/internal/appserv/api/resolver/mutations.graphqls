@@ -1,0 +1,3 @@
+type Mutation {
+    setNotificationsRead(input: [String!]!) : Status!
+}

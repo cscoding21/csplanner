@@ -33,7 +33,7 @@ func setDefaults() {
 	viper.SetDefault("default.botuseremail", "aibot@jmk21.com")
 
 	//Security
-	viper.SetDefault("security.bypassauth", "false")
+	viper.SetDefault("security.bypassauth", "true")
 	viper.SetDefault("security.jwtsigningkey", "local_signing_key_V4G7A1")
 	viper.SetDefault("security.jwtaudience", "analyzer.net")
 	viper.SetDefault("security.jwtissuer", "analyzer.net")

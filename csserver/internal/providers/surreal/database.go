@@ -3,19 +3,20 @@ package surreal
 import (
 	"csserver/internal/common"
 	"csserver/internal/interfaces"
+	"fmt"
 
 	"github.com/surrealdb/surrealdb.go"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type DBClient struct {
 	Client *surrealdb.DB
-	Logger interfaces.Logger
 }
 
-func NewDBClient(client surrealdb.DB, logger interfaces.Logger) *DBClient {
+func NewDBClient(client surrealdb.DB) *DBClient {
 	return &DBClient{
 		Client: &client,
-		Logger: logger,
 	}
 }
 
@@ -23,15 +24,15 @@ func NewDBClient(client surrealdb.DB, logger interfaces.Logger) *DBClient {
 func (db *DBClient) GetObjectById(id string) (interface{}, error) {
 	objectData, err := db.Client.Select(id)
 	if err != nil {
-		return common.HandleReturnWithValue(db.Logger, &objectData, err)
+		return common.HandleReturnWithValue(&objectData, err)
 	}
 
 	err = surrealdb.Unmarshal(objectData, &objectData)
 	if err != nil {
-		return common.HandleReturnWithValue(db.Logger, &objectData, err)
+		return common.HandleReturnWithValue(&objectData, err)
 	}
 
-	return common.HandleReturnWithValue(db.Logger, &objectData, err)
+	return common.HandleReturnWithValue(&objectData, err)
 }
 
 // GetObjectById returns an object from the database
@@ -40,10 +41,8 @@ func (db *DBClient) GetObject(
 	key string,
 	criteria map[string]interface{}) (interface{}, error) {
 
-	//outlist := make([]interface{}, 1)
-
 	objectData, err := db.Client.Query(sql, criteria)
-	return common.HandleReturnWithValue(db.Logger, &objectData, err)
+	return common.HandleReturnWithValue(&objectData, err)
 }
 
 // DeleteObject delete an object from the DB based on the ID
@@ -51,10 +50,10 @@ func (db *DBClient) DeleteObject(
 	userID string,
 	id string) error {
 
-	db.Logger.Infof("Deleting database object: %v", id)
+	log.Infof("Deleting database object: %v", id)
 
 	if _, err := db.Client.Delete(id); err != nil {
-		db.Logger.Error(err)
+		log.Error(err)
 		return err
 	}
 
@@ -66,11 +65,11 @@ func (db *DBClient) SoftDeleteObject(
 	userID string,
 	input interfaces.DBObject) error {
 
-	db.Logger.Infof("Soft deleting database object: %v", input)
+	log.Infof("Soft deleting database object: %v", input)
 	input.SetDeleteInfo(userID)
 
 	_, err := db.Client.Update(input.GetID(), input)
-	return common.HandleReturn(db.Logger, err)
+	return common.HandleReturn(err)
 }
 
 // CreateObject create an object of the passed in type
@@ -82,7 +81,7 @@ func (db *DBClient) CreateObject(
 	input.SetCreateInfo(userID)
 	data, err := db.Client.Create(objectName, input)
 	if err != nil {
-		return common.HandleReturnWithValue(db.Logger, &data, err)
+		return common.HandleReturnWithValue(&data, err)
 	}
 
 	return data, nil
@@ -97,7 +96,7 @@ func (db *DBClient) UpdateObject(
 	input.SetUpdateInfo(userID)
 	data, err := db.Client.Update(objectID, input)
 	if err != nil {
-		return common.HandleReturnWithValue(db.Logger, &data, err)
+		return common.HandleReturnWithValue(&data, err)
 	}
 
 	return data, nil
@@ -117,21 +116,21 @@ func (db *DBClient) CreateOrUpdateObject(
 }
 
 // FindPagedObjects return paged objects from the database
-func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters map[string]interface{}) (interface{}, int, error) {
+func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters common.QueryFilters) (interface{}, int, error) {
 	pageSql := getPageSql(sql)
 
-	filters["start"] = paging.GetOffset()
-	filters["limit"] = *paging.ResultsPerPage
+	filters.AddFilter(common.QueryFilter{Key: "start", Value: fmt.Sprint(paging.GetOffset())})
+	filters.AddFilter(common.QueryFilter{Key: "limit", Value: fmt.Sprint(*paging.ResultsPerPage)})
 
 	resultsData, err := db.Client.Query(pageSql, filters)
 	if err != nil {
-		db.Logger.Error(err)
+		log.Error(err)
 		return nil, -1, err
 	}
 
 	count, err := db.GetCount(sql, filters)
 	if err != nil {
-		db.Logger.Error(err)
+		log.Error(err)
 		return nil, -1, err
 	}
 
@@ -139,15 +138,15 @@ func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filte
 }
 
 // GetCount returns an int representing the number of records in a database
-func (db *DBClient) GetCount(sql string, filters map[string]interface{}) (*int, error) {
+func (db *DBClient) GetCount(sql string, filters common.QueryFilters) (*int, error) {
 	countSql := getCountSql(sql)
 	countData, err := db.Client.Query(countSql, filters)
 	if err != nil {
-		return common.HandleReturnWithValue[int](db.Logger, nil, err)
+		return common.HandleReturnWithValue[int](nil, err)
 	}
 
-	count, err := parseCountFromSurrealResult(db.Logger, countData)
-	return common.HandleReturnWithValue[int](db.Logger, count, err)
+	count, err := parseCountFromSurrealResult(countData)
+	return common.HandleReturnWithValue[int](count, err)
 }
 
 // GetScalar returns a single value from the database
@@ -178,5 +177,5 @@ func (db *DBClient) GetCount(sql string, filters map[string]interface{}) (*int, 
 // Execute runs a statement against the database
 func (db *DBClient) Execute(sql string, vars map[string]interface{}) error {
 	_, err := db.Client.Query(sql, vars)
-	return common.HandleReturn(db.Logger, err)
+	return common.HandleReturn(err)
 }

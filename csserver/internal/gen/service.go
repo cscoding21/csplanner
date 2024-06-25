@@ -1,44 +1,85 @@
 package gen
 
 import (
+	"errors"
 	"os"
 	"path"
 	"strings"
 
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
 	"github.com/cscoding21/csgen"
+	csvalGen "github.com/cscoding21/csval/gen"
 )
 
 type GenProps struct {
-	ServiceName  string
-	ServiceLower string
-	OutputPath   string
+	ServiceName       string
+	ServiceLower      string
+	OutputPath        string
+	IncludeValidation bool
 }
 
-func Generate(props GenProps) error {
+func GenService(props GenProps) error {
+	caser := cases.Title(language.English)
+	//---ensure struct name is title case
+	props.ServiceName = caser.String(props.ServiceName)
+
+	//---create an all-lowercase version for the database & file names
 	props.ServiceLower = strings.ToLower(props.ServiceName)
 
-	builder := csgen.NewCSGenBuilderForFile("csplanner", strings.ToLower(props.ServiceName))
+	servicePath := path.Join(props.OutputPath, props.ServiceLower)
+	fullModelPath := path.Join(servicePath, "models.go")
 
-	builder.WriteString(csgen.ExecuteTemplate("list_identifier", identifierTemplateString, props))
-	builder.WriteString(csgen.ExecuteTemplate("list_service_struct", serviceStructTemplateString, props))
-	builder.WriteString(csgen.ExecuteTemplate("list_service_getbyid", getByIDTemplateString, props))
-	builder.WriteString(csgen.ExecuteTemplate("list_service_findall", findAllTemplateString, props))
-	builder.WriteString(csgen.ExecuteTemplate("list_service_create", createTemplateString, props))
-	builder.WriteString(csgen.ExecuteTemplate("list_service_update", updateTemplateString, props))
-	builder.WriteString(csgen.ExecuteTemplate("list_service_delete", deleteTemplateString, props))
-
-	path := path.Join(props.OutputPath, strings.ToLower(props.ServiceName))
-	err := os.MkdirAll(path, os.ModePerm)
+	err := os.MkdirAll(servicePath, os.ModePerm)
 	if err != nil {
 		return err
 	}
 
+	_, err = os.Open(fullModelPath)
+	if errors.Is(err, os.ErrNotExist) {
+		// handle the case where the file doesn't exist
+		modelBuilder := strings.Builder{}
+
+		modelBuilder.WriteString(csgen.ExecuteTemplate("models", modelsTemplateString, props))
+
+		err = csgen.WriteGeneratedGoFile(fullModelPath, modelBuilder.String())
+		if err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	}
+
+	needsVal, err := csvalGen.CheckFileHasValidatorTags(fullModelPath)
+	if err != nil {
+		return err
+	}
+
+	props.IncludeValidation = needsVal
+
+	//---create a builder for the service file
+	builder := csgen.NewCSGenBuilderForFile("csplanner", props.ServiceLower)
+
+	builder.WriteString(csgen.ExecuteTemplate("identifier", identifierTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_struct", serviceStructTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_getbyid", getByIDTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_findall", findAllTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_create", createTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_update", updateTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_delete", deleteTemplateString, props))
+
 	fullPath := csgen.GetFileName(
 		"csplanner",
-		path,
-		strings.ToLower(props.ServiceName))
+		servicePath,
+		props.ServiceLower)
 
 	err = csgen.WriteGeneratedGoFile(fullPath, builder.String())
+	if err != nil {
+		return err
+	}
+
+	err = csvalGen.Generate(fullModelPath)
 	if err != nil {
 		return err
 	}
@@ -56,18 +97,15 @@ var serviceStructTemplateString = `
 // {{.ServiceName}}Service is a service for interacting with lists.
 type {{.ServiceName}}Service struct {
 	DBClient      surreal.DBClient
-	Logger        interfaces.Logger
 	ContextHelper interfaces.ContextHelpers
 }
 
 // New{{.ServiceName}}Service creates a new {{.ServiceName}} service.
 func New{{.ServiceName}}Service(
-	db surreal.DBClient,
-	logger interfaces.Logger) *{{.ServiceName}}Service {
+	db surreal.DBClient) *{{.ServiceName}}Service {
 
 	return &{{.ServiceName}}Service{
 		DBClient: db,
-		Logger:   logger,
 	}
 }
 
@@ -77,14 +115,13 @@ var deleteTemplateString = `
 // Delete{{.ServiceName}} deletes a {{.ServiceName}}.
 func (s *{{.ServiceName}}Service) Delete{{.ServiceName}}(ctx context.Context, id string) error {
 	userID := s.ContextHelper.GetUserIDFromContext(ctx)
-	s.Logger.Info(id)
+
 	list, err := s.Get{{.ServiceName}}ByID(ctx, id)
 	if err != nil {
-		return common.HandleReturn(s.Logger, err)
+		return common.HandleReturn(err)
 	}
 
 	return common.HandleReturn(
-		s.Logger,
 		s.DBClient.SoftDeleteObject(userID, list),
 	)
 }
@@ -96,13 +133,12 @@ var getByIDTemplateString = `
 func (s *{{.ServiceName}}Service) Get{{.ServiceName}}ByID(ctx context.Context, id string) (*{{.ServiceName}}, error) {
 	outData, err := s.DBClient.GetObjectById(id)
 	if err != nil {
-		return common.HandleReturnWithValue[{{.ServiceName}}](s.Logger, nil, err)
+		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
 	}
 
-	output, err := common.SurrealUnmarshal[{{.ServiceName}}](s.Logger, outData)
+	output, err := marshal.SurrealUnmarshal[{{.ServiceName}}](outData)
 
 	return common.HandleReturnWithValue(
-		s.Logger,
 		output,
 		err,
 	)
@@ -113,21 +149,22 @@ func (s *{{.ServiceName}}Service) Get{{.ServiceName}}ByID(ctx context.Context, i
 var createTemplateString = `
 // {{.ServiceName}}List creates a new {{.ServiceName}}.
 func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (*{{.ServiceName}}, error) {
+{{if .IncludeValidation}}
 	val := input.Validate()
 	if !val.Pass {
-		return common.HandleReturnWithValue[{{.ServiceName}}](s.Logger, nil, val.Error("{{.ServiceName}} validation failed"))
+		return common.HandleReturnWithValue[{{.ServiceName}}](nil, val.Error("{{.ServiceName}} validation failed"))
 	}
-
+{{end}}
 	userID := s.ContextHelper.GetUserIDFromContext(ctx)
 
 	outData, err := s.DBClient.CreateObject(userID, {{.ServiceName }}Identifier, input)
 	if err != nil {
-		return common.HandleReturnWithValue[{{.ServiceName}}](s.Logger, nil, err)
+		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
 	}
 
-	list, err := common.SurrealSmartUnmarshal[{{.ServiceName}}](s.Logger, outData)
+	list, err := marshal.SurrealSmartUnmarshal[{{.ServiceName}}](outData)
 
-	return common.HandleReturnWithValue(s.Logger, list, err)
+	return common.HandleReturnWithValue(list, err)
 }
 	
 `
@@ -135,16 +172,22 @@ func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, in
 var updateTemplateString = `
 // Update{{.ServiceName}} update an existing {{.ServiceName}}.
 func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (*{{.ServiceName}}, error) {
+{{if .IncludeValidation}}
+	val := input.Validate()
+	if !val.Pass {
+		return common.HandleReturnWithValue[{{.ServiceName}}](nil, val.Error("{{.ServiceName}} validation failed"))
+	}
+{{end}}
 	userID := s.ContextHelper.GetUserIDFromContext(ctx)
 
 	outData, err := s.DBClient.UpdateObject(userID, input.ID, input)
 	if err != nil {
-		return common.HandleReturnWithValue[{{.ServiceName}}](s.Logger, nil, err)
+		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
 	}
 
-	output, err := common.SurrealUnmarshal[{{.ServiceName}}](s.Logger, outData)
+	output, err := marshal.SurrealUnmarshal[{{.ServiceName}}](outData)
 
-	return common.HandleReturnWithValue(s.Logger, output, err)
+	return common.HandleReturnWithValue(output, err)
 }
 	
 `
@@ -161,7 +204,7 @@ func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}(ctx context.Context) (
 	}
 
 	pagingResults.Pagination.TotalResults = &resultCount
-	unpacked, err := common.SurrealSmartUnmarshal[[]{{.ServiceName}}](s.Logger, results)
+	unpacked, err := marshal.SurrealSmartUnmarshal[[]{{.ServiceName}}](results)
 	if err != nil {
 		return pagingResults, err
 	}
@@ -170,4 +213,24 @@ func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}(ctx context.Context) (
 	return pagingResults, nil
 }
 	
+`
+
+var modelsTemplateString = `
+//go:generate csval
+
+//---NOTE TO DEVELOPERRS
+//---This file will only be generated once.  Modify file as needed.
+
+package {{.ServiceLower}}
+
+import (
+	"csserver/internal/common"
+)
+
+type {{.ServiceName}} struct {
+	//---common for all DB objects
+	common.ControlFields
+
+	//---TODO: add fields here
+}
 `

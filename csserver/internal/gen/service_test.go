@@ -10,7 +10,7 @@ func TestGenerate(t *testing.T) {
 		OutputPath:  "/home/jeph/projects/cscoding21/csplanner/csserver/internal/services",
 	}
 
-	err := Generate(props)
+	err := GenService(props)
 	if err != nil {
 		t.Error(err)
 	}
@@ -22,7 +22,7 @@ func TestGenerateList(t *testing.T) {
 		OutputPath:  "/home/jeph/projects/cscoding21/csplanner/csserver/internal/services",
 	}
 
-	err := Generate(props)
+	err := GenService(props)
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,0 +1,21 @@
+type Notification {
+  id: String!
+  userId: String!
+  userName: String!
+  recipientIsBot: Boolean!
+  type: Int!
+  contextId: String!
+  text: String
+  isRead: Boolean!
+  initiatorName: String!
+  initiatorId: String!
+  initiatorProfileImage: String
+  controlFields: ControlFields!
+}
+
+
+type NotificationResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Notification!]!
+}

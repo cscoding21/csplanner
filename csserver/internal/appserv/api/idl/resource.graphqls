@@ -1,0 +1,46 @@
+type Resource {
+  id: String
+  name: String!
+  role: String!
+  user: User
+  profileImage: String
+  skills: [Skill!]
+  isBot: Boolean!
+  controlFields: ControlFields!
+}
+
+
+type Skill {
+  id: String!
+  name: String!
+  proficiency: Float
+}
+
+
+input UpdateResource {
+  id: String
+  name: String!
+  role: String
+  userID: String
+  email: String
+  profileImage: String
+  skills: [UpdateSkill!]
+}
+
+input UpdateSkill {
+  resourceID: String!
+  id: String!
+  proficiency: Float!
+}
+
+
+type CreateResourceResult {
+  status: Status!
+  resource: Resource
+}
+
+type ResourceResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Resource!]
+}
