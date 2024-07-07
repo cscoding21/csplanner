@@ -1,0 +1,29 @@
+type Organization {
+  id: String
+  name: String!
+  defaults: OrganizationDefaults!
+  controlFields: ControlFields!
+}
+
+type OrganizationDefaults {
+  discountRate: Float!
+  hoursPerWeek: Int!
+}
+
+
+input UpdateOrganization {
+  id: String
+  name: String!
+  defaults: UpdateOrganizationDefaults!
+}
+
+input UpdateOrganizationDefaults {
+  discountRate: Float!
+  hoursPerWeek: Int!
+}
+
+
+type CreateOrganizationResult {
+  status: Status!
+  organization: Organization
+}

@@ -1,0 +1,19 @@
+
+#####################################################################
+# Common Sense Coding: CSMig Manifest File
+# https://github.com/cscoding21/csmig
+
+# The project root.  This will be used when necessary for determining file locations
+project_root: /home/jeph/projects/cscoding21/csplanner/csserver
+
+# The path where migrations functionality will live
+generator_path: migrations
+
+# The name of the implementation that is used for naming and comments for generated files
+# implementation_name: 
+
+# The package name that will be used for generated migration files
+generator_package: migrations
+
+# The database (or other persistence strategy) that will be used to track migration state
+version_strategy: surrealdb

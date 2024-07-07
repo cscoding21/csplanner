@@ -1,0 +1,19 @@
+type ImplementationTemplate {
+  id: String!
+  name: String!
+  controlFields: ControlFields!
+  phases: [ImplementationTemplatePhase!]!
+}
+
+type ImplementationTemplatePhase {
+  id: String!
+  name: String!
+  order: Int!
+  description: String!
+}
+
+
+input UpdateProjectMilestoneTemplate {
+  projectId: String!
+  templateId: String!
+}

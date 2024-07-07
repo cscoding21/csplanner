@@ -74,7 +74,7 @@ type QueryFilters struct {
 
 type QueryFilter struct {
 	Key       string
-	Value     string
+	Value     interface{}
 	Operation FilterOperation
 }
 

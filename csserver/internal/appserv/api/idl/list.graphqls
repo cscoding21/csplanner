@@ -2,6 +2,7 @@ type List {
     id: String!
     name: String!
     values: [ListItem!]!
+    controlFields: ControlFields
 }
 
 
@@ -11,5 +12,7 @@ type ListItem {
 }
 
 type ListResults {
+  paging: Pagination
+  filters: Filters!
   results: [List!]
 }

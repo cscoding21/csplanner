@@ -1,0 +1,237 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Project {
+  id: String
+  projectBasics: ProjectBasics!
+  projectValue: ProjectValue!
+  projectCost: ProjectCost!
+  projectDaci: ProjectDaci!
+  controlFields: ControlFields!
+  projectFeatures: [ProjectFeature!]
+  projectMilestones: [ProjectMilestone!]
+}
+
+
+type ProjectBasics {
+  name: String!
+  description: String!
+  status: String!
+  startDate: Time
+  ownerID: String
+}
+
+
+type ProjectValue {
+  fundingSource: String
+  discountRate: Float
+  yearOneValue: Float
+  yearTwoValue: Float
+  yearThreeValue: Float
+  yearFourValue: Float
+  yearFiveValue: Float
+  netPresentValue: Float
+  internalRateOfReturn: Float
+}
+
+
+type ProjectCost {
+  ongoing: Float
+  blendedRate: Float
+  initialCost: Float
+  hourEstimate: Int!
+}
+
+
+type ProjectDaci {
+  driver: [String]
+  approver: [String]
+  contributor: [String]
+  informed: [String]
+}
+
+type ProjectFeature {
+  id: String!
+  name: String!
+  description: String!
+  priority: Float!
+  status: String!
+}
+
+type ProjectMilestone {
+  id: String!
+  startDate: Time
+  endDate: Time
+  phase: ProjectMilestonePhase!
+  tasks: [ProjectMilestoneTask!]!
+}
+
+type ProjectMilestonePhase {
+  id: String!
+  order: Int!
+  name: String!
+  description: String!
+}
+
+type ProjectMilestoneTask {
+  id: String!
+  name: String!
+  hourEstimate: Int!
+  description: String
+  requiredSkillIDs: [String!]
+  skills: [Skill!]
+  resources: [Resource!]
+  resourceIDs: [String!]
+  status: String!
+  startDate: Time
+  endDate: Time
+}
+
+type Comment {
+  id: String!
+  projectId: String!
+  text: String!
+  resource: Resource!
+  replies: [Comment!]
+  controlFields: ControlFields!
+  likes: [String!]
+  loves: [String!]
+  dislikes: [String!]
+  laughsAt: [String!]
+  acknowledges: [String!]
+  isEdited: Boolean!
+}
+
+
+type ProjectFilters {
+  status: String
+}
+
+
+type ProjectResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Project!]
+}
+
+
+type CreateProjectResult {
+  status: Status
+  project: Project
+}
+
+
+type CreateProjectCommentResult {
+  status: Status
+  comment: Comment
+}
+
+
+
+
+
+
+
+input UpdateProject {
+  id: String
+  projectBasics: UpdateProjectBasics
+  projectValue: UpdateProjectValue
+  projectCost: UpdateProjectCost
+  projectDaci: UpdateProjectDACI
+  projectFeatures: [UpdateProjectFeature]
+  projectMilestones: [UpdateProjectMilestone]
+}
+
+
+input UpdateProjectBasics {
+  name: String!
+  description: String
+  status: String
+  startDate: Time
+  ownerID: String
+}
+
+
+input UpdateProjectValue {
+  fundingSource: String
+  discountRate: Float
+  yearOneValue: Float
+  yearTwoValue: Float
+  yearThreeValue: Float
+  yearFourValue: Float
+  yearFiveValue: Float
+}
+
+
+input UpdateProjectCost {
+  ongoing: Float
+  blendedRate: Float
+}
+
+
+input UpdateProjectDACI {
+  driver: [String]
+  approver: [String]
+  contributor: [String]
+  informed: [String]
+}
+
+
+input UpdateComment {
+  projectId: String!
+  id: String
+  text: String!
+}
+
+
+input UpdateCommentReply {
+  parentCommentID: String!
+  text: String!
+}
+
+
+input UpdateCommentEmote {
+  commentID: String!
+  emoteType: String!
+}
+
+input UpdateProjectFeature {
+  projectID: String!
+  id: String
+  name: String!
+  description: String!
+  status: String!
+  priority: Int!
+}
+
+
+input UpdateProjectMilestone {
+  id: String!
+  startDate: Time
+  phase: UpdateProjectMilestonePhase!
+  tasks: [UpdateProjectMilestoneTask!]
+}
+
+
+input UpdateProjectMilestonePhase {
+  id: String!
+  name: String!
+  order: Int!
+  description: String!
+}
+
+
+input UpdateProjectMilestoneTask {
+  id: String
+  name: String!
+  description: String
+  hourEstimate: Int!
+  resourceIDs: [String!]
+  requiredSkillIDs: [String!]
+  startDate: Time
+  endDate: Time
+  status: String!
+  projectID: String!
+  milestoneID: String!
+}

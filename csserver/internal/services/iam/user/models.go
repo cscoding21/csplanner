@@ -14,4 +14,7 @@ type User struct {
 	common.ControlFields
 
 	//---TODO: add fields here
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }

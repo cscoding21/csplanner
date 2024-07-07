@@ -8,7 +8,7 @@ image:
   repository: surrealdb/surrealdb
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.4.2"
+  tag: "v1.5.3"
   #tag: "1.0.0"
 
 imagePullSecrets: []
@@ -49,7 +49,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8000
+  port: 9999
 
 ingress:
   enabled: false

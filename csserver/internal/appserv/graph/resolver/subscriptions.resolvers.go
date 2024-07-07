@@ -16,6 +16,11 @@ func (r *subscriptionResolver) CurrentTime(ctx context.Context) (<-chan *idl.Tim
 	panic(fmt.Errorf("not implemented: CurrentTime - currentTime"))
 }
 
+// NotificationUpdate is the resolver for the notificationUpdate field.
+func (r *subscriptionResolver) NotificationUpdate(ctx context.Context) (<-chan string, error) {
+	panic(fmt.Errorf("not implemented: NotificationUpdate - notificationUpdate"))
+}
+
 // Subscription returns graph.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() graph.SubscriptionResolver { return &subscriptionResolver{r} }
 

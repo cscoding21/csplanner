@@ -102,10 +102,12 @@ type {{.ServiceName}}Service struct {
 
 // New{{.ServiceName}}Service creates a new {{.ServiceName}} service.
 func New{{.ServiceName}}Service(
-	db surreal.DBClient) *{{.ServiceName}}Service {
+	db surreal.DBClient,
+	ch config.ContextHelper) *{{.ServiceName}}Service {
 
 	return &{{.ServiceName}}Service{
 		DBClient: db,
+		ContextHelper: &ch,
 	}
 }
 
@@ -147,7 +149,7 @@ func (s *{{.ServiceName}}Service) Get{{.ServiceName}}ByID(ctx context.Context, i
 `
 
 var createTemplateString = `
-// {{.ServiceName}}List creates a new {{.ServiceName}}.
+// Create{{.ServiceName}} creates a new {{.ServiceName}}.
 func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (*{{.ServiceName}}, error) {
 {{if .IncludeValidation}}
 	val := input.Validate()
@@ -162,9 +164,10 @@ func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, in
 		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
 	}
 
-	list, err := marshal.SurrealSmartUnmarshal[{{.ServiceName}}](outData)
+	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
 
-	return common.HandleReturnWithValue(list, err)
+	outObj := utils.RefToVal(outArray)[0]
+	return common.HandleReturnWithValue(&outObj, err)
 }
 	
 `
@@ -185,16 +188,17 @@ func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, in
 		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
 	}
 
-	output, err := marshal.SurrealUnmarshal[{{.ServiceName}}](outData)
+	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
 
-	return common.HandleReturnWithValue(output, err)
+	outObj := utils.RefToVal(outArray)[0]
+	return common.HandleReturnWithValue(&outObj, err)
 }
 	
 `
 
 var findAllTemplateString = `
-// FindAll{{.ServiceName}} return all {{.ServiceName}} in the system
-func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}(ctx context.Context) (common.PagedResults[{{.ServiceName}}], error) {
+// FindAll{{.ServiceName}}s return all {{.ServiceName}} in the system
+func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}s(ctx context.Context) (common.PagedResults[{{.ServiceName}}], error) {
 	pagingResults := common.NewPagedResultsForAllRecords[{{.ServiceName}}]()
 	sql := "select * from {{.ServiceLower}} where deleted_at is null order by name"
 

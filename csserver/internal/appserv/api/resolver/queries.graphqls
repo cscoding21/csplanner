@@ -1,4 +1,28 @@
 type Query {
+    currentUser: User
+    getUser(id: String!): User!
+
+    findProjects(pageAndFilter: PageAndFilter!): ProjectResults!
+    getProject(id: String!): Project!
+    portfolioSnapshot: PortfolioSnapshot!
+    resourceSnapshot: ResourceSnapshot!
+
+    findProjectComments(projectID: String!) :[Comment!]!  
+    getCommentThread(id: String!): Comment!
+        
+    findActivity(pageAndFilter: PageAndFilter!): ActivityResults!
+    findAllProjectTemplates: [ImplementationTemplate!]!
+
+    getOrganization: Organization!
+
+    findAllUsers: UserResults!
+    findAllResources: ResourceResults!
+    findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
+
+    getResource(id: String!): Resource!
+
     findAllLists: ListResults!
     getList(nameOrID: String!): List
+
+    getArtifact(id: String): Artifact
 }

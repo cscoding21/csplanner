@@ -1,0 +1,34 @@
+
+type PortfolioSnapshot {
+  projects: [SnapshotProject!]!
+}
+
+
+type SnapshotProject {
+    id: String!
+    name: String!
+    npv: Float!
+    status: String!
+    startDate: Time
+    endDate: Time
+}
+
+
+type ResourceSnapshot {
+  scheduledResources: [ScheduledResource!]!
+}
+
+type ScheduledResource {
+  projectId: String!
+	projectName: String!
+	projectStatus: String!
+	milestoneName: String!
+	milestoneStartDate: Time
+	milestoneEndDate: Time
+	taskName: String!
+	taskStartDate: Time
+	taskEndDate: Time
+	taskHourEstimate: Int!
+	resourceId: String!
+	resourceName: String!
+}

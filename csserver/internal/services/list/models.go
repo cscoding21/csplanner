@@ -14,5 +14,11 @@ type List struct {
 	common.ControlFields
 
 	//---TODO: add fields here
-	Name string `csval:"req"`
+	Name   string     `json:"name" csval:"req"`
+	Values []ListItem `json:"values"`
+}
+
+type ListItem struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }

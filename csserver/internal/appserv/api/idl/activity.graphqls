@@ -1,0 +1,17 @@
+type Activity {
+  id: String!
+  type: String!
+  summary: String!
+  detail: String
+  context: String!
+  targetID: String
+  resource: Resource
+  controlFields: ControlFields!
+}
+
+
+type ActivityResults {
+  paging: Pagination!
+  filters: Filters!
+  results: [Activity]
+}

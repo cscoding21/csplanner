@@ -3,7 +3,6 @@ package surreal
 import (
 	"csserver/internal/common"
 	"csserver/internal/interfaces"
-	"fmt"
 
 	"github.com/surrealdb/surrealdb.go"
 
@@ -38,11 +37,9 @@ func (db *DBClient) GetObjectById(id string) (interface{}, error) {
 // GetObjectById returns an object from the database
 func (db *DBClient) GetObject(
 	sql string,
-	key string,
 	criteria map[string]interface{}) (interface{}, error) {
 
-	objectData, err := db.Client.Query(sql, criteria)
-	return common.HandleReturnWithValue(&objectData, err)
+	return db.Client.Query(sql, criteria)
 }
 
 // DeleteObject delete an object from the DB based on the ID
@@ -79,12 +76,7 @@ func (db *DBClient) CreateObject(
 	input interfaces.DBObject) (interface{}, error) {
 
 	input.SetCreateInfo(userID)
-	data, err := db.Client.Create(objectName, input)
-	if err != nil {
-		return common.HandleReturnWithValue(&data, err)
-	}
-
-	return data, nil
+	return db.Client.Create(objectName, input)
 }
 
 // CreateObject create an object of the passed in type
@@ -94,12 +86,7 @@ func (db *DBClient) UpdateObject(
 	input interfaces.DBObject) (interface{}, error) {
 
 	input.SetUpdateInfo(userID)
-	data, err := db.Client.Update(objectID, input)
-	if err != nil {
-		return common.HandleReturnWithValue(&data, err)
-	}
-
-	return data, nil
+	return db.Client.Update(objectID, input)
 }
 
 // CreateOrUpdateObject if the passed in object contains an ID, it will update.  otherwise it will create.
@@ -119,10 +106,12 @@ func (db *DBClient) CreateOrUpdateObject(
 func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters common.QueryFilters) (interface{}, int, error) {
 	pageSql := getPageSql(sql)
 
-	filters.AddFilter(common.QueryFilter{Key: "start", Value: fmt.Sprint(paging.GetOffset())})
-	filters.AddFilter(common.QueryFilter{Key: "limit", Value: fmt.Sprint(*paging.ResultsPerPage)})
+	filters.AddFilter(common.QueryFilter{Key: "start", Value: paging.GetOffset()})
+	filters.AddFilter(common.QueryFilter{Key: "limit", Value: *paging.ResultsPerPage})
 
-	resultsData, err := db.Client.Query(pageSql, filters)
+	fm := filters.GetFiltersAsMap()
+
+	resultsData, err := db.Client.Query(pageSql, fm)
 	if err != nil {
 		log.Error(err)
 		return nil, -1, err
@@ -145,8 +134,7 @@ func (db *DBClient) GetCount(sql string, filters common.QueryFilters) (*int, err
 		return common.HandleReturnWithValue[int](nil, err)
 	}
 
-	count, err := parseCountFromSurrealResult(countData)
-	return common.HandleReturnWithValue[int](count, err)
+	return parseCountFromSurrealResult(countData)
 }
 
 // GetScalar returns a single value from the database

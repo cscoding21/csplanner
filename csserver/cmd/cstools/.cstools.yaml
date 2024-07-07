@@ -5,5 +5,5 @@ services:
     path: ""
   - name: User
     path: iam
-  - name: Auth
+  - name: Login
     path: iam

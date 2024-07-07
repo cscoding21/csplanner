@@ -1,0 +1,14 @@
+type Artifact {
+    id: String!
+    fileType: String!
+    fileName: String!
+    url: String!
+
+    controlFields: ControlFields
+}
+
+
+type RelateArtifact {
+    artifactID: String!
+    linkID: String!
+}

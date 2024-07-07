@@ -10,3 +10,15 @@ setup_ollama()
 
 #---- Tools
 setup_debug()
+
+
+
+###############################################################
+# Watch: tell Tilt how to connect locally (optional)
+# Port forward service
+# SurrealDB
+k8s_resource(
+  workload='surrealdb',
+  port_forwards=9999,
+  labels=["Database"]
+)

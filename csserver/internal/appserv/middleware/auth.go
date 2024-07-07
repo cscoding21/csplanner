@@ -10,7 +10,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 
+	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
+	"csserver/internal/services/iam/auth"
 
 	"encoding/json"
 	"net/http"
@@ -53,17 +55,17 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		us := factory.GetUserService()
+		bctx := config.NewContext()
+
 		if allowAnonomousOperation(r) {
 			anonEmail := config.Config.Default.BotUserEmail
-			log.Warn("AI Bot credentials set")
-			bctx := config.NewContext()
+			log.Warnf("AI Bot credentials set for %s", anonEmail)
 
-			log.Infof("Anon email used: %s", anonEmail)
-
-			// anonID, _ := users.GetUser(bctx, anonEmail)
+			anonID, _ := us.GetUser(bctx, anonEmail)
 
 			bctx = context.WithValue(bctx, config.UserEmailKey, anonEmail)
-			// bctx = context.WithValue(bctx, config.UserIDKey, anonID)
+			bctx = context.WithValue(bctx, config.UserIDKey, anonID)
 			r = r.WithContext(bctx)
 
 			next.ServeHTTP(w, r)
@@ -73,25 +75,31 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		token := getTokenFromHeader(r)
 		log.Info(token)
 
-		// result := authService.ValidateToken(context.Background(), token)
-		// log.Debugf("AUTH Validation Result for token %s: %v", token, result)
-		// if !result.Success {
-		// 	err := fmt.Errorf("login failed for token %s", token)
-		// 	log.Error(err)
-		// 	http.Error(w, "Forbidden", http.StatusForbidden)
-		// 	return
-		// }
+		authService := factory.GetAuthService()
+		result, err := authService.Authenticate(auth.AuthCredentials{Token: token})
+		if err != nil {
+			log.Error(err)
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+		log.Debugf("AUTH Validation Result for token %s: %v", token, result)
+		if !result.Success {
+			err := fmt.Errorf("login failed for token %s", token)
+			log.Error(err)
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
 
-		// if result.Success {
-		// 	log.Debugf("Authentication success for user %s", result.User.Email)
+		if result.Success {
+			log.Debugf("Authentication success for user %s", result.User.Email)
 
-		// 	ctx := context.WithValue(r.Context(), config.UserEmailKey, result.User.Email)
-		// 	ctx = context.WithValue(ctx, config.UserIDKey, result.User.ID)
-		// 	r = r.WithContext(ctx)
+			ctx := context.WithValue(r.Context(), config.UserEmailKey, result.User.Email)
+			ctx = context.WithValue(ctx, config.UserIDKey, result.User.ID)
+			r = r.WithContext(ctx)
 
-		next.ServeHTTP(w, r)
-		return
-		// }
+			next.ServeHTTP(w, r)
+			return
+		}
 
 		log.Warn("Authentication failed")
 		http.Error(w, "Forbidden", http.StatusForbidden)
@@ -116,17 +124,18 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 		}
 	}
 
-	// token = authService.CleanToken(token)
+	bctx := config.NewContext()
+	authService := factory.GetAuthService()
 
-	// result := authService.ValidateToken(context.Background(), token)
-	// if result.Success {
-	// 	log.Debugf("WebSocket authentication success for user %s", result.User.Email)
+	result, _ := authService.Authenticate(auth.AuthCredentials{Token: token})
+	if result.Success {
+		log.Debugf("WebSocket authentication success for user %s", result.User.Email)
 
-	// 	ctx = context.WithValue(ctx, config.UserEmailKey, result.User.Email)
-	// 	ctx = context.WithValue(ctx, config.UserIDKey, result.User.ID)
+		bctx = context.WithValue(bctx, config.UserEmailKey, result.User.Email)
+		bctx = context.WithValue(bctx, config.UserIDKey, result.User.ID)
 
-	// 	return ctx, &initPayload, nil
-	// }
+		return bctx, &initPayload, nil
+	}
 
 	return ctx, &initPayload, fmt.Errorf("login failed for token %s", token)
 }

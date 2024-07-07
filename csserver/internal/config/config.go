@@ -2,6 +2,8 @@ package config
 
 import (
 	"errors"
+	"fmt"
+	"os"
 
 	"github.com/spf13/viper"
 
@@ -14,7 +16,25 @@ var Config ConfigValues
 func InitConfig() {
 	setDefaults()
 
-	err := viper.Unmarshal(&Config)
+	//---TODO: figure out where to store the config
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(errors.New("could not find home directory"))
+	}
+
+	// Search config in home directory with name ".csplanner" (without extension).
+	viper.AddConfigPath(home)
+	viper.SetConfigType("yaml")
+	viper.SetConfigName(".csplanner")
+
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// If a config file is found, read it in.
+	if err = viper.ReadInConfig(); err == nil {
+		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	}
+
+	err = viper.Unmarshal(&Config)
 	if err != nil {
 		log.Fatal(errors.New("config could not be loaded"))
 	}
