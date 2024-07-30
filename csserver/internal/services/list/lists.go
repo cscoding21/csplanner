@@ -13,7 +13,7 @@ import (
 // GetList get a list based on the passed in email
 func (s *ListService) GetList(ctx context.Context, idOrName string) (*List, error) {
 	listRaw, err := s.DBClient.GetObject(
-		fmt.Sprintf("SELECT * FROM %s WHERE Name = $idOrName OR id = $idOrName", ListIdentifier),
+		fmt.Sprintf("SELECT * FROM %s WHERE name = $idOrName OR id = $idOrName", ListIdentifier),
 		map[string]interface{}{"idOrName": idOrName})
 
 	if err != nil {

@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"fmt"
@@ -13,7 +14,17 @@ import (
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
-	panic(fmt.Errorf("not implemented: CurrentUser - currentUser"))
+	ch := factory.GetContextHelper()
+	email := ch.GetUserEmailFromContext(ctx)
+
+	//---TODO: Implement resolver
+	out := &idl.User{
+		ID:    "user:1121",
+		Name:  "jeph",
+		Email: email,
+	}
+
+	return out, nil
 }
 
 // GetUser is the resolver for the getUser field.

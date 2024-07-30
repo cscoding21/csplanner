@@ -6,6 +6,7 @@ import (
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
+	"fmt"
 
 	"github.com/surrealdb/surrealdb.go"
 
@@ -17,6 +18,12 @@ var (
 	_dbclient *surreal.DBClient
 )
 
+// GetContextHelper get context helper singleton
+func GetContextHelper() *config.ContextHelper {
+	ch := config.ContextHelper{}
+	return &ch
+}
+
 // GetDBClient get dbclient singleton
 func GetDBClient() *surreal.DBClient {
 	if _dbclient != nil {
@@ -24,7 +31,8 @@ func GetDBClient() *surreal.DBClient {
 	}
 
 	// Connect to SurrealDB
-	_dbclient, err := surrealdb.New(config.Config.Database.Host)
+	host := fmt.Sprintf("ws://%s:%v/rpc", config.Config.Database.Host, config.Config.Database.Port)
+	_dbclient, err := surrealdb.New(host)
 	if err != nil {
 		log.Error(err)
 		return nil

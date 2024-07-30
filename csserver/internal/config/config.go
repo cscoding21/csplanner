@@ -42,11 +42,14 @@ func InitConfig() {
 
 func setDefaults() {
 	// Database
-	viper.SetDefault("database.host", "ws://localhost:9999/rpc")
+	//viper.SetDefault("database.host", "localhost")
+	viper.SetDefault("database.host", "surrealdb.database.svc")
+
 	viper.SetDefault("database.user", "root")
 	viper.SetDefault("database.password", "root")
 	viper.SetDefault("database.namespace", "test")
 	viper.SetDefault("database.database", "test")
+	viper.SetDefault("database.port", 9999)
 
 	//Default
 	viper.SetDefault("default.pagesize", 25)
@@ -89,6 +92,7 @@ type DatabaseConfig struct {
 	Password  string
 	Namespace string
 	Database  string
+	Port      int
 }
 
 type DefaultsConfig struct {
