@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/viper"
 
@@ -27,13 +28,17 @@ func InitConfig() {
 	viper.SetConfigType("yaml")
 	viper.SetConfigName(".csplanner")
 
-	viper.AutomaticEnv() // read in environment variables that match
-
 	// If a config file is found, read it in.
 	if err = viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 
+	replacer := strings.NewReplacer(".", "_")
+	viper.SetEnvKeyReplacer(replacer)
+	viper.SetEnvPrefix("csp")
+	viper.AutomaticEnv() // read in environment variables that match
+
+	// Config = readInConfig()
 	err = viper.Unmarshal(&Config)
 	if err != nil {
 		log.Fatal(errors.New("config could not be loaded"))
@@ -42,9 +47,7 @@ func InitConfig() {
 
 func setDefaults() {
 	// Database
-	//viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.host", "surrealdb.database.svc")
-
+	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.user", "root")
 	viper.SetDefault("database.password", "root")
 	viper.SetDefault("database.namespace", "test")
@@ -56,7 +59,7 @@ func setDefaults() {
 	viper.SetDefault("default.botuseremail", "aibot@jmk21.com")
 
 	//Security
-	viper.SetDefault("security.bypassauth", "true")
+	viper.SetDefault("security.bypassauth", "false")
 	viper.SetDefault("security.jwtsigningkey", "local_signing_key_V4G7A1")
 	viper.SetDefault("security.jwtaudience", "analyzer.net")
 	viper.SetDefault("security.jwtissuer", "analyzer.net")
@@ -71,8 +74,7 @@ func setDefaults() {
 
 	//Services
 	viper.SetDefault("services.aihost", "http://localhost:7000/bot")
-	viper.SetDefault("services.aihost", "http://ai.app.svc:7000/bot")
-	//viper.SetDefault("services.ollamahost", "ollama.ollama.svc:11434")
+	viper.SetDefault("services.ollamahost", "ollama.ollama.svc:11434")
 }
 
 // Config the parent config structure

@@ -56,13 +56,18 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		}
 
 		us := factory.GetUserService()
-		bctx := config.NewContext()
+		bctx := r.Context()
 
 		if allowAnonomousOperation(r) {
 			anonEmail := config.Config.Default.BotUserEmail
 			log.Warnf("AI Bot credentials set for %s", anonEmail)
 
-			anonID, _ := us.GetUser(bctx, anonEmail)
+			anonID, err := us.GetUser(bctx, anonEmail)
+			if err != nil {
+				log.Error(err)
+			} else {
+				log.Warnf("resolved user %s", anonID.Name)
+			}
 
 			bctx = context.WithValue(bctx, config.UserEmailKey, anonEmail)
 			bctx = context.WithValue(bctx, config.UserIDKey, anonID)
@@ -165,7 +170,7 @@ func allowAnonomousOperation(r *http.Request) bool {
 	json.Unmarshal([]byte(body), &graphqlQuery)
 	log.Debug(graphqlQuery)
 
-	allowed := []string{"IntrospectionQuery", "login", "createUser"}
+	allowed := []string{"IntrospectionQuery", "login", "createUser", "currentUser"}
 
 	//---this will handle calls from the JS client
 	if slices.Contains(allowed, graphqlQuery.OperationName) {

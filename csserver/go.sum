@@ -13,6 +13,8 @@ github.com/cscoding21/csgen v0.5.0 h1:2Wexk7PRiFurlT+V4bxr513k61tr7bKgdUB/y1pNZ3
 github.com/cscoding21/csgen v0.5.0/go.mod h1:whEgoVIbPf7ptckVgvwqTBNCDCp6yJRL89iCPq/z6Ls=
 github.com/cscoding21/csmap v0.2.2 h1:WakVIqJmS/cwIGGSdEPlSTHvWEBeBCVLXhjeciacFgQ=
 github.com/cscoding21/csmap v0.2.2/go.mod h1:J9fBhjfrs/uG3NJXup8HJUMB2N5TjcUnja5lN8mlcgM=
+github.com/cscoding21/csmap v0.3.0 h1:YZEAqW71bucdIhMj10lzqYrflVaWljS8m9gfpbiXl8I=
+github.com/cscoding21/csmap v0.3.0/go.mod h1:GlLoEWxRHFXfGiOS9ZfMJhLjqLw7bx7rkGUWzK1U6/o=
 github.com/cscoding21/csmig v0.0.0-20240705221351-7c961f232527 h1:uxGvaLQ5WHDvT+9TMSm7io+jOzgTI/37W0TbBMF9hHU=
 github.com/cscoding21/csmig v0.0.0-20240705221351-7c961f232527/go.mod h1:wSt8PGxNkPoqv9Kx7zmYrYrONA/9J4lCjn5I2SXl+qE=
 github.com/cscoding21/csmig v0.0.0-20240727154000-df99f45b2202 h1:z0OiyArejK++MGJd5yrTVhvOChOkCvYbGCFfx3Pp0Dw=

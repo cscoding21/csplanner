@@ -6,25 +6,29 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+
 	"fmt"
 )
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
-	ch := factory.GetContextHelper()
-	email := ch.GetUserEmailFromContext(ctx)
+	//ch := factory.GetContextHelper()
+	us := factory.GetUserService()
 
-	//---TODO: Implement resolver
-	out := &idl.User{
-		ID:    "user:1121",
-		Name:  "jeph",
-		Email: email,
+	// email := ch.GetUserEmailFromContext(ctx)
+
+	user, err := us.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	return out, nil
+	out := csmap.UserUserToIdl(*user)
+
+	return &out, nil
 }
 
 // GetUser is the resolver for the getUser field.

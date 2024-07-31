@@ -1,0 +1,54 @@
+project_root: "/home/jeph/projects/cscoding21/csplanner/csserver"
+generator_path: "internal/appserv/csmap"
+#generator_package: "tests"
+
+# source and destination pathes are relative to project root
+maps:
+  - name: "source_user"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/iam/user/models.go"
+    imports: 
+    - "csserver/internal/services/iam/user"
+  - name: "target_user"
+    source_path: "internal/services/iam/user/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/services/iam/user"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # # Test of 2 objects with different names 
+  # - name: "source_data1"
+  #   source_path: "tests/diffnames/source_data1.go"
+  #   target_path: "tests/diffnames/target_data1.go"
+  #   # imports: 
+  #   # - "github.com/cscoding21/csgen"
+  #   map_overrides:
+  #   - source_name: "TestSource"
+  #     target_name: "TestTarget"
+  #   - source_name: "LocationSource"
+  #     target_name: "LocationTarget"
+
+  # # Test of mapping 2 identical objects with identical naming
+  # - name: "source_data2"
+  #   source_path: "tests/pkg1/test.go"
+  #   target_path: "tests/pkg2/test.go"
+
+  # # Test of mapping 2 identical objects in the same package
+  # - name: "source_pkgco"
+  #   source_path: "tests/pkgco/test1.go"
+  #   target_path: "tests/pkgco/test2.go"
+  #   map_overrides:
+  #   - source_name: "PagingSource"
+  #     target_name: "PagingTarget"
