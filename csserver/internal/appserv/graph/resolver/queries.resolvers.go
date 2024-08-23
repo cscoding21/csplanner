@@ -10,17 +10,14 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/common"
 
 	"fmt"
 )
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
-	//ch := factory.GetContextHelper()
 	us := factory.GetUserService()
-
-	// email := ch.GetUserEmailFromContext(ctx)
-
 	user, err := us.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
@@ -103,12 +100,31 @@ func (r *queryResolver) GetResource(ctx context.Context, id string) (*idl.Resour
 
 // FindAllLists is the resolver for the findAllLists field.
 func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, error) {
-	panic(fmt.Errorf("not implemented: FindAllLists - findAllLists"))
+	ls := factory.GetListService()
+	listResults, err := ls.FindAllLists(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg := csmap.PaginationCommonToIdl(listResults.Pagination)
+	out := idl.ListResults{
+		Paging:  &pg,
+		Results: csmap.ListListToIdlSlice(common.ValToRefSlice(listResults.Results)),
+	}
+	return &out, nil
 }
 
 // GetList is the resolver for the getList field.
 func (r *queryResolver) GetList(ctx context.Context, nameOrID string) (*idl.List, error) {
-	panic(fmt.Errorf("not implemented: GetList - getList"))
+	ls := factory.GetListService()
+	list, err := ls.GetList(ctx, nameOrID)
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.ListListToIdl(*list)
+
+	return &out, nil
 }
 
 // GetArtifact is the resolver for the getArtifact field.

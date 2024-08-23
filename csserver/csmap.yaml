@@ -2,18 +2,39 @@ project_root: "/home/jeph/projects/cscoding21/csplanner/csserver"
 generator_path: "internal/appserv/csmap"
 #generator_package: "tests"
 
+common_structs:
+  - package_name: common
+    struct_name: ControlFields
+    path: internal/common/controlfields.go
+  - package_name: common
+    struct_name: Pagination
+    path: internal/common/paging.go
+  - package_name: common
+    struct_name: QueryFilter
+    path: internal/common/paging.go
+  - package_name: common
+    struct_name: QueryFilters
+    path: internal/common/paging.go
+
 # source and destination pathes are relative to project root
 maps:
-  - name: "source_user"
-    source_path: "internal/appserv/graph/idl/models.gen.go"
-    target_path: "internal/services/iam/user/models.go"
+  - name: "target_paging"
+    source_path: "internal/common/paging.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
-    - "csserver/internal/services/iam/user"
+    - "csserver/internal/common"
+  - name: "target_list"
+    source_path: "internal/services/list/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/services/list"
+    - "csserver/internal/common"
   - name: "target_user"
     source_path: "internal/services/iam/user/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/services/iam/user"
+    - "csserver/internal/common"
 
 
 

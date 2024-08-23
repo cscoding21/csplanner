@@ -6,7 +6,6 @@ import (
 
 // HandleReturn passthrough function that logs an error if needed.
 func HandleReturn(err error) error {
-
 	if err != nil {
 		log.Error(err)
 		return err

@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"csserver/internal/utils"
 	"errors"
 	"os"
 	"path"
@@ -18,12 +19,16 @@ type GenProps struct {
 	ServiceLower      string
 	OutputPath        string
 	IncludeValidation bool
+	IDTag             string
+	CFTag             string
 }
 
 func GenService(props GenProps) error {
 	caser := cases.Title(language.English)
 	//---ensure struct name is title case
 	props.ServiceName = caser.String(props.ServiceName)
+	props.IDTag = utils.WrapInBackticks("json:\"id,omitempty\" csval:\"required\"")
+	props.CFTag = utils.WrapInBackticks("json:\"control_fields\" csval:\"validate\"")
 
 	//---create an all-lowercase version for the database & file names
 	props.ServiceLower = strings.ToLower(props.ServiceName)
@@ -233,7 +238,8 @@ import (
 
 type {{.ServiceName}} struct {
 	//---common for all DB objects
-	common.ControlFields
+	ID string {{.IDTag}}
+	ControlFields common.ControlFields {{.CFTag}}
 
 	//---TODO: add fields here
 }
