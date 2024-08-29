@@ -3,18 +3,15 @@
 //---NOTE TO DEVELOPERRS
 //---This file will only be generated once.  Modify file as needed.
 
-package login
+package activity
 
 import (
 	"csserver/internal/common"
 )
 
-type Login struct {
+type Activity struct {
 	//---common for all DB objects
-	common.ControlFields
+	common.ControlFields `json:"control_fields" csval:"validate"`
 
 	//---TODO: add fields here
-	UserID   string `json:"user_id" csval:"req"`
-	Username string `json:"username" csval:"req"`
-	Password string `json:"password" csval:"req"`
 }

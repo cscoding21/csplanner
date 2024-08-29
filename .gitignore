@@ -21,5 +21,8 @@
 go.work
 go.work.sum
 
+# Ignore secrets folder
+secrets/*
+
 # Ignore all go generated Go files
 **/*.gen.go

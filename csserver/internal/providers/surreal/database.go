@@ -103,11 +103,11 @@ func (db *DBClient) CreateOrUpdateObject(
 }
 
 // FindPagedObjects return paged objects from the database
-func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters common.QueryFilters) (interface{}, int, error) {
+func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters common.Filters) (interface{}, int, error) {
 	pageSql := getPageSql(sql)
 
-	filters.AddFilter(common.QueryFilter{Key: "start", Value: paging.GetOffset()})
-	filters.AddFilter(common.QueryFilter{Key: "limit", Value: *paging.ResultsPerPage})
+	filters.AddFilter(common.Filter{Key: "start", Value: paging.GetOffset()})
+	filters.AddFilter(common.Filter{Key: "limit", Value: *paging.ResultsPerPage})
 
 	fm := filters.GetFiltersAsMap()
 
@@ -127,7 +127,7 @@ func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filte
 }
 
 // GetCount returns an int representing the number of records in a database
-func (db *DBClient) GetCount(sql string, filters common.QueryFilters) (*int, error) {
+func (db *DBClient) GetCount(sql string, filters common.Filters) (*int, error) {
 	countSql := getCountSql(sql)
 	countData, err := db.Client.Query(countSql, filters)
 	if err != nil {

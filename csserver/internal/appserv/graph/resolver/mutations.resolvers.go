@@ -6,8 +6,10 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/services/iam/auth"
 	"fmt"
 )
 
@@ -23,7 +25,22 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser)
 
 // Login is the resolver for the login field.
 func (r *mutationResolver) Login(ctx context.Context, creds idl.UpdateLogin) (*idl.LoginResult, error) {
-	panic(fmt.Errorf("not implemented: Login - login"))
+	ae := factory.GetAuthService(ctx)
+	cr := auth.AuthCredentials{
+		Username: creds.Email,
+		Password: creds.Password,
+	}
+
+	resp, err := ae.Authenticate(ctx, cr)
+	if err != nil {
+		return nil, err
+	}
+
+	lr := idl.LoginResult{
+		Token: &resp.Token,
+	}
+
+	return &lr, nil
 }
 
 // CreateProject is the resolver for the createProject field.

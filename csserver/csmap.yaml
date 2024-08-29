@@ -10,26 +10,31 @@ common_structs:
     struct_name: Pagination
     path: internal/common/paging.go
   - package_name: common
-    struct_name: QueryFilter
+    struct_name: Filter
     path: internal/common/paging.go
   - package_name: common
-    struct_name: QueryFilters
+    struct_name: Filters
     path: internal/common/paging.go
 
 # source and destination pathes are relative to project root
 maps:
-  - name: "target_paging"
+  - name: "activity_target"
+    source_path: "internal/services/activity/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+  - name: "paging_target"
     source_path: "internal/common/paging.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
-  - name: "target_list"
+  - name: "list_target"
     source_path: "internal/services/list/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/services/list"
     - "csserver/internal/common"
-  - name: "target_user"
+  - name: "user_target"
     source_path: "internal/services/iam/user/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 

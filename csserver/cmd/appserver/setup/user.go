@@ -24,12 +24,13 @@ func CreateOrGetBot(ctx context.Context) *userPackage.User {
 	}
 
 	botUser := userPackage.User{
-		Email:    config.Config.Default.BotUserEmail,
-		Name:     "AI Bot",
-		Password: "<PASSWORD>",
+		Email:     config.Config.Default.BotUserEmail,
+		FirstName: "AI",
+		LastName:  "Bot",
+		Password:  "<PASSWORD>",
 	}
 
-	user, err = service.CreateUser(ctx, &botUser)
+	err = service.NewUser(ctx, &botUser)
 	if err != nil {
 		log.Errorf("error creating user: %v", err)
 	}
@@ -43,33 +44,26 @@ func CreateTestUsers(ctx context.Context) error {
 
 	usrs := []userPackage.User{
 		//---users
-		{Email: "jeph@jmk21.com", Name: "Jeph", Password: "localpass"},
-		{Email: "tifa@jmk21.com", Name: "Tifa", Password: "localpass"},
-		{Email: "cloud@jmk21.com", Name: "Cloud", Password: "localpass"},
-		{Email: "aerith@jmk21.com", Name: "Aerith", Password: "localpass"},
-		{Email: "barrett@jmk21.com", Name: "Barrett", Password: "localpass"},
-		{Email: "jessie@jmk21.com", Name: "Jessie", Password: "localpass"},
-		{Email: "biggs@jmk21.com", Name: "Biggs", Password: "localpass"},
-		{Email: "wedge@jmk21.com", Name: "Wedge", Password: "localpass"},
-		{Email: "cid@jmk21.com", Name: "Cid", Password: "localpass"},
-		{Email: "vincent@jmk21.com", Name: "Vincent", Password: "localpass"},
-		{Email: "yuffie@jmk21.com", Name: "Yuffie", Password: "localpass"},
-		{Email: "red13@jmk21.com", Name: "Red 13", Password: "localpass"},
-		{Email: "zack@jmk21.com", Name: "Zack", Password: "localpass"},
+		{Email: "jeph@jmk21.com", FirstName: "Geomfry", LastName: "McHale", Password: "localpass"},
+		{Email: "tifa@jmk21.com", FirstName: "Tifa", LastName: "Lockhart", Password: "localpass"},
+		{Email: "cloud@jmk21.com", FirstName: "Cloud", LastName: "Strife", Password: "localpass"},
+		{Email: "aerith@jmk21.com", FirstName: "Aerith", LastName: "Gainsborough", Password: "localpass"},
+		{Email: "barrett@jmk21.com", FirstName: "Barrett", LastName: "Wallace", Password: "localpass"},
+		{Email: "jessie@jmk21.com", FirstName: "Jessie", LastName: "Raspberry", Password: "localpass"},
+		{Email: "biggs@jmk21.com", FirstName: "Biggs", LastName: "Avalanche", Password: "localpass"},
+		{Email: "wedge@jmk21.com", FirstName: "Wedge", LastName: "Avalanche", Password: "localpass"},
+		{Email: "cid@jmk21.com", FirstName: "Cid", LastName: "Highwind", Password: "localpass"},
+		{Email: "vincent@jmk21.com", FirstName: "Vincent", LastName: "Valentine", Password: "localpass"},
+		{Email: "yuffie@jmk21.com", FirstName: "Yuffie", LastName: "Kisaragi", Password: "localpass"},
+		{Email: "red13@jmk21.com", FirstName: "Red 13", LastName: "Nanaki", Password: "localpass"},
+		{Email: "zack@jmk21.com", FirstName: "Zack", LastName: "Fair", Password: "localpass"},
 	}
 
 	for _, u := range usrs {
-		//---this will fail if user already exists, which is fine
-		existingUser, err := service.GetUser(ctx, u.Email)
+		err := service.NewUser(ctx, &u)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("NewUser(%s): %s\n", u.Email, err)
 		}
-
-		if existingUser != nil && len(existingUser.Email) > 0 {
-			continue
-		}
-
-		service.CreateUser(ctx, &u)
 	}
 
 	return nil

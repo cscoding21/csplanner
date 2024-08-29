@@ -1,13 +1,17 @@
 package factory
 
 import (
+	"context"
 	"csserver/internal/config"
 	"csserver/internal/providers/surreal"
+	"csserver/internal/services/activity"
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
 	"fmt"
+	"sync"
 
+	"github.com/Nerzal/gocloak/v13"
 	"github.com/surrealdb/surrealdb.go"
 
 	log "github.com/sirupsen/logrus"
@@ -15,6 +19,7 @@ import (
 
 // ---define singletons
 var (
+	lock      = &sync.Mutex{}
 	_dbclient *surreal.DBClient
 )
 
@@ -24,22 +29,27 @@ func GetContextHelper() *config.ContextHelper {
 	return &ch
 }
 
-// GetDBClient get dbclient singleton
+// GetDBClient return a configured DB client as a singleton
 func GetDBClient() *surreal.DBClient {
 	if _dbclient != nil {
 		return _dbclient
 	}
 
+	lock.Lock()
+	defer lock.Unlock()
+
+	fmt.Println("Creating DBClient instance now.")
+
 	// Connect to SurrealDB
 	host := fmt.Sprintf("ws://%s:%v/rpc", config.Config.Database.Host, config.Config.Database.Port)
-	_dbclient, err := surrealdb.New(host)
+	_db, err := surrealdb.New(host)
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
 	// Sign in
-	if _, err = _dbclient.Signin(map[string]string{
+	if _, err = _db.Signin(map[string]string{
 		"user": config.Config.Database.User,
 		"pass": config.Config.Database.Password,
 	}); err != nil {
@@ -48,7 +58,7 @@ func GetDBClient() *surreal.DBClient {
 	}
 
 	// Select namespace and database
-	if _, err = _dbclient.Use(
+	if _, err = _db.Use(
 		config.Config.Database.Namespace,
 		config.Config.Database.Database,
 	); err != nil {
@@ -56,21 +66,47 @@ func GetDBClient() *surreal.DBClient {
 		return nil
 	}
 
-	return surreal.NewDBClient(*_dbclient)
+	_dbclient = surreal.NewDBClient(*_db)
+
+	return _dbclient
+}
+
+// GetKeycloakClient return a Keycloak client
+func GetKeycloakClient() *gocloak.GoCloak {
+	client := gocloak.NewClient(config.Config.Security.KeycloakURL)
+	return client
+}
+
+// GetAuthService get user service singleton
+func GetAuthService(ctx context.Context) *auth.AuthService {
+	kc := GetKeycloakClient()
+
+	return auth.NewAuthService(
+		kc,
+		config.Config.Security.KeycloakClientID,
+		config.Config.Security.KeycloakClientSecret,
+		config.Config.Security.KeycloakRealm)
+}
+
+// GetActivityService get activity service singleton
+func GetActivityService() *activity.ActivityService {
+	surrealClient := GetDBClient()
+	contextHelper := config.ContextHelper{}
+	return activity.NewActivityService(*surrealClient, contextHelper)
 }
 
 // GetUserService get user service singleton
 func GetUserService() *user.UserService {
-	surrealClient := GetDBClient()
 	contextHelper := config.ContextHelper{}
-	return user.NewUserService(*surrealClient, contextHelper)
-}
+	client := GetKeycloakClient()
+	svc := user.NewUserService(
+		contextHelper,
+		client,
+		config.Config.Security.KeycloakRealm,
+		config.Config.Security.KeycloakAdminUser,
+		config.Config.Security.KeycloakAdminPass)
 
-// GetAuthService get user service singleton
-func GetAuthService() *auth.AuthService {
-	return auth.NewAuthService([]auth.AuthProvider{
-		auth.NewCSAuthProvider(),
-	})
+	return &svc
 }
 
 // GetListService get list service singleton

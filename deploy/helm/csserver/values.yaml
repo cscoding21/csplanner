@@ -19,6 +19,21 @@ env:
     value: "surrealdb.database.svc"
   - name: "CSP_SERVICES_AIHOST"
     value: http://ai.app.svc:7000/bot
+  - name: CSP_DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: surreal-pass
+        key: surreal-pass.txt
+  - name: CSP_SECURITY_KEYCLOAKADMINPASS
+    valueFrom:
+      secretKeyRef:
+        name: kc-admin-pass
+        key: kc-admin-pass.txt
+  - name: CSP_SECURITY_KEYCLOAKCLIENTSECRET
+    valueFrom:
+      secretKeyRef:
+        name: kc-client-secret
+        key: kc-client-secret.txt
 
 
 serviceAccount:

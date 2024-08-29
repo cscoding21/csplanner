@@ -4,10 +4,11 @@ go 1.23
 
 require (
 	github.com/99designs/gqlgen v0.17.49 // indirect
+	github.com/Nerzal/gocloak/v13 v13.9.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/cscoding21/csgen v0.6.9 // indirect
-	github.com/cscoding21/csmap v0.3.3 // indirect
+	github.com/cscoding21/csmap v0.3.4 // indirect
 	github.com/cscoding21/csmig v0.0.0-20240730174928-8d8d72bbf218 // indirect
 	github.com/cscoding21/csval v0.4.2 // indirect
 	github.com/fatih/color v1.17.0 // indirect
@@ -15,6 +16,7 @@ require (
 	github.com/go-chi/chi v1.5.5 // indirect
 	github.com/go-chi/chi/v5 v5.0.14 // indirect
 	github.com/go-chi/cors v1.2.1 // indirect
+	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -26,10 +28,13 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.6.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
+	github.com/segmentio/ksuid v1.0.4 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
@@ -48,6 +53,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.20.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect

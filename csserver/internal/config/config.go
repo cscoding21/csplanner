@@ -60,9 +60,14 @@ func setDefaults() {
 
 	//Security
 	viper.SetDefault("security.bypassauth", "false")
-	viper.SetDefault("security.jwtsigningkey", "local_signing_key_V4G7A1")
-	viper.SetDefault("security.jwtaudience", "analyzer.net")
-	viper.SetDefault("security.jwtissuer", "analyzer.net")
+	viper.SetDefault("security.jwtaudience", "csplanner.io")
+	viper.SetDefault("security.jwtissuer", "csplanner.io")
+	viper.SetDefault("security.keycloakurl", "http://keycloak-keycloakx-http.keycloak.svc/auth")
+	viper.SetDefault("security.keycloakrealm", "csplanner")
+	viper.SetDefault("security.keycloakadminuser", "csplanner-admin")
+	viper.SetDefault("security.keycloakadminpass", "pass")
+	viper.SetDefault("security.keycloakclientid", "web-login")
+	viper.SetDefault("security.keycloakclientsecret", "pass")
 
 	//Server
 	viper.SetDefault("server.enableplayground", "true")
@@ -103,10 +108,16 @@ type DefaultsConfig struct {
 }
 
 type SecurityConfig struct {
-	BypassAuth    bool
-	JwtSigningKey string
-	JwtAudience   string
-	JwtIssuer     string
+	BypassAuth           bool
+	JwtSigningKey        string
+	JwtAudience          string
+	JwtIssuer            string
+	KeycloakURL          string
+	KeycloakRealm        string
+	KeycloakAdminUser    string
+	KeycloakAdminPass    string
+	KeycloakClientID     string
+	KeycloakClientSecret string
 }
 
 type ServerConfig struct {

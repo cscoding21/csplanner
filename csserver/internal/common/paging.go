@@ -18,7 +18,7 @@ const (
 )
 
 // NewPagedResults helper method for generating a paged results object
-func NewPagedResults[T any](paging Pagination, filters QueryFilters) PagedResults[T] {
+func NewPagedResults[T any](paging Pagination, filters Filters) PagedResults[T] {
 	out := PagedResults[T]{
 		Pagination: paging,
 		Filters:    filters,
@@ -33,7 +33,7 @@ func NewPagedResultsForAllRecords[T any]() PagedResults[T] {
 	maxInt := math.MaxInt32
 	one := 1
 
-	filters := QueryFilters{Filters: []QueryFilter{}}
+	filters := Filters{Filters: []Filter{}}
 
 	paging := Pagination{
 		ResultsPerPage: &maxInt,
@@ -45,7 +45,7 @@ func NewPagedResultsForAllRecords[T any]() PagedResults[T] {
 
 type PagedResults[T any] struct {
 	Pagination Pagination
-	Filters    QueryFilters
+	Filters    Filters
 	Results    []T
 }
 
@@ -68,17 +68,17 @@ func (p *Pagination) GetOffset() int {
 	return (pn - 1) * rpp
 }
 
-type QueryFilters struct {
-	Filters []QueryFilter
+type Filters struct {
+	Filters []Filter
 }
 
-type QueryFilter struct {
+type Filter struct {
 	Key       string
 	Value     interface{}
 	Operation FilterOperation
 }
 
-func (filters *QueryFilters) GetFilter(key string) *QueryFilter {
+func (filters *Filters) GetFilter(key string) *Filter {
 	for _, f := range filters.Filters {
 		if f.Key == key {
 			return &f
@@ -88,7 +88,7 @@ func (filters *QueryFilters) GetFilter(key string) *QueryFilter {
 	return nil
 }
 
-func (filters *QueryFilters) GetFilterValue(key string) interface{} {
+func (filters *Filters) GetFilterValue(key string) interface{} {
 	f := filters.GetFilter(key)
 	if f == nil {
 		return ""
@@ -97,7 +97,7 @@ func (filters *QueryFilters) GetFilterValue(key string) interface{} {
 	return f.Value
 }
 
-func (filters *QueryFilters) GetFiltersAsMap() map[string]interface{} {
+func (filters *Filters) GetFiltersAsMap() map[string]interface{} {
 	out := make(map[string]interface{})
 
 	for _, f := range filters.Filters {
@@ -107,7 +107,7 @@ func (filters *QueryFilters) GetFiltersAsMap() map[string]interface{} {
 	return out
 }
 
-func (filters *QueryFilters) AddFilter(filterToAdd QueryFilter) {
+func (filters *Filters) AddFilter(filterToAdd Filter) {
 	existingFilter := filters.GetFilter(filterToAdd.Key)
 
 	if existingFilter == nil {
@@ -123,6 +123,6 @@ func (filters *QueryFilters) AddFilter(filterToAdd QueryFilter) {
 	}
 }
 
-func (filters *QueryFilters) HasFilters() bool {
+func (filters *Filters) HasFilters() bool {
 	return len(filters.Filters) > 0
 }

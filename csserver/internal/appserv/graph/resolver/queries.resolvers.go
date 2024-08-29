@@ -11,8 +11,8 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
-
 	"fmt"
+	"os/user"
 )
 
 // CurrentUser is the resolver for the currentUser field.
@@ -30,7 +30,15 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, error) {
-	panic(fmt.Errorf("not implemented: GetUser - getUser"))
+	us := factory.GetUserService()
+	user, err := us.GetUser(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.UserUserToIdl(*user)
+
+	return &out, nil
 }
 
 // FindProjects is the resolver for the findProjects field.
@@ -65,7 +73,22 @@ func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.C
 
 // FindActivity is the resolver for the findActivity field.
 func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error) {
-	panic(fmt.Errorf("not implemented: FindActivity - findActivity"))
+	as := factory.GetActivityService()
+
+	//---TODO: make this find paged activities
+	activityResults, err := as.FindAllActivitys(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetIDLPageAndFilters(activityResults.Pagination, activityResults.Filters)
+	out := idl.ActivityResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ActivityActivityToIdlSlice(common.ValToRefSlice(activityResults.Results)),
+	}
+
+	return &out, nil
 }
 
 // FindAllProjectTemplates is the resolver for the findAllProjectTemplates field.
@@ -80,7 +103,21 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 
 // FindAllUsers is the resolver for the findAllUsers field.
 func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, error) {
-	panic(fmt.Errorf("not implemented: FindAllUsers - findAllUsers"))
+	us := factory.GetUserService()
+	userResults, err := us.FindAllUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pr := common.NewPagedResultsForAllRecords[user.User]()
+	pg, fi := csmap.GetIDLPageAndFilters(pr.Pagination, pr.Filters)
+	out := idl.UserResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.UserUserToIdlSlice(common.ValToRefSlice(*userResults)),
+	}
+
+	return &out, nil
 }
 
 // FindAllResources is the resolver for the findAllResources field.
@@ -106,11 +143,13 @@ func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, err
 		return nil, err
 	}
 
-	pg := csmap.PaginationCommonToIdl(listResults.Pagination)
+	pg, fi := csmap.GetIDLPageAndFilters(listResults.Pagination, listResults.Filters)
 	out := idl.ListResults{
 		Paging:  &pg,
+		Filters: &fi,
 		Results: csmap.ListListToIdlSlice(common.ValToRefSlice(listResults.Results)),
 	}
+
 	return &out, nil
 }
 

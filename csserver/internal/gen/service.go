@@ -238,8 +238,7 @@ import (
 
 type {{.ServiceName}} struct {
 	//---common for all DB objects
-	ID string {{.IDTag}}
-	ControlFields common.ControlFields {{.CFTag}}
+	common.ControlFields {{.CFTag}}
 
 	//---TODO: add fields here
 }

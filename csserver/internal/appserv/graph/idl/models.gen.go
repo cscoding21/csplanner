@@ -506,7 +506,8 @@ type UpdateUser struct {
 
 type User struct {
 	ID            string         `json:"id"`
-	Name          string         `json:"name"`
+	FirstName     string         `json:"firstName"`
+	LastName      string         `json:"lastName"`
 	Email         string         `json:"email"`
 	ProfileImage  *string        `json:"profileImage,omitempty"`
 	ControlFields *ControlFields `json:"controlFields,omitempty"`

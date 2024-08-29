@@ -19,3 +19,12 @@ gql:
 		go run github.com/99designs/gqlgen generate && \
 		cd ../.. && \
 		go generate ./...;
+
+csmap:
+	cd ./csserver && \
+	csmap;
+
+k8s-secrets:
+	./scripts/k8s-secrets.sh;
+
+

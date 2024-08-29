@@ -66,7 +66,7 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 			if err != nil {
 				log.Error(err)
 			} else {
-				log.Warnf("resolved user %s", anonID.Name)
+				log.Warnf("resolved user %s %s", anonID.FirstName, anonID.LastName)
 			}
 
 			bctx = context.WithValue(bctx, config.UserEmailKey, anonEmail)
@@ -80,8 +80,8 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		token := getTokenFromHeader(r)
 		log.Info(token)
 
-		authService := factory.GetAuthService()
-		result, err := authService.Authenticate(auth.AuthCredentials{Token: token})
+		authService := factory.GetAuthService(bctx)
+		result, err := authService.ValidateToken(bctx, token)
 		if err != nil {
 			log.Error(err)
 			http.Error(w, "Forbidden", http.StatusForbidden)
@@ -130,9 +130,9 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 	}
 
 	bctx := config.NewContext()
-	authService := factory.GetAuthService()
+	authService := factory.GetAuthService(bctx)
 
-	result, _ := authService.Authenticate(auth.AuthCredentials{Token: token})
+	result, _ := authService.Authenticate(bctx, auth.AuthCredentials{Token: token})
 	if result.Success {
 		log.Debugf("WebSocket authentication success for user %s", result.User.Email)
 

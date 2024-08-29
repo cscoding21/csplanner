@@ -6,7 +6,7 @@ NAMESPACE = 'ollama'
 # https://github.com/nats-io/k8s/blob/main/helm/charts/nats/values.yaml
 
 def setup_ollama():
-    namespace_create(NAMESPACE)
+    namespace_create(NAMESPACE, allow_duplicates=True)
 
     helm_repo(
         'ollama-helm-repo', 

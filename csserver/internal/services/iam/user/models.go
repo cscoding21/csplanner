@@ -1,20 +1,10 @@
-//go:generate csval
-
-//---NOTE TO DEVELOPERRS
-//---This file will only be generated once.  Modify file as needed.
-
 package user
 
-import (
-	"csserver/internal/common"
-)
-
 type User struct {
-	//---common for all DB objects
-	common.ControlFields
-
-	//---TODO: add fields here
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	ID              string `json:"id,omitempty" csval:"req"`
+	FirstName       string `json:"firstName" csval:"req"`
+	LastName        string `json:"lastName" csval:"req"`
+	Email           string `json:"email" csval:"req,email"`
+	Password        string `json:"password" csval:"req"`
+	ConfirmPassword string `json:"confirmPassword" csval:"req,equals(Password)"`
 }
