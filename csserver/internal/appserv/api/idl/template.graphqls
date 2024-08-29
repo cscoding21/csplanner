@@ -1,7 +1,6 @@
 type ImplementationTemplate {
   id: String!
   name: String!
-  controlFields: ControlFields!
   phases: [ImplementationTemplatePhase!]!
 }
 

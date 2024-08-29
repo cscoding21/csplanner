@@ -6,7 +6,6 @@ type Resource {
   profileImage: String
   skills: [Skill!]
   isBot: Boolean!
-  controlFields: ControlFields!
 }
 
 

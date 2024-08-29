@@ -2,7 +2,6 @@ type List {
     id: String!
     name: String!
     values: [ListItem!]!
-    controlFields: ControlFields
 }
 
 

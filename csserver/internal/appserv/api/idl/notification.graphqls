@@ -10,7 +10,8 @@ type Notification {
   initiatorName: String!
   initiatorId: String!
   initiatorProfileImage: String
-  controlFields: ControlFields!
+  createdAt: Time
+
 }
 
 

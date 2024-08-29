@@ -5,7 +5,6 @@ type User {
   lastName: String!
   email: String!
   profileImage: String
-  controlFields: ControlFields
 }
 
 type LoginResult {

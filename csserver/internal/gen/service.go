@@ -155,48 +155,52 @@ func (s *{{.ServiceName}}Service) Get{{.ServiceName}}ByID(ctx context.Context, i
 
 var createTemplateString = `
 // Create{{.ServiceName}} creates a new {{.ServiceName}}.
-func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (*{{.ServiceName}}, error) {
+func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (common.UpdateResult[{{.ServiceName}}], error) {
 {{if .IncludeValidation}}
 	val := input.Validate()
 	if !val.Pass {
-		return common.HandleReturnWithValue[{{.ServiceName}}](nil, val.Error("{{.ServiceName}} validation failed"))
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), fmt.Errorf("validation failed")
 	}
+{{else}}
+	val := validate.NewSuccessValidationResult()
 {{end}}
 	userID := s.ContextHelper.GetUserIDFromContext(ctx)
 
 	outData, err := s.DBClient.CreateObject(userID, {{.ServiceName }}Identifier, input)
 	if err != nil {
-		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
 	}
 
 	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
 
 	outObj := utils.RefToVal(outArray)[0]
-	return common.HandleReturnWithValue(&outObj, err)
+	return common.NewUpdateResult[{{.ServiceName}}](&val, &outObj), nil
 }
 	
 `
 
 var updateTemplateString = `
 // Update{{.ServiceName}} update an existing {{.ServiceName}}.
-func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (*{{.ServiceName}}, error) {
+func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (common.UpdateResult[{{.ServiceName}}], error) {
 {{if .IncludeValidation}}
 	val := input.Validate()
 	if !val.Pass {
-		return common.HandleReturnWithValue[{{.ServiceName}}](nil, val.Error("{{.ServiceName}} validation failed"))
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), fmt.Errorf("validation failed")
 	}
+{{else}}
+	val := validate.NewSuccessValidationResult()
 {{end}}
 	userID := s.ContextHelper.GetUserIDFromContext(ctx)
 
 	outData, err := s.DBClient.UpdateObject(userID, input.ID, input)
 	if err != nil {
-		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
 	}
 
 	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
 
 	outObj := utils.RefToVal(outArray)[0]
-	return common.HandleReturnWithValue(&outObj, err)
+	return common.NewUpdateResult[{{.ServiceName}}](&val, &outObj), nil
 }
 	
 `

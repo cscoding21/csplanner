@@ -50,14 +50,13 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Activity struct {
-		Context       func(childComplexity int) int
-		ControlFields func(childComplexity int) int
-		Detail        func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Resource      func(childComplexity int) int
-		Summary       func(childComplexity int) int
-		TargetID      func(childComplexity int) int
-		Type          func(childComplexity int) int
+		Context  func(childComplexity int) int
+		Detail   func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Resource func(childComplexity int) int
+		Summary  func(childComplexity int) int
+		TargetID func(childComplexity int) int
+		Type     func(childComplexity int) int
 	}
 
 	ActivityResults struct {
@@ -67,11 +66,10 @@ type ComplexityRoot struct {
 	}
 
 	Artifact struct {
-		ControlFields func(childComplexity int) int
-		FileName      func(childComplexity int) int
-		FileType      func(childComplexity int) int
-		ID            func(childComplexity int) int
-		URL           func(childComplexity int) int
+		FileName func(childComplexity int) int
+		FileType func(childComplexity int) int
+		ID       func(childComplexity int) int
+		URL      func(childComplexity int) int
 	}
 
 	Comment struct {
@@ -137,10 +135,9 @@ type ComplexityRoot struct {
 	}
 
 	ImplementationTemplate struct {
-		ControlFields func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Name          func(childComplexity int) int
-		Phases        func(childComplexity int) int
+		ID     func(childComplexity int) int
+		Name   func(childComplexity int) int
+		Phases func(childComplexity int) int
 	}
 
 	ImplementationTemplatePhase struct {
@@ -151,10 +148,9 @@ type ComplexityRoot struct {
 	}
 
 	List struct {
-		ControlFields func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Name          func(childComplexity int) int
-		Values        func(childComplexity int) int
+		ID     func(childComplexity int) int
+		Name   func(childComplexity int) int
+		Values func(childComplexity int) int
 	}
 
 	ListItem struct {
@@ -204,7 +200,7 @@ type ComplexityRoot struct {
 
 	Notification struct {
 		ContextID             func(childComplexity int) int
-		ControlFields         func(childComplexity int) int
+		CreatedAt             func(childComplexity int) int
 		ID                    func(childComplexity int) int
 		InitiatorID           func(childComplexity int) int
 		InitiatorName         func(childComplexity int) int
@@ -224,10 +220,9 @@ type ComplexityRoot struct {
 	}
 
 	Organization struct {
-		ControlFields func(childComplexity int) int
-		Defaults      func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Name          func(childComplexity int) int
+		Defaults func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Name     func(childComplexity int) int
 	}
 
 	OrganizationDefaults struct {
@@ -365,14 +360,13 @@ type ComplexityRoot struct {
 	}
 
 	Resource struct {
-		ControlFields func(childComplexity int) int
-		ID            func(childComplexity int) int
-		IsBot         func(childComplexity int) int
-		Name          func(childComplexity int) int
-		ProfileImage  func(childComplexity int) int
-		Role          func(childComplexity int) int
-		Skills        func(childComplexity int) int
-		User          func(childComplexity int) int
+		ID           func(childComplexity int) int
+		IsBot        func(childComplexity int) int
+		Name         func(childComplexity int) int
+		ProfileImage func(childComplexity int) int
+		Role         func(childComplexity int) int
+		Skills       func(childComplexity int) int
+		User         func(childComplexity int) int
 	}
 
 	ResourceResults struct {
@@ -416,8 +410,9 @@ type ComplexityRoot struct {
 	}
 
 	Status struct {
-		Message func(childComplexity int) int
-		Success func(childComplexity int) int
+		Message          func(childComplexity int) int
+		Success          func(childComplexity int) int
+		ValidationResult func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -431,18 +426,27 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		ControlFields func(childComplexity int) int
-		Email         func(childComplexity int) int
-		FirstName     func(childComplexity int) int
-		ID            func(childComplexity int) int
-		LastName      func(childComplexity int) int
-		ProfileImage  func(childComplexity int) int
+		Email        func(childComplexity int) int
+		FirstName    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		LastName     func(childComplexity int) int
+		ProfileImage func(childComplexity int) int
 	}
 
 	UserResults struct {
 		Filters func(childComplexity int) int
 		Paging  func(childComplexity int) int
 		Results func(childComplexity int) int
+	}
+
+	ValidationMessage struct {
+		Field   func(childComplexity int) int
+		Message func(childComplexity int) int
+	}
+
+	ValidationResult struct {
+		Messages func(childComplexity int) int
+		Pass     func(childComplexity int) int
 	}
 }
 
@@ -523,13 +527,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Activity.Context(childComplexity), true
 
-	case "Activity.controlFields":
-		if e.complexity.Activity.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.Activity.ControlFields(childComplexity), true
-
 	case "Activity.detail":
 		if e.complexity.Activity.Detail == nil {
 			break
@@ -592,13 +589,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ActivityResults.Results(childComplexity), true
-
-	case "Artifact.controlFields":
-		if e.complexity.Artifact.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.Artifact.ControlFields(childComplexity), true
 
 	case "Artifact.fileName":
 		if e.complexity.Artifact.FileName == nil {
@@ -873,13 +863,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Filters.Filters(childComplexity), true
 
-	case "ImplementationTemplate.controlFields":
-		if e.complexity.ImplementationTemplate.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplate.ControlFields(childComplexity), true
-
 	case "ImplementationTemplate.id":
 		if e.complexity.ImplementationTemplate.ID == nil {
 			break
@@ -928,13 +911,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImplementationTemplatePhase.Order(childComplexity), true
-
-	case "List.controlFields":
-		if e.complexity.List.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.List.ControlFields(childComplexity), true
 
 	case "List.id":
 		if e.complexity.List.ID == nil {
@@ -1315,12 +1291,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.ContextID(childComplexity), true
 
-	case "Notification.controlFields":
-		if e.complexity.Notification.ControlFields == nil {
+	case "Notification.createdAt":
+		if e.complexity.Notification.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Notification.ControlFields(childComplexity), true
+		return e.complexity.Notification.CreatedAt(childComplexity), true
 
 	case "Notification.id":
 		if e.complexity.Notification.ID == nil {
@@ -1412,13 +1388,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NotificationResults.Results(childComplexity), true
-
-	case "Organization.controlFields":
-		if e.complexity.Organization.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.Organization.ControlFields(childComplexity), true
 
 	case "Organization.defaults":
 		if e.complexity.Organization.Defaults == nil {
@@ -2093,13 +2062,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RelateArtifact.LinkID(childComplexity), true
 
-	case "Resource.controlFields":
-		if e.complexity.Resource.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.Resource.ControlFields(childComplexity), true
-
 	case "Resource.id":
 		if e.complexity.Resource.ID == nil {
 			break
@@ -2338,6 +2300,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Status.Success(childComplexity), true
 
+	case "Status.validationResult":
+		if e.complexity.Status.ValidationResult == nil {
+			break
+		}
+
+		return e.complexity.Status.ValidationResult(childComplexity), true
+
 	case "Subscription.currentTime":
 		if e.complexity.Subscription.CurrentTime == nil {
 			break
@@ -2365,13 +2334,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TimeResponse.UnixTime(childComplexity), true
-
-	case "User.controlFields":
-		if e.complexity.User.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.User.ControlFields(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -2428,6 +2390,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserResults.Results(childComplexity), true
+
+	case "ValidationMessage.field":
+		if e.complexity.ValidationMessage.Field == nil {
+			break
+		}
+
+		return e.complexity.ValidationMessage.Field(childComplexity), true
+
+	case "ValidationMessage.message":
+		if e.complexity.ValidationMessage.Message == nil {
+			break
+		}
+
+		return e.complexity.ValidationMessage.Message(childComplexity), true
+
+	case "ValidationResult.messages":
+		if e.complexity.ValidationResult.Messages == nil {
+			break
+		}
+
+		return e.complexity.ValidationResult.Messages(childComplexity), true
+
+	case "ValidationResult.pass":
+		if e.complexity.ValidationResult.Pass == nil {
+			break
+		}
+
+		return e.complexity.ValidationResult.Pass(childComplexity), true
 
 	}
 	return 0, false
@@ -2582,7 +2572,6 @@ var sources = []*ast.Source{
   context: String!
   targetID: String
   resource: Resource
-  controlFields: ControlFields!
 }
 
 
@@ -2596,8 +2585,6 @@ type ActivityResults {
     fileType: String!
     fileName: String!
     url: String!
-
-    controlFields: ControlFields
 }
 
 
@@ -2615,6 +2602,7 @@ type TimeResponse {
 type Status {
   success: Boolean!
   message: [String!]!
+  validationResult: ValidationResult
 }
 
 
@@ -2648,6 +2636,16 @@ type Filters {
   filters: [Filter]
 }
 
+type ValidationResult {
+  pass: Boolean!
+  messages: [ValidationMessage]
+}
+
+type ValidationMessage {
+  message: String!
+  field: String!
+}
+
 
 input PageAndFilter {
   paging: InputPagination
@@ -2667,12 +2665,13 @@ input InputFilter {
 
 input InputFilters {
   filters: [InputFilter]
-}`, BuiltIn: false},
+}
+
+`, BuiltIn: false},
 	{Name: "../api/idl/list.graphqls", Input: `type List {
     id: String!
     name: String!
     values: [ListItem!]!
-    controlFields: ControlFields
 }
 
 
@@ -2698,7 +2697,8 @@ type ListResults {
   initiatorName: String!
   initiatorId: String!
   initiatorProfileImage: String
-  controlFields: ControlFields!
+  createdAt: Time
+
 }
 
 
@@ -2711,7 +2711,6 @@ type NotificationResults {
   id: String
   name: String!
   defaults: OrganizationDefaults!
-  controlFields: ControlFields!
 }
 
 type OrganizationDefaults {
@@ -3015,7 +3014,6 @@ input UpdateProjectMilestoneTask {
   profileImage: String
   skills: [Skill!]
   isBot: Boolean!
-  controlFields: ControlFields!
 }
 
 
@@ -3056,7 +3054,6 @@ type ResourceResults {
 	{Name: "../api/idl/template.graphqls", Input: `type ImplementationTemplate {
   id: String!
   name: String!
-  controlFields: ControlFields!
   phases: [ImplementationTemplatePhase!]!
 }
 
@@ -3079,7 +3076,6 @@ type User {
   lastName: String!
   email: String!
   profileImage: String
-  controlFields: ControlFields
 }
 
 type LoginResult {
@@ -4100,74 +4096,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Activity_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Activity) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Activity_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Activity_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Activity",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -4325,8 +4255,6 @@ func (ec *executionContext) fieldContext_ActivityResults_results(_ context.Conte
 				return ec.fieldContext_Activity_targetID(ctx, field)
 			case "resource":
 				return ec.fieldContext_Activity_resource(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Activity_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Activity", field.Name)
 		},
@@ -4505,67 +4433,6 @@ func (ec *executionContext) fieldContext_Artifact_url(_ context.Context, field g
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Artifact_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Artifact) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Artifact_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalOControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Artifact_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Artifact",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -4756,8 +4623,6 @@ func (ec *executionContext) fieldContext_Comment_resource(_ context.Context, fie
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -5323,8 +5188,6 @@ func (ec *executionContext) fieldContext_ControlFields_createByUser(_ context.Co
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5422,8 +5285,6 @@ func (ec *executionContext) fieldContext_ControlFields_updateByUser(_ context.Co
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5559,8 +5420,6 @@ func (ec *executionContext) fieldContext_ControlFields_deleteByUser(_ context.Co
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -5611,6 +5470,8 @@ func (ec *executionContext) fieldContext_CreateOrganizationResult_status(_ conte
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -5660,8 +5521,6 @@ func (ec *executionContext) fieldContext_CreateOrganizationResult_organization(_
 				return ec.fieldContext_Organization_name(ctx, field)
 			case "defaults":
 				return ec.fieldContext_Organization_defaults(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Organization_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -5709,6 +5568,8 @@ func (ec *executionContext) fieldContext_CreateProjectCommentResult_status(_ con
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -5823,6 +5684,8 @@ func (ec *executionContext) fieldContext_CreateProjectResult_status(_ context.Co
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -5932,6 +5795,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_status(_ context.C
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -5989,8 +5854,6 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -6038,6 +5901,8 @@ func (ec *executionContext) fieldContext_CreateUserResult_status(_ context.Conte
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -6091,8 +5956,6 @@ func (ec *executionContext) fieldContext_CreateUserResult_user(_ context.Context
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -6364,70 +6227,6 @@ func (ec *executionContext) fieldContext_ImplementationTemplate_name(_ context.C
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplate_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplate) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplate_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplate_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplate",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -6801,67 +6600,6 @@ func (ec *executionContext) fieldContext_List_values(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _List_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.List) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_List_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalOControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_List_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "List",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ListItem_value(ctx context.Context, field graphql.CollectedField, obj *idl.ListItem) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ListItem_value(ctx, field)
 	if err != nil {
@@ -7091,8 +6829,6 @@ func (ec *executionContext) fieldContext_ListResults_results(_ context.Context, 
 				return ec.fieldContext_List_name(ctx, field)
 			case "values":
 				return ec.fieldContext_List_values(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_List_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type List", field.Name)
 		},
@@ -7181,6 +6917,8 @@ func (ec *executionContext) fieldContext_LoginResult_status(_ context.Context, f
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -7234,8 +6972,6 @@ func (ec *executionContext) fieldContext_LoginResult_user(_ context.Context, fie
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -7293,8 +7029,6 @@ func (ec *executionContext) fieldContext_LoginResult_resource(_ context.Context,
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -7654,6 +7388,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteProject(ctx context.Cont
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -8081,6 +7817,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteProjectComment(ctx conte
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -8203,6 +7941,8 @@ func (ec *executionContext) fieldContext_Mutation_toggleEmote(ctx context.Contex
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -8386,6 +8126,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteResource(ctx context.Con
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -8447,6 +8189,8 @@ func (ec *executionContext) fieldContext_Mutation_updateResourceSkill(ctx contex
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -8508,6 +8252,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteResourceSkill(ctx contex
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -8764,6 +8510,8 @@ func (ec *executionContext) fieldContext_Mutation_setNotificationsRead(ctx conte
 				return ec.fieldContext_Status_success(ctx, field)
 			case "message":
 				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
 		},
@@ -9260,8 +9008,8 @@ func (ec *executionContext) fieldContext_Notification_initiatorProfileImage(_ co
 	return fc, nil
 }
 
-func (ec *executionContext) _Notification_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_controlFields(ctx, field)
+func (ec *executionContext) _Notification_createdAt(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9274,51 +9022,28 @@ func (ec *executionContext) _Notification_controlFields(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
+		return obj.CreatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(*idl.ControlFields)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Notification_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Notification_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Notification",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
+			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9484,8 +9209,8 @@ func (ec *executionContext) fieldContext_NotificationResults_results(_ context.C
 				return ec.fieldContext_Notification_initiatorId(ctx, field)
 			case "initiatorProfileImage":
 				return ec.fieldContext_Notification_initiatorProfileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Notification_controlFields(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Notification_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Notification", field.Name)
 		},
@@ -9623,70 +9348,6 @@ func (ec *executionContext) fieldContext_Organization_defaults(_ context.Context
 				return ec.fieldContext_OrganizationDefaults_hoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationDefaults", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Organization_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Organization) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Organization_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Organization_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Organization",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -11984,8 +11645,6 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -12733,8 +12392,6 @@ func (ec *executionContext) fieldContext_Query_currentUser(_ context.Context, fi
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -12791,8 +12448,6 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -13311,8 +12966,6 @@ func (ec *executionContext) fieldContext_Query_findAllProjectTemplates(_ context
 				return ec.fieldContext_ImplementationTemplate_id(ctx, field)
 			case "name":
 				return ec.fieldContext_ImplementationTemplate_name(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_ImplementationTemplate_controlFields(ctx, field)
 			case "phases":
 				return ec.fieldContext_ImplementationTemplate_phases(ctx, field)
 			}
@@ -13367,8 +13020,6 @@ func (ec *executionContext) fieldContext_Query_getOrganization(_ context.Context
 				return ec.fieldContext_Organization_name(ctx, field)
 			case "defaults":
 				return ec.fieldContext_Organization_defaults(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Organization_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -13596,8 +13247,6 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -13710,8 +13359,6 @@ func (ec *executionContext) fieldContext_Query_getList(ctx context.Context, fiel
 				return ec.fieldContext_List_name(ctx, field)
 			case "values":
 				return ec.fieldContext_List_values(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_List_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type List", field.Name)
 		},
@@ -13774,8 +13421,6 @@ func (ec *executionContext) fieldContext_Query_getArtifact(ctx context.Context, 
 				return ec.fieldContext_Artifact_fileName(ctx, field)
 			case "url":
 				return ec.fieldContext_Artifact_url(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Artifact_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Artifact", field.Name)
 		},
@@ -14186,8 +13831,6 @@ func (ec *executionContext) fieldContext_Resource_user(_ context.Context, field 
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -14324,70 +13967,6 @@ func (ec *executionContext) fieldContext_Resource_isBot(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Resource_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Resource_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Resource_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Resource",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -14542,8 +14121,6 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Resource_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -15612,6 +15189,53 @@ func (ec *executionContext) fieldContext_Status_message(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Status_validationResult(ctx context.Context, field graphql.CollectedField, obj *idl.Status) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Status_validationResult(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ValidationResult, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ValidationResult)
+	fc.Result = res
+	return ec.marshalOValidationResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Status_validationResult(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Status",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "pass":
+				return ec.fieldContext_ValidationResult_pass(ctx, field)
+			case "messages":
+				return ec.fieldContext_ValidationResult_messages(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ValidationResult", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Subscription_currentTime(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
 	fc, err := ec.fieldContext_Subscription_currentTime(ctx, field)
 	if err != nil {
@@ -16039,67 +15663,6 @@ func (ec *executionContext) fieldContext_User_profileImage(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _User_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalOControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UserResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.UserResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserResults_paging(ctx, field)
 	if err != nil {
@@ -16245,10 +15808,187 @@ func (ec *executionContext) fieldContext_UserResults_results(_ context.Context, 
 				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_User_profileImage(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_User_controlFields(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ValidationMessage_message(ctx context.Context, field graphql.CollectedField, obj *idl.ValidationMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ValidationMessage_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ValidationMessage_message(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ValidationMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ValidationMessage_field(ctx context.Context, field graphql.CollectedField, obj *idl.ValidationMessage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ValidationMessage_field(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Field, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ValidationMessage_field(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ValidationMessage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ValidationResult_pass(ctx context.Context, field graphql.CollectedField, obj *idl.ValidationResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ValidationResult_pass(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pass, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ValidationResult_pass(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ValidationResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ValidationResult_messages(ctx context.Context, field graphql.CollectedField, obj *idl.ValidationResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ValidationResult_messages(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Messages, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.ValidationMessage)
+	fc.Result = res
+	return ec.marshalOValidationMessage2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationMessage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ValidationResult_messages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ValidationResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "message":
+				return ec.fieldContext_ValidationMessage_message(ctx, field)
+			case "field":
+				return ec.fieldContext_ValidationMessage_field(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ValidationMessage", field.Name)
 		},
 	}
 	return fc, nil
@@ -19155,11 +18895,6 @@ func (ec *executionContext) _Activity(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Activity_targetID(ctx, field, obj)
 		case "resource":
 			out.Values[i] = ec._Activity_resource(ctx, field, obj)
-		case "controlFields":
-			out.Values[i] = ec._Activity_controlFields(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -19260,8 +18995,6 @@ func (ec *executionContext) _Artifact(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "controlFields":
-			out.Values[i] = ec._Artifact_controlFields(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -19727,11 +19460,6 @@ func (ec *executionContext) _ImplementationTemplate(ctx context.Context, sel ast
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "controlFields":
-			out.Values[i] = ec._ImplementationTemplate_controlFields(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "phases":
 			out.Values[i] = ec._ImplementationTemplate_phases(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -19840,8 +19568,6 @@ func (ec *executionContext) _List(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "controlFields":
-			out.Values[i] = ec._List_controlFields(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20264,11 +19990,8 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			}
 		case "initiatorProfileImage":
 			out.Values[i] = ec._Notification_initiatorProfileImage(ctx, field, obj)
-		case "controlFields":
-			out.Values[i] = ec._Notification_controlFields(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
+		case "createdAt":
+			out.Values[i] = ec._Notification_createdAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20358,11 +20081,6 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			}
 		case "defaults":
 			out.Values[i] = ec._Organization_defaults(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "controlFields":
-			out.Values[i] = ec._Organization_controlFields(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -21599,11 +21317,6 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "controlFields":
-			out.Values[i] = ec._Resource_controlFields(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -21916,6 +21629,8 @@ func (ec *executionContext) _Status(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "validationResult":
+			out.Values[i] = ec._Status_validationResult(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22038,8 +21753,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "profileImage":
 			out.Values[i] = ec._User_profileImage(ctx, field, obj)
-		case "controlFields":
-			out.Values[i] = ec._User_controlFields(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22083,6 +21796,91 @@ func (ec *executionContext) _UserResults(ctx context.Context, sel ast.SelectionS
 			}
 		case "results":
 			out.Values[i] = ec._UserResults_results(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var validationMessageImplementors = []string{"ValidationMessage"}
+
+func (ec *executionContext) _ValidationMessage(ctx context.Context, sel ast.SelectionSet, obj *idl.ValidationMessage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, validationMessageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ValidationMessage")
+		case "message":
+			out.Values[i] = ec._ValidationMessage_message(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "field":
+			out.Values[i] = ec._ValidationMessage_field(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var validationResultImplementors = []string{"ValidationResult"}
+
+func (ec *executionContext) _ValidationResult(ctx context.Context, sel ast.SelectionSet, obj *idl.ValidationResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, validationResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ValidationResult")
+		case "pass":
+			out.Values[i] = ec._ValidationResult_pass(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "messages":
+			out.Values[i] = ec._ValidationResult_messages(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23868,13 +23666,6 @@ func (ec *executionContext) marshalOComment2ᚖcsserverᚋinternalᚋappservᚋg
 	return ec._Comment(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx context.Context, sel ast.SelectionSet, v *idl.ControlFields) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ControlFields(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOFilter2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐFilter(ctx context.Context, sel ast.SelectionSet, v []*idl.Filter) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -24621,6 +24412,61 @@ func (ec *executionContext) marshalOUser2ᚖcsserverᚋinternalᚋappservᚋgrap
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOValidationMessage2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationMessage(ctx context.Context, sel ast.SelectionSet, v []*idl.ValidationMessage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOValidationMessage2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationMessage(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOValidationMessage2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationMessage(ctx context.Context, sel ast.SelectionSet, v *idl.ValidationMessage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ValidationMessage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOValidationResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationResult(ctx context.Context, sel ast.SelectionSet, v *idl.ValidationResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ValidationResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

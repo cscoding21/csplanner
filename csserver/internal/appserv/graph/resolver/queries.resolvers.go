@@ -12,7 +12,6 @@ import (
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
 	"fmt"
-	"os/user"
 )
 
 // CurrentUser is the resolver for the currentUser field.
@@ -81,7 +80,7 @@ func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.Page
 		return nil, err
 	}
 
-	pg, fi := csmap.GetIDLPageAndFilters(activityResults.Pagination, activityResults.Filters)
+	pg, fi := csmap.GetPageAndFilterIDL(activityResults.Pagination, activityResults.Filters)
 	out := idl.ActivityResults{
 		Paging:  &pg,
 		Filters: &fi,
@@ -109,12 +108,11 @@ func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, err
 		return nil, err
 	}
 
-	pr := common.NewPagedResultsForAllRecords[user.User]()
-	pg, fi := csmap.GetIDLPageAndFilters(pr.Pagination, pr.Filters)
+	pg, fi := csmap.GetPageAndFilterIDL(userResults.Pagination, userResults.Filters)
 	out := idl.UserResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.UserUserToIdlSlice(common.ValToRefSlice(*userResults)),
+		Results: csmap.UserUserToIdlSlice(common.ValToRefSlice(userResults.Results)),
 	}
 
 	return &out, nil
@@ -143,7 +141,7 @@ func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, err
 		return nil, err
 	}
 
-	pg, fi := csmap.GetIDLPageAndFilters(listResults.Pagination, listResults.Filters)
+	pg, fi := csmap.GetPageAndFilterIDL(listResults.Pagination, listResults.Filters)
 	out := idl.ListResults{
 		Paging:  &pg,
 		Filters: &fi,

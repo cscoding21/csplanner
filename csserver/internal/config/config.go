@@ -57,6 +57,7 @@ func setDefaults() {
 	//Default
 	viper.SetDefault("default.pagesize", 25)
 	viper.SetDefault("default.botuseremail", "aibot@jmk21.com")
+	viper.SetDefault("default.botpassword", "pass")
 
 	//Security
 	viper.SetDefault("security.bypassauth", "false")
@@ -105,6 +106,7 @@ type DatabaseConfig struct {
 type DefaultsConfig struct {
 	PageSize     int
 	BotUserEmail string
+	BotPassword  string
 }
 
 type SecurityConfig struct {

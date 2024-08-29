@@ -7,14 +7,13 @@ import (
 )
 
 type Activity struct {
-	ID            string         `json:"id"`
-	Type          string         `json:"type"`
-	Summary       string         `json:"summary"`
-	Detail        *string        `json:"detail,omitempty"`
-	Context       string         `json:"context"`
-	TargetID      *string        `json:"targetID,omitempty"`
-	Resource      *Resource      `json:"resource,omitempty"`
-	ControlFields *ControlFields `json:"controlFields"`
+	ID       string    `json:"id"`
+	Type     string    `json:"type"`
+	Summary  string    `json:"summary"`
+	Detail   *string   `json:"detail,omitempty"`
+	Context  string    `json:"context"`
+	TargetID *string   `json:"targetID,omitempty"`
+	Resource *Resource `json:"resource,omitempty"`
 }
 
 type ActivityResults struct {
@@ -24,11 +23,10 @@ type ActivityResults struct {
 }
 
 type Artifact struct {
-	ID            string         `json:"id"`
-	FileType      string         `json:"fileType"`
-	FileName      string         `json:"fileName"`
-	URL           string         `json:"url"`
-	ControlFields *ControlFields `json:"controlFields,omitempty"`
+	ID       string `json:"id"`
+	FileType string `json:"fileType"`
+	FileName string `json:"fileName"`
+	URL      string `json:"url"`
 }
 
 type Comment struct {
@@ -94,10 +92,9 @@ type Filters struct {
 }
 
 type ImplementationTemplate struct {
-	ID            string                         `json:"id"`
-	Name          string                         `json:"name"`
-	ControlFields *ControlFields                 `json:"controlFields"`
-	Phases        []*ImplementationTemplatePhase `json:"phases"`
+	ID     string                         `json:"id"`
+	Name   string                         `json:"name"`
+	Phases []*ImplementationTemplatePhase `json:"phases"`
 }
 
 type ImplementationTemplatePhase struct {
@@ -123,10 +120,9 @@ type InputPagination struct {
 }
 
 type List struct {
-	ID            string         `json:"id"`
-	Name          string         `json:"name"`
-	Values        []*ListItem    `json:"values"`
-	ControlFields *ControlFields `json:"controlFields,omitempty"`
+	ID     string      `json:"id"`
+	Name   string      `json:"name"`
+	Values []*ListItem `json:"values"`
 }
 
 type ListItem struct {
@@ -151,18 +147,18 @@ type Mutation struct {
 }
 
 type Notification struct {
-	ID                    string         `json:"id"`
-	UserID                string         `json:"userId"`
-	UserName              string         `json:"userName"`
-	RecipientIsBot        bool           `json:"recipientIsBot"`
-	Type                  int            `json:"type"`
-	ContextID             string         `json:"contextId"`
-	Text                  *string        `json:"text,omitempty"`
-	IsRead                bool           `json:"isRead"`
-	InitiatorName         string         `json:"initiatorName"`
-	InitiatorID           string         `json:"initiatorId"`
-	InitiatorProfileImage *string        `json:"initiatorProfileImage,omitempty"`
-	ControlFields         *ControlFields `json:"controlFields"`
+	ID                    string     `json:"id"`
+	UserID                string     `json:"userId"`
+	UserName              string     `json:"userName"`
+	RecipientIsBot        bool       `json:"recipientIsBot"`
+	Type                  int        `json:"type"`
+	ContextID             string     `json:"contextId"`
+	Text                  *string    `json:"text,omitempty"`
+	IsRead                bool       `json:"isRead"`
+	InitiatorName         string     `json:"initiatorName"`
+	InitiatorID           string     `json:"initiatorId"`
+	InitiatorProfileImage *string    `json:"initiatorProfileImage,omitempty"`
+	CreatedAt             *time.Time `json:"createdAt,omitempty"`
 }
 
 type NotificationResults struct {
@@ -172,10 +168,9 @@ type NotificationResults struct {
 }
 
 type Organization struct {
-	ID            *string               `json:"id,omitempty"`
-	Name          string                `json:"name"`
-	Defaults      *OrganizationDefaults `json:"defaults"`
-	ControlFields *ControlFields        `json:"controlFields"`
+	ID       *string               `json:"id,omitempty"`
+	Name     string                `json:"name"`
+	Defaults *OrganizationDefaults `json:"defaults"`
 }
 
 type OrganizationDefaults struct {
@@ -300,14 +295,13 @@ type RelateArtifact struct {
 }
 
 type Resource struct {
-	ID            *string        `json:"id,omitempty"`
-	Name          string         `json:"name"`
-	Role          string         `json:"role"`
-	User          *User          `json:"user,omitempty"`
-	ProfileImage  *string        `json:"profileImage,omitempty"`
-	Skills        []*Skill       `json:"skills,omitempty"`
-	IsBot         bool           `json:"isBot"`
-	ControlFields *ControlFields `json:"controlFields"`
+	ID           *string  `json:"id,omitempty"`
+	Name         string   `json:"name"`
+	Role         string   `json:"role"`
+	User         *User    `json:"user,omitempty"`
+	ProfileImage *string  `json:"profileImage,omitempty"`
+	Skills       []*Skill `json:"skills,omitempty"`
+	IsBot        bool     `json:"isBot"`
 }
 
 type ResourceResults struct {
@@ -351,8 +345,9 @@ type SnapshotProject struct {
 }
 
 type Status struct {
-	Success bool     `json:"success"`
-	Message []string `json:"message"`
+	Success          bool              `json:"success"`
+	Message          []string          `json:"message"`
+	ValidationResult *ValidationResult `json:"validationResult,omitempty"`
 }
 
 // `Subscription` is where all the subscriptions your clients can
@@ -505,16 +500,25 @@ type UpdateUser struct {
 }
 
 type User struct {
-	ID            string         `json:"id"`
-	FirstName     string         `json:"firstName"`
-	LastName      string         `json:"lastName"`
-	Email         string         `json:"email"`
-	ProfileImage  *string        `json:"profileImage,omitempty"`
-	ControlFields *ControlFields `json:"controlFields,omitempty"`
+	ID           string  `json:"id"`
+	FirstName    string  `json:"firstName"`
+	LastName     string  `json:"lastName"`
+	Email        string  `json:"email"`
+	ProfileImage *string `json:"profileImage,omitempty"`
 }
 
 type UserResults struct {
 	Paging  *Pagination `json:"paging,omitempty"`
 	Filters *Filters    `json:"filters"`
 	Results []*User     `json:"results,omitempty"`
+}
+
+type ValidationMessage struct {
+	Message string `json:"message"`
+	Field   string `json:"field"`
+}
+
+type ValidationResult struct {
+	Pass     bool                 `json:"pass"`
+	Messages []*ValidationMessage `json:"messages,omitempty"`
 }

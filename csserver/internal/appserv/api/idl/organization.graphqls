@@ -2,7 +2,6 @@ type Organization {
   id: String
   name: String!
   defaults: OrganizationDefaults!
-  controlFields: ControlFields!
 }
 
 type OrganizationDefaults {

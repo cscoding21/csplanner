@@ -6,7 +6,6 @@ type Activity {
   context: String!
   targetID: String
   resource: Resource
-  controlFields: ControlFields!
 }
 
 

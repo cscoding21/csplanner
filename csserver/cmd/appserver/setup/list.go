@@ -45,9 +45,13 @@ func CreateTestLists(ctx context.Context) error {
 	if err != nil {
 		log.Errorf("Error getting skills list: %v", err)
 
-		_, err = service.CreateList(ctx, &skillsList)
+		ur, err := service.CreateList(ctx, &skillsList)
 		if err != nil {
 			log.Errorf("Error creating skills list: %v", err)
+		}
+
+		if !ur.ValidationResult.Pass {
+			log.Warn(ur.ValidationResult.Pass, ur.ValidationResult.Messages)
 		}
 	}
 
@@ -55,9 +59,13 @@ func CreateTestLists(ctx context.Context) error {
 	if err != nil {
 		log.Errorf("Error getting funding source list: %v", err)
 
-		_, err = service.CreateList(ctx, &fundingSourceList)
+		ur, err := service.CreateList(ctx, &fundingSourceList)
 		if err != nil {
 			log.Errorf("Error creating funding source list: %v", err)
+		}
+
+		if !ur.ValidationResult.Pass {
+			log.Warn(ur.ValidationResult.Pass, ur.ValidationResult.Messages)
 		}
 	}
 

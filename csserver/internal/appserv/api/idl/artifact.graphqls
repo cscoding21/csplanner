@@ -3,8 +3,6 @@ type Artifact {
     fileType: String!
     fileName: String!
     url: String!
-
-    controlFields: ControlFields
 }
 
 

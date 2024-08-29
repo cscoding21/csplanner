@@ -8,6 +8,7 @@ type TimeResponse {
 type Status {
   success: Boolean!
   message: [String!]!
+  validationResult: ValidationResult
 }
 
 
@@ -41,6 +42,16 @@ type Filters {
   filters: [Filter]
 }
 
+type ValidationResult {
+  pass: Boolean!
+  messages: [ValidationMessage]
+}
+
+type ValidationMessage {
+  message: String!
+  field: String!
+}
+
 
 input PageAndFilter {
   paging: InputPagination
@@ -61,3 +72,4 @@ input InputFilter {
 input InputFilters {
   filters: [InputFilter]
 }
+

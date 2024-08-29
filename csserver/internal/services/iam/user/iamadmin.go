@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"csserver/internal/common"
 	"csserver/internal/config"
@@ -36,10 +37,15 @@ func NewUserService(
 }
 
 // NewUser create a new Keycloak user
-func (s *UserService) NewUser(ctx context.Context, user *User) error {
+func (s *UserService) NewUser(ctx context.Context, user *User) (common.UpdateResult[User], error) {
+	val := user.Validate()
+	if !val.Pass {
+		return common.NewUpdateResult[User](&val, nil), fmt.Errorf("validation failed")
+	}
+
 	token, err := s.getAdminToken(ctx)
 	if err != nil {
-		return err
+		return common.NewUpdateResult[User](&val, nil), err
 	}
 
 	u := gocloak.User{
@@ -52,11 +58,11 @@ func (s *UserService) NewUser(ctx context.Context, user *User) error {
 
 	uid, err := s.KCClient.CreateUser(ctx, token.AccessToken, s.KCRealm, u)
 	if err != nil {
-		return err
+		return common.NewUpdateResult[User](&val, nil), err
 	}
 
 	err = s.KCClient.SetPassword(ctx, token.AccessToken, uid, s.KCRealm, user.Password, false)
-	return common.HandleReturn(err)
+	return common.NewUpdateResult[User](&val, nil), err
 
 }
 
@@ -112,20 +118,21 @@ func (s *UserService) GetUser(ctx context.Context, idOrEmail string) (*User, err
 }
 
 // GetUser get a user based on the passed in email
-func (s *UserService) FindAllUsers(ctx context.Context) (*[]User, error) {
+func (s *UserService) FindAllUsers(ctx context.Context) (common.PagedResults[User], error) {
+	pagingResults := common.NewPagedResultsForAllRecords[User]()
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
 		"master")
 	if err != nil {
-		return common.HandleReturnWithValue[[]User](nil, err)
+		return pagingResults, err
 	}
 
 	params := gocloak.GetUsersParams{}
 
 	users, err := s.KCClient.GetUsers(ctx, token.AccessToken, s.KCRealm, params)
 	if err != nil || len(users) == 0 {
-		return common.HandleReturnWithValue[[]User](nil, err)
+		return pagingResults, err
 	}
 
 	out := []User{}
@@ -139,7 +146,11 @@ func (s *UserService) FindAllUsers(ctx context.Context) (*[]User, error) {
 		}
 
 		out = append(out, user)
-
 	}
-	return common.HandleReturnWithValue(&out, err)
+
+	pagingResults.Results = out
+	resultCount := len(pagingResults.Results)
+	pagingResults.Pagination.TotalResults = &resultCount
+
+	return pagingResults, nil
 }

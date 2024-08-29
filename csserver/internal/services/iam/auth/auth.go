@@ -53,7 +53,8 @@ func (s *AuthService) ValidateToken(ctx context.Context, token string) (AuthResu
 		return NewSuccessAuthResult(token), nil
 	}
 
-	return NewFailingAuthResult(token, err), fmt.Errorf("token expired")
+	err = fmt.Errorf("token expired")
+	return NewFailingAuthResult(token, err), err
 }
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
