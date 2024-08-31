@@ -172,6 +172,9 @@ func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, in
 	}
 
 	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
+	if err != nil {
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
+	}
 
 	outObj := utils.RefToVal(outArray)[0]
 	return common.NewUpdateResult[{{.ServiceName}}](&val, &outObj), nil
@@ -198,6 +201,9 @@ func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, in
 	}
 
 	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
+	if err != nil {
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
+	}
 
 	outObj := utils.RefToVal(outArray)[0]
 	return common.NewUpdateResult[{{.ServiceName}}](&val, &outObj), nil
