@@ -40,6 +40,11 @@ maps:
     imports: 
     - "csserver/internal/services/iam/user"
     - "csserver/internal/common"
+  - name: "resource_target"
+    source_path: "internal/services/resource/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
 
 
 

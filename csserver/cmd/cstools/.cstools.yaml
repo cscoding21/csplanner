@@ -3,6 +3,17 @@ services_dir: /home/jeph/projects/cscoding21/csplanner/csserver/internal/service
 services:
   - name: Activity
     path: ""
+  - name: Artifact
+    path: ""
+  - name: Comment
+    path: ""
   - name: List
     path: ""
+  - name: Project
+    path: ""
+  - name: ProjectTemplate
+    path: ""
+  - name: Resource
+    path: ""
+  
   

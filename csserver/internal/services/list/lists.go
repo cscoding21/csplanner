@@ -2,10 +2,11 @@ package list
 
 import (
 	"context"
-	"csserver/internal/common"
-	"csserver/internal/marshal"
 	"errors"
 	"fmt"
+
+	"csserver/internal/common"
+	"csserver/internal/marshal"
 
 	"github.com/cscoding21/csmap/utils"
 )

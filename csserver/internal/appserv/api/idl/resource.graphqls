@@ -1,5 +1,6 @@
 type Resource {
   id: String
+  type: String!
   name: String!
   role: String!
   user: User
@@ -18,6 +19,7 @@ type Skill {
 
 input UpdateResource {
   id: String
+  type: String!
   name: String!
   role: String
   userID: String
