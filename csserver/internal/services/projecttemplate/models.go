@@ -11,7 +11,7 @@ import (
 
 type Projecttemplate struct {
 	//---common for all DB objects
-	common.ControlFields `json:"control_fields" csval:"validate"`
+	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
 	Name   string                 `json:"name"`

@@ -12,13 +12,13 @@ import (
 // Resource represents a person or purchase that contributs to the implementation of a project
 type Resource struct {
 	//---common for all DB objects
-	common.ControlFields `json:"control_fields" csval:"validate"`
+	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
 	Name         string   `json:"name" caval:"req"`
 	Type         string   `json:"type" caval:"req"`
 	Role         string   `json:"role"`
-	UserID       *string  `json:"user_id"`
+	UserEmail    *string  `json:"user_email"`
 	ProfileImage *string  `json:"profile_image"`
 	Skills       []*Skill `json:"skills"`
 	IsBot        bool     `json:"is_bot"`

@@ -11,7 +11,7 @@ import (
 
 type List struct {
 	//---common for all DB objects
-	common.ControlFields
+	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
 	Name   string     `json:"name" csval:"req"`

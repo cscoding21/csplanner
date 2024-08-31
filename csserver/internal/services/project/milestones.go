@@ -16,19 +16,13 @@ import (
 func (s *ProjectService) DeleteTaskFromProject(ctx context.Context, projectID string, milestoneID string, taskID string) (*common.UpdateResult[Project], error) {
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
 	}
 
 	updatedProject := deleteTaskFromProjectGraph(*project, milestoneID, taskID)
 
 	pro, err := s.UpdateProject(ctx, &updatedProject)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-
-	return &pro, nil
+	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
 }
 
 // deleteTaskFromProjectGraph if the milestone exists in the project object graph...remove the specified task
@@ -53,20 +47,14 @@ func deleteTaskFromProjectGraph(project Project, milestoneID string, taskID stri
 func (s *ProjectService) UpdateProjectTask(ctx context.Context, projectID string, milestoneID string, task ProjectMilestoneTask) (*common.UpdateResult[Project], error) {
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
 	}
 
 	//---DO THE UPDATE
 	updatedProject := updateTaskFromProjectGraph(*project, milestoneID, task)
 
 	pro, err := s.UpdateProject(ctx, &updatedProject)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-
-	return &pro, nil
+	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
 }
 
 // updateTaskFromProjectGraph if the milestone exists in the project object graph...update the specified task.  Otherwise, add the task
@@ -108,8 +96,7 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 	ctx context.Context, projectID string, template projecttemplate.Projecttemplate) (*common.UpdateResult[Project], error) {
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
 	}
 
 	project.ProjectMilestones = make([]*ProjectMilestone, 0)
@@ -128,11 +115,6 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 		project.ProjectMilestones = append(project.ProjectMilestones, &milestone)
 	}
 
-	projectResult, err := s.UpdateProject(ctx, project)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-
-	return &projectResult, nil
+	pro, err := s.UpdateProject(ctx, project)
+	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
 }

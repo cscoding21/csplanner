@@ -44,7 +44,7 @@ func (db *DBClient) GetObject(
 
 // DeleteObject delete an object from the DB based on the ID
 func (db *DBClient) DeleteObject(
-	userID string,
+	userEmail string,
 	id string) error {
 
 	log.Infof("Deleting database object: %v", id)
@@ -59,11 +59,11 @@ func (db *DBClient) DeleteObject(
 
 // SoftDeleteObject mark an obect as deleted but leave its record in the database
 func (db *DBClient) SoftDeleteObject(
-	userID string,
+	userEmail string,
 	input interfaces.DBObject) error {
 
 	log.Infof("Soft deleting database object: %v", input)
-	input.SetDeleteInfo(userID)
+	input.SetDeleteInfo(userEmail)
 
 	_, err := db.Client.Update(input.GetID(), input)
 	return common.HandleReturn(err)
@@ -71,34 +71,34 @@ func (db *DBClient) SoftDeleteObject(
 
 // CreateObject create an object of the passed in type
 func (db *DBClient) CreateObject(
-	userID string,
+	userEmail string,
 	objectName string,
 	input interfaces.DBObject) (interface{}, error) {
 
-	input.SetCreateInfo(userID)
+	input.SetCreateInfo(userEmail)
 	return db.Client.Create(objectName, input)
 }
 
 // CreateObject create an object of the passed in type
 func (db *DBClient) UpdateObject(
-	userID string,
+	userEmail string,
 	objectID string,
 	input interfaces.DBObject) (interface{}, error) {
 
-	input.SetUpdateInfo(userID)
+	input.SetUpdateInfo(userEmail)
 	return db.Client.Update(objectID, input)
 }
 
 // CreateOrUpdateObject if the passed in object contains an ID, it will update.  otherwise it will create.
 func (db *DBClient) CreateOrUpdateObject(
-	userID string,
+	userEmail string,
 	objectID string,
 	input interfaces.DBObject) (interface{}, error) {
 
 	if input.HasID() {
-		return db.UpdateObject(userID, objectID, input)
+		return db.UpdateObject(userEmail, objectID, input)
 	} else {
-		return db.CreateObject(userID, objectID, input)
+		return db.CreateObject(userEmail, objectID, input)
 	}
 }
 

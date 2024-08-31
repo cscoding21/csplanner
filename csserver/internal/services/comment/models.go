@@ -11,7 +11,7 @@ import (
 
 type Comment struct {
 	//---common for all DB objects
-	common.ControlFields `json:"control_fields" csval:"validate"`
+	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
 	ProjectID    string    `json:"project_id"`
@@ -26,12 +26,12 @@ type Comment struct {
 }
 
 type Mention struct {
-	UserID          string `json:"userId"`
-	UserName        string `json:"userName"`
-	CommentID       string `json:"commentId"`
-	ProjectID       string `json:"projectId"`
-	MentionedByID   string `json:"mentionedById"`
-	MentionedByName string `json:"mentionedByName"`
+	UserEmail       string `json:"user_email"`
+	UserName        string `json:"user_name"`
+	CommentID       string `json:"comment_ie"`
+	ProjectID       string `json:"project_id"`
+	MentionedByID   string `json:"mentioned_by_id"`
+	MentionedByName string `json:"mentioned_by_name"`
 	Text            string `json:"text"`
-	IsBot           bool   `json:"isBot"`
+	IsBot           bool   `json:"is_bot"`
 }

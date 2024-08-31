@@ -28,14 +28,14 @@ func (p *Project) GetProjectNPV() float64 {
 }
 
 // GetProjectIRR calclate the NPV for the project based on cost and value entries
-func (p *Project) GetProjectIRR(project Project) float64 {
+func (p *Project) GetProjectIRR() float64 {
 	values := []float64{
-		-(project.ProjectCost.InitialCost),
-		project.ProjectValue.YearOneValue,
-		project.ProjectValue.YearTwoValue,
-		project.ProjectValue.YearThreeValue,
-		project.ProjectValue.YearFourValue,
-		project.ProjectValue.YearFiveValue,
+		-(p.ProjectCost.InitialCost),
+		p.ProjectValue.YearOneValue,
+		p.ProjectValue.YearTwoValue,
+		p.ProjectValue.YearThreeValue,
+		p.ProjectValue.YearFourValue,
+		p.ProjectValue.YearFiveValue,
 	}
 
 	irr, err := finance.IRR(values)
@@ -48,22 +48,22 @@ func (p *Project) GetProjectIRR(project Project) float64 {
 }
 
 // GetProjectInitialCost calculates the initial cost of the project
-func (p *Project) GetProjectInitialCost(project Project) (int, float64) {
+func (p *Project) GetProjectInitialCost() (int, float64) {
 	cost := 0.0
 	hours := 0
 
-	if project.ProjectMilestones == nil || len(project.ProjectMilestones) == 0 {
+	if len(p.ProjectMilestones) == 0 {
 		return hours, cost
 	}
 
-	for _, m := range project.ProjectMilestones {
-		if m.Tasks == nil || len(m.Tasks) == 0 {
+	for _, m := range p.ProjectMilestones {
+		if len(m.Tasks) == 0 {
 			continue
 		}
 
 		for _, t := range m.Tasks {
 			hours = hours + t.HourEstimate
-			cost = cost + float64(t.HourEstimate)*(*project.ProjectCost.BlendedRate)
+			cost = cost + float64(t.HourEstimate)*(*p.ProjectCost.BlendedRate)
 		}
 	}
 

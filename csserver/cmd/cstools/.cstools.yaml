@@ -9,6 +9,8 @@ services:
     path: ""
   - name: List
     path: ""
+  - name: Notification
+    path: ""
   - name: Project
     path: ""
   - name: ProjectTemplate

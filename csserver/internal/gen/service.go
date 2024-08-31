@@ -19,7 +19,6 @@ type GenProps struct {
 	ServiceLower      string
 	OutputPath        string
 	IncludeValidation bool
-	IDTag             string
 	CFTag             string
 }
 
@@ -27,8 +26,7 @@ func GenService(props GenProps) error {
 	caser := cases.Title(language.English)
 	//---ensure struct name is title case
 	props.ServiceName = caser.String(props.ServiceName)
-	props.IDTag = utils.WrapInBackticks("json:\"id,omitempty\" csval:\"required\"")
-	props.CFTag = utils.WrapInBackticks("json:\"control_fields\" csval:\"validate\"")
+	props.CFTag = utils.WrapInBackticks("csval:\"validate\"")
 
 	//---create an all-lowercase version for the database & file names
 	props.ServiceLower = strings.ToLower(props.ServiceName)
@@ -121,7 +119,7 @@ func New{{.ServiceName}}Service(
 var deleteTemplateString = `
 // Delete{{.ServiceName}} deletes a {{.ServiceName}}.
 func (s *{{.ServiceName}}Service) Delete{{.ServiceName}}(ctx context.Context, id string) error {
-	userID := s.ContextHelper.GetUserIDFromContext(ctx)
+	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
 
 	list, err := s.Get{{.ServiceName}}ByID(ctx, id)
 	if err != nil {
@@ -129,7 +127,7 @@ func (s *{{.ServiceName}}Service) Delete{{.ServiceName}}(ctx context.Context, id
 	}
 
 	return common.HandleReturn(
-		s.DBClient.SoftDeleteObject(userID, list),
+		s.DBClient.SoftDeleteObject(userEmail, list),
 	)
 }
 
@@ -164,9 +162,9 @@ func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, in
 {{else}}
 	val := validate.NewSuccessValidationResult()
 {{end}}
-	userID := s.ContextHelper.GetUserIDFromContext(ctx)
+	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
 
-	outData, err := s.DBClient.CreateObject(userID, {{.ServiceName }}Identifier, input)
+	outData, err := s.DBClient.CreateObject(userEmail, {{.ServiceName }}Identifier, input)
 	if err != nil {
 		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
 	}
@@ -193,9 +191,9 @@ func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, in
 {{else}}
 	val := validate.NewSuccessValidationResult()
 {{end}}
-	userID := s.ContextHelper.GetUserIDFromContext(ctx)
+	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
 
-	outData, err := s.DBClient.UpdateObject(userID, input.ID, input)
+	outData, err := s.DBClient.UpdateObject(userEmail, input.ID, input)
 	if err != nil {
 		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
 	}

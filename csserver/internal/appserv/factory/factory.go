@@ -8,6 +8,9 @@ import (
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
+	"csserver/internal/services/project"
+	"csserver/internal/services/projecttemplate"
+	"csserver/internal/services/resource"
 	"fmt"
 	"sync"
 
@@ -23,7 +26,7 @@ var (
 	_dbclient *surreal.DBClient
 )
 
-// GetContextHelper get context helper singleton
+// GetContextHelper get context helper
 func GetContextHelper() *config.ContextHelper {
 	ch := config.ContextHelper{}
 	return &ch
@@ -77,7 +80,7 @@ func GetKeycloakClient() *gocloak.GoCloak {
 	return client
 }
 
-// GetAuthService get user service singleton
+// GetAuthService get user service instance
 func GetAuthService(ctx context.Context) *auth.AuthService {
 	kc := GetKeycloakClient()
 
@@ -88,14 +91,14 @@ func GetAuthService(ctx context.Context) *auth.AuthService {
 		config.Config.Security.KeycloakRealm)
 }
 
-// GetActivityService get activity service singleton
+// GetActivityService get activity service instance
 func GetActivityService() *activity.ActivityService {
 	surrealClient := GetDBClient()
 	contextHelper := config.ContextHelper{}
 	return activity.NewActivityService(*surrealClient, contextHelper)
 }
 
-// GetUserService get user service singleton
+// GetUserService get user service instance
 func GetUserService() *user.UserService {
 	contextHelper := config.ContextHelper{}
 	client := GetKeycloakClient()
@@ -109,8 +112,26 @@ func GetUserService() *user.UserService {
 	return &svc
 }
 
-// GetListService get list service singleton
+// GetListService get list service instance
 func GetListService() *list.ListService {
 	surrealClient := GetDBClient()
 	return list.NewListService(*surrealClient, config.ContextHelper{})
+}
+
+// GetResourceService return a resource service instance
+func GetResourceService() *resource.ResourceService {
+	surrealClient := GetDBClient()
+	return resource.NewResourceService(*surrealClient, config.ContextHelper{})
+}
+
+// GetProjectService return a project service instance
+func GetProjectService() *project.ProjectService {
+	surrealClient := GetDBClient()
+	return project.NewProjectService(*surrealClient, config.ContextHelper{})
+}
+
+// GetProjectTemplateService return a project template service instance
+func GetProjectTemplateService() *projecttemplate.ProjecttemplateService {
+	surrealClient := GetDBClient()
+	return projecttemplate.NewProjecttemplateService(*surrealClient, config.ContextHelper{})
 }
