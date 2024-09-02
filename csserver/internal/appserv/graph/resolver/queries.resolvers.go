@@ -157,6 +157,25 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 	return &out, nil
 }
 
+// FindResources is the resolver for the findResources field.
+func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.ResourceResults, error) {
+	rs := factory.GetResourceService()
+	//paging, filters :=
+	results, err := rs.FindAllResources(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetPageAndFilterIDL(results.Pagination, results.Filters)
+	out := idl.ResourceResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
+}
+
 // FindUserNotifications is the resolver for the findUserNotifications field.
 func (r *queryResolver) FindUserNotifications(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.NotificationResults, error) {
 	panic(fmt.Errorf("not implemented: FindUserNotifications - findUserNotifications"))

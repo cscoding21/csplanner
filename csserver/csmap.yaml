@@ -28,6 +28,12 @@ maps:
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+  # - name: "paging_source"
+  #   source_path: "internal/appserv/graph/idl/models.gen.go"
+  #   target_path: "internal/common/paging.go"
+  #   imports: 
+  #   - "csserver/internal/common"
+
   - name: "list_target"
     source_path: "internal/services/list/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"

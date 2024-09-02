@@ -348,6 +348,7 @@ type ComplexityRoot struct {
 		FindAllUsers            func(childComplexity int) int
 		FindProjectComments     func(childComplexity int, projectID string) int
 		FindProjects            func(childComplexity int, pageAndFilter idl.PageAndFilter) int
+		FindResources           func(childComplexity int, pageAndFilter *idl.PageAndFilter) int
 		FindUserNotifications   func(childComplexity int, pageAndFilter *idl.PageAndFilter) int
 		GetArtifact             func(childComplexity int, id *string) int
 		GetCommentThread        func(childComplexity int, id string) int
@@ -497,6 +498,7 @@ type QueryResolver interface {
 	GetOrganization(ctx context.Context) (*idl.Organization, error)
 	FindAllUsers(ctx context.Context) (*idl.UserResults, error)
 	FindAllResources(ctx context.Context) (*idl.ResourceResults, error)
+	FindResources(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.ResourceResults, error)
 	FindUserNotifications(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.NotificationResults, error)
 	GetResource(ctx context.Context, id string) (*idl.Resource, error)
 	FindAllLists(ctx context.Context) (*idl.ListResults, error)
@@ -1971,6 +1973,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.FindProjects(childComplexity, args["pageAndFilter"].(idl.PageAndFilter)), true
 
+	case "Query.findResources":
+		if e.complexity.Query.FindResources == nil {
+			break
+		}
+
+		args, err := ec.field_Query_findResources_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FindResources(childComplexity, args["pageAndFilter"].(*idl.PageAndFilter)), true
+
 	case "Query.findUserNotifications":
 		if e.complexity.Query.FindUserNotifications == nil {
 			break
@@ -3204,6 +3218,7 @@ input UpdateLogin {
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
+    findResources(pageAndFilter: PageAndFilter): ResourceResults!
     findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
 
     getResource(id: String!): Resource!
@@ -3680,6 +3695,21 @@ func (ec *executionContext) field_Query_findProjects_args(ctx context.Context, r
 	if tmp, ok := rawArgs["pageAndFilter"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageAndFilter"))
 		arg0, err = ec.unmarshalNPageAndFilter2csserverᚋinternalᚋappservᚋgraphᚋidlᚐPageAndFilter(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pageAndFilter"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_findResources_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *idl.PageAndFilter
+	if tmp, ok := rawArgs["pageAndFilter"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageAndFilter"))
+		arg0, err = ec.unmarshalOPageAndFilter2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPageAndFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -13332,6 +13362,69 @@ func (ec *executionContext) fieldContext_Query_findAllResources(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_findResources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_findResources(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FindResources(rctx, fc.Args["pageAndFilter"].(*idl.PageAndFilter))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ResourceResults)
+	fc.Result = res
+	return ec.marshalNResourceResults2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResourceResults(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_findResources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "paging":
+				return ec.fieldContext_ResourceResults_paging(ctx, field)
+			case "filters":
+				return ec.fieldContext_ResourceResults_filters(ctx, field)
+			case "results":
+				return ec.fieldContext_ResourceResults_results(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ResourceResults", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_findResources_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_findUserNotifications(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_findUserNotifications(ctx, field)
 	if err != nil {
@@ -21391,6 +21484,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_findAllResources(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "findResources":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_findResources(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

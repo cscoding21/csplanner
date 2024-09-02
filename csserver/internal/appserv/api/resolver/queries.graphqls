@@ -17,6 +17,7 @@ type Query {
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
+    findResources(pageAndFilter: PageAndFilter): ResourceResults!
     findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
 
     getResource(id: String!): Resource!
