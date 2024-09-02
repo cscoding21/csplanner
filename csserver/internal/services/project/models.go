@@ -7,6 +7,7 @@ package project
 
 import (
 	"csserver/internal/common"
+	"csserver/internal/services/project/ptypes"
 	"time"
 )
 
@@ -24,11 +25,11 @@ type Project struct {
 }
 
 type ProjectBasics struct {
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	Status      ProjectState `json:"status"`
-	StartDate   *time.Time   `json:"start_time"`
-	OwnerID     string       `json:"owner_id"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	Status      ptypes.ProjectState `json:"status"`
+	StartDate   *time.Time          `json:"start_time"`
+	OwnerEmail  string              `json:"owner_email"`
 }
 
 type ProjectValue struct {
@@ -58,11 +59,11 @@ type ProjectDaci struct {
 }
 
 type ProjectFeature struct {
-	ID          *string         `json:"id,omitempty"`
-	Priority    FeaturePriority `json:"priority"`
-	Name        string          `json:"name"`
-	Description string          `json:"description"`
-	Status      string          `json:"status"`
+	ID          *string                `json:"id,omitempty"`
+	Priority    ptypes.FeaturePriority `json:"priority"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Status      string                 `json:"status"`
 }
 
 type ProjectMilestone struct {
@@ -81,13 +82,13 @@ type ProjectMilestonePhase struct {
 }
 
 type ProjectMilestoneTask struct {
-	ID               *string         `json:"id,omitempty"`
-	Name             string          `json:"name"`
-	Description      string          `json:"description"`
-	HourEstimate     int             `json:"hour_estimate"`
-	ResourceIDs      []string        `json:"resources_ids"`
-	RequiredSkillIDs []string        `json:"required_skill_ids"`
-	Status           MilestoneStatus `json:"status"`
-	StartDate        *time.Time      `json:"start_date"`
-	EndDate          *time.Time      `json:"end_date"`
+	ID               *string                `json:"id,omitempty"`
+	Name             string                 `json:"name"`
+	Description      string                 `json:"description"`
+	HourEstimate     int                    `json:"hour_estimate"`
+	ResourceIDs      []string               `json:"resources_ids"`
+	RequiredSkillIDs []string               `json:"required_skill_ids"`
+	Status           ptypes.MilestoneStatus `json:"status"`
+	StartDate        *time.Time             `json:"start_date"`
+	EndDate          *time.Time             `json:"end_date"`
 }

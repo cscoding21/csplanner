@@ -1,5 +1,4 @@
-//go:generate stringer -type=FeaturePriority
-package project
+package ptypes
 
 type FeaturePriority string
 type MilestoneStatus string

@@ -8,7 +8,7 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/cscoding21/csgen v0.6.9 // indirect
-	github.com/cscoding21/csmap v0.3.4 // indirect
+	github.com/cscoding21/csmap v0.3.5 // indirect
 	github.com/cscoding21/csmig v0.0.0-20240730174928-8d8d72bbf218 // indirect
 	github.com/cscoding21/csval v0.4.2 // indirect
 	github.com/fatih/color v1.17.0 // indirect

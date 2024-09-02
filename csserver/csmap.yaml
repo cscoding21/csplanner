@@ -45,6 +45,27 @@ maps:
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+  - name: "project_target"
+    source_path: "internal/services/project/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+  - name: "notification_target"
+    source_path: "internal/services/notification/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+  - name: "comment_target"
+    source_path: "internal/services/comment/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+  - name: "projecttemplate_target"
+    source_path: "internal/services/projecttemplate/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+    - "csserver/internal/services/projecttemplate"
 
 
 

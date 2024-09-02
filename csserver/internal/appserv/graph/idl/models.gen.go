@@ -91,19 +91,6 @@ type Filters struct {
 	Filters []*Filter `json:"filters,omitempty"`
 }
 
-type ImplementationTemplate struct {
-	ID     string                         `json:"id"`
-	Name   string                         `json:"name"`
-	Phases []*ImplementationTemplatePhase `json:"phases"`
-}
-
-type ImplementationTemplatePhase struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Order       int    `json:"order"`
-	Description string `json:"description"`
-}
-
 type InputFilter struct {
 	Key       string `json:"key"`
 	Value     string `json:"value"`
@@ -148,7 +135,7 @@ type Mutation struct {
 
 type Notification struct {
 	ID                    string     `json:"id"`
-	UserID                string     `json:"userId"`
+	UserEmail             string     `json:"userEmail"`
 	UserName              string     `json:"userName"`
 	RecipientIsBot        bool       `json:"recipientIsBot"`
 	Type                  int        `json:"type"`
@@ -156,7 +143,7 @@ type Notification struct {
 	Text                  *string    `json:"text,omitempty"`
 	IsRead                bool       `json:"isRead"`
 	InitiatorName         string     `json:"initiatorName"`
-	InitiatorID           string     `json:"initiatorId"`
+	InitiatorEmail        string     `json:"initiatorEmail"`
 	InitiatorProfileImage *string    `json:"initiatorProfileImage,omitempty"`
 	CreatedAt             *time.Time `json:"createdAt,omitempty"`
 }
@@ -210,7 +197,7 @@ type ProjectBasics struct {
 	Description string     `json:"description"`
 	Status      string     `json:"status"`
 	StartDate   *time.Time `json:"startDate,omitempty"`
-	OwnerID     *string    `json:"ownerID,omitempty"`
+	OwnerEmail  *string    `json:"ownerEmail,omitempty"`
 }
 
 type ProjectCost struct {
@@ -228,11 +215,11 @@ type ProjectDaci struct {
 }
 
 type ProjectFeature struct {
-	ID          string  `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Priority    float64 `json:"priority"`
-	Status      string  `json:"status"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Priority    string `json:"priority"`
+	Status      string `json:"status"`
 }
 
 type ProjectFilters struct {
@@ -284,6 +271,25 @@ type ProjectValue struct {
 	YearFiveValue        *float64 `json:"yearFiveValue,omitempty"`
 	NetPresentValue      *float64 `json:"netPresentValue,omitempty"`
 	InternalRateOfReturn *float64 `json:"internalRateOfReturn,omitempty"`
+}
+
+type Projecttemplate struct {
+	ID     string                  `json:"id"`
+	Name   string                  `json:"name"`
+	Phases []*ProjecttemplatePhase `json:"phases"`
+}
+
+type ProjecttemplatePhase struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Order       int    `json:"order"`
+	Description string `json:"description"`
+}
+
+type ProjecttemplateResults struct {
+	Paging  *Pagination        `json:"paging,omitempty"`
+	Filters *Filters           `json:"filters"`
+	Results []*Projecttemplate `json:"results,omitempty"`
 }
 
 type Query struct {

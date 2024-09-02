@@ -1,6 +1,6 @@
 type Notification {
   id: String!
-  userId: String!
+  userEmail: String!
   userName: String!
   recipientIsBot: Boolean!
   type: Int!
@@ -8,7 +8,7 @@ type Notification {
   text: String
   isRead: Boolean!
   initiatorName: String!
-  initiatorId: String!
+  initiatorEmail: String!
   initiatorProfileImage: String
   createdAt: Time
 

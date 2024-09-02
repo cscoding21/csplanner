@@ -1,14 +1,20 @@
-type ImplementationTemplate {
+type Projecttemplate {
   id: String!
   name: String!
-  phases: [ImplementationTemplatePhase!]!
+  phases: [ProjecttemplatePhase!]!
 }
 
-type ImplementationTemplatePhase {
+type ProjecttemplatePhase {
   id: String!
   name: String!
   order: Int!
   description: String!
+}
+
+type ProjecttemplateResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Projecttemplate!]
 }
 
 

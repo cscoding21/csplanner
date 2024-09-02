@@ -8,6 +8,7 @@ import (
 
 	"csserver/internal/appserv/factory"
 	"csserver/internal/services/project"
+	"csserver/internal/services/project/ptypes"
 	"csserver/internal/utils"
 
 	"github.com/google/uuid"
@@ -31,18 +32,18 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "This is my ticket to the big time",
-			OwnerID:     allResources.Results[0].ID,
-			Status:      project.Draft,
+			OwnerEmail:  *allResources.Results[0].UserEmail,
+			Status:      ptypes.Draft,
 		},
 		ProjectCost: &project.ProjectCost{
 			Ongoing:     utils.ValToRef(100.0),
 			BlendedRate: utils.ValToRef(200.0),
 		},
 		ProjectFeatures: []*project.ProjectFeature{
-			{ID: utils.ValToRef(uuid.New().String()), Priority: project.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
-			{ID: utils.ValToRef(uuid.New().String()), Priority: project.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
-			{ID: utils.ValToRef(uuid.New().String()), Priority: project.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
-			{ID: utils.ValToRef(uuid.New().String()), Priority: project.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 		},
 		ProjectValue: &project.ProjectValue{
 			FundingSource:  "internal",
@@ -163,22 +164,22 @@ func findPortfolioProjects() []project.Project {
 
 	type PT struct {
 		name   string
-		status project.ProjectState
+		status ptypes.ProjectState
 	}
 
 	names := []PT{
-		{name: "Video: Project Overview & Tech Stack", status: project.Approved},
-		{name: "Video: Kuberetes is Magic", status: project.Approved},
-		{name: "Video: Setting Local Dev With Tilt", status: project.Approved},
-		{name: "Video: Monorepo / Microservice", status: project.Rejected},
-		{name: "Video: Golang Project Setup", status: project.Backlogged},
-		{name: "Video: Mapping Objects in our Project", status: project.Backlogged},
-		{name: "Video: CRUD Operations Using Surreal", status: project.Draft},
-		{name: "Video: Scheduled 1", status: project.Scheduled},
-		{name: "Video: Scheduled 2", status: project.Scheduled},
-		{name: "Video: Inflight 1", status: project.InFlight},
-		{name: "Video: Inflight 2", status: project.InFlight},
-		{name: "Video: Inflight 3", status: project.InFlight},
+		{name: "Video: Project Overview & Tech Stack", status: ptypes.Approved},
+		{name: "Video: Kuberetes is Magic", status: ptypes.Approved},
+		{name: "Video: Setting Local Dev With Tilt", status: ptypes.Approved},
+		{name: "Video: Monorepo / Microservice", status: ptypes.Rejected},
+		{name: "Video: Golang Project Setup", status: ptypes.Backlogged},
+		{name: "Video: Mapping Objects in our Project", status: ptypes.Backlogged},
+		{name: "Video: CRUD Operations Using Surreal", status: ptypes.Draft},
+		{name: "Video: Scheduled 1", status: ptypes.Scheduled},
+		{name: "Video: Scheduled 2", status: ptypes.Scheduled},
+		{name: "Video: Inflight 1", status: ptypes.InFlight},
+		{name: "Video: Inflight 2", status: ptypes.InFlight},
+		{name: "Video: Inflight 3", status: ptypes.InFlight},
 	}
 
 	for _, p := range names {
@@ -196,7 +197,7 @@ func findPortfolioProjects() []project.Project {
 	return outProjects
 }
 
-func GetVideoProjectTemplate(name string, status project.ProjectState) project.Project {
+func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Project {
 	rs := factory.GetResourceService()
 	ctx := context.Background()
 	allResources, _ := rs.FindAllResources(ctx)
@@ -223,7 +224,7 @@ func GetVideoProjectTemplate(name string, status project.ProjectState) project.P
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
 			Description: "Here's a video to add to the portfolio",
-			OwnerID:     allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID,
+			OwnerEmail:  *allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].UserEmail,
 			Status:      status,
 		},
 		ProjectCost: &project.ProjectCost{
@@ -231,10 +232,10 @@ func GetVideoProjectTemplate(name string, status project.ProjectState) project.P
 			BlendedRate: utils.ValToRef(121.0),
 		},
 		ProjectFeatures: []*project.ProjectFeature{
-			{ID: utils.ValToRef("projectfeature:1"), Priority: project.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
-			{ID: utils.ValToRef("projectfeature:2"), Priority: project.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
-			{ID: utils.ValToRef("projectfeature:3"), Priority: project.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
-			{ID: utils.ValToRef("projectfeature:4"), Priority: project.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:1"), Priority: ptypes.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:2"), Priority: ptypes.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:3"), Priority: ptypes.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:4"), Priority: ptypes.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 		},
 		ProjectValue: &project.ProjectValue{
 			DiscountRate:   7.0,

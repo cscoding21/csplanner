@@ -17,12 +17,12 @@ import (
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 	us := factory.GetUserService()
-	user, err := us.GetCurrentUser(ctx)
+	obj, err := us.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	out := csmap.UserUserToIdl(*user)
+	out := csmap.UserUserToIdl(*obj)
 
 	return &out, nil
 }
@@ -30,12 +30,12 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, error) {
 	us := factory.GetUserService()
-	user, err := us.GetUser(ctx, id)
+	obj, err := us.GetUser(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	out := csmap.UserUserToIdl(*user)
+	out := csmap.UserUserToIdl(*obj)
 
 	return &out, nil
 }
@@ -47,7 +47,15 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 
 // GetProject is the resolver for the getProject field.
 func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project, error) {
-	panic(fmt.Errorf("not implemented: GetProject - getProject"))
+	ps := factory.GetProjectService()
+	obj, err := ps.GetProjectByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.ProjectProjectToIdl(*obj)
+
+	return &out, nil
 }
 
 // PortfolioSnapshot is the resolver for the portfolioSnapshot field.
@@ -91,8 +99,21 @@ func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.Page
 }
 
 // FindAllProjectTemplates is the resolver for the findAllProjectTemplates field.
-func (r *queryResolver) FindAllProjectTemplates(ctx context.Context) ([]*idl.ImplementationTemplate, error) {
-	panic(fmt.Errorf("not implemented: FindAllProjectTemplates - findAllProjectTemplates"))
+func (r *queryResolver) FindAllProjectTemplates(ctx context.Context) (*idl.ProjecttemplateResults, error) {
+	service := factory.GetProjectTemplateService()
+	results, err := service.FindAllProjecttemplates(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetPageAndFilterIDL(results.Pagination, results.Filters)
+	out := idl.ProjecttemplateResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ProjecttemplateProjecttemplateToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
 }
 
 // GetOrganization is the resolver for the getOrganization field.
@@ -120,7 +141,20 @@ func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, err
 
 // FindAllResources is the resolver for the findAllResources field.
 func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResults, error) {
-	panic(fmt.Errorf("not implemented: FindAllResources - findAllResources"))
+	rs := factory.GetResourceService()
+	results, err := rs.FindAllResources(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetPageAndFilterIDL(results.Pagination, results.Filters)
+	out := idl.ResourceResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
 }
 
 // FindUserNotifications is the resolver for the findUserNotifications field.
@@ -130,7 +164,15 @@ func (r *queryResolver) FindUserNotifications(ctx context.Context, pageAndFilter
 
 // GetResource is the resolver for the getResource field.
 func (r *queryResolver) GetResource(ctx context.Context, id string) (*idl.Resource, error) {
-	panic(fmt.Errorf("not implemented: GetResource - getResource"))
+	service := factory.GetResourceService()
+	obj, err := service.GetResourceByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.ResourceResourceToIdl(*obj)
+
+	return &out, nil
 }
 
 // FindAllLists is the resolver for the findAllLists field.
@@ -153,13 +195,13 @@ func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, err
 
 // GetList is the resolver for the getList field.
 func (r *queryResolver) GetList(ctx context.Context, nameOrID string) (*idl.List, error) {
-	ls := factory.GetListService()
-	list, err := ls.GetList(ctx, nameOrID)
+	service := factory.GetListService()
+	obj, err := service.GetList(ctx, nameOrID)
 	if err != nil {
 		return nil, err
 	}
 
-	out := csmap.ListListToIdl(*list)
+	out := csmap.ListListToIdl(*obj)
 
 	return &out, nil
 }

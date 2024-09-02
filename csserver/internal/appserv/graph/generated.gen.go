@@ -134,19 +134,6 @@ type ComplexityRoot struct {
 		Filters func(childComplexity int) int
 	}
 
-	ImplementationTemplate struct {
-		ID     func(childComplexity int) int
-		Name   func(childComplexity int) int
-		Phases func(childComplexity int) int
-	}
-
-	ImplementationTemplatePhase struct {
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Order       func(childComplexity int) int
-	}
-
 	List struct {
 		ID     func(childComplexity int) int
 		Name   func(childComplexity int) int
@@ -202,14 +189,14 @@ type ComplexityRoot struct {
 		ContextID             func(childComplexity int) int
 		CreatedAt             func(childComplexity int) int
 		ID                    func(childComplexity int) int
-		InitiatorID           func(childComplexity int) int
+		InitiatorEmail        func(childComplexity int) int
 		InitiatorName         func(childComplexity int) int
 		InitiatorProfileImage func(childComplexity int) int
 		IsRead                func(childComplexity int) int
 		RecipientIsBot        func(childComplexity int) int
 		Text                  func(childComplexity int) int
 		Type                  func(childComplexity int) int
-		UserID                func(childComplexity int) int
+		UserEmail             func(childComplexity int) int
 		UserName              func(childComplexity int) int
 	}
 
@@ -255,7 +242,7 @@ type ComplexityRoot struct {
 	ProjectBasics struct {
 		Description func(childComplexity int) int
 		Name        func(childComplexity int) int
-		OwnerID     func(childComplexity int) int
+		OwnerEmail  func(childComplexity int) int
 		StartDate   func(childComplexity int) int
 		Status      func(childComplexity int) int
 	}
@@ -331,6 +318,25 @@ type ComplexityRoot struct {
 		YearOneValue         func(childComplexity int) int
 		YearThreeValue       func(childComplexity int) int
 		YearTwoValue         func(childComplexity int) int
+	}
+
+	Projecttemplate struct {
+		ID     func(childComplexity int) int
+		Name   func(childComplexity int) int
+		Phases func(childComplexity int) int
+	}
+
+	ProjecttemplatePhase struct {
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Order       func(childComplexity int) int
+	}
+
+	ProjecttemplateResults struct {
+		Filters func(childComplexity int) int
+		Paging  func(childComplexity int) int
+		Results func(childComplexity int) int
 	}
 
 	Query struct {
@@ -487,7 +493,7 @@ type QueryResolver interface {
 	FindProjectComments(ctx context.Context, projectID string) ([]*idl.Comment, error)
 	GetCommentThread(ctx context.Context, id string) (*idl.Comment, error)
 	FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error)
-	FindAllProjectTemplates(ctx context.Context) ([]*idl.ImplementationTemplate, error)
+	FindAllProjectTemplates(ctx context.Context) (*idl.ProjecttemplateResults, error)
 	GetOrganization(ctx context.Context) (*idl.Organization, error)
 	FindAllUsers(ctx context.Context) (*idl.UserResults, error)
 	FindAllResources(ctx context.Context) (*idl.ResourceResults, error)
@@ -863,55 +869,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Filters.Filters(childComplexity), true
-
-	case "ImplementationTemplate.id":
-		if e.complexity.ImplementationTemplate.ID == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplate.ID(childComplexity), true
-
-	case "ImplementationTemplate.name":
-		if e.complexity.ImplementationTemplate.Name == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplate.Name(childComplexity), true
-
-	case "ImplementationTemplate.phases":
-		if e.complexity.ImplementationTemplate.Phases == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplate.Phases(childComplexity), true
-
-	case "ImplementationTemplatePhase.description":
-		if e.complexity.ImplementationTemplatePhase.Description == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplatePhase.Description(childComplexity), true
-
-	case "ImplementationTemplatePhase.id":
-		if e.complexity.ImplementationTemplatePhase.ID == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplatePhase.ID(childComplexity), true
-
-	case "ImplementationTemplatePhase.name":
-		if e.complexity.ImplementationTemplatePhase.Name == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplatePhase.Name(childComplexity), true
-
-	case "ImplementationTemplatePhase.order":
-		if e.complexity.ImplementationTemplatePhase.Order == nil {
-			break
-		}
-
-		return e.complexity.ImplementationTemplatePhase.Order(childComplexity), true
 
 	case "List.id":
 		if e.complexity.List.ID == nil {
@@ -1306,12 +1263,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.ID(childComplexity), true
 
-	case "Notification.initiatorId":
-		if e.complexity.Notification.InitiatorID == nil {
+	case "Notification.initiatorEmail":
+		if e.complexity.Notification.InitiatorEmail == nil {
 			break
 		}
 
-		return e.complexity.Notification.InitiatorID(childComplexity), true
+		return e.complexity.Notification.InitiatorEmail(childComplexity), true
 
 	case "Notification.initiatorName":
 		if e.complexity.Notification.InitiatorName == nil {
@@ -1355,12 +1312,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.Type(childComplexity), true
 
-	case "Notification.userId":
-		if e.complexity.Notification.UserID == nil {
+	case "Notification.userEmail":
+		if e.complexity.Notification.UserEmail == nil {
 			break
 		}
 
-		return e.complexity.Notification.UserID(childComplexity), true
+		return e.complexity.Notification.UserEmail(childComplexity), true
 
 	case "Notification.userName":
 		if e.complexity.Notification.UserName == nil {
@@ -1530,12 +1487,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectBasics.Name(childComplexity), true
 
-	case "ProjectBasics.ownerID":
-		if e.complexity.ProjectBasics.OwnerID == nil {
+	case "ProjectBasics.ownerEmail":
+		if e.complexity.ProjectBasics.OwnerEmail == nil {
 			break
 		}
 
-		return e.complexity.ProjectBasics.OwnerID(childComplexity), true
+		return e.complexity.ProjectBasics.OwnerEmail(childComplexity), true
 
 	case "ProjectBasics.startDate":
 		if e.complexity.ProjectBasics.StartDate == nil {
@@ -1872,6 +1829,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectValue.YearTwoValue(childComplexity), true
+
+	case "Projecttemplate.id":
+		if e.complexity.Projecttemplate.ID == nil {
+			break
+		}
+
+		return e.complexity.Projecttemplate.ID(childComplexity), true
+
+	case "Projecttemplate.name":
+		if e.complexity.Projecttemplate.Name == nil {
+			break
+		}
+
+		return e.complexity.Projecttemplate.Name(childComplexity), true
+
+	case "Projecttemplate.phases":
+		if e.complexity.Projecttemplate.Phases == nil {
+			break
+		}
+
+		return e.complexity.Projecttemplate.Phases(childComplexity), true
+
+	case "ProjecttemplatePhase.description":
+		if e.complexity.ProjecttemplatePhase.Description == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplatePhase.Description(childComplexity), true
+
+	case "ProjecttemplatePhase.id":
+		if e.complexity.ProjecttemplatePhase.ID == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplatePhase.ID(childComplexity), true
+
+	case "ProjecttemplatePhase.name":
+		if e.complexity.ProjecttemplatePhase.Name == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplatePhase.Name(childComplexity), true
+
+	case "ProjecttemplatePhase.order":
+		if e.complexity.ProjecttemplatePhase.Order == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplatePhase.Order(childComplexity), true
+
+	case "ProjecttemplateResults.filters":
+		if e.complexity.ProjecttemplateResults.Filters == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplateResults.Filters(childComplexity), true
+
+	case "ProjecttemplateResults.paging":
+		if e.complexity.ProjecttemplateResults.Paging == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplateResults.Paging(childComplexity), true
+
+	case "ProjecttemplateResults.results":
+		if e.complexity.ProjecttemplateResults.Results == nil {
+			break
+		}
+
+		return e.complexity.ProjecttemplateResults.Results(childComplexity), true
 
 	case "Query.currentUser":
 		if e.complexity.Query.CurrentUser == nil {
@@ -2600,6 +2627,40 @@ type RelateArtifact {
     artifactID: String!
     linkID: String!
 }`, BuiltIn: false},
+	{Name: "../api/idl/comment.graphqls", Input: `type Comment {
+  id: String!
+  projectId: String!
+  text: String!
+  resource: Resource!
+  replies: [Comment!]
+  controlFields: ControlFields!
+  likes: [String!]
+  loves: [String!]
+  dislikes: [String!]
+  laughsAt: [String!]
+  acknowledges: [String!]
+  isEdited: Boolean!
+}
+
+
+
+input UpdateComment {
+  projectId: String!
+  id: String
+  text: String!
+}
+
+
+input UpdateCommentReply {
+  parentCommentID: String!
+  text: String!
+}
+
+
+input UpdateCommentEmote {
+  commentID: String!
+  emoteType: String!
+}`, BuiltIn: false},
 	{Name: "../api/idl/common.graphqls", Input: `scalar Time
 scalar Upload
 type TimeResponse {
@@ -2695,7 +2756,7 @@ type ListResults {
 }`, BuiltIn: false},
 	{Name: "../api/idl/notification.graphqls", Input: `type Notification {
   id: String!
-  userId: String!
+  userEmail: String!
   userName: String!
   recipientIsBot: Boolean!
   type: Int!
@@ -2703,7 +2764,7 @@ type ListResults {
   text: String
   isRead: Boolean!
   initiatorName: String!
-  initiatorId: String!
+  initiatorEmail: String!
   initiatorProfileImage: String
   createdAt: Time
 
@@ -2798,7 +2859,7 @@ type ProjectBasics {
   description: String!
   status: String!
   startDate: Time
-  ownerID: String
+  ownerEmail: String
 }
 
 
@@ -2834,7 +2895,7 @@ type ProjectFeature {
   id: String!
   name: String!
   description: String!
-  priority: Float!
+  priority: String!
   status: String!
 }
 
@@ -2865,21 +2926,6 @@ type ProjectMilestoneTask {
   status: String!
   startDate: Time
   endDate: Time
-}
-
-type Comment {
-  id: String!
-  projectId: String!
-  text: String!
-  resource: Resource!
-  replies: [Comment!]
-  controlFields: ControlFields!
-  likes: [String!]
-  loves: [String!]
-  dislikes: [String!]
-  laughsAt: [String!]
-  acknowledges: [String!]
-  isEdited: Boolean!
 }
 
 
@@ -2954,25 +3000,6 @@ input UpdateProjectDACI {
   approver: [String]
   contributor: [String]
   informed: [String]
-}
-
-
-input UpdateComment {
-  projectId: String!
-  id: String
-  text: String!
-}
-
-
-input UpdateCommentReply {
-  parentCommentID: String!
-  text: String!
-}
-
-
-input UpdateCommentEmote {
-  commentID: String!
-  emoteType: String!
 }
 
 input UpdateProjectFeature {
@@ -3061,17 +3088,23 @@ type ResourceResults {
   filters: Filters!
   results: [Resource!]
 }`, BuiltIn: false},
-	{Name: "../api/idl/template.graphqls", Input: `type ImplementationTemplate {
+	{Name: "../api/idl/template.graphqls", Input: `type Projecttemplate {
   id: String!
   name: String!
-  phases: [ImplementationTemplatePhase!]!
+  phases: [ProjecttemplatePhase!]!
 }
 
-type ImplementationTemplatePhase {
+type ProjecttemplatePhase {
   id: String!
   name: String!
   order: Int!
   description: String!
+}
+
+type ProjecttemplateResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Projecttemplate!]
 }
 
 
@@ -3165,7 +3198,7 @@ input UpdateLogin {
     getCommentThread(id: String!): Comment!
         
     findActivity(pageAndFilter: PageAndFilter!): ActivityResults!
-    findAllProjectTemplates: [ImplementationTemplate!]!
+    findAllProjectTemplates: ProjecttemplateResults!
 
     getOrganization: Organization!
 
@@ -6160,324 +6193,6 @@ func (ec *executionContext) fieldContext_Filters_filters(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _ImplementationTemplate_id(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplate) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplate_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplate_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplate",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplate_name(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplate) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplate_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplate_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplate",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplate_phases(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplate) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplate_phases(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Phases, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*idl.ImplementationTemplatePhase)
-	fc.Result = res
-	return ec.marshalNImplementationTemplatePhase2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplatePhaseᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplate_phases(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplate",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_ImplementationTemplatePhase_id(ctx, field)
-			case "name":
-				return ec.fieldContext_ImplementationTemplatePhase_name(ctx, field)
-			case "order":
-				return ec.fieldContext_ImplementationTemplatePhase_order(ctx, field)
-			case "description":
-				return ec.fieldContext_ImplementationTemplatePhase_description(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ImplementationTemplatePhase", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplatePhase_id(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplatePhase) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplatePhase_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplatePhase_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplatePhase",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplatePhase_name(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplatePhase) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplatePhase_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplatePhase_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplatePhase",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplatePhase_order(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplatePhase) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplatePhase_order(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Order, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplatePhase_order(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplatePhase",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ImplementationTemplatePhase_description(ctx context.Context, field graphql.CollectedField, obj *idl.ImplementationTemplatePhase) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImplementationTemplatePhase_description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImplementationTemplatePhase_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImplementationTemplatePhase",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _List_id(ctx context.Context, field graphql.CollectedField, obj *idl.List) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_List_id(ctx, field)
 	if err != nil {
@@ -8592,8 +8307,8 @@ func (ec *executionContext) fieldContext_Notification_id(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Notification_userId(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_userId(ctx, field)
+func (ec *executionContext) _Notification_userEmail(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_userEmail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8606,7 +8321,7 @@ func (ec *executionContext) _Notification_userId(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
+		return obj.UserEmail, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8623,7 +8338,7 @@ func (ec *executionContext) _Notification_userId(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Notification_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Notification_userEmail(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Notification",
 		Field:      field,
@@ -8941,8 +8656,8 @@ func (ec *executionContext) fieldContext_Notification_initiatorName(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _Notification_initiatorId(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_initiatorId(ctx, field)
+func (ec *executionContext) _Notification_initiatorEmail(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_initiatorEmail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -8955,7 +8670,7 @@ func (ec *executionContext) _Notification_initiatorId(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.InitiatorID, nil
+		return obj.InitiatorEmail, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8972,7 +8687,7 @@ func (ec *executionContext) _Notification_initiatorId(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Notification_initiatorId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Notification_initiatorEmail(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Notification",
 		Field:      field,
@@ -9207,8 +8922,8 @@ func (ec *executionContext) fieldContext_NotificationResults_results(_ context.C
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Notification_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Notification_userId(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Notification_userEmail(ctx, field)
 			case "userName":
 				return ec.fieldContext_Notification_userName(ctx, field)
 			case "recipientIsBot":
@@ -9223,8 +8938,8 @@ func (ec *executionContext) fieldContext_NotificationResults_results(_ context.C
 				return ec.fieldContext_Notification_isRead(ctx, field)
 			case "initiatorName":
 				return ec.fieldContext_Notification_initiatorName(ctx, field)
-			case "initiatorId":
-				return ec.fieldContext_Notification_initiatorId(ctx, field)
+			case "initiatorEmail":
+				return ec.fieldContext_Notification_initiatorEmail(ctx, field)
 			case "initiatorProfileImage":
 				return ec.fieldContext_Notification_initiatorProfileImage(ctx, field)
 			case "createdAt":
@@ -9769,8 +9484,8 @@ func (ec *executionContext) fieldContext_Project_projectBasics(_ context.Context
 				return ec.fieldContext_ProjectBasics_status(ctx, field)
 			case "startDate":
 				return ec.fieldContext_ProjectBasics_startDate(ctx, field)
-			case "ownerID":
-				return ec.fieldContext_ProjectBasics_ownerID(ctx, field)
+			case "ownerEmail":
+				return ec.fieldContext_ProjectBasics_ownerEmail(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectBasics", field.Name)
 		},
@@ -10293,8 +10008,8 @@ func (ec *executionContext) fieldContext_ProjectBasics_startDate(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectBasics_ownerID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectBasics_ownerID(ctx, field)
+func (ec *executionContext) _ProjectBasics_ownerEmail(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectBasics_ownerEmail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10307,7 +10022,7 @@ func (ec *executionContext) _ProjectBasics_ownerID(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OwnerID, nil
+		return obj.OwnerEmail, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10321,7 +10036,7 @@ func (ec *executionContext) _ProjectBasics_ownerID(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectBasics_ownerID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectBasics_ownerEmail(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectBasics",
 		Field:      field,
@@ -10823,9 +10538,9 @@ func (ec *executionContext) _ProjectFeature_priority(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectFeature_priority(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10835,7 +10550,7 @@ func (ec *executionContext) fieldContext_ProjectFeature_priority(_ context.Conte
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12366,6 +12081,472 @@ func (ec *executionContext) fieldContext_ProjectValue_internalRateOfReturn(_ con
 	return fc, nil
 }
 
+func (ec *executionContext) _Projecttemplate_id(ctx context.Context, field graphql.CollectedField, obj *idl.Projecttemplate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Projecttemplate_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Projecttemplate_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Projecttemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Projecttemplate_name(ctx context.Context, field graphql.CollectedField, obj *idl.Projecttemplate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Projecttemplate_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Projecttemplate_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Projecttemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Projecttemplate_phases(ctx context.Context, field graphql.CollectedField, obj *idl.Projecttemplate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Projecttemplate_phases(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Phases, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.ProjecttemplatePhase)
+	fc.Result = res
+	return ec.marshalNProjecttemplatePhase2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplatePhaseᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Projecttemplate_phases(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Projecttemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ProjecttemplatePhase_id(ctx, field)
+			case "name":
+				return ec.fieldContext_ProjecttemplatePhase_name(ctx, field)
+			case "order":
+				return ec.fieldContext_ProjecttemplatePhase_order(ctx, field)
+			case "description":
+				return ec.fieldContext_ProjecttemplatePhase_description(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjecttemplatePhase", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplatePhase_id(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplatePhase) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplatePhase_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplatePhase_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplatePhase",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplatePhase_name(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplatePhase) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplatePhase_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplatePhase_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplatePhase",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplatePhase_order(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplatePhase) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplatePhase_order(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Order, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplatePhase_order(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplatePhase",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplatePhase_description(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplatePhase) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplatePhase_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplatePhase_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplatePhase",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplateResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplateResults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplateResults_paging(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Paging, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Pagination)
+	fc.Result = res
+	return ec.marshalOPagination2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPagination(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplateResults_paging(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplateResults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "totalResults":
+				return ec.fieldContext_Pagination_totalResults(ctx, field)
+			case "resultsPerPage":
+				return ec.fieldContext_Pagination_resultsPerPage(ctx, field)
+			case "pageNumber":
+				return ec.fieldContext_Pagination_pageNumber(ctx, field)
+			case "after":
+				return ec.fieldContext_Pagination_after(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Pagination", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplateResults_filters(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplateResults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplateResults_filters(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Filters, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Filters)
+	fc.Result = res
+	return ec.marshalNFilters2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐFilters(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplateResults_filters(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplateResults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "filters":
+				return ec.fieldContext_Filters_filters(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Filters", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjecttemplateResults_results(ctx context.Context, field graphql.CollectedField, obj *idl.ProjecttemplateResults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjecttemplateResults_results(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Results, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.Projecttemplate)
+	fc.Result = res
+	return ec.marshalOProjecttemplate2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjecttemplateResults_results(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjecttemplateResults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Projecttemplate_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Projecttemplate_name(ctx, field)
+			case "phases":
+				return ec.fieldContext_Projecttemplate_phases(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Projecttemplate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_currentUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_currentUser(ctx, field)
 	if err != nil {
@@ -12969,9 +13150,9 @@ func (ec *executionContext) _Query_findAllProjectTemplates(ctx context.Context, 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*idl.ImplementationTemplate)
+	res := resTmp.(*idl.ProjecttemplateResults)
 	fc.Result = res
-	return ec.marshalNImplementationTemplate2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplateᚄ(ctx, field.Selections, res)
+	return ec.marshalNProjecttemplateResults2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateResults(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_findAllProjectTemplates(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12982,14 +13163,14 @@ func (ec *executionContext) fieldContext_Query_findAllProjectTemplates(_ context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_ImplementationTemplate_id(ctx, field)
-			case "name":
-				return ec.fieldContext_ImplementationTemplate_name(ctx, field)
-			case "phases":
-				return ec.fieldContext_ImplementationTemplate_phases(ctx, field)
+			case "paging":
+				return ec.fieldContext_ProjecttemplateResults_paging(ctx, field)
+			case "filters":
+				return ec.fieldContext_ProjecttemplateResults_filters(ctx, field)
+			case "results":
+				return ec.fieldContext_ProjecttemplateResults_results(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type ImplementationTemplate", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ProjecttemplateResults", field.Name)
 		},
 	}
 	return fc, nil
@@ -19514,109 +19695,6 @@ func (ec *executionContext) _Filters(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
-var implementationTemplateImplementors = []string{"ImplementationTemplate"}
-
-func (ec *executionContext) _ImplementationTemplate(ctx context.Context, sel ast.SelectionSet, obj *idl.ImplementationTemplate) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, implementationTemplateImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ImplementationTemplate")
-		case "id":
-			out.Values[i] = ec._ImplementationTemplate_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._ImplementationTemplate_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "phases":
-			out.Values[i] = ec._ImplementationTemplate_phases(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var implementationTemplatePhaseImplementors = []string{"ImplementationTemplatePhase"}
-
-func (ec *executionContext) _ImplementationTemplatePhase(ctx context.Context, sel ast.SelectionSet, obj *idl.ImplementationTemplatePhase) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, implementationTemplatePhaseImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ImplementationTemplatePhase")
-		case "id":
-			out.Values[i] = ec._ImplementationTemplatePhase_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._ImplementationTemplatePhase_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "order":
-			out.Values[i] = ec._ImplementationTemplatePhase_order(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "description":
-			out.Values[i] = ec._ImplementationTemplatePhase_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var listImplementors = []string{"List"}
 
 func (ec *executionContext) _List(ctx context.Context, sel ast.SelectionSet, obj *idl.List) graphql.Marshaler {
@@ -20021,8 +20099,8 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "userId":
-			out.Values[i] = ec._Notification_userId(ctx, field, obj)
+		case "userEmail":
+			out.Values[i] = ec._Notification_userEmail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -20058,8 +20136,8 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "initiatorId":
-			out.Values[i] = ec._Notification_initiatorId(ctx, field, obj)
+		case "initiatorEmail":
+			out.Values[i] = ec._Notification_initiatorEmail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -20400,8 +20478,8 @@ func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.Selectio
 			}
 		case "startDate":
 			out.Values[i] = ec._ProjectBasics_startDate(ctx, field, obj)
-		case "ownerID":
-			out.Values[i] = ec._ProjectBasics_ownerID(ctx, field, obj)
+		case "ownerEmail":
+			out.Values[i] = ec._ProjectBasics_ownerEmail(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20854,6 +20932,152 @@ func (ec *executionContext) _ProjectValue(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._ProjectValue_netPresentValue(ctx, field, obj)
 		case "internalRateOfReturn":
 			out.Values[i] = ec._ProjectValue_internalRateOfReturn(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projecttemplateImplementors = []string{"Projecttemplate"}
+
+func (ec *executionContext) _Projecttemplate(ctx context.Context, sel ast.SelectionSet, obj *idl.Projecttemplate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projecttemplateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Projecttemplate")
+		case "id":
+			out.Values[i] = ec._Projecttemplate_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Projecttemplate_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "phases":
+			out.Values[i] = ec._Projecttemplate_phases(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projecttemplatePhaseImplementors = []string{"ProjecttemplatePhase"}
+
+func (ec *executionContext) _ProjecttemplatePhase(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjecttemplatePhase) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projecttemplatePhaseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjecttemplatePhase")
+		case "id":
+			out.Values[i] = ec._ProjecttemplatePhase_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._ProjecttemplatePhase_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "order":
+			out.Values[i] = ec._ProjecttemplatePhase_order(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "description":
+			out.Values[i] = ec._ProjecttemplatePhase_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projecttemplateResultsImplementors = []string{"ProjecttemplateResults"}
+
+func (ec *executionContext) _ProjecttemplateResults(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjecttemplateResults) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projecttemplateResultsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjecttemplateResults")
+		case "paging":
+			out.Values[i] = ec._ProjecttemplateResults_paging(ctx, field, obj)
+		case "filters":
+			out.Values[i] = ec._ProjecttemplateResults_filters(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "results":
+			out.Values[i] = ec._ProjecttemplateResults_results(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22517,114 +22741,6 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNImplementationTemplate2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplateᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ImplementationTemplate) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNImplementationTemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplate(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNImplementationTemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplate(ctx context.Context, sel ast.SelectionSet, v *idl.ImplementationTemplate) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._ImplementationTemplate(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNImplementationTemplatePhase2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplatePhaseᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ImplementationTemplatePhase) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNImplementationTemplatePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplatePhase(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNImplementationTemplatePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐImplementationTemplatePhase(ctx context.Context, sel ast.SelectionSet, v *idl.ImplementationTemplatePhase) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._ImplementationTemplatePhase(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -23003,6 +23119,84 @@ func (ec *executionContext) marshalNProjectValue2ᚖcsserverᚋinternalᚋappser
 		return graphql.Null
 	}
 	return ec._ProjectValue(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplate(ctx context.Context, sel ast.SelectionSet, v *idl.Projecttemplate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Projecttemplate(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjecttemplatePhase2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplatePhaseᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjecttemplatePhase) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjecttemplatePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplatePhase(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNProjecttemplatePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplatePhase(ctx context.Context, sel ast.SelectionSet, v *idl.ProjecttemplatePhase) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjecttemplatePhase(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjecttemplateResults2csserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateResults(ctx context.Context, sel ast.SelectionSet, v idl.ProjecttemplateResults) graphql.Marshaler {
+	return ec._ProjecttemplateResults(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProjecttemplateResults2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateResults(ctx context.Context, sel ast.SelectionSet, v *idl.ProjecttemplateResults) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjecttemplateResults(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNResource2csserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx context.Context, sel ast.SelectionSet, v idl.Resource) graphql.Marshaler {
@@ -24075,6 +24269,53 @@ func (ec *executionContext) marshalOProjectMilestone2ᚕᚖcsserverᚋinternal�
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNProjectMilestone2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectMilestone(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOProjecttemplate2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Projecttemplate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplate(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

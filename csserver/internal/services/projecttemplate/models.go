@@ -15,10 +15,10 @@ type Projecttemplate struct {
 
 	//---TODO: add fields here
 	Name   string                 `json:"name"`
-	Phases []ProjectTemplatePhase `json:"phases"`
+	Phases []ProjecttemplatePhase `json:"phases"`
 }
 
-type ProjectTemplatePhase struct {
+type ProjecttemplatePhase struct {
 	ID          string `json:"id,omitempty"`
 	PhaseOrder  byte   `json:"phase_order"`
 	Name        string `json:"name"`

@@ -19,7 +19,7 @@ type ProjectBasics {
   description: String!
   status: String!
   startDate: Time
-  ownerID: String
+  ownerEmail: String
 }
 
 
@@ -55,7 +55,7 @@ type ProjectFeature {
   id: String!
   name: String!
   description: String!
-  priority: Float!
+  priority: String!
   status: String!
 }
 
@@ -86,21 +86,6 @@ type ProjectMilestoneTask {
   status: String!
   startDate: Time
   endDate: Time
-}
-
-type Comment {
-  id: String!
-  projectId: String!
-  text: String!
-  resource: Resource!
-  replies: [Comment!]
-  controlFields: ControlFields!
-  likes: [String!]
-  loves: [String!]
-  dislikes: [String!]
-  laughsAt: [String!]
-  acknowledges: [String!]
-  isEdited: Boolean!
 }
 
 
@@ -175,25 +160,6 @@ input UpdateProjectDACI {
   approver: [String]
   contributor: [String]
   informed: [String]
-}
-
-
-input UpdateComment {
-  projectId: String!
-  id: String
-  text: String!
-}
-
-
-input UpdateCommentReply {
-  parentCommentID: String!
-  text: String!
-}
-
-
-input UpdateCommentEmote {
-  commentID: String!
-  emoteType: String!
 }
 
 input UpdateProjectFeature {

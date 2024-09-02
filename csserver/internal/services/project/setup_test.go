@@ -2,6 +2,7 @@ package project
 
 import (
 	"csserver/internal/common"
+	"csserver/internal/services/project/ptypes"
 	"csserver/internal/utils"
 
 	"github.com/google/uuid"
@@ -14,18 +15,18 @@ var testProject = Project{
 	ProjectBasics: &ProjectBasics{
 		Name:        "Test Project",
 		Description: "This is a test project",
-		OwnerID:     "user:123",
-		Status:      Draft,
+		OwnerEmail:  "user:123",
+		Status:      ptypes.Draft,
 	},
 	ProjectCost: &ProjectCost{
 		Ongoing:     utils.ValToRef(100.0),
 		BlendedRate: utils.ValToRef(200.0),
 	},
 	ProjectFeatures: []*ProjectFeature{
-		{ID: utils.ValToRef("projectfeature:1"), Priority: High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
-		{ID: utils.ValToRef("projectfeature:2"), Priority: VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
-		{ID: utils.ValToRef("projectfeature:3"), Priority: VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
-		{ID: utils.ValToRef("projectfeature:4"), Priority: Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
+		{ID: utils.ValToRef("projectfeature:1"), Priority: ptypes.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
+		{ID: utils.ValToRef("projectfeature:2"), Priority: ptypes.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
+		{ID: utils.ValToRef("projectfeature:3"), Priority: ptypes.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
+		{ID: utils.ValToRef("projectfeature:4"), Priority: ptypes.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 	},
 	ProjectValue: &ProjectValue{
 		DiscountRate:   7.0,

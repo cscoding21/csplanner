@@ -1,0 +1,34 @@
+type Comment {
+  id: String!
+  projectId: String!
+  text: String!
+  resource: Resource!
+  replies: [Comment!]
+  controlFields: ControlFields!
+  likes: [String!]
+  loves: [String!]
+  dislikes: [String!]
+  laughsAt: [String!]
+  acknowledges: [String!]
+  isEdited: Boolean!
+}
+
+
+
+input UpdateComment {
+  projectId: String!
+  id: String
+  text: String!
+}
+
+
+input UpdateCommentReply {
+  parentCommentID: String!
+  text: String!
+}
+
+
+input UpdateCommentEmote {
+  commentID: String!
+  emoteType: String!
+}

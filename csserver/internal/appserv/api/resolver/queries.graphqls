@@ -11,7 +11,7 @@ type Query {
     getCommentThread(id: String!): Comment!
         
     findActivity(pageAndFilter: PageAndFilter!): ActivityResults!
-    findAllProjectTemplates: [ImplementationTemplate!]!
+    findAllProjectTemplates: ProjecttemplateResults!
 
     getOrganization: Organization!
 

@@ -27,6 +27,8 @@ github.com/cscoding21/csmap v0.3.3 h1:0cJYNaInBo5Q5eqllEDm3zJmodPa+MKs+zqf/msCY7
 github.com/cscoding21/csmap v0.3.3/go.mod h1:Wn54J4iVD54AHorah0zL5L2obzTT3XfjeONpmLc8x8s=
 github.com/cscoding21/csmap v0.3.4 h1:3T/aPrnNXSmkrhMCUIhBCq2VmLREXog6a0jqjqXPoBg=
 github.com/cscoding21/csmap v0.3.4/go.mod h1:Wn54J4iVD54AHorah0zL5L2obzTT3XfjeONpmLc8x8s=
+github.com/cscoding21/csmap v0.3.5 h1:2oPBRbpQXSPfmTU5jfvqs7mdI9/pIHdgcaWLnLJCdoI=
+github.com/cscoding21/csmap v0.3.5/go.mod h1:Wn54J4iVD54AHorah0zL5L2obzTT3XfjeONpmLc8x8s=
 github.com/cscoding21/csmig v0.0.0-20240705221351-7c961f232527 h1:uxGvaLQ5WHDvT+9TMSm7io+jOzgTI/37W0TbBMF9hHU=
 github.com/cscoding21/csmig v0.0.0-20240705221351-7c961f232527/go.mod h1:wSt8PGxNkPoqv9Kx7zmYrYrONA/9J4lCjn5I2SXl+qE=
 github.com/cscoding21/csmig v0.0.0-20240727154000-df99f45b2202 h1:z0OiyArejK++MGJd5yrTVhvOChOkCvYbGCFfx3Pp0Dw=
