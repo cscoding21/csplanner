@@ -1,23 +1,15 @@
 package resource
 
-import (
-	"context"
-	"csserver/internal/common"
-	"csserver/internal/marshal"
-	"fmt"
-
-	log "github.com/sirupsen/logrus"
-)
-
 // FindResources return a paged list of resources based on filter criteria
+/*
 func (s *ResourceService) FindResources(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[Resource], error) {
 	out := common.NewPagedResults[Resource](paging, filters)
 
 	whereSql, _ := s.DBClient.BuildWhereClauseFromFilters(&filters)
 
-	sql := fmt.Sprintf(`SELECT * 
-			FROM resource 
-			WHERE true 
+	sql := fmt.Sprintf(`SELECT *
+			FROM resource
+			WHERE true
 				AND deleted_at is null
 				%s
 			ORDER BY name
@@ -38,3 +30,4 @@ func (s *ResourceService) FindResources(ctx context.Context, paging common.Pagin
 	out.Results = common.RefToVal(unpacked)
 	return out, nil
 }
+*/

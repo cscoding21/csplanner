@@ -68,6 +68,7 @@ func GenService(props GenProps) error {
 	builder.WriteString(csgen.ExecuteTemplate("service_struct", serviceStructTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_getbyid", getByIDTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_findall", findAllTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_find", findTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_create", createTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_update", updateTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_delete", deleteTemplateString, props))
@@ -101,16 +102,19 @@ var serviceStructTemplateString = `
 type {{.ServiceName}}Service struct {
 	DBClient      surreal.DBClient
 	ContextHelper interfaces.ContextHelpers
+	PubSub nats.PubSubProvider
 }
 
 // New{{.ServiceName}}Service creates a new {{.ServiceName}} service.
 func New{{.ServiceName}}Service(
 	db surreal.DBClient,
-	ch config.ContextHelper) *{{.ServiceName}}Service {
+	ch config.ContextHelper,
+	ps nats.PubSubProvider) *{{.ServiceName}}Service {
 
 	return &{{.ServiceName}}Service{
 		DBClient: db,
 		ContextHelper: &ch,
+		PubSub: ps,
 	}
 }
 
@@ -230,6 +234,33 @@ func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}s(ctx context.Context) 
 	return pagingResults, nil
 }
 	
+`
+
+var findTemplateString = `
+// Find{{.ServiceName}} return a paged list of {{.ServiceName}} based on filter criteria
+func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[{{.ServiceName}}], error) {
+	out := common.NewPagedResults[{{.ServiceName}}](paging, filters)
+
+	whereSql, _ := s.DBClient.BuildWhereClauseFromFilters(&filters)
+
+	sql := fmt.Sprintf("SELECT * FROM resource WHERE true AND deleted_at is null %s ORDER BY name", whereSql)
+
+	rawResults, count, err := s.DBClient.FindPagedObjects(sql, paging, filters)
+	if err != nil {
+		log.Error(err)
+		return out, err
+	}
+
+	out.Pagination.TotalResults = &count
+	unpacked, err := marshal.SurrealSmartUnmarshal[[]{{.ServiceName}}](rawResults)
+	if err != nil {
+		return out, err
+	}
+
+	out.Results = common.RefToVal(unpacked)
+	return out, nil
+}
+
 `
 
 var modelsTemplateString = `

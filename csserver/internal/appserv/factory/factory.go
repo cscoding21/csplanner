@@ -3,7 +3,7 @@ package factory
 import (
 	"context"
 	"csserver/internal/config"
-	pubsub "csserver/internal/providers/nats"
+	"csserver/internal/providers/nats"
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/activity"
 	"csserver/internal/services/iam/auth"
@@ -76,8 +76,8 @@ func GetDBClient() *surreal.DBClient {
 }
 
 // GetPubSubClient return a pubsub client
-func GetPubSubClient() (pubsub.PubSubProvider, error) {
-	ps := pubsub.NewPubSubProvider(
+func GetPubSubClient() (nats.PubSubProvider, error) {
+	ps := nats.NewPubSubProvider(
 		config.Config.PubSub.Host,
 		config.Config.PubSub.Name,
 		config.Config.PubSub.SubjectFormat,
@@ -96,9 +96,15 @@ func GetKeycloakClient() *gocloak.GoCloak {
 // GetAuthService get user service instance
 func GetAuthService(ctx context.Context) *auth.AuthService {
 	kc := GetKeycloakClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
 
 	return auth.NewAuthService(
 		kc,
+		pubsub,
 		config.Config.Security.KeycloakClientID,
 		config.Config.Security.KeycloakClientSecret,
 		config.Config.Security.KeycloakRealm)
@@ -108,16 +114,28 @@ func GetAuthService(ctx context.Context) *auth.AuthService {
 func GetActivityService() *activity.ActivityService {
 	surrealClient := GetDBClient()
 	contextHelper := config.ContextHelper{}
-	return activity.NewActivityService(*surrealClient, contextHelper)
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+	return activity.NewActivityService(*surrealClient, contextHelper, pubsub)
 }
 
 // GetUserService get user service instance
 func GetUserService() *user.UserService {
 	contextHelper := config.ContextHelper{}
 	client := GetKeycloakClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
 	svc := user.NewUserService(
 		contextHelper,
 		client,
+		pubsub,
 		config.Config.Security.KeycloakRealm,
 		config.Config.Security.KeycloakAdminUser,
 		config.Config.Security.KeycloakAdminPass)
@@ -128,23 +146,47 @@ func GetUserService() *user.UserService {
 // GetListService get list service instance
 func GetListService() *list.ListService {
 	surrealClient := GetDBClient()
-	return list.NewListService(*surrealClient, config.ContextHelper{})
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return list.NewListService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetResourceService return a resource service instance
 func GetResourceService() *resource.ResourceService {
 	surrealClient := GetDBClient()
-	return resource.NewResourceService(*surrealClient, config.ContextHelper{})
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return resource.NewResourceService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetProjectService return a project service instance
 func GetProjectService() *project.ProjectService {
 	surrealClient := GetDBClient()
-	return project.NewProjectService(*surrealClient, config.ContextHelper{})
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return project.NewProjectService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetProjectTemplateService return a project template service instance
 func GetProjectTemplateService() *projecttemplate.ProjecttemplateService {
 	surrealClient := GetDBClient()
-	return projecttemplate.NewProjecttemplateService(*surrealClient, config.ContextHelper{})
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return projecttemplate.NewProjecttemplateService(*surrealClient, config.ContextHelper{}, pubsub)
 }

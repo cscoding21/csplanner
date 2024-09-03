@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"csserver/internal/providers/nats"
 	"csserver/internal/services/iam/user"
 	"fmt"
 
@@ -27,10 +28,12 @@ type AuthService struct {
 	KCClientID     string
 	KCClientSecret string
 	KCRealm        string
+	PubSub         nats.PubSubProvider
 }
 
 // NewAuthService return an AuthService instance with proper configuration
 func NewAuthService(client *gocloak.GoCloak,
+	PubSubProvider nats.PubSubProvider,
 	clientID string,
 	clientSecret string,
 	realm string) *AuthService {
@@ -39,6 +42,7 @@ func NewAuthService(client *gocloak.GoCloak,
 		KCClientID:     clientID,
 		KCClientSecret: clientSecret,
 		KCRealm:        realm,
+		PubSub:         PubSubProvider,
 	}
 }
 

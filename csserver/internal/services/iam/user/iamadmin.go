@@ -7,6 +7,7 @@ import (
 
 	"csserver/internal/common"
 	"csserver/internal/config"
+	"csserver/internal/providers/nats"
 
 	"github.com/Nerzal/gocloak/v13"
 )
@@ -17,11 +18,13 @@ type UserService struct {
 	KCAdminUser   string
 	KCAdminPass   string
 	ContextHelper config.ContextHelper
+	PubSub        nats.PubSubProvider
 }
 
 func NewUserService(
 	ch config.ContextHelper,
 	client *gocloak.GoCloak,
+	pubsub nats.PubSubProvider,
 	realm string,
 	adminUser string,
 	adminPass string,
@@ -32,6 +35,7 @@ func NewUserService(
 	out.KCRealm = realm
 	out.KCAdminUser = adminUser
 	out.KCAdminPass = adminPass
+	out.PubSub = pubsub
 
 	return out
 }
