@@ -88,7 +88,7 @@ func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.Page
 		return nil, err
 	}
 
-	pg, fi := csmap.GetPageAndFilterIDL(activityResults.Pagination, activityResults.Filters)
+	pg, fi := csmap.GetPageAndFilterIdl(activityResults.Pagination, activityResults.Filters)
 	out := idl.ActivityResults{
 		Paging:  &pg,
 		Filters: &fi,
@@ -106,7 +106,7 @@ func (r *queryResolver) FindAllProjectTemplates(ctx context.Context) (*idl.Proje
 		return nil, err
 	}
 
-	pg, fi := csmap.GetPageAndFilterIDL(results.Pagination, results.Filters)
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
 	out := idl.ProjecttemplateResults{
 		Paging:  &pg,
 		Filters: &fi,
@@ -129,7 +129,7 @@ func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, err
 		return nil, err
 	}
 
-	pg, fi := csmap.GetPageAndFilterIDL(userResults.Pagination, userResults.Filters)
+	pg, fi := csmap.GetPageAndFilterIdl(userResults.Pagination, userResults.Filters)
 	out := idl.UserResults{
 		Paging:  &pg,
 		Filters: &fi,
@@ -147,7 +147,7 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 		return nil, err
 	}
 
-	pg, fi := csmap.GetPageAndFilterIDL(results.Pagination, results.Filters)
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
 	out := idl.ResourceResults{
 		Paging:  &pg,
 		Filters: &fi,
@@ -160,13 +160,13 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 // FindResources is the resolver for the findResources field.
 func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.ResourceResults, error) {
 	rs := factory.GetResourceService()
-	//paging, filters :=
-	results, err := rs.FindAllResources(ctx)
+	paging, filters := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
+	results, err := rs.FindResources(ctx, paging, filters)
 	if err != nil {
 		return nil, err
 	}
 
-	pg, fi := csmap.GetPageAndFilterIDL(results.Pagination, results.Filters)
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
 	out := idl.ResourceResults{
 		Paging:  &pg,
 		Filters: &fi,
@@ -202,7 +202,7 @@ func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, err
 		return nil, err
 	}
 
-	pg, fi := csmap.GetPageAndFilterIDL(listResults.Pagination, listResults.Filters)
+	pg, fi := csmap.GetPageAndFilterIdl(listResults.Pagination, listResults.Filters)
 	out := idl.ListResults{
 		Paging:  &pg,
 		Filters: &fi,

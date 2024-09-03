@@ -167,3 +167,8 @@ func (db *DBClient) Execute(sql string, vars map[string]interface{}) error {
 	_, err := db.Client.Query(sql, vars)
 	return common.HandleReturn(err)
 }
+
+// BuildWhereClauseFromFilters convenience function to generate a where clause based on the input filters
+func (db *DBClient) BuildWhereClauseFromFilters(filters *common.Filters) (string, map[string]interface{}) {
+	return buildWhereClauseFromFilters(filters)
+}

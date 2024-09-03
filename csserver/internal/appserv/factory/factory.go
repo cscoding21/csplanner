@@ -3,6 +3,7 @@ package factory
 import (
 	"context"
 	"csserver/internal/config"
+	pubsub "csserver/internal/providers/nats"
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/activity"
 	"csserver/internal/services/iam/auth"
@@ -72,6 +73,18 @@ func GetDBClient() *surreal.DBClient {
 	_dbclient = surreal.NewDBClient(*_db)
 
 	return _dbclient
+}
+
+// GetPubSubClient return a pubsub client
+func GetPubSubClient() (pubsub.PubSubProvider, error) {
+	ps := pubsub.NewPubSubProvider(
+		config.Config.PubSub.Host,
+		config.Config.PubSub.Name,
+		config.Config.PubSub.SubjectFormat,
+		config.Config.PubSub.StreamName,
+	)
+
+	return ps, nil
 }
 
 // GetKeycloakClient return a Keycloak client

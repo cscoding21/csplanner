@@ -4,25 +4,37 @@ import (
 	"context"
 	"csserver/internal/common"
 	"csserver/internal/marshal"
+	"fmt"
 
 	log "github.com/sirupsen/logrus"
 )
 
+// FindResources return a paged list of resources based on filter criteria
 func (s *ResourceService) FindResources(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[Resource], error) {
 	out := common.NewPagedResults[Resource](paging, filters)
 
-	rawResults, count, err := s.DBClient.FindPagedObjects("", paging, filters)
+	whereSql, _ := s.DBClient.BuildWhereClauseFromFilters(&filters)
+
+	sql := fmt.Sprintf(`SELECT * 
+			FROM resource 
+			WHERE true 
+				AND deleted_at is null
+				%s
+			ORDER BY name
+			`, whereSql)
+
+	rawResults, count, err := s.DBClient.FindPagedObjects(sql, paging, filters)
 	if err != nil {
 		log.Error()
 		return out, err
 	}
 
 	out.Pagination.TotalResults = &count
-	_, err = marshal.SurrealUnmarshalRaw[[]Resource](rawResults, out.Results)
+	unpacked, err := marshal.SurrealSmartUnmarshal[[]Resource](rawResults)
 	if err != nil {
-		log.Error()
 		return out, err
 	}
 
+	out.Results = common.RefToVal(unpacked)
 	return out, nil
 }

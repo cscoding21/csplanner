@@ -77,6 +77,9 @@ func setDefaults() {
 
 	//Pub-Sub
 	viper.SetDefault("pubsub.host", "nats://nats.nats.svc:4222")
+	viper.SetDefault("pubsub.subjectformat", "%s.%s.%s.%s")
+	viper.SetDefault("pubsub.streamname", "CSPLANNER")
+	viper.SetDefault("pubsub.name", "csplanner-nats")
 
 	//Services
 	viper.SetDefault("services.aihost", "http://localhost:7000/bot")
@@ -129,7 +132,10 @@ type ServerConfig struct {
 }
 
 type PubSubConfig struct {
-	Host string
+	Host          string
+	SubjectFormat string
+	StreamName    string
+	Name          string
 }
 
 type ServicesConfig struct {

@@ -8,7 +8,7 @@ import (
 )
 
 // GetPageAndFilterIDL return pagination and filters objects converted to IDL
-func GetPageAndFilterIDL(paging common.Pagination, filters common.Filters) (idl.Pagination, idl.Filters) {
+func GetPageAndFilterIdl(paging common.Pagination, filters common.Filters) (idl.Pagination, idl.Filters) {
 	p := PaginationCommonToIdl(paging)
 	f := FiltersCommonToIdl(filters)
 
@@ -16,10 +16,25 @@ func GetPageAndFilterIDL(paging common.Pagination, filters common.Filters) (idl.
 }
 
 // GetPageAndFilterModel return pagination and filters objects converted to IDL
-func GetPageAndFilterModel(paging idl.Pagination, filters idl.Filters) (common.Pagination, common.Filters) {
+func GetPageAndFilterModel(paging idl.InputPagination, filters *idl.InputFilters) (common.Pagination, common.Filters) {
 	//---TODO: insert the proper mapping code
-	p := common.Pagination{}
+	p := common.Pagination{
+		PageNumber:     paging.PageNumber,
+		ResultsPerPage: paging.ResultsPerPage,
+	}
 	f := common.Filters{Filters: []common.Filter{}}
+
+	if filters != nil {
+		for _, fil := range filters.Filters {
+			thisFilter := common.Filter{
+				Key:       fil.Key,
+				Value:     fil.Value,
+				Operation: common.FilterOperation(fil.Operation),
+			}
+
+			f.Filters = append(f.Filters, thisFilter)
+		}
+	}
 
 	return p, f
 }

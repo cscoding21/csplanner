@@ -1,6 +1,7 @@
 package surreal
 
 import (
+	"fmt"
 	"strings"
 
 	"csserver/internal/common"
@@ -40,3 +41,54 @@ func parseCountFromSurrealResult(raw interface{}) (*int, error) {
 
 	return &count, nil
 }
+
+func buildWhereClauseFromFilters(filters *common.Filters) (string, map[string]interface{}) {
+	if filters == nil || len(filters.Filters) == 0 {
+		return "", filters.GetFiltersAsMap()
+	}
+
+	builder := strings.Builder{}
+
+	for _, f := range filters.Filters {
+		stringFormat := getPhraseFromFilterOp(f.Operation)
+		builder.WriteString(fmt.Sprintf(stringFormat, f.Key, f.Key))
+	}
+
+	return builder.String(), filters.GetFiltersAsMap()
+}
+
+func getPhraseFromFilterOp(fo common.FilterOperation) string {
+	out := ""
+
+	switch fo {
+	case (common.FilterOperationEqual):
+		return "AND %s = $%v \n"
+	case (common.FilterOperationNotEqual):
+		return "AND %s != $%v \n"
+	case (common.FilterOperationGreater):
+		return "AND %s > $%v \n"
+	case (common.FilterOperationLess):
+		return "AND %s < $%v \n"
+	case (common.FilterOperationGreaterOrEqual):
+		return "AND %s >= $%v \n"
+	case (common.FilterOperationLessOrEqual):
+		return "AND %s <= $%v \n"
+	case (common.FilterOperationIn):
+		return "AND %s IN ($%v) \n"
+	case (common.FilterOperationNotIn):
+		return "AND %s NOT IN ($%v) \n"
+	}
+
+	return out
+}
+
+/*
+FilterOperationEqual          FilterOperation = "eq"
+	FilterOperationNotEqual       FilterOperation = "ne"
+	FilterOperationGreater        FilterOperation = "gt"
+	FilterOperationLess           FilterOperation = "lt"
+	FilterOperationGreaterOrEqual FilterOperation = "ge"
+	FilterOperationLessOrEqual    FilterOperation = "le"
+	FilterOperationIn             FilterOperation = "in"
+	FilterOperationNotIn          FilterOperation = "nin"
+*/
