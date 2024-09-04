@@ -24,6 +24,4 @@ type Query {
 
     findAllLists: ListResults!
     getList(nameOrID: String!): List
-
-    getArtifact(id: String): Artifact
 }

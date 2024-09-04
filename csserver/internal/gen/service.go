@@ -243,7 +243,7 @@ func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, pag
 
 	whereSql, _ := s.DBClient.BuildWhereClauseFromFilters(&filters)
 
-	sql := fmt.Sprintf("SELECT * FROM resource WHERE true AND deleted_at is null %s ORDER BY name", whereSql)
+	sql := fmt.Sprintf("SELECT * FROM {{.ServiceLower}} WHERE true AND deleted_at is null %s ORDER BY name", whereSql)
 
 	rawResults, count, err := s.DBClient.FindPagedObjects(sql, paging, filters)
 	if err != nil {

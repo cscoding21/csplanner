@@ -42,7 +42,22 @@ func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, erro
 
 // FindProjects is the resolver for the findProjects field.
 func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ProjectResults, error) {
-	panic(fmt.Errorf("not implemented: FindProjects - findProjects"))
+	service := factory.GetProjectService()
+	paging, filters := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
+
+	results, err := service.FindProjects(ctx, paging, filters)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	out := idl.ProjectResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ProjectProjectToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
 }
 
 // GetProject is the resolver for the getProject field.
@@ -223,11 +238,6 @@ func (r *queryResolver) GetList(ctx context.Context, nameOrID string) (*idl.List
 	out := csmap.ListListToIdl(*obj)
 
 	return &out, nil
-}
-
-// GetArtifact is the resolver for the getArtifact field.
-func (r *queryResolver) GetArtifact(ctx context.Context, id *string) (*idl.Artifact, error) {
-	panic(fmt.Errorf("not implemented: GetArtifact - getArtifact"))
 }
 
 // Query returns graph.QueryResolver implementation.

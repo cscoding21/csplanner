@@ -3,7 +3,7 @@
 package user
 
 type User struct {
-	ID              string `json:"id, omitempty"`
+	ID              string `json:"id,omitempty"`
 	FirstName       string `json:"firstName" csval:"req"`
 	LastName        string `json:"lastName" csval:"req"`
 	Email           string `json:"email" csval:"req,email"`
