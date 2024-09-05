@@ -1,0 +1,27 @@
+query findAllLists {
+  findAllLists { 
+    paging {
+      ...pagingFragment
+    }
+    results {
+      id
+      name
+      values {
+        value
+        name
+      }
+    }
+  }
+}
+
+
+query getList($nameOrID: String!) {
+  getList(nameOrID: $nameOrID) { 
+    id
+    name
+    values {
+      value
+      name
+    }
+  }
+}

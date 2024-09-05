@@ -1,0 +1,88 @@
+fragment commentFragment on Comment {
+    id
+    text
+    isEdited
+    projectId
+    resource {
+      ...resourceFragment
+    }
+    replies {
+        id
+        text
+        isEdited
+        resource {
+        ...resourceFragment
+        }
+        controlFields {
+        ...controlFieldsFragment
+        }
+        likes 
+        loves 
+        dislikes 
+        laughsAt 
+        acknowledges
+    }
+    likes 
+    loves 
+    dislikes 
+    laughsAt 
+    acknowledges 
+}
+
+
+mutation createProjectComment ($comment: UpdateComment!) {
+  createProjectComment (input: $comment) {
+      status {
+        ...statusFragment
+      }
+      comment {
+        id
+        text
+      }
+  }
+}
+
+mutation updateProjectComment ($comment: UpdateComment!) {
+  updateProjectComment (input: $comment) {
+      status {
+        ...statusFragment
+      }
+      comment {
+        id
+        text
+      }
+  }
+}
+
+mutation createProjectCommentReply ($reply: UpdateCommentReply!) {
+  createProjectCommentReply (input: $reply) {
+      status {
+        ...statusFragment
+      }
+      comment {
+        id
+        text
+      }
+  }
+}
+
+
+mutation deleteProjectComment ($id: String!) {
+  deleteProjectComment(id: $id) {
+    ...statusFragment
+  }
+}
+
+
+query findProjectComments($projectID: String!) {
+  findProjectComments(projectID: $projectID) {
+    ...commentFragment
+  }
+}
+
+
+query getCommentThread($commentID: String!) {
+  getCommentThread(id: $commentID) {
+    ...commentFragment
+  }
+}

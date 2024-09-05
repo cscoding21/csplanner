@@ -1,0 +1,84 @@
+fragment resourceFragment on Resource {
+  name
+    id
+    user {
+      firstName
+      lastName
+      email
+    }
+    role
+    profileImage
+    isBot
+    skills {
+      id
+      name
+      proficiency
+    }
+}
+
+mutation updateResourceSkill($input: UpdateSkill!) {
+  updateResourceSkill (input: $input)  {
+    success
+    message
+  }
+}
+
+
+mutation deleteResourceSkill($resourceID: String!, $skillID: String!) {
+  deleteResourceSkill (resourceID: $resourceID, skillID: $skillID)  {
+    success
+    message
+  }
+}
+
+
+mutation createResource ($input: UpdateResource!){
+  createResource (input: $input)  {
+    status {
+      success
+      message
+    }
+    resource {
+      ...resourceFragment
+    }
+  }
+}
+
+
+mutation updateResource ($input: UpdateResource!){
+  updateResource (input: $input)  {
+    status {
+      ...statusFragment
+    }
+    resource {
+      ...resourceFragment 
+    }
+  }
+}
+
+
+mutation deleteResource ($id: String!) {
+  deleteResource(id: $id) {
+    success
+    message
+  }
+}
+
+
+query getResource($id: String!) {
+  getResource(id: $id) {
+    ...resourceFragment
+  }
+}
+
+
+query findAllResources {
+  findAllResources { 
+    paging {
+      ...pagingFragment
+    }
+    results {
+      ...resourceFragment
+    }
+  }
+}

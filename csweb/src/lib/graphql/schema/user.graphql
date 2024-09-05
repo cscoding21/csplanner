@@ -1,0 +1,13 @@
+query findAllUsers {
+  findAllUsers {
+    paging {
+      ...pagingFragment
+    }
+    results {
+      firstName
+      lastName
+      email
+      id
+    }
+  }
+}

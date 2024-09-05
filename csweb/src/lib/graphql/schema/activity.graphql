@@ -1,0 +1,23 @@
+query findActivity($input: PageAndFilter!) {
+  findActivity(pageAndFilter: $input) {
+    paging {
+      ...pagingFragment
+    }
+    results {
+      id
+      summary
+      detail
+      context 
+      targetID
+      type
+      resource {
+        name
+        id
+        profileImage
+        user {
+          email
+        }
+      }
+    }
+  }
+}

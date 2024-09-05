@@ -1,0 +1,30 @@
+mutation login($creds: UpdateLogin!) {
+  login (creds: $creds)  {
+    status {
+      success
+      message
+    }
+    token
+    user {
+        email
+        firstName
+        lastName
+        profileImage
+    }
+    resource {
+      name
+      id
+      profileImage
+    }
+  }
+}
+
+
+query currentUser {
+  currentUser {
+    firstName
+    lastName
+    email
+    profileImage
+  }
+}

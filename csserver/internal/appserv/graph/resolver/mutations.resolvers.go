@@ -36,8 +36,20 @@ func (r *mutationResolver) Login(ctx context.Context, creds idl.UpdateLogin) (*i
 		return nil, err
 	}
 
+	status := idl.Status{
+		Success: resp.Success,
+		Message: []string{resp.Message},
+	}
+	user := idl.User{
+		FirstName: resp.User.FirstName,
+		LastName:  resp.User.LastName,
+		Email:     resp.User.Email,
+	}
+
 	lr := idl.LoginResult{
-		Token: &resp.Token,
+		Token:  &resp.Token,
+		Status: &status,
+		User:   &user,
 	}
 
 	return &lr, nil

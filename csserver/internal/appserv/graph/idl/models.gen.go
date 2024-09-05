@@ -146,6 +146,7 @@ type Notification struct {
 	InitiatorEmail        string     `json:"initiatorEmail"`
 	InitiatorProfileImage *string    `json:"initiatorProfileImage,omitempty"`
 	CreatedAt             *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt             *time.Time `json:"updatedAt,omitempty"`
 }
 
 type NotificationResults struct {
