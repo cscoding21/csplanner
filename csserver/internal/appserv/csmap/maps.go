@@ -39,8 +39,8 @@ func GetPageAndFilterModel(paging idl.InputPagination, filters *idl.InputFilters
 	return p, f
 }
 
-// GetValidationResultIDL create a validation result IDL from the caval package objects
-func GetValidationResultIDL(result validate.ValidationResult) idl.ValidationResult {
+// GetValidationResultIdl create a validation result IDL from the caval package objects
+func GetValidationResultIdl(result validate.ValidationResult) idl.ValidationResult {
 	out := idl.ValidationResult{
 		Pass:     result.Pass,
 		Messages: []*idl.ValidationMessage{},

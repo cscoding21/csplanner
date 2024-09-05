@@ -8,14 +8,12 @@ export const login = async (creds: UpdateLogin) => {
     const client = getApolloClient()
 
     return client.mutate({ mutation: LoginDocument, variables: { creds } }).then(result => {
-        console.log(result)
-
         setLoggedInUser(result.data.login)
 
         return result
     }).catch(err => {
         console.error(err)
-
+        
         return error(err)
     });
 }

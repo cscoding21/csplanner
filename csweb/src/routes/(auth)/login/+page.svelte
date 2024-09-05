@@ -6,19 +6,17 @@
     import { EmailInput, PasswordInput } from "$lib/components/forms"
     import { AlertError } from "$lib/components/messages"
 
-    export let errors: any = {}
-    export let lf = loginForm
-
-    let loginFailed:Boolean = false
+    let errors:any = $state({})
+    let loginFailed:Boolean = $state(false)
 
     const submitForm = async () => {
 		errors = {}
 
-		const bs = loginSchema.validate(lf, { abortEarly: false })
+		const bs = loginSchema.validate(loginForm, { abortEarly: false })
 			.then(() => {
-				console.log('validation passed')
+				console.log('client-size validation passed')
 
-                login({ email: lf.email, password: lf.password })
+                login({ email: loginForm.email, password: loginForm.password })
                     .then((r) => {
                         console.log(r.data.login.status?.success.valueOf())
                         if(r.data.login.status?.success.valueOf()) {
@@ -27,6 +25,9 @@
                         } else {
                             loginFailed = true
                         }
+                    }).catch((err) => {
+                        loginFailed = true
+                        console.log(err)
                     })
 			})
 			.catch((err) => {
@@ -35,28 +36,24 @@
 				console.log(errors);
 			});
     }
-
-    $: lf
-	$: errors
-    $: loginFailed
 </script>
   
 
 <div class="mt-8">
 <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
 <form class="space-y-6" action="#">
-<h5 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to Analyzer</h5>
+<h5 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to <span class="text-md text-amber-500">cs</span>Planner</h5>
     <AlertError showAlert={loginFailed} title="Login Attempt Failed" message="We were unable to validate your login credentials"/>
     
-    <EmailInput bind:value={lf.email} 
+    <EmailInput bind:value={loginForm.email} 
         fieldName="Email" 
         error={errors.email} />
     
-    <PasswordInput bind:value={lf.password} 
+    <PasswordInput bind:value={loginForm.password} 
         fieldName="Password" 
         error={errors.password} />
 
-    <button type="button" on:click={submitForm} class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
+    <button type="button" onclick={submitForm} class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
         Not registered? <a href="/register" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a> <br />
         Forgot password? <a href="/forgot" class="text-blue-700 hover:underline dark:text-blue-500">Reset</a>

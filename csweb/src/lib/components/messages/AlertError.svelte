@@ -1,7 +1,5 @@
 <script lang="ts">
-    export let showAlert:Boolean = false
-    export let title:string = ""
-    export let message:string = ""
+    let { showAlert, title, message = $bindable() } = $props()
 </script>
 
 
@@ -12,7 +10,7 @@
     </svg>
     <span class="sr-only">Info</span>
     <div>
-      <span class="font-medium">{title}</span> {message}
+      <span class="font-medium">{title}</span>: {message}
     </div>
   </div>
 {/if}

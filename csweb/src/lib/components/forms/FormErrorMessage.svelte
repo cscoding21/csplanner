@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let message: string
+    let { message = $bindable() } = $props()
 </script>
 
 {#if message}

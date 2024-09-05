@@ -41,7 +41,7 @@
     <div class="flex items-center md:order-3">
       <DarkMode class="text-2xl mr-2" />
       <!-- <NotificationList /> -->
-      <Avatar id="avatar-menu" src={loginInfo.resource?.profileImage || ""} class="ml-6 cursor-pointer">{getInitialsFromName(loginInfo.resource?.name || "")}</Avatar>
+      <Avatar id="avatar-menu" src={loginInfo.resource?.profileImage || ""} class="ml-6 cursor-pointer">{getInitialsFromName(loginInfo.user?.firstName + " " + loginInfo.user?.lastName || "")}</Avatar>
       <NavHamburger class1="w-full md:flex md:w-auto md:order-1" />
     </div>
     <Dropdown placement="bottom" triggeredBy="#avatar-menu">

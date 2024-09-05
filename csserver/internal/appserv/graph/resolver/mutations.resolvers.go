@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
@@ -36,20 +37,22 @@ func (r *mutationResolver) Login(ctx context.Context, creds idl.UpdateLogin) (*i
 		return nil, err
 	}
 
+	us := factory.GetUserService()
+	user, err := us.GetUser(ctx, creds.Email)
+	if err != nil {
+		return nil, err
+	}
+
 	status := idl.Status{
 		Success: resp.Success,
 		Message: []string{resp.Message},
 	}
-	user := idl.User{
-		FirstName: resp.User.FirstName,
-		LastName:  resp.User.LastName,
-		Email:     resp.User.Email,
-	}
+	outUser := csmap.UserUserToIdl(*user)
 
 	lr := idl.LoginResult{
 		Token:  &resp.Token,
 		Status: &status,
-		User:   &user,
+		User:   &outUser,
 	}
 
 	return &lr, nil
