@@ -1,0 +1,20 @@
+config:
+  jetstream:
+    enabled: true
+
+    fileStore:
+        enabled: true
+        dir: /mnt/data/nats
+        pvc:
+          enabled: false
+          size: 20Gi
+          storageClassName: standard
+
+    memoryStore:
+      enabled: true
+      # ensure that container has a sufficient memory limit greater than maxSize
+      maxSize: 64Kb
+      #maxSize: 1Gi
+
+  natsBox:
+    enabled: false

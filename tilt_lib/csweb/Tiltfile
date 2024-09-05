@@ -1,0 +1,23 @@
+# -*- mode: Python -*-
+
+load('ext://namespace', 'namespace_create')
+load('ext://helm_resource', 'helm_resource')
+
+NAMESPACE = 'app'
+
+def setup_csweb():
+    namespace_create(NAMESPACE, allow_duplicates=True)
+
+    docker_build(
+        'csplanner-csweb', 
+        './csweb', 
+        dockerfile = 'csweb/Dockerfile'
+    )
+
+    k8s_yaml(
+        helm(
+            './deploy/helm/csweb',
+            name = 'csweb',
+            namespace = NAMESPACE
+        )
+    )
