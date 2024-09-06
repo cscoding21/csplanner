@@ -1,3 +1,9 @@
 export { default as EmailInput } from './EmailInput.svelte';
 export { default as FormErrorMessage } from './FormErrorMessage.svelte';
+export { default as MoneyInput } from './MoneyInput.svelte';
+export { default as NumberInput } from './NumberInput.svelte';
 export { default as PasswordInput } from './PasswordInput.svelte';
+export { default as PercentInput } from './PercentInput.svelte';
+export { default as SelectInput } from './SelectInput.svelte';
+export { default as TextAreaInput } from './TextAreaInput.svelte';
+export { default as TextInput } from './TextInput.svelte';

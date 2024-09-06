@@ -1,9 +1,6 @@
 <script lang="ts">
     import { toasts } from "$lib/stores/toasts";
     import { Toast } from "$lib/components/messages";
-    import { createEventDispatcher } from "svelte";
-
-    const dispatch = createEventDispatcher();
 </script>
 
 
