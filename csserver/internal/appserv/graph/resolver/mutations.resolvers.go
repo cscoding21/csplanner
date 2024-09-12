@@ -6,11 +6,8 @@ package resolver
 
 import (
 	"context"
-	"csserver/internal/appserv/csmap"
-	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
-	"csserver/internal/services/iam/auth"
 	"fmt"
 )
 
@@ -22,77 +19,6 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input idl.UpdateUser)
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
 	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
-}
-
-// Login is the resolver for the login field.
-func (r *mutationResolver) Login(ctx context.Context, creds idl.UpdateLogin) (*idl.LoginResult, error) {
-	ae := factory.GetAuthService(ctx)
-	cr := auth.AuthCredentials{
-		Username: creds.Email,
-		Password: creds.Password,
-	}
-
-	resp, err := ae.Authenticate(ctx, cr)
-	if err != nil {
-		return nil, err
-	}
-
-	us := factory.GetUserService()
-	user, err := us.GetUser(ctx, creds.Email)
-	if err != nil {
-		return nil, err
-	}
-
-	status := idl.Status{
-		Success: resp.Success,
-		Message: []string{resp.Message},
-	}
-	outUser := csmap.UserUserToIdl(*user)
-
-	lr := idl.LoginResult{
-		Token:        &resp.Token,
-		RefreshToken: &resp.RefreshToken,
-		Status:       &status,
-		User:         &outUser,
-	}
-
-	return &lr, nil
-}
-
-// RefreshToken is the resolver for the refreshToken field.
-func (r *mutationResolver) RefreshToken(ctx context.Context, input idl.UpdateRefresh) (*idl.LoginResult, error) {
-	as := factory.GetAuthService(ctx)
-
-	resp, err := as.RefreshToken(ctx, input.RefreshToken)
-	if err != nil {
-		return nil, err
-	}
-
-	status := idl.Status{
-		Success: resp.Success,
-		Message: []string{resp.Message},
-	}
-
-	lr := idl.LoginResult{
-		Token:        &resp.Token,
-		RefreshToken: &resp.RefreshToken,
-		Status:       &status,
-	}
-
-	return &lr, nil
-}
-
-// Signout is the resolver for the signout field.
-func (r *mutationResolver) Signout(ctx context.Context, input idl.UpdateRefresh) (*idl.Status, error) {
-	ae := factory.GetAuthService(ctx)
-	err := ae.Signout(ctx, input.RefreshToken)
-
-	status := &idl.Status{
-		Success: err == nil,
-		Message: []string{},
-	}
-
-	return status, err
 }
 
 // CreateProject is the resolver for the createProject field.

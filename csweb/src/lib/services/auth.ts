@@ -1,10 +1,15 @@
 import { appConfig } from '$lib/appConfig'
-import type { User, UpdateLogin } from "$lib/graphql/generated/sdk";
+import type { User } from "$lib/graphql/generated/sdk";
 import { goto } from '$app/navigation';
 import { getCookie, deleteCookie } from '$lib/utils/helpers'
 
 let user:User | undefined
 let refreshId:ReturnType<typeof setInterval>;
+
+type UpdateLogin = {
+  email: string,
+  password: string,
+}
 
 
 export function authService() {
@@ -33,7 +38,7 @@ export function authService() {
           decodeUser(data.accessToken)
 
           //---refresh the token on the configured interval
-          refreshId = setInterval(refresh, appConfig.tokenRefreshMinutes * 1000 * 60)
+          refreshCycle()
           console.log("setting refresh interval", refreshId)
 
           return true
@@ -52,39 +57,45 @@ export function authService() {
    */
   function signout():Promise<boolean> {
     const refreshToken = getRefreshToken()
+    const accessToken = getAccessToken()
+
+    console.log(refreshToken)
+    console.log(accessToken)
 
     const request = new Request(appConfig.signoutUrl, {
       method: "POST",
       body: JSON.stringify({ refreshToken  }),
       headers: {
         "Content-Type": "application/json",
-        "authorization": getAccessToken(),
+        "authorization": accessToken,
       },
     });
 
     return fetch(request)
-      .then(response => response.json())
+      .then(response => {
+        if(response.status === 403) {
+          //---access token already expired
+          cleanup()
+          return true
+        }
+        response.json()
+      })
       .then(data => { 
         console.log(data)
-        if(data.success) {
-          //---TODO: come up with a better strategy for local handling
-          deleteCookie("accessToken")
-          deleteCookie("refreshToken")
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-
-          //---refresh the token on the configured interval
-          clearInterval(refreshId)
-
-          return true
-        } else {
-          return false
-        }
+        cleanup()
+        return true
     }).catch (err => {
       console.error("signout error", err)
-
-      return false
+      cleanup()
+      return true
     })
+  }
+
+  function cleanup() {
+    deleteCookie("accessToken")
+    deleteCookie("refreshToken")
+
+    clearInterval(refreshId)
   }
 
 
@@ -124,6 +135,26 @@ export function authService() {
         return false
       })
     }
+
+  
+  /**
+   * This will start an inverval that updates the access token behind the scenes.
+   * It is 
+   */
+  function refreshCycle() {
+    const accessToken = getAccessToken()
+    const refreshToken = getRefreshToken()
+
+    if (accessToken && refreshToken) {
+      console.log("begin refresh cycle")
+      
+      //---clear current refresh cycle if exists
+      clearInterval(refreshId)
+
+      //---begin a new refresh cycle
+      refreshId = setInterval(refresh, appConfig.tokenRefreshMinutes * 1000 * 60)
+    }
+  }
 
 
   /**
@@ -248,6 +279,13 @@ export function authService() {
     authCheck,
     getAuthHeaders,
     getAccessToken,
-    showData
+    showData,
+    refreshCycle
   }
+}
+
+export const handle403 = (code:any) => {
+    if (code == 403) {
+      goto("/login")
+    }
 }

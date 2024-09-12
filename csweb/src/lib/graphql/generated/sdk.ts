@@ -150,15 +150,6 @@ export type ListResults = {
   results?: Maybe<Array<List>>;
 };
 
-export type LoginResult = {
-  __typename?: 'LoginResult';
-  refreshToken?: Maybe<Scalars['String']['output']>;
-  resource?: Maybe<Resource>;
-  status?: Maybe<Status>;
-  token?: Maybe<Scalars['String']['output']>;
-  user?: Maybe<User>;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   createOrganization: CreateOrganizationResult;
@@ -173,11 +164,8 @@ export type Mutation = {
   deleteProjectTask: CreateProjectResult;
   deleteResource: Status;
   deleteResourceSkill: Status;
-  login: LoginResult;
-  refreshToken: LoginResult;
   setNotificationsRead: Status;
   setProjectMilestonesFromTemplate: Project;
-  signout: Status;
   toggleEmote: Status;
   updateOrganization: CreateOrganizationResult;
   updateProject: CreateProjectResult;
@@ -254,16 +242,6 @@ export type MutationDeleteResourceSkillArgs = {
 };
 
 
-export type MutationLoginArgs = {
-  creds: UpdateLogin;
-};
-
-
-export type MutationRefreshTokenArgs = {
-  input: UpdateRefresh;
-};
-
-
 export type MutationSetNotificationsReadArgs = {
   input: Array<Scalars['String']['input']>;
 };
@@ -271,11 +249,6 @@ export type MutationSetNotificationsReadArgs = {
 
 export type MutationSetProjectMilestonesFromTemplateArgs = {
   input?: InputMaybe<UpdateProjectMilestoneTemplate>;
-};
-
-
-export type MutationSignoutArgs = {
-  input: UpdateRefresh;
 };
 
 
@@ -679,11 +652,6 @@ export type UpdateCommentReply = {
   text: Scalars['String']['input'];
 };
 
-export type UpdateLogin = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
 export type UpdateOrganization = {
   defaults: UpdateOrganizationDefaults;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -775,10 +743,6 @@ export type UpdateProjectValue = {
   yearOneValue?: InputMaybe<Scalars['Float']['input']>;
   yearThreeValue?: InputMaybe<Scalars['Float']['input']>;
   yearTwoValue?: InputMaybe<Scalars['Float']['input']>;
-};
-
-export type UpdateRefresh = {
-  refreshToken: Scalars['String']['input'];
 };
 
 export type UpdateResource = {
@@ -1125,70 +1089,6 @@ export const GetListDocument = gql`
   }
 }
     `;
-export const LoginDocument = gql`
-    mutation login($creds: UpdateLogin!) {
-  login(creds: $creds) {
-    status {
-      success
-      message
-    }
-    token
-    refreshToken
-    user {
-      email
-      firstName
-      lastName
-      profileImage
-    }
-    resource {
-      name
-      id
-      profileImage
-    }
-  }
-}
-    `;
-export const RefreshTokenDocument = gql`
-    mutation refreshToken($input: UpdateRefresh!) {
-  refreshToken(input: $input) {
-    status {
-      success
-      message
-    }
-    token
-    refreshToken
-    user {
-      email
-      firstName
-      lastName
-      profileImage
-    }
-    resource {
-      name
-      id
-      profileImage
-    }
-  }
-}
-    `;
-export const SignoutDocument = gql`
-    mutation signout($input: UpdateRefresh!) {
-  signout(input: $input) {
-    success
-    message
-  }
-}
-    `;
-export const CurrentUserDocument = gql`
-    query currentUser {
-  currentUser {
-    firstName
-    lastName
-    email
-    profileImage
-  }
-}
-    `;
 export const FindUserNotificationsDocument = gql`
     query findUserNotifications($input: PageAndFilter!) {
   findUserNotifications(pageAndFilter: $input) {
@@ -1507,18 +1407,6 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     getList(variables: GetListQueryVariables, options?: C): Promise<GetListQuery> {
       return requester<GetListQuery, GetListQueryVariables>(GetListDocument, variables, options) as Promise<GetListQuery>;
-    },
-    login(variables: LoginMutationVariables, options?: C): Promise<LoginMutation> {
-      return requester<LoginMutation, LoginMutationVariables>(LoginDocument, variables, options) as Promise<LoginMutation>;
-    },
-    refreshToken(variables: RefreshTokenMutationVariables, options?: C): Promise<RefreshTokenMutation> {
-      return requester<RefreshTokenMutation, RefreshTokenMutationVariables>(RefreshTokenDocument, variables, options) as Promise<RefreshTokenMutation>;
-    },
-    signout(variables: SignoutMutationVariables, options?: C): Promise<SignoutMutation> {
-      return requester<SignoutMutation, SignoutMutationVariables>(SignoutDocument, variables, options) as Promise<SignoutMutation>;
-    },
-    currentUser(variables?: CurrentUserQueryVariables, options?: C): Promise<CurrentUserQuery> {
-      return requester<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, variables, options) as Promise<CurrentUserQuery>;
     },
     findUserNotifications(variables: FindUserNotificationsQueryVariables, options?: C): Promise<FindUserNotificationsQuery> {
       return requester<FindUserNotificationsQuery, FindUserNotificationsQueryVariables>(FindUserNotificationsDocument, variables, options) as Promise<FindUserNotificationsQuery>;

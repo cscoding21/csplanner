@@ -151,14 +151,6 @@ type ComplexityRoot struct {
 		Results func(childComplexity int) int
 	}
 
-	LoginResult struct {
-		RefreshToken func(childComplexity int) int
-		Resource     func(childComplexity int) int
-		Status       func(childComplexity int) int
-		Token        func(childComplexity int) int
-		User         func(childComplexity int) int
-	}
-
 	Mutation struct {
 		CreateOrganization               func(childComplexity int, input idl.UpdateOrganization) int
 		CreateProject                    func(childComplexity int, input idl.UpdateProject) int
@@ -172,11 +164,8 @@ type ComplexityRoot struct {
 		DeleteProjectTask                func(childComplexity int, projectID string, milestoneID string, taskID string) int
 		DeleteResource                   func(childComplexity int, id string) int
 		DeleteResourceSkill              func(childComplexity int, resourceID string, skillID string) int
-		Login                            func(childComplexity int, creds idl.UpdateLogin) int
-		RefreshToken                     func(childComplexity int, input idl.UpdateRefresh) int
 		SetNotificationsRead             func(childComplexity int, input []string) int
 		SetProjectMilestonesFromTemplate func(childComplexity int, input *idl.UpdateProjectMilestoneTemplate) int
-		Signout                          func(childComplexity int, input idl.UpdateRefresh) int
 		ToggleEmote                      func(childComplexity int, input idl.UpdateCommentEmote) int
 		UpdateOrganization               func(childComplexity int, input idl.UpdateOrganization) int
 		UpdateProject                    func(childComplexity int, input idl.UpdateProject) int
@@ -464,9 +453,6 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error)
 	UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error)
-	Login(ctx context.Context, creds idl.UpdateLogin) (*idl.LoginResult, error)
-	RefreshToken(ctx context.Context, input idl.UpdateRefresh) (*idl.LoginResult, error)
-	Signout(ctx context.Context, input idl.UpdateRefresh) (*idl.Status, error)
 	CreateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error)
 	UpdateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error)
 	DeleteProject(ctx context.Context, id string) (*idl.Status, error)
@@ -932,41 +918,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ListResults.Results(childComplexity), true
 
-	case "LoginResult.refreshToken":
-		if e.complexity.LoginResult.RefreshToken == nil {
-			break
-		}
-
-		return e.complexity.LoginResult.RefreshToken(childComplexity), true
-
-	case "LoginResult.resource":
-		if e.complexity.LoginResult.Resource == nil {
-			break
-		}
-
-		return e.complexity.LoginResult.Resource(childComplexity), true
-
-	case "LoginResult.status":
-		if e.complexity.LoginResult.Status == nil {
-			break
-		}
-
-		return e.complexity.LoginResult.Status(childComplexity), true
-
-	case "LoginResult.token":
-		if e.complexity.LoginResult.Token == nil {
-			break
-		}
-
-		return e.complexity.LoginResult.Token(childComplexity), true
-
-	case "LoginResult.user":
-		if e.complexity.LoginResult.User == nil {
-			break
-		}
-
-		return e.complexity.LoginResult.User(childComplexity), true
-
 	case "Mutation.createOrganization":
 		if e.complexity.Mutation.CreateOrganization == nil {
 			break
@@ -1111,30 +1062,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteResourceSkill(childComplexity, args["resourceID"].(string), args["skillID"].(string)), true
 
-	case "Mutation.login":
-		if e.complexity.Mutation.Login == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_login_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.Login(childComplexity, args["creds"].(idl.UpdateLogin)), true
-
-	case "Mutation.refreshToken":
-		if e.complexity.Mutation.RefreshToken == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_refreshToken_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RefreshToken(childComplexity, args["input"].(idl.UpdateRefresh)), true
-
 	case "Mutation.setNotificationsRead":
 		if e.complexity.Mutation.SetNotificationsRead == nil {
 			break
@@ -1158,18 +1085,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SetProjectMilestonesFromTemplate(childComplexity, args["input"].(*idl.UpdateProjectMilestoneTemplate)), true
-
-	case "Mutation.signout":
-		if e.complexity.Mutation.Signout == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_signout_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.Signout(childComplexity, args["input"].(idl.UpdateRefresh)), true
 
 	case "Mutation.toggleEmote":
 		if e.complexity.Mutation.ToggleEmote == nil {
@@ -2513,7 +2428,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateComment,
 		ec.unmarshalInputUpdateCommentEmote,
 		ec.unmarshalInputUpdateCommentReply,
-		ec.unmarshalInputUpdateLogin,
 		ec.unmarshalInputUpdateOrganization,
 		ec.unmarshalInputUpdateOrganizationDefaults,
 		ec.unmarshalInputUpdateProject,
@@ -2526,7 +2440,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateProjectMilestoneTask,
 		ec.unmarshalInputUpdateProjectMilestoneTemplate,
 		ec.unmarshalInputUpdateProjectValue,
-		ec.unmarshalInputUpdateRefresh,
 		ec.unmarshalInputUpdateResource,
 		ec.unmarshalInputUpdateSkill,
 		ec.unmarshalInputUpdateUser,
@@ -3166,14 +3079,6 @@ type User {
   profileImage: String
 }
 
-type LoginResult {
-  token: String
-  refreshToken: String
-  status: Status
-  user: User
-  resource: Resource
-}
-
 type CreateUserResult {
   status: Status
   user: User
@@ -3193,22 +3098,10 @@ input UpdateUser {
   confirmPassword: String!
   profileImage: String
 }
-
-
-input UpdateLogin {
-  email: String!
-  password: String!
-}
-
-input UpdateRefresh {
-  refreshToken: String!
-}`, BuiltIn: false},
+`, BuiltIn: false},
 	{Name: "../api/resolver/mutations.graphqls", Input: `type Mutation {
     createUser(input: UpdateUser!): CreateUserResult!
     updateUser(input: UpdateUser!): CreateUserResult!
-    login(creds: UpdateLogin!) : LoginResult!
-    refreshToken(input: UpdateRefresh!) : LoginResult!
-    signout(input: UpdateRefresh!) : Status!
 
     createProject(input: UpdateProject!): CreateProjectResult!
     updateProject(input: UpdateProject!): CreateProjectResult!
@@ -3499,36 +3392,6 @@ func (ec *executionContext) field_Mutation_deleteResource_args(ctx context.Conte
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 idl.UpdateLogin
-	if tmp, ok := rawArgs["creds"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creds"))
-		arg0, err = ec.unmarshalNUpdateLogin2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateLogin(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["creds"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 idl.UpdateRefresh
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateRefresh2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateRefresh(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_setNotificationsRead_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3551,21 +3414,6 @@ func (ec *executionContext) field_Mutation_setProjectMilestonesFromTemplate_args
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOUpdateProjectMilestoneTemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectMilestoneTemplate(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_signout_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 idl.UpdateRefresh
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateRefresh2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateRefresh(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6648,249 +6496,6 @@ func (ec *executionContext) fieldContext_ListResults_results(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _LoginResult_token(ctx context.Context, field graphql.CollectedField, obj *idl.LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_token(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Token, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_LoginResult_token(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "LoginResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _LoginResult_refreshToken(ctx context.Context, field graphql.CollectedField, obj *idl.LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_refreshToken(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_LoginResult_refreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "LoginResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _LoginResult_status(ctx context.Context, field graphql.CollectedField, obj *idl.LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*idl.Status)
-	fc.Result = res
-	return ec.marshalOStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_LoginResult_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "LoginResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_Status_success(ctx, field)
-			case "message":
-				return ec.fieldContext_Status_message(ctx, field)
-			case "validationResult":
-				return ec.fieldContext_Status_validationResult(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _LoginResult_user(ctx context.Context, field graphql.CollectedField, obj *idl.LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_user(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*idl.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_LoginResult_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "LoginResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "profileImage":
-				return ec.fieldContext_User_profileImage(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _LoginResult_resource(ctx context.Context, field graphql.CollectedField, obj *idl.LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_resource(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Resource, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*idl.Resource)
-	fc.Result = res
-	return ec.marshalOResource2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_LoginResult_resource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "LoginResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Resource_id(ctx, field)
-			case "type":
-				return ec.fieldContext_Resource_type(ctx, field)
-			case "name":
-				return ec.fieldContext_Resource_name(ctx, field)
-			case "role":
-				return ec.fieldContext_Resource_role(ctx, field)
-			case "user":
-				return ec.fieldContext_Resource_user(ctx, field)
-			case "profileImage":
-				return ec.fieldContext_Resource_profileImage(ctx, field)
-			case "skills":
-				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
 	if err != nil {
@@ -7007,203 +6612,6 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_login(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Login(rctx, fc.Args["creds"].(idl.UpdateLogin))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.LoginResult)
-	fc.Result = res
-	return ec.marshalNLoginResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐLoginResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "token":
-				return ec.fieldContext_LoginResult_token(ctx, field)
-			case "refreshToken":
-				return ec.fieldContext_LoginResult_refreshToken(ctx, field)
-			case "status":
-				return ec.fieldContext_LoginResult_status(ctx, field)
-			case "user":
-				return ec.fieldContext_LoginResult_user(ctx, field)
-			case "resource":
-				return ec.fieldContext_LoginResult_resource(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type LoginResult", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_refreshToken(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RefreshToken(rctx, fc.Args["input"].(idl.UpdateRefresh))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.LoginResult)
-	fc.Result = res
-	return ec.marshalNLoginResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐLoginResult(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "token":
-				return ec.fieldContext_LoginResult_token(ctx, field)
-			case "refreshToken":
-				return ec.fieldContext_LoginResult_refreshToken(ctx, field)
-			case "status":
-				return ec.fieldContext_LoginResult_status(ctx, field)
-			case "user":
-				return ec.fieldContext_LoginResult_user(ctx, field)
-			case "resource":
-				return ec.fieldContext_LoginResult_resource(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type LoginResult", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_refreshToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_signout(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_signout(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Signout(rctx, fc.Args["input"].(idl.UpdateRefresh))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.Status)
-	fc.Result = res
-	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_signout(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "success":
-				return ec.fieldContext_Status_success(ctx, field)
-			case "message":
-				return ec.fieldContext_Status_message(ctx, field)
-			case "validationResult":
-				return ec.fieldContext_Status_validationResult(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_signout_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18559,40 +17967,6 @@ func (ec *executionContext) unmarshalInputUpdateCommentReply(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateLogin(ctx context.Context, obj interface{}) (idl.UpdateLogin, error) {
-	var it idl.UpdateLogin
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"email", "password"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "email":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Email = data
-		case "password":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Password = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdateOrganization(ctx context.Context, obj interface{}) (idl.UpdateOrganization, error) {
 	var it idl.UpdateOrganization
 	asMap := map[string]interface{}{}
@@ -19226,33 +18600,6 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 				return it, err
 			}
 			it.YearFiveValue = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputUpdateRefresh(ctx context.Context, obj interface{}) (idl.UpdateRefresh, error) {
-	var it idl.UpdateRefresh
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"refreshToken"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "refreshToken":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("refreshToken"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RefreshToken = data
 		}
 	}
 
@@ -20156,50 +19503,6 @@ func (ec *executionContext) _ListResults(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var loginResultImplementors = []string{"LoginResult"}
-
-func (ec *executionContext) _LoginResult(ctx context.Context, sel ast.SelectionSet, obj *idl.LoginResult) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, loginResultImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("LoginResult")
-		case "token":
-			out.Values[i] = ec._LoginResult_token(ctx, field, obj)
-		case "refreshToken":
-			out.Values[i] = ec._LoginResult_refreshToken(ctx, field, obj)
-		case "status":
-			out.Values[i] = ec._LoginResult_status(ctx, field, obj)
-		case "user":
-			out.Values[i] = ec._LoginResult_user(ctx, field, obj)
-		case "resource":
-			out.Values[i] = ec._LoginResult_resource(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -20229,27 +19532,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateUser(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "login":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_login(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "refreshToken":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_refreshToken(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "signout":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_signout(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -23180,20 +22462,6 @@ func (ec *executionContext) marshalNListResults2ᚖcsserverᚋinternalᚋappserv
 	return ec._ListResults(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNLoginResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐLoginResult(ctx context.Context, sel ast.SelectionSet, v idl.LoginResult) graphql.Marshaler {
-	return ec._LoginResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNLoginResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐLoginResult(ctx context.Context, sel ast.SelectionSet, v *idl.LoginResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._LoginResult(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNNotification2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐNotificationᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Notification) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -23810,11 +23078,6 @@ func (ec *executionContext) unmarshalNUpdateCommentReply2csserverᚋinternalᚋa
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateLogin2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateLogin(ctx context.Context, v interface{}) (idl.UpdateLogin, error) {
-	res, err := ec.unmarshalInputUpdateLogin(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNUpdateOrganization2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateOrganization(ctx context.Context, v interface{}) (idl.UpdateOrganization, error) {
 	res, err := ec.unmarshalInputUpdateOrganization(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -23848,11 +23111,6 @@ func (ec *executionContext) unmarshalNUpdateProjectMilestoneTask2csserverᚋinte
 func (ec *executionContext) unmarshalNUpdateProjectMilestoneTask2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectMilestoneTask(ctx context.Context, v interface{}) (*idl.UpdateProjectMilestoneTask, error) {
 	res, err := ec.unmarshalInputUpdateProjectMilestoneTask(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpdateRefresh2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateRefresh(ctx context.Context, v interface{}) (idl.UpdateRefresh, error) {
-	res, err := ec.unmarshalInputUpdateRefresh(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateResource2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateResource(ctx context.Context, v interface{}) (idl.UpdateResource, error) {

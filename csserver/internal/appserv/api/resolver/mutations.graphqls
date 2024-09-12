@@ -1,9 +1,6 @@
 type Mutation {
     createUser(input: UpdateUser!): CreateUserResult!
     updateUser(input: UpdateUser!): CreateUserResult!
-    login(creds: UpdateLogin!) : LoginResult!
-    refreshToken(input: UpdateRefresh!) : LoginResult!
-    signout(input: UpdateRefresh!) : Status!
 
     createProject(input: UpdateProject!): CreateProjectResult!
     updateProject(input: UpdateProject!): CreateProjectResult!

@@ -123,14 +123,6 @@ type ListResults struct {
 	Results []*List     `json:"results,omitempty"`
 }
 
-type LoginResult struct {
-	Token        *string   `json:"token,omitempty"`
-	RefreshToken *string   `json:"refreshToken,omitempty"`
-	Status       *Status   `json:"status,omitempty"`
-	User         *User     `json:"user,omitempty"`
-	Resource     *Resource `json:"resource,omitempty"`
-}
-
 type Mutation struct {
 }
 
@@ -386,11 +378,6 @@ type UpdateCommentReply struct {
 	Text            string `json:"text"`
 }
 
-type UpdateLogin struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 type UpdateOrganization struct {
 	ID       *string                     `json:"id,omitempty"`
 	Name     string                      `json:"name"`
@@ -482,10 +469,6 @@ type UpdateProjectValue struct {
 	YearThreeValue *float64 `json:"yearThreeValue,omitempty"`
 	YearFourValue  *float64 `json:"yearFourValue,omitempty"`
 	YearFiveValue  *float64 `json:"yearFiveValue,omitempty"`
-}
-
-type UpdateRefresh struct {
-	RefreshToken string `json:"refreshToken"`
 }
 
 type UpdateResource struct {

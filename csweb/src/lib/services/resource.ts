@@ -15,7 +15,7 @@ export const findAllResources = async () => {
 
 /**
  * Return a single resource based on its ID
- * @param id 
+ * @param id - the ID of the resource to get
  * @returns a single resource based on the passed-in ID
  */
 export const getResource = async (id: string): Promise<ApolloQueryResult<Resource>> => {

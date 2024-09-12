@@ -20,6 +20,7 @@
 
 	onMount(async () => {
     console.log('layout onMount')
+    as.refreshCycle()
 	});
 </script>
 

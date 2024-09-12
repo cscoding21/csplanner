@@ -1,13 +1,14 @@
-import { ApolloClient, InMemoryCache, split, HttpLink } from "@apollo/client/core";
+import { ApolloClient, InMemoryCache, split, HttpLink, concat } from "@apollo/client/core";
+import { onError } from "@apollo/client/link/error";
 import { getMainDefinition } from '@apollo/client/utilities';
 import { appConfig } from "$lib/appConfig"
 import { authService } from '$lib/services/auth';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
+import { goto } from '$app/navigation';
 
 export const getApolloClient = () => {
   let as = authService()
-  //as.showData()
 
   const httpLink = new HttpLink({
     uri: appConfig.graphqlEndpoint,
@@ -40,10 +41,17 @@ export const getApolloClient = () => {
   );
   
   const client = new ApolloClient({
-    link: splitLink,
+    link: logoutLink.concat(splitLink),
 		cache: new InMemoryCache(),
-    headers: as.getAuthHeaders()
+    headers: as.getAuthHeaders(),
   });
 
   return client;
 }
+
+const logoutLink = onError(({ networkError }) => {
+  // @ts-ignore
+  if (networkError?.statusCode === 403) {
+    goto("/login")
+  }
+})

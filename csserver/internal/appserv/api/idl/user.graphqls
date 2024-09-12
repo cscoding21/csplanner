@@ -7,14 +7,6 @@ type User {
   profileImage: String
 }
 
-type LoginResult {
-  token: String
-  refreshToken: String
-  status: Status
-  user: User
-  resource: Resource
-}
-
 type CreateUserResult {
   status: Status
   user: User
@@ -33,14 +25,4 @@ input UpdateUser {
   password: String!
   confirmPassword: String!
   profileImage: String
-}
-
-
-input UpdateLogin {
-  email: String!
-  password: String!
-}
-
-input UpdateRefresh {
-  refreshToken: String!
 }
