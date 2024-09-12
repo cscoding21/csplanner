@@ -152,6 +152,7 @@ export type ListResults = {
 
 export type LoginResult = {
   __typename?: 'LoginResult';
+  refreshToken?: Maybe<Scalars['String']['output']>;
   resource?: Maybe<Resource>;
   status?: Maybe<Status>;
   token?: Maybe<Scalars['String']['output']>;
@@ -173,8 +174,10 @@ export type Mutation = {
   deleteResource: Status;
   deleteResourceSkill: Status;
   login: LoginResult;
+  refreshToken: LoginResult;
   setNotificationsRead: Status;
   setProjectMilestonesFromTemplate: Project;
+  signout: Status;
   toggleEmote: Status;
   updateOrganization: CreateOrganizationResult;
   updateProject: CreateProjectResult;
@@ -256,6 +259,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationRefreshTokenArgs = {
+  input: UpdateRefresh;
+};
+
+
 export type MutationSetNotificationsReadArgs = {
   input: Array<Scalars['String']['input']>;
 };
@@ -263,6 +271,11 @@ export type MutationSetNotificationsReadArgs = {
 
 export type MutationSetProjectMilestonesFromTemplateArgs = {
   input?: InputMaybe<UpdateProjectMilestoneTemplate>;
+};
+
+
+export type MutationSignoutArgs = {
+  input: UpdateRefresh;
 };
 
 
@@ -764,6 +777,10 @@ export type UpdateProjectValue = {
   yearTwoValue?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type UpdateRefresh = {
+  refreshToken: Scalars['String']['input'];
+};
+
 export type UpdateResource = {
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -1116,6 +1133,7 @@ export const LoginDocument = gql`
       message
     }
     token
+    refreshToken
     user {
       email
       firstName
@@ -1127,6 +1145,37 @@ export const LoginDocument = gql`
       id
       profileImage
     }
+  }
+}
+    `;
+export const RefreshTokenDocument = gql`
+    mutation refreshToken($input: UpdateRefresh!) {
+  refreshToken(input: $input) {
+    status {
+      success
+      message
+    }
+    token
+    refreshToken
+    user {
+      email
+      firstName
+      lastName
+      profileImage
+    }
+    resource {
+      name
+      id
+      profileImage
+    }
+  }
+}
+    `;
+export const SignoutDocument = gql`
+    mutation signout($input: UpdateRefresh!) {
+  signout(input: $input) {
+    success
+    message
   }
 }
     `;
@@ -1461,6 +1510,12 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     login(variables: LoginMutationVariables, options?: C): Promise<LoginMutation> {
       return requester<LoginMutation, LoginMutationVariables>(LoginDocument, variables, options) as Promise<LoginMutation>;
+    },
+    refreshToken(variables: RefreshTokenMutationVariables, options?: C): Promise<RefreshTokenMutation> {
+      return requester<RefreshTokenMutation, RefreshTokenMutationVariables>(RefreshTokenDocument, variables, options) as Promise<RefreshTokenMutation>;
+    },
+    signout(variables: SignoutMutationVariables, options?: C): Promise<SignoutMutation> {
+      return requester<SignoutMutation, SignoutMutationVariables>(SignoutDocument, variables, options) as Promise<SignoutMutation>;
     },
     currentUser(variables?: CurrentUserQueryVariables, options?: C): Promise<CurrentUserQuery> {
       return requester<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, variables, options) as Promise<CurrentUserQuery>;

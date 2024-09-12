@@ -124,10 +124,11 @@ type ListResults struct {
 }
 
 type LoginResult struct {
-	Token    *string   `json:"token,omitempty"`
-	Status   *Status   `json:"status,omitempty"`
-	User     *User     `json:"user,omitempty"`
-	Resource *Resource `json:"resource,omitempty"`
+	Token        *string   `json:"token,omitempty"`
+	RefreshToken *string   `json:"refreshToken,omitempty"`
+	Status       *Status   `json:"status,omitempty"`
+	User         *User     `json:"user,omitempty"`
+	Resource     *Resource `json:"resource,omitempty"`
 }
 
 type Mutation struct {
@@ -481,6 +482,10 @@ type UpdateProjectValue struct {
 	YearThreeValue *float64 `json:"yearThreeValue,omitempty"`
 	YearFourValue  *float64 `json:"yearFourValue,omitempty"`
 	YearFiveValue  *float64 `json:"yearFiveValue,omitempty"`
+}
+
+type UpdateRefresh struct {
+	RefreshToken string `json:"refreshToken"`
 }
 
 type UpdateResource struct {

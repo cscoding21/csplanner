@@ -50,12 +50,49 @@ func (r *mutationResolver) Login(ctx context.Context, creds idl.UpdateLogin) (*i
 	outUser := csmap.UserUserToIdl(*user)
 
 	lr := idl.LoginResult{
-		Token:  &resp.Token,
-		Status: &status,
-		User:   &outUser,
+		Token:        &resp.Token,
+		RefreshToken: &resp.RefreshToken,
+		Status:       &status,
+		User:         &outUser,
 	}
 
 	return &lr, nil
+}
+
+// RefreshToken is the resolver for the refreshToken field.
+func (r *mutationResolver) RefreshToken(ctx context.Context, input idl.UpdateRefresh) (*idl.LoginResult, error) {
+	as := factory.GetAuthService(ctx)
+
+	resp, err := as.RefreshToken(ctx, input.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	status := idl.Status{
+		Success: resp.Success,
+		Message: []string{resp.Message},
+	}
+
+	lr := idl.LoginResult{
+		Token:        &resp.Token,
+		RefreshToken: &resp.RefreshToken,
+		Status:       &status,
+	}
+
+	return &lr, nil
+}
+
+// Signout is the resolver for the signout field.
+func (r *mutationResolver) Signout(ctx context.Context, input idl.UpdateRefresh) (*idl.Status, error) {
+	ae := factory.GetAuthService(ctx)
+	err := ae.Signout(ctx, input.RefreshToken)
+
+	status := &idl.Status{
+		Success: err == nil,
+		Message: []string{},
+	}
+
+	return status, err
 }
 
 // CreateProject is the resolver for the createProject field.

@@ -22,14 +22,30 @@ func Serve() error {
 	router := getRouter()
 
 	// Add middleware
-	router.Use(middleware.AuthenticationMiddleware)
+	//router.Use(middleware.ValidationMiddleware)
 
 	//---add handlers to router
-	router.Handle("/query", handlers.GetGqlHandler())
-	router.Handle("/files/*", http.StripPrefix("/files/", handlers.GetTusdHandler()))
+	//	auth handlers
+	router.Handle("/login", middleware.AuthMiddleware(handlers.GetLoginHandler()))
+	router.Handle("/refresh",
+		middleware.AuthMiddleware(
+			middleware.ValidationMiddleware(handlers.GetRefreshHandler()),
+		),
+	)
+	router.Handle("/signout",
+		middleware.AuthMiddleware(
+			middleware.ValidationMiddleware(handlers.GetSignoutHandler()),
+		),
+	)
+
+	//	graphql handlers
+	router.Handle("/query", middleware.ValidationMiddleware(handlers.GetGqlHandler()))
 	if config.Config.Server.EnablePlayground {
 		router.Handle("/playground", playground.Handler("GraphQL playground", "/query"))
 	}
+
+	//	file handler
+	router.Handle("/files/*", http.StripPrefix("/files/", handlers.GetTusdHandler()))
 
 	//---start web server
 	return http.ListenAndServe(fmt.Sprintf(":%v", config.Config.Server.ServerPort), router)

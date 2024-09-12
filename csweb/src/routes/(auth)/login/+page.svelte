@@ -1,13 +1,14 @@
 <script lang="ts">
     import { parseErrors, mergeErrors } from '$lib/forms/helpers'
     import { loginForm, loginSchema } from '$lib/forms/login.validation'
-    import { login } from '$lib/services/auth'
     import { goto } from '$app/navigation'
     import { EmailInput, PasswordInput } from "$lib/components/forms"
     import { AlertError } from "$lib/components/messages"
+    import { authService } from '$lib/services/auth'
 
     let errors:any = $state({})
     let loginFailed:Boolean = $state(false)
+    let as = authService()
 
     const submitForm = async () => {
 		errors = {}
@@ -16,12 +17,12 @@
 			.then(() => {
 				console.log('client-size validation passed')
 
-                login({ email: loginForm.email, password: loginForm.password })
+                const resp = as.login({ email: loginForm.email, password: loginForm.password })
                     .then((r) => {
-                        console.log(r.data.login.status?.success.valueOf())
-                        if(r.data.login.status?.success.valueOf()) {
+                        console.log(r)
+                        if(r) {
                             loginFailed = false
-                            goto('/home')
+                            goto('/resource')
                         } else {
                             loginFailed = true
                         }
@@ -33,7 +34,7 @@
 			.catch((err) => {
 				errors = mergeErrors(errors, parseErrors(err))
 
-				console.log(errors);
+				console.error(errors);
 			});
     }
 </script>
@@ -54,10 +55,10 @@
         error={errors.password} />
 
     <button type="button" onclick={submitForm} class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
-    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+    <!-- <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
         Not registered? <a href="/register" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a> <br />
         Forgot password? <a href="/forgot" class="text-blue-700 hover:underline dark:text-blue-500">Reset</a>
-    </div>
+    </div> -->
 </form>
 </div>
 </div>

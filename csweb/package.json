@@ -53,6 +53,7 @@
 		"graphql": "^16.9.0",
 		"graphql-tag": "^2.12.6",
 		"graphql-ws": "^5.16.0",
+		"keycloak-js": "^25.0.4",
 		"svelte-persisted-store": "^0.11.0",
 		"tailwind-merge": "^2.5.2",
 		"yup": "^1.4.0"

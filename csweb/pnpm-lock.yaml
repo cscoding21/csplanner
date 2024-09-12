@@ -32,6 +32,9 @@ importers:
       graphql-ws:
         specifier: ^5.16.0
         version: 5.16.0(graphql@16.9.0)
+      keycloak-js:
+        specifier: ^25.0.4
+        version: 25.0.4
       svelte-persisted-store:
         specifier: ^0.11.0
         version: 0.11.0(svelte@5.0.0-next.244)
@@ -2056,6 +2059,9 @@ packages:
   jose@5.8.0:
     resolution: {integrity: sha512-E7CqYpL/t7MMnfGnK/eg416OsFCVUrU/Y3Vwe7QjKhu/BkS1Ms455+2xsqZQVN57/U2MHMBvEb5SrmAZWAIntA==}
 
+  js-sha256@0.11.0:
+    resolution: {integrity: sha512-6xNlKayMZvds9h1Y1VWc0fQHQ82BxTXizWPEtEeGvmOUYpBRy4gbWroHLpzowe6xiQhHpelCQiE7HEdznyBL9Q==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -2088,6 +2094,13 @@ packages:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
+
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
+  keycloak-js@25.0.4:
+    resolution: {integrity: sha512-LW7dVgqcBxMnnJTdmh7Zgd0NpStJnX2sCMrJGqcGtm4zmk4Rwlqk2o2uOvY7PaRHHYePXfbIwrqVhlN3GAnRCg==}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -5498,6 +5511,8 @@ snapshots:
 
   jose@5.8.0: {}
 
+  js-sha256@0.11.0: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@4.1.0:
@@ -5520,6 +5535,13 @@ snapshots:
       remove-trailing-spaces: 1.0.8
 
   json5@2.2.3: {}
+
+  jwt-decode@4.0.0: {}
+
+  keycloak-js@25.0.4:
+    dependencies:
+      js-sha256: 0.11.0
+      jwt-decode: 4.0.0
 
   keyv@4.5.4:
     dependencies:

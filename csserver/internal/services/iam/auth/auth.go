@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"github.com/Nerzal/gocloak/v13"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type AuthCredentials struct {
@@ -16,11 +18,12 @@ type AuthCredentials struct {
 }
 
 type AuthResult struct {
-	Success bool
-	Token   string
-	User    user.User
-	Claims  interface{}
-	Message string
+	Success      bool
+	Token        string
+	RefreshToken string
+	User         user.User
+	Claims       interface{}
+	Message      string
 }
 
 type AuthService struct {
@@ -53,16 +56,45 @@ func (s *AuthService) ValidateToken(ctx context.Context, token string) (AuthResu
 		return NewFailingAuthResult(token, err), err
 	}
 
-	if rptResult.Active != nil && *rptResult.Active {
-		return NewSuccessAuthResult(token), nil
+	decoded, claims, err := s.KCClient.DecodeAccessToken(ctx, token, s.KCRealm)
+	if err != nil {
+		return NewFailingAuthResult(token, err), err
 	}
 
-	err = fmt.Errorf("token expired")
+	log.Infof("%s - status: %v\n", token, rptResult)
+	log.Infof("decoded: %v\n", decoded)
+	log.Infof("claimss: %v\n", claims)
+
+	if rptResult.Active != nil && *rptResult.Active {
+		return NewSuccessAuthResult(token, ""), nil
+	}
+
+	err = fmt.Errorf("token not active")
 	return NewFailingAuthResult(token, err), err
+}
+
+// RefreshToken issue an updated authToken using the passed in refresh token
+func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (AuthResult, error) {
+	newAuthToken, err := s.KCClient.RefreshToken(ctx, refreshToken, s.KCClientID, s.KCClientSecret, s.KCRealm)
+	if err != nil {
+		return NewFailingAuthResult(refreshToken, err), err
+	}
+
+	return NewSuccessAuthResult(newAuthToken.AccessToken, newAuthToken.RefreshToken), nil
+}
+
+// Signout issue a signout command to the auth server which will invalidate the refresh token
+func (s *AuthService) Signout(ctx context.Context, refreshToken string) error {
+	return s.KCClient.Logout(ctx, s.KCClientID, s.KCClientSecret, s.KCRealm, refreshToken)
 }
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
+	log.Info(creds)
+	log.Info(s.KCClientID)
+	log.Info(s.KCClientSecret)
+	log.Info(s.KCRealm)
+
 	token, err := s.KCClient.Login(ctx,
 		s.KCClientID,
 		s.KCClientSecret,
@@ -74,14 +106,15 @@ func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (
 		return NewFailingAuthResult("", err), err
 	}
 
-	return NewSuccessAuthResult(token.AccessToken), nil
+	return NewSuccessAuthResult(token.AccessToken, token.RefreshToken), nil
 }
 
 // NewSuccessAuthResult return a new AuthResult with a success flag set to true and the given token
-func NewSuccessAuthResult(token string) AuthResult {
+func NewSuccessAuthResult(token string, refreshToken string) AuthResult {
 	return AuthResult{
-		Success: true,
-		Token:   token,
+		Success:      true,
+		Token:        token,
+		RefreshToken: refreshToken,
 	}
 }
 

@@ -9,6 +9,7 @@ type User {
 
 type LoginResult {
   token: String
+  refreshToken: String
   status: Status
   user: User
   resource: Resource
@@ -38,4 +39,8 @@ input UpdateUser {
 input UpdateLogin {
   email: String!
   password: String!
+}
+
+input UpdateRefresh {
+  refreshToken: String!
 }

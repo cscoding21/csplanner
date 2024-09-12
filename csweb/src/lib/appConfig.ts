@@ -1,8 +1,16 @@
+import type { KeycloakOnLoad } from "keycloak-js";
+
 export interface AppConfig {
     graphqlEndpoint: string; 
     graphqlWSEndpoint: string;
     fileEndpoint: string;
     defaultResultsPerPage: number;
+
+    tokenRefreshMinutes: number;
+
+    loginUrl: string;
+    signoutUrl: string;
+    refreshUrl: string;
   }
     
   //---TODO: Load from file or env
@@ -11,4 +19,10 @@ export interface AppConfig {
     graphqlWSEndpoint: "ws://localhost:5000/query",
     fileEndpoint: "http://localhost:5000/files/",
     defaultResultsPerPage: 20,
+
+    tokenRefreshMinutes: 1,
+
+    loginUrl: "http://localhost:5000/login",
+    signoutUrl: "http://localhost:5000/signout",
+    refreshUrl: "http://localhost:5000/refresh",
   };

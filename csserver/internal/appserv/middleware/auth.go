@@ -31,26 +31,30 @@ type GraphQLShape struct {
 	Variables     interface{}
 }
 
-// AuthenticationMiddleware
-func AuthenticationMiddleware(next http.Handler) http.Handler {
+// ValidationMiddleware
+func ValidationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//---temporary for testing
 		if checkIsFile(r) {
+			log.Info("Auth bypass: is file")
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		if swallowHealthCheck(r) || checkIsPlayground(r) {
+			log.Info("Auth bypass: playground or swallow")
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		if checkWebsocketKey(r) {
+			log.Info("Auth bypass: web socket key")
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		if bypassSecurity(r) {
+			log.Info("Auth bypass: flag")
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -78,12 +82,12 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := getTokenFromHeader(r)
-		log.Info(token)
+		log.Infof("Auth token: %s", token)
 
 		authService := factory.GetAuthService(bctx)
 		result, err := authService.ValidateToken(bctx, token)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("error on validate: %s", err)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
@@ -108,6 +112,15 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 
 		log.Warn("Authentication failed")
 		http.Error(w, "Forbidden", http.StatusForbidden)
+	})
+}
+
+// AuthMiddleware sets authorization cookies
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Executing middleware before request phase!")
+		// Pass control back to the handler
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -200,6 +213,24 @@ func getTokenFromHeader(r *http.Request) string {
 	strippedToken := strings.Replace(token, "Bearer ", "", 1)
 
 	return strippedToken
+}
+
+func getAccessTokenFromCookie(r *http.Request) string {
+	cookie, err := r.Cookie("accessToken")
+	if err != nil {
+		return ""
+	}
+
+	return cookie.Value
+}
+
+func getRefreshTokenFromCookie(r *http.Request) string {
+	cookie, err := r.Cookie("refreshToken")
+	if err != nil {
+		return ""
+	}
+
+	return cookie.Value
 }
 
 // checkIsPlayground return true if the request is to the playground

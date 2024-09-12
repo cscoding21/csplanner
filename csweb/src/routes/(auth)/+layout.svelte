@@ -1,12 +1,15 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { isAuthenticated } from "$lib/stores/auth";
     import { goto } from '$app/navigation'
+    import { authService } from "$lib/services/auth";
+
+    const as = authService()
 
     onMount(async () => {
-		if(isAuthenticated()) {
-			goto("/home")
-		}
+      console.log("auth layout.svelte authenticated", as.authCheck())
+      if(as.authCheck()) {
+        goto("/home")
+      }
 	});
 </script>
 

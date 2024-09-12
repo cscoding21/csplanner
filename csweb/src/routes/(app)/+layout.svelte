@@ -1,25 +1,25 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
   import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider, DarkMode, Button, Input } from 'flowbite-svelte';
-	import { isAuthenticated, currentUser, logout } from '$lib/stores/auth';
+  import { authService } from '$lib/services/auth';
   import { SearchOutline } from 'flowbite-svelte-icons';
-	import type { LoginResult } from '$lib/graphql/generated/sdk'
 	import { goto } from '$app/navigation';
   import { getInitialsFromName } from '$lib/utils/format';
   import { PageMessages, NotificationList } from '$lib/components/messages';
 
-	let loginInfo: LoginResult = currentUser()
+  const as = authService()
+	const cu = as.currentUser()
 
 	const logoutUser = () => {
-		logout()
-
-		goto("/login")
+    as.signout().then(r => {
+      if(r) {
+        goto("/login")
+      }
+    })
 	}
 
 	onMount(async () => {
-		if(!isAuthenticated()) {
-			goto("/login");
-		}
+    console.log('layout onMount')
 	});
 </script>
 
@@ -41,13 +41,13 @@
     <div class="flex items-center md:order-3">
       <DarkMode class="text-2xl mr-2" />
       <!-- <NotificationList /> -->
-      <Avatar id="avatar-menu" src={loginInfo.resource?.profileImage || ""} class="ml-6 cursor-pointer">{getInitialsFromName(loginInfo.user?.firstName + " " + loginInfo.user?.lastName || "")}</Avatar>
+      <Avatar id="avatar-menu" src={cu?.profileImage || ""} class="ml-6 cursor-pointer">{getInitialsFromName(cu?.firstName + " " + cu?.lastName || "")}</Avatar>
       <NavHamburger class1="w-full md:flex md:w-auto md:order-1" />
     </div>
     <Dropdown placement="bottom" triggeredBy="#avatar-menu">
       <DropdownHeader>
-        <span class="block text-sm">{loginInfo.user?.firstName}</span>
-        <span class="block truncate text-sm font-medium">{loginInfo.user?.email}</span>
+        <span class="block text-sm">{cu?.firstName}</span>
+        <span class="block truncate text-sm font-medium">{cu?.email}</span>
       </DropdownHeader>
       <DropdownItem>Dashboard</DropdownItem>
       <DropdownItem>Settings</DropdownItem>
