@@ -256,7 +256,7 @@ export function authService() {
 			firstName: decoded.given_name,
 			lastName: decoded.family_name,
 			email: decoded.email,
-			profileImage: ''
+			profileImage: decoded.profileImage
 		};
 
 		return user as User;
