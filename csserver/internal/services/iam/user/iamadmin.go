@@ -52,12 +52,17 @@ func (s *UserService) NewUser(ctx context.Context, user *User) (common.UpdateRes
 		return common.NewUpdateResult[User](&val, nil), err
 	}
 
+	props := make(map[string][]string)
+
+	props["profileImage"] = []string{user.ProfileImage}
+
 	u := gocloak.User{
-		FirstName: &user.FirstName,
-		LastName:  &user.LastName,
-		Email:     &user.Email,
-		Enabled:   gocloak.BoolP(true),
-		Username:  &user.Email,
+		FirstName:  &user.FirstName,
+		LastName:   &user.LastName,
+		Email:      &user.Email,
+		Enabled:    gocloak.BoolP(true),
+		Username:   &user.Email,
+		Attributes: &props,
 	}
 
 	uid, err := s.KCClient.CreateUser(ctx, token.AccessToken, s.KCRealm, u)

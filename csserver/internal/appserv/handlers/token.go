@@ -104,8 +104,6 @@ func (h RefreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	fmt.Println(args)
-
 	resp, err := as.RefreshToken(ctx, args.RefreshToken)
 	if err != nil {
 		fmt.Println(err)

@@ -9,4 +9,5 @@ type User struct {
 	Email           string `json:"email" csval:"req,email"`
 	Password        string `json:"password" csval:"req"`
 	ConfirmPassword string `json:"confirmPassword" csval:"req,equals(Password)"`
+	ProfileImage    string `json:"profileImage"`
 }

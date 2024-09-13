@@ -67,7 +67,7 @@ func setDefaults() {
 	viper.SetDefault("security.keycloakrealm", "csplanner")
 	viper.SetDefault("security.keycloakadminuser", "csplanner-admin")
 	viper.SetDefault("security.keycloakadminpass", "pass")
-	viper.SetDefault("security.keycloakclientid", "web-login")
+	viper.SetDefault("security.keycloakclientid", "web-client")
 	viper.SetDefault("security.keycloakclientsecret", "pass")
 
 	//Server
