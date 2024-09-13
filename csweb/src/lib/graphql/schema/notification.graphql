@@ -1,35 +1,33 @@
 fragment notificationFragment on Notification {
-    id
-    userEmail
-    userName
-    text
-    recipientIsBot
-    isRead
-    recipientIsBot
-    type
-    contextId
-    initiatorName
-    initiatorEmail
-    initiatorProfileImage
-    updatedAt
+	id
+	userEmail
+	userName
+	text
+	recipientIsBot
+	isRead
+	recipientIsBot
+	type
+	contextId
+	initiatorName
+	initiatorEmail
+	initiatorProfileImage
+	updatedAt
 }
-
 
 query findUserNotifications($input: PageAndFilter!) {
-  findUserNotifications(pageAndFilter: $input) {
-    paging {
-      ...pagingFragment
-    }
-    results {
-      ...notificationFragment
-    }
-  }
+	findUserNotifications(pageAndFilter: $input) {
+		paging {
+			...pagingFragment
+		}
+		results {
+			...notificationFragment
+		}
+	}
 }
 
-
-mutation setNotificationsRead($ids:[String!]!) {
-  setNotificationsRead(input:$ids) {
-    success
-    message
-  }
+mutation setNotificationsRead($ids: [String!]!) {
+	setNotificationsRead(input: $ids) {
+		success
+		message
+	}
 }

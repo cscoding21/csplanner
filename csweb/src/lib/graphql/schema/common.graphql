@@ -1,36 +1,35 @@
 fragment controlFieldsFragment on ControlFields {
-    createdBy
-    createdAt
-    updatedAt
-    updatedBy
-    deletedAt
-    deletedBy
-    createByUser {
-        firstName
-        lastName
-        email
-    }
-    updateByUser {
-        firstName
-        lastName
-        email
-    }
-    deleteByUser {
-        firstName
-        lastName
-        email
-    }
+	createdBy
+	createdAt
+	updatedAt
+	updatedBy
+	deletedAt
+	deletedBy
+	createByUser {
+		firstName
+		lastName
+		email
+	}
+	updateByUser {
+		firstName
+		lastName
+		email
+	}
+	deleteByUser {
+		firstName
+		lastName
+		email
+	}
 }
 
-
 fragment statusFragment on Status {
-    success
-    message
+	success
+	message
 }
 
 fragment pagingFragment on Pagination {
-    pageNumber
-    totalResults
-    resultsPerPage
-    after
+	pageNumber
+	totalResults
+	resultsPerPage
+	after
 }

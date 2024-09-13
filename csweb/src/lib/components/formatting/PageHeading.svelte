@@ -1,13 +1,18 @@
 <script lang="ts">
-    import { Heading } from "flowbite-svelte";
+	import { Heading } from 'flowbite-svelte';
+	import type { Snippet } from 'svelte';
 
-    let { title = $bindable() } = $props()
+	interface PageHeadingProps {
+		title: string;
+		children: Snippet;
+	}
+	let { title, children = $bindable() }: PageHeadingProps = $props();
 </script>
 
-<Heading tag="h3" class="px-2 mb-4">
-    {title}
+<Heading tag="h3" class="mb-4 px-2">
+	{title}
 
-    <span class="float-right">
-        <slot />
-    </span>
+	<span class="float-right">
+		{@render children()}
+	</span>
 </Heading>

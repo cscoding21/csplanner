@@ -1,193 +1,183 @@
 fragment projectFragment on Project {
-  id
-    projectBasics{
-      name
-      description
-      status
-      startDate
-      ownerEmail
-    }
-    projectValue {
-      fundingSource
-      discountRate
-      yearOneValue
-      yearTwoValue
-      yearThreeValue
-      yearFourValue
-      yearFiveValue
-      netPresentValue
-      internalRateOfReturn
-    }
-    projectCost {
-      ongoing
-      blendedRate
-      initialCost
-      hourEstimate
-    }
-    projectDaci {
-      driver
-      approver
-      contributor
-      informed
-    }
-    projectFeatures {
-      id
-      name
-      description
-      priority
-      status
-    }
-    projectMilestones {
-      id
-      phase {
-        name
-        description
-        id
-        order
-      }
-      tasks {
-        id
-        name
-        description
-        status
-        hourEstimate
-        requiredSkillIDs
-        skills {
-          id
-          name
-        }
-        resourceIDs
-        resources {
-          ...resourceFragment 
-        }
-        startDate
-        endDate
-      }
-    }
+	id
+	projectBasics {
+		name
+		description
+		status
+		startDate
+		ownerEmail
+	}
+	projectValue {
+		fundingSource
+		discountRate
+		yearOneValue
+		yearTwoValue
+		yearThreeValue
+		yearFourValue
+		yearFiveValue
+		netPresentValue
+		internalRateOfReturn
+	}
+	projectCost {
+		ongoing
+		blendedRate
+		initialCost
+		hourEstimate
+	}
+	projectDaci {
+		driver
+		approver
+		contributor
+		informed
+	}
+	projectFeatures {
+		id
+		name
+		description
+		priority
+		status
+	}
+	projectMilestones {
+		id
+		phase {
+			name
+			description
+			id
+			order
+		}
+		tasks {
+			id
+			name
+			description
+			status
+			hourEstimate
+			requiredSkillIDs
+			skills {
+				id
+				name
+			}
+			resourceIDs
+			resources {
+				...resourceFragment
+			}
+			startDate
+			endDate
+		}
+	}
 }
 
 query findProjects($input: PageAndFilter!) {
-  findProjects(pageAndFilter: $input) {
-    paging {
-      ...pagingFragment
-    }
-    results {
-      ...projectFragment
-    }
-  }
+	findProjects(pageAndFilter: $input) {
+		paging {
+			...pagingFragment
+		}
+		results {
+			...projectFragment
+		}
+	}
 }
 
 query getProject($id: String!) {
-  getProject(id: $id) {
-    ...projectFragment
-  }
+	getProject(id: $id) {
+		...projectFragment
+	}
 }
-
 
 query findAllProjectTemplates {
-  findAllProjectTemplates {
-    results {
-    name
-    id
-    phases {
-      id
-      name
-      order
-      description
-    }
-  }
-  }
+	findAllProjectTemplates {
+		results {
+			name
+			id
+			phases {
+				id
+				name
+				order
+				description
+			}
+		}
+	}
 }
 
-
-mutation createProject ($project: UpdateProject!) {
-  createProject (input: $project) {
-      status {
-        ...statusFragment
-      }
-      project {
-        ...projectFragment
-      }
-  }
+mutation createProject($project: UpdateProject!) {
+	createProject(input: $project) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
 }
 
-
-mutation updateProject ($project: UpdateProject!) {
-  updateProject (input: $project) {
-      status {
-        ...statusFragment
-      }
-      project {
-        ...projectFragment
-      }
-  }
+mutation updateProject($project: UpdateProject!) {
+	updateProject(input: $project) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
 }
 
-
-mutation deleteProject ($id: String!) {
-  deleteProject(id: $id) {
-    ...statusFragment
-  }
+mutation deleteProject($id: String!) {
+	deleteProject(id: $id) {
+		...statusFragment
+	}
 }
 
-
-mutation toggleEmote ($input: UpdateCommentEmote!){
-  toggleEmote (input: $input)  {
-      ...statusFragment
-  }
+mutation toggleEmote($input: UpdateCommentEmote!) {
+	toggleEmote(input: $input) {
+		...statusFragment
+	}
 }
 
-
-mutation setProjectMilestonesFromTemplate ($input: UpdateProjectMilestoneTemplate!){
-  setProjectMilestonesFromTemplate (input: $input)  {
-      ...projectFragment
-  }
+mutation setProjectMilestonesFromTemplate($input: UpdateProjectMilestoneTemplate!) {
+	setProjectMilestonesFromTemplate(input: $input) {
+		...projectFragment
+	}
 }
 
-
-mutation updateProjectTask ($input: UpdateProjectMilestoneTask!) {
-  updateProjectTask (input: $input)  {
-      status {
-        ...statusFragment
-      }
-      project {
-        ...projectFragment
-      }
-  }
+mutation updateProjectTask($input: UpdateProjectMilestoneTask!) {
+	updateProjectTask(input: $input) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
 }
 
-
-mutation deleteProjectTask ($projectID: String!, $milestoneID: String!, $taskID: String!) {
-  deleteProjectTask (projectID: $projectID, milestoneID: $milestoneID, taskID: $taskID)  {
-      status {
-        ...statusFragment
-      }
-      project {
-        ...projectFragment
-      }
-  }
+mutation deleteProjectTask($projectID: String!, $milestoneID: String!, $taskID: String!) {
+	deleteProjectTask(projectID: $projectID, milestoneID: $milestoneID, taskID: $taskID) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
 }
 
-
-mutation updateProjectFeature ($input: UpdateProjectFeature!) {
-  updateProjectFeature (input: $input)  {
-      status {
-        ...statusFragment
-      }
-      project {
-        ...projectFragment
-      }
-  }
+mutation updateProjectFeature($input: UpdateProjectFeature!) {
+	updateProjectFeature(input: $input) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
 }
 
-
-mutation deleteProjectFeature ($projectID: String!, $featureID: String!) {
-  deleteProjectFeature (projectID: $projectID, featureID: $featureID)  {
-      status {
-        ...statusFragment
-      }
-      project {
-        ...projectFragment
-      }
-  }
+mutation deleteProjectFeature($projectID: String!, $featureID: String!) {
+	deleteProjectFeature(projectID: $projectID, featureID: $featureID) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
 }

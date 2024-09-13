@@ -1,8 +1,8 @@
 mutation createUser($info: UpdateUser!) {
-  createUser (input: $info)  {
-    status {
-        success
-        message
-    }
-  }
+	createUser(input: $info) {
+		status {
+			success
+			message
+		}
+	}
 }
