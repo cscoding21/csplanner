@@ -2,8 +2,7 @@
 	import { parseErrors, mergeErrors } from '$lib/forms/helpers';
 	import { loginForm, loginSchema } from '$lib/forms/login.validation';
 	import { goto } from '$app/navigation';
-	import { EmailInput, PasswordInput } from '$lib/components/forms';
-	import { AlertError } from '$lib/components/messages';
+	import { EmailInput, PasswordInput, AlertError } from '$lib/components';
 	import { authService } from '$lib/services/auth';
 
 	let errors: any = $state({});
@@ -65,10 +64,6 @@
 				class="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
 				>Login</button
 			>
-			<!-- <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-        Not registered? <a href="/register" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a> <br />
-        Forgot password? <a href="/forgot" class="text-blue-700 hover:underline dark:text-blue-500">Reset</a>
-    </div> -->
 		</form>
 	</div>
 </div>

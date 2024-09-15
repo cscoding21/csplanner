@@ -3,15 +3,13 @@
 	import { UserAddOutline } from 'flowbite-svelte-icons';
 	import { findAllResources } from '$lib/services/resource';
 	import { ResourceActionBar, ResourceCard } from './components';
-	import { NoResults } from '$lib/components/messages';
-	import { PageHeading } from '$lib/components/formatting';
-	import { is } from '$lib/utils/check';
+	import { NoResults, PageHeading } from '$lib/components';
 	import { onMount } from 'svelte';
-	import type { ApolloQueryResult } from '@apollo/client';
+	import type { ResourceResults } from '$lib/graphql/generated/sdk';
 
-	const refresh = async (): Promise<ApolloQueryResult<any>> => {
-		console.log('resource refresh');
+	const refresh = async (): Promise<ResourceResults> => {
 		const res = await findAllResources();
+		console.log(res)
 
 		return res;
 	};
@@ -21,8 +19,6 @@
 	});
 
 	let resources = $state(refresh());
-
-	console.log('resource page.svelte');
 </script>
 
 <ResourceActionBar pageDetail="">
@@ -34,14 +30,14 @@
 	</ButtonGroup>
 </ResourceActionBar>
 
-<PageHeading title="Resource Roster"><span></span></PageHeading>
+<PageHeading title="Resource Roster" />
 
 {#await resources}
 	<div>Loading...</div>
 {:then promiseData}
-	{#if is(promiseData.data.findAllResources.results)}
+	{#if promiseData.results != null}
 		<div class="grid grid-cols-3 gap-3">
-			{#each promiseData.data.findAllResources.results as r}
+			{#each promiseData.results as r}
 				<ResourceCard resource={r} on:updated={refresh} />
 			{/each}
 		</div>

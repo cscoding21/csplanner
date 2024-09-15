@@ -32,7 +32,7 @@ func CreateOrGetBot(ctx context.Context) *userPackage.User {
 		ProfileImage:    "/aibot.jpg",
 	}
 
-	ur, err := service.NewUser(ctx, &botUser)
+	ur, err := service.CreateUser(ctx, &botUser)
 	if err != nil {
 		log.Errorf("error creating user: %v", err)
 	}
@@ -66,7 +66,7 @@ func CreateTestUsers(ctx context.Context) error {
 	}
 
 	for _, u := range usrs {
-		ur, err := service.NewUser(ctx, &u)
+		ur, err := service.CreateUser(ctx, &u)
 		if err != nil {
 			log.Errorf("NewUser(%s): %s\n", u.Email, err)
 		}

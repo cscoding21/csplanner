@@ -28,11 +28,6 @@ maps:
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
-  # - name: "paging_source"
-  #   source_path: "internal/appserv/graph/idl/models.gen.go"
-  #   target_path: "internal/common/paging.go"
-  #   imports: 
-  #   - "csserver/internal/common"
 
   - name: "list_target"
     source_path: "internal/services/list/models.go"
@@ -40,17 +35,41 @@ maps:
     imports: 
     - "csserver/internal/services/list"
     - "csserver/internal/common"
+
   - name: "user_target"
     source_path: "internal/services/iam/user/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/services/iam/user"
     - "csserver/internal/common"
+  - name: "user_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/iam/user/models.go"
+    imports: 
+    - "csserver/internal/services/iam/user"
+    - "csserver/internal/common"
+    map_overrides:
+    - source_name: "UpdateUser"
+      target_name: "User"
+
+
   - name: "resource_target"
     source_path: "internal/services/resource/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+  - name: "resource_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/resource/models.go"
+    imports: 
+    - "csserver/internal/common"
+    map_overrides:
+    - source_name: "UpdateResource"
+      target_name: "Resource"
+    - source_name: "UpdateSkill"
+      target_name: "Skill"
+
+
   - name: "project_target"
     source_path: "internal/services/project/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"

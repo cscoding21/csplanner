@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const skillForm: any = {
+export const skillForm : any = {
 	resourceID: '',
 	skillID: '',
 	proficiency: ''

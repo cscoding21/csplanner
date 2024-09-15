@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FormErrorMessage } from '$lib/components/forms';
+	import { FormErrorMessage } from '$lib/components';
 	import { DollarOutline } from 'flowbite-svelte-icons';
 	import { createEventDispatcher } from 'svelte';
 

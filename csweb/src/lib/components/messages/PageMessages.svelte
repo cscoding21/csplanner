@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { toasts } from '$lib/stores/toasts';
-	import { Toast } from '$lib/components/messages';
+	import { Toast } from '$lib/components';
 </script>
 
 {#if $toasts}

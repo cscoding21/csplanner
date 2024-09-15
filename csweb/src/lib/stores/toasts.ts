@@ -3,7 +3,7 @@ import { writable } from 'svelte/store';
 export const toasts = writable([]);
 
 export type Toast = {
-	id: number;
+	id?: number;
 	message: string;
 	type: 'info' | 'success' | 'error' | 'warn' | 'user';
 	dismissible: boolean;

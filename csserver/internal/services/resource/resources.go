@@ -1,33 +1,83 @@
 package resource
 
-// FindResources return a paged list of resources based on filter criteria
-/*
-func (s *ResourceService) FindResources(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[Resource], error) {
-	out := common.NewPagedResults[Resource](paging, filters)
+import (
+	"context"
+	"csserver/internal/common"
+	"slices"
 
-	whereSql, _ := s.DBClient.BuildWhereClauseFromFilters(&filters)
+	"github.com/cscoding21/csval/validate"
+	"github.com/opentracing/opentracing-go/log"
+)
 
-	sql := fmt.Sprintf(`SELECT *
-			FROM resource
-			WHERE true
-				AND deleted_at is null
-				%s
-			ORDER BY name
-			`, whereSql)
+// UpdateSkillForResource add or update a skill to s resource
+func (s *ResourceService) UpdateSkillForResource(ctx context.Context, id string, skill Skill) (common.UpdateResult[Resource], error) {
+	val := validate.NewSuccessValidationResult()
 
-	rawResults, count, err := s.DBClient.FindPagedObjects(sql, paging, filters)
+	res, err := s.GetResourceByID(ctx, id)
 	if err != nil {
-		log.Error()
-		return out, err
+		log.Error(err)
+		return common.NewUpdateResult(&val, res), err
 	}
 
-	out.Pagination.TotalResults = &count
-	unpacked, err := marshal.SurrealSmartUnmarshal[[]Resource](rawResults)
-	if err != nil {
-		return out, err
+	if skillsContain(res.Skills, skill.ID) {
+		//---update the existing skill
+		for i, s := range res.Skills {
+			if s.ID == skill.ID {
+				res.Skills[i].Proficiency = skill.Proficiency
+			}
+		}
+	} else {
+		res.Skills = append(res.Skills, &skill)
 	}
 
-	out.Results = common.RefToVal(unpacked)
+	out, err := s.UpdateResource(ctx, res)
+	if err != nil {
+		log.Error(err)
+		return common.NewUpdateResult(&val, res), err
+	}
+
 	return out, nil
 }
-*/
+
+// RemoveSkillFromResource remove a skill from a resource
+func (s *ResourceService) RemoveSkillFromResource(ctx context.Context, resourceID string, skillID string) (common.UpdateResult[Resource], error) {
+	val := validate.NewSuccessValidationResult()
+
+	res, err := s.GetResourceByID(ctx, resourceID)
+	if err != nil {
+		log.Error(err)
+		return common.NewUpdateResult(&val, res), err
+	}
+
+	if skillsContain(res.Skills, skillID) {
+		//---update the existing skill
+		for i, s := range res.Skills {
+			if s.ID == skillID {
+				res.Skills = slices.Delete(res.Skills, i, i+1)
+			}
+		}
+	}
+
+	out, err := s.UpdateResource(ctx, res)
+	if err != nil {
+		log.Error(err)
+		return common.NewUpdateResult(&val, res), err
+	}
+
+	return out, nil
+}
+
+// skillsContain return true is a skill with the corresponging ID already exists
+func skillsContain(skills []*Skill, id string) bool {
+	if len(skills) == 0 {
+		return false
+	}
+
+	for _, s := range skills {
+		if s.ID == id {
+			return true
+		}
+	}
+
+	return false
+}

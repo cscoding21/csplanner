@@ -40,8 +40,8 @@ func NewUserService(
 	return out
 }
 
-// NewUser create a new Keycloak user
-func (s *UserService) NewUser(ctx context.Context, user *User) (common.UpdateResult[User], error) {
+// CreateUser create a new Keycloak user
+func (s *UserService) CreateUser(ctx context.Context, user *User) (common.UpdateResult[User], error) {
 	val := user.Validate()
 	if !val.Pass {
 		return common.NewUpdateResult[User](&val, nil), fmt.Errorf("validation failed")
@@ -72,7 +72,36 @@ func (s *UserService) NewUser(ctx context.Context, user *User) (common.UpdateRes
 
 	err = s.KCClient.SetPassword(ctx, token.AccessToken, uid, s.KCRealm, user.Password, false)
 	return common.NewUpdateResult[User](&val, nil), err
+}
 
+// UpdateUser create a new Keycloak user
+func (s *UserService) UpdateUser(ctx context.Context, user *User) (common.UpdateResult[User], error) {
+	val := user.Validate()
+	if !val.Pass {
+		return common.NewUpdateResult[User](&val, nil), fmt.Errorf("validation failed")
+	}
+
+	token, err := s.getAdminToken(ctx)
+	if err != nil {
+		return common.NewUpdateResult[User](&val, nil), err
+	}
+
+	props := make(map[string][]string)
+
+	props["profileImage"] = []string{user.ProfileImage}
+
+	u := gocloak.User{
+		FirstName:  &user.FirstName,
+		LastName:   &user.LastName,
+		Email:      &user.Email,
+		Enabled:    gocloak.BoolP(true),
+		Username:   &user.Email,
+		Attributes: &props,
+	}
+
+	err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, u)
+
+	return common.NewUpdateResult[User](&val, nil), err
 }
 
 // getAdminToken return an token that can be used for

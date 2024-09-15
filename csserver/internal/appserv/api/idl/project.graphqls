@@ -4,6 +4,8 @@
 
 type Project {
   id: String
+  createdAt: Time
+  updatedAt: Time
   projectBasics: ProjectBasics!
   projectValue: ProjectValue!
   projectCost: ProjectCost!

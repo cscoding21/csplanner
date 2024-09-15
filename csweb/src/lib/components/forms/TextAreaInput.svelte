@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FormErrorMessage from './FormErrorMessage.svelte';
+	import { FormErrorMessage } from '$lib/components';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();

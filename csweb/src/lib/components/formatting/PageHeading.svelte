@@ -4,7 +4,7 @@
 
 	interface PageHeadingProps {
 		title: string;
-		children: Snippet;
+		children?: Snippet;
 	}
 	let { title, children = $bindable() }: PageHeadingProps = $props();
 </script>
@@ -13,6 +13,6 @@
 	{title}
 
 	<span class="float-right">
-		{@render children()}
+		{#if children} {@render children()} {/if}
 	</span>
 </Heading>

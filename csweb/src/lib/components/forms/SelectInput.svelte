@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FormErrorMessage } from '$lib/components/forms';
+	import { FormErrorMessage } from '$lib/components';
 	import { Label, Select, type SelectOptionType } from 'flowbite-svelte';
 	import { createEventDispatcher } from 'svelte';
 
@@ -11,7 +11,7 @@
 		});
 	}
 
-	let { fieldName, error, value, options = $bindable() } = $props();
+	let { fieldName, error = $bindable(), value = $bindable(), options = $bindable() } = $props();
 </script>
 
 <div class="mb-6">

@@ -19,7 +19,7 @@
 	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import { PageMessages /* , NotificationList */ } from '$lib/components/messages';
+	import { PageMessages /* , NotificationList */ } from '$lib/components';
 
 	const as = authService();
 	const cu = as.currentUser();

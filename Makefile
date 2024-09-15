@@ -24,6 +24,14 @@ csmap:
 	cd ./csserver && \
 	csmap;
 
+codegen:
+	cd ./csweb && \
+	pnpm codegen;
+
+genall:
+	make gql && \
+	make csmap;
+
 k8s-secrets:
 	./scripts/k8s-secrets.sh;
 

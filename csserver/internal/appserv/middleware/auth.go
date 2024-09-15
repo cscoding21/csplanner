@@ -53,16 +53,10 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if bypassSecurity(r) {
-			log.Info("Auth bypass: flag")
-			next.ServeHTTP(w, r)
-			return
-		}
-
 		us := factory.GetUserService()
 		bctx := r.Context()
 
-		if allowAnonomousOperation(r) {
+		if allowAnonomousOperation(r) || bypassSecurity(r) {
 			anonEmail := config.Config.Default.BotUserEmail
 			log.Warnf("AI Bot credentials set for %s", anonEmail)
 
@@ -204,7 +198,9 @@ func allowAnonomousOperation(r *http.Request) bool {
 
 // bypassSecurity check to see if security should be bypassed.  For local development
 func bypassSecurity(r *http.Request) bool {
-	return config.Config.Security.BypassAuth
+	_, isPlayground := strings.CutPrefix(r.Referer(), "http://localhost:5000/playground")
+
+	return config.Config.Security.BypassAuth || isPlayground
 }
 
 // getTokenFromHeader gets the jwt from the request header and strips the bearer prefix if necessary

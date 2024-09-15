@@ -55,3 +55,36 @@ func GetValidationResultIdl(result validate.ValidationResult) idl.ValidationResu
 
 	return out
 }
+
+// GetStatusFromError returns a failing status when an error occurs
+func GetStatusFromError(err error) (*idl.Status, error) {
+	status := idl.Status{}
+
+	if err != nil {
+		status.Success = false
+		status.Message = []string{err.Error()}
+
+		return &status, err
+	}
+
+	status.Success = true
+	return &status, nil
+}
+
+// GetStatusFromUpdateResult return an IDL status from an update result
+func GetStatusFromUpdateResult[T any](result common.UpdateResult[T]) (*idl.Status, error) {
+	status := idl.Status{}
+
+	if result.ValidationResult.Pass {
+		status.Success = true
+
+		return &status, nil
+	}
+
+	status.Success = false
+	if result.ValidationResult != nil {
+		status.ValidationResult = common.ValToRef(GetValidationResultIdl(*result.ValidationResult))
+	}
+
+	return &status, nil
+}

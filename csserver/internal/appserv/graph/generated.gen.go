@@ -223,6 +223,7 @@ type ComplexityRoot struct {
 
 	Project struct {
 		ControlFields     func(childComplexity int) int
+		CreatedAt         func(childComplexity int) int
 		ID                func(childComplexity int) int
 		ProjectBasics     func(childComplexity int) int
 		ProjectCost       func(childComplexity int) int
@@ -230,6 +231,7 @@ type ComplexityRoot struct {
 		ProjectFeatures   func(childComplexity int) int
 		ProjectMilestones func(childComplexity int) int
 		ProjectValue      func(childComplexity int) int
+		UpdatedAt         func(childComplexity int) int
 	}
 
 	ProjectBasics struct {
@@ -359,6 +361,7 @@ type ComplexityRoot struct {
 	}
 
 	Resource struct {
+		CreatedAt    func(childComplexity int) int
 		ID           func(childComplexity int) int
 		IsBot        func(childComplexity int) int
 		Name         func(childComplexity int) int
@@ -1383,6 +1386,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.ControlFields(childComplexity), true
 
+	case "Project.createdAt":
+		if e.complexity.Project.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Project.CreatedAt(childComplexity), true
+
 	case "Project.id":
 		if e.complexity.Project.ID == nil {
 			break
@@ -1431,6 +1441,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.ProjectValue(childComplexity), true
+
+	case "Project.updatedAt":
+		if e.complexity.Project.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Project.UpdatedAt(childComplexity), true
 
 	case "ProjectBasics.description":
 		if e.complexity.ProjectBasics.Description == nil {
@@ -2048,6 +2065,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RelateArtifact.LinkID(childComplexity), true
+
+	case "Resource.createdAt":
+		if e.complexity.Resource.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Resource.CreatedAt(childComplexity), true
 
 	case "Resource.id":
 		if e.complexity.Resource.ID == nil {
@@ -2802,6 +2826,8 @@ type ScheduledResource {
 
 type Project {
   id: String
+  createdAt: Time
+  updatedAt: Time
   projectBasics: ProjectBasics!
   projectValue: ProjectValue!
   projectCost: ProjectCost!
@@ -3008,6 +3034,7 @@ input UpdateProjectMilestoneTask {
   profileImage: String
   skills: [Skill!]
   isBot: Boolean!
+  createdAt: Time
 }
 
 
@@ -4070,6 +4097,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -4599,6 +4628,8 @@ func (ec *executionContext) fieldContext_Comment_resource(_ context.Context, fie
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -5707,6 +5738,10 @@ func (ec *executionContext) fieldContext_CreateProjectResult_project(_ context.C
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Project_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Project_updatedAt(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -5832,6 +5867,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -7830,6 +7867,10 @@ func (ec *executionContext) fieldContext_Mutation_setProjectMilestonesFromTempla
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Project_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Project_updatedAt(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -9137,6 +9178,88 @@ func (ec *executionContext) fieldContext_Project_id(_ context.Context, field gra
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_createdAt(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_updatedAt(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -11085,6 +11208,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -11396,6 +11521,10 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Project_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Project_updatedAt(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -12476,6 +12605,10 @@ func (ec *executionContext) fieldContext_Query_getProject(ctx context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Project_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Project_updatedAt(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -13218,6 +13351,8 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -13925,6 +14060,47 @@ func (ec *executionContext) fieldContext_Resource_isBot(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Resource_createdAt(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ResourceResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.ResourceResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ResourceResults_paging(ctx, field)
 	if err != nil {
@@ -14076,6 +14252,8 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "isBot":
 				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -20023,6 +20201,10 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = graphql.MarshalString("Project")
 		case "id":
 			out.Values[i] = ec._Project_id(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Project_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Project_updatedAt(ctx, field, obj)
 		case "projectBasics":
 			out.Values[i] = ec._Project_projectBasics(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -21249,6 +21431,8 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createdAt":
+			out.Values[i] = ec._Resource_createdAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

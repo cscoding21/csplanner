@@ -3,22 +3,29 @@ import {
 	type NotificationResults,
 	type PageAndFilter,
 	SetNotificationsReadDocument,
-	type Notification
+	type Notification,
+	type Status
 } from '$lib/graphql/generated/sdk';
-import type { ApolloQueryResult, FetchResult, Observable } from '@apollo/client';
+import type { FetchResult, Observable } from '@apollo/client';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import { gql } from '@apollo/client/core';
 
 export const findNotifications = async (
 	input: PageAndFilter
-): Promise<ApolloQueryResult<NotificationResults>> => {
+): Promise<NotificationResults> => {
 	const client = getApolloClient();
 
 	return client.query({
 		query: FindUserNotificationsDocument,
 		variables: { input },
 		fetchPolicy: 'no-cache'
-	});
+	}).then(res => {
+        if(res) {
+            return res.data.findNotifications
+        }
+    }).catch(err => {
+        return err;
+    });
 };
 
 export const subscribeToNotifications = (
@@ -70,8 +77,14 @@ export const getNotificationHeadline = (not: Notification): string => {
 	}
 };
 
-export const setNotificationsRead = async (ids: string[]) => {
+export const setNotificationsRead = async (ids: string[]) : Promise<Status> => {
 	const client = getApolloClient();
 
-	return client.mutate({ mutation: SetNotificationsReadDocument, variables: { ids } });
+	return client.mutate({ mutation: SetNotificationsReadDocument, variables: { ids } }).then(res => {
+        if(res) {
+            return res.data.setNotificationsRead
+        }
+    }).catch(err => {
+        return err;
+    });
 };

@@ -177,6 +177,8 @@ type PortfolioSnapshot struct {
 
 type Project struct {
 	ID                *string             `json:"id,omitempty"`
+	CreatedAt         *time.Time          `json:"createdAt,omitempty"`
+	UpdatedAt         *time.Time          `json:"updatedAt,omitempty"`
 	ProjectBasics     *ProjectBasics      `json:"projectBasics"`
 	ProjectValue      *ProjectValue       `json:"projectValue"`
 	ProjectCost       *ProjectCost        `json:"projectCost"`
@@ -295,14 +297,15 @@ type RelateArtifact struct {
 }
 
 type Resource struct {
-	ID           *string  `json:"id,omitempty"`
-	Type         string   `json:"type"`
-	Name         string   `json:"name"`
-	Role         string   `json:"role"`
-	User         *User    `json:"user,omitempty"`
-	ProfileImage *string  `json:"profileImage,omitempty"`
-	Skills       []*Skill `json:"skills,omitempty"`
-	IsBot        bool     `json:"isBot"`
+	ID           *string    `json:"id,omitempty"`
+	Type         string     `json:"type"`
+	Name         string     `json:"name"`
+	Role         string     `json:"role"`
+	User         *User      `json:"user,omitempty"`
+	ProfileImage *string    `json:"profileImage,omitempty"`
+	Skills       []*Skill   `json:"skills,omitempty"`
+	IsBot        bool       `json:"isBot"`
+	CreatedAt    *time.Time `json:"createdAt,omitempty"`
 }
 
 type ResourceResults struct {

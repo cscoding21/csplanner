@@ -1,7 +1,6 @@
 import * as yup from 'yup';
-import type { UpdateResource } from '$lib/graphql/generated/sdk';
 
-export const resourceForm: UpdateResource = {
+export const resourceForm : any = {
 	id: '',
 	type: '',
 	name: '',

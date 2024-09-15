@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FormErrorMessage } from '.';
+	import { FormErrorMessage } from '$lib/components';
 	import { createEventDispatcher } from 'svelte';
 	import { Input, ButtonGroup, InputAddon } from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';

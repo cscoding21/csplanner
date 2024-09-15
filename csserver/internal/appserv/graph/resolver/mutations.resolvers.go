@@ -6,19 +6,46 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/csmap"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/common"
 	"fmt"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	out := idl.CreateUserResult{}
+	service := factory.GetUserService()
+	user := csmap.UpdateUserIdlToUser(input)
+
+	result, err := service.CreateUser(ctx, &user)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+	} else {
+		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+		out.User = common.ValToRef(csmap.UserUserToIdl(*result.Object))
+	}
+
+	return &out, nil
 }
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+	out := idl.CreateUserResult{}
+	service := factory.GetUserService()
+	user := csmap.UpdateUserIdlToUser(input)
+
+	result, err := service.UpdateUser(ctx, &user)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+	} else {
+		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+		out.User = common.ValToRef(csmap.UserUserToIdl(*result.Object))
+	}
+
+	return &out, nil
 }
 
 // CreateProject is the resolver for the createProject field.
@@ -33,7 +60,8 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdatePr
 
 // DeleteProject is the resolver for the deleteProject field.
 func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: DeleteProject - deleteProject"))
+	service := factory.GetProjectService()
+	return csmap.GetStatusFromError(service.DeleteProject(ctx, id))
 }
 
 // UpdateProjectTask is the resolver for the updateProjectTask field.
@@ -83,27 +111,64 @@ func (r *mutationResolver) ToggleEmote(ctx context.Context, input idl.UpdateComm
 
 // CreateResource is the resolver for the createResource field.
 func (r *mutationResolver) CreateResource(ctx context.Context, input idl.UpdateResource) (*idl.CreateResourceResult, error) {
-	panic(fmt.Errorf("not implemented: CreateResource - createResource"))
+	out := idl.CreateResourceResult{}
+	service := factory.GetResourceService()
+	res := csmap.UpdateResourceIdlToResource(input)
+
+	result, err := service.CreateResource(ctx, &res)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+	} else {
+		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+		out.Resource = common.ValToRef(csmap.ResourceResourceToIdl(*result.Object))
+	}
+
+	return &out, err
 }
 
 // UpdateResource is the resolver for the updateResource field.
 func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateResource) (*idl.CreateResourceResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateResource - updateResource"))
+	out := idl.CreateResourceResult{}
+	service := factory.GetResourceService()
+	res := csmap.UpdateResourceIdlToResource(input)
+
+	result, err := service.UpdateResource(ctx, &res)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+	} else {
+		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+		out.Resource = common.ValToRef(csmap.ResourceResourceToIdl(*result.Object))
+	}
+
+	return &out, err
 }
 
 // DeleteResource is the resolver for the deleteResource field.
 func (r *mutationResolver) DeleteResource(ctx context.Context, id string) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: DeleteResource - deleteResource"))
+	service := factory.GetResourceService()
+
+	return csmap.GetStatusFromError(service.DeleteResource(ctx, id))
 }
 
 // UpdateResourceSkill is the resolver for the updateResourceSkill field.
 func (r *mutationResolver) UpdateResourceSkill(ctx context.Context, input idl.UpdateSkill) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: UpdateResourceSkill - updateResourceSkill"))
+	service := factory.GetResourceService()
+	skill := csmap.UpdateSkillIdlToResource(input)
+
+	_, err := service.UpdateSkillForResource(ctx, input.ResourceID, skill)
+	if err != nil {
+		return csmap.GetStatusFromError(err)
+	}
+
+	return &idl.Status{Success: true}, nil
 }
 
 // DeleteResourceSkill is the resolver for the deleteResourceSkill field.
 func (r *mutationResolver) DeleteResourceSkill(ctx context.Context, resourceID string, skillID string) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: DeleteResourceSkill - deleteResourceSkill"))
+	service := factory.GetResourceService()
+	_, err := service.RemoveSkillFromResource(ctx, resourceID, skillID)
+
+	return csmap.GetStatusFromError(err)
 }
 
 // CreateOrganization is the resolver for the createOrganization field.

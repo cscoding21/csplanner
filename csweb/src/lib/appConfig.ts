@@ -18,7 +18,7 @@ export const appConfig: AppConfig = {
 	fileEndpoint: 'http://localhost:5000/files/',
 	defaultResultsPerPage: 20,
 
-	tokenRefreshMinutes: 1,
+	tokenRefreshMinutes: 4,
 
 	loginUrl: 'http://localhost:5000/login',
 	signoutUrl: 'http://localhost:5000/signout',
