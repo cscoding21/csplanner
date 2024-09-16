@@ -28,6 +28,11 @@ codegen:
 	cd ./csweb && \
 	pnpm codegen;
 
+servgen:
+	cd ./csserver/cmd/cstools && \
+	go install cstools.go && \
+	cstools gen;
+
 genall:
 	make gql && \
 	make csmap;
