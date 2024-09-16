@@ -197,18 +197,26 @@ func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, in
 {{end}}
 	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
 
+	lastObj, err := s.Get{{.ServiceName}}ByID(ctx, input.ID)
+	if err != nil {
+		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
+	}
+
+	//---ensure the integrity of the creation data
+	input.CreatedAt = lastObj.CreatedAt
+	input.CreatedBy = lastObj.CreatedBy
+
 	outData, err := s.DBClient.UpdateObject(userEmail, input.ID, input)
 	if err != nil {
 		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
 	}
 
-	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
+	outObj, err := marshal.SurrealUnmarshal[{{.ServiceName}}](outData)
 	if err != nil {
 		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
 	}
 
-	outObj := utils.RefToVal(outArray)[0]
-	return common.NewUpdateResult[{{.ServiceName}}](&val, &outObj), nil
+	return common.NewUpdateResult[{{.ServiceName}}](&val, outObj), nil
 }
 	
 `

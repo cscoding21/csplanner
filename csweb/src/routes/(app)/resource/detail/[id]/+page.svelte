@@ -9,7 +9,6 @@
     import { getInitialsFromName } from "$lib/utils/format";
     import { resourceForm, resourceSchema } from "$lib/forms/resource.validation";
     import { handleFileUpload } from "$lib/services/file";
-    import { is } from "$lib/utils/check";
     import { coalesceToType, mergeErrors, parseErrors } from "$lib/forms/helpers";
     import type { UpdateResource, Resource } from "$lib/graphql/generated/sdk";
     import { addToast } from "$lib/stores/toasts";
@@ -19,7 +18,7 @@
     const id = $page.params.id;
 
     let editModalOpen:boolean = $state(false)
-    let errors = $state({})
+    let errors = $state({name: "", role: ""})
     let rf = $state(deepCopy(resourceForm))
 
     const refresh = async () => {
@@ -34,7 +33,7 @@
 
     const deleteSkill = async (skillID:string) => {
         deleteResourceSkill(id, skillID).then(res => {
-            if(res.data.deleteResourceSkill.success) {
+            if(res.success) {
                 addToast({ 
                     message: "Resource skill deleted successfully", 
                     dismissible: true, 
@@ -44,7 +43,7 @@
                 resourcePromise = refresh()
             } else {
                 addToast({ 
-                    message: "Error updating resource: " + res.data.deleteResourceSkill.message, 
+                    message: "Error updating resource: " + res.message, 
                     dismissible: true, 
                     type: "error"}
                 )
@@ -60,7 +59,7 @@
 
                 updateResource(f as UpdateResource)
                     .then((res) => {
-                        if(res.data.updateResource.status?.success.valueOf()) {
+                        if(res.status?.success.valueOf()) {
                             editModalOpen = false
 
                             addToast({ 
@@ -72,7 +71,7 @@
                             refresh()
                         } else {
                             addToast({ 
-								message: "Error updating resource: " + res.data.updateResource.status?.message, 
+								message: "Error updating resource: " + res.status?.message, 
 								dismissible: true, 
 								type: "error"}
 							)
@@ -115,7 +114,7 @@
 {#await resourcePromise }
     <div>Loading...</div>
 {:then promiseData}
-{#if is(promiseData)}
+{#if promiseData}
 <ResourceActionBar pageDetail={promiseData.name}>
     {#if !promiseData.isBot}
     <ButtonGroup>
@@ -172,7 +171,7 @@
     </caption>
 
     
-    {#if promiseData.skills }
+    {#if promiseData.skills && promiseData.skills.length > 0 }
     <Table>
         <TableHead>
             <TableHeadCell>Skill</TableHeadCell>

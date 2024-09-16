@@ -76,7 +76,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := getTokenFromHeader(r)
-		log.Infof("Auth token: %s", token)
+		//log.Infof("Auth token: %s", token)
 
 		authService := factory.GetAuthService(bctx)
 		result, err := authService.ValidateToken(bctx, token)
@@ -112,7 +112,6 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 // AuthMiddleware sets authorization cookies
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Executing middleware before request phase!")
 		// Pass control back to the handler
 		next.ServeHTTP(w, r)
 	})

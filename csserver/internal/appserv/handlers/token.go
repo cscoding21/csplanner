@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type LoginHandler struct{}
@@ -18,21 +20,19 @@ type RefreshArgs struct {
 
 // ServeHTTP handles login functionality
 func (h LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("LoginHandler")
+	log.Info("LoginHandler")
 	ctx := r.Context()
 	as := factory.GetAuthService(ctx)
 	var creds auth.AuthCredentials
 
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
-
-	fmt.Println(creds)
 
 	resp, err := as.Authenticate(ctx, creds)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	status := fmt.Sprintf(
@@ -61,14 +61,14 @@ func GetLoginHandler() LoginHandler {
 
 // ServeHTTP handles logout functionality
 func (h SignoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("SignoutHandler")
+	log.Info("SignoutHandler")
 	ctx := r.Context()
 	as := factory.GetAuthService(ctx)
 
 	var args RefreshArgs
 	err := json.NewDecoder(r.Body).Decode(&args)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	status := `{"success": true }`
@@ -79,7 +79,7 @@ func (h SignoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusOK)
 	} else {
-		fmt.Println(err)
+		log.Error(err)
 		status = `{"success": false }`
 		w.WriteHeader(http.StatusInternalServerError)
 	}
@@ -94,19 +94,19 @@ func GetSignoutHandler() SignoutHandler {
 
 // ServeHTTP handles refresh functionality
 func (h RefreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("RefreshHandler")
+	log.Info("RefreshHandler")
 	ctx := r.Context()
 	as := factory.GetAuthService(ctx)
 	var args RefreshArgs
 
 	err := json.NewDecoder(r.Body).Decode(&args)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	resp, err := as.RefreshToken(ctx, args.RefreshToken)
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

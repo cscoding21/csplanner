@@ -8,7 +8,7 @@ image:
   repository: surrealdb/surrealdb
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.5.4"
+  tag: "v1.5.5"
   #tag: "1.0.0"
 
 imagePullSecrets: []

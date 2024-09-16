@@ -31,7 +31,7 @@
 			.then(() => {
                 updateResourceSkill({ resourceID: parsedSkillForm.resourceID, id: parsedSkillForm.skillID, proficiency: parsedSkillForm.proficiency as number })
                     .then(res => {
-                        if(res.data.updateResourceSkill.success) {
+                        if(res.success) {
                             addToast({ 
 									message: "Skill successfully added to resource", 
 									dismissible: true, 
@@ -43,7 +43,7 @@
                             updated()
                         } else {
                             addToast({ 
-								message: "Error creating resource: " + res.data.updateResourceSkill.message, 
+								message: "Error creating resource: " + res.message, 
 								dismissible: true, 
 								type: "error"}
 							)
