@@ -9,7 +9,6 @@
 
 	const refresh = async (): Promise<ResourceResults> => {
 		const res = await findAllResources();
-		console.log(res)
 
 		return res;
 	};

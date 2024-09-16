@@ -29,7 +29,7 @@ fullnameOverride: ""
 ollama:
   gpu:
     # -- Enable GPU integration
-    enabled: false
+    enabled: true
 
     # -- Specify the number of GPU
     number: 1

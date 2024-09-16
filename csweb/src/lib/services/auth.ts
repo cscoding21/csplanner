@@ -211,7 +211,7 @@ export function authService() {
 	 * return the current access token of the logged in user
 	 * @returns the current access token if available
 	 */
-	function getAccessToken():string {
+	function getAccessToken(): string {
 		let token = getCookie('accessToken');
 
 		if (token) {

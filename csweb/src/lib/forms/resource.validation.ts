@@ -1,8 +1,8 @@
 import * as yup from 'yup';
 
-export const resourceForm : any = {
+export const resourceForm: any = {
 	id: '',
-	type: '',
+	type: 'human',
 	name: '',
 	userID: '',
 	role: '',
@@ -13,7 +13,7 @@ export const resourceForm : any = {
 export const resetFormValues = (form: any) => {
 	form.id = '';
 	form.name = '';
-	form.type = '';
+	form.type = 'human';
 	form.userID = '';
 	form.role = '';
 	form.email = '';

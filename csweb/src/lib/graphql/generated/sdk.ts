@@ -354,6 +354,7 @@ export type PortfolioSnapshot = {
 export type Project = {
   __typename?: 'Project';
   controlFields: ControlFields;
+  createdAt?: Maybe<Scalars['Time']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   projectBasics: ProjectBasics;
   projectCost: ProjectCost;
@@ -361,6 +362,7 @@ export type Project = {
   projectFeatures?: Maybe<Array<ProjectFeature>>;
   projectMilestones?: Maybe<Array<ProjectMilestone>>;
   projectValue: ProjectValue;
+  updatedAt?: Maybe<Scalars['Time']['output']>;
 };
 
 export type ProjectBasics = {
@@ -811,6 +813,7 @@ export const ResourceFragmentFragmentDoc = gql`
   role
   profileImage
   isBot
+  type
   createdAt
   skills {
     id

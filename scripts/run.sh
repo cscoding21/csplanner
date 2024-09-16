@@ -18,13 +18,16 @@ else
     fi
 
     #---start minikube
-    minikube start  --mount-string="${HOME}/projects/data:/mnt/data" --mount
+    minikube start --driver=docker --container-runtime docker --gpus all  --mount-string="${HOME}/projects/data:/mnt/data" --mount
 
     if [[ -z ${HAS_STATE} ]]; then
         echo "Setting ingress and linkerd"
 
         #---enable minikube addons
         minikube addons enable ingress
+        minikube addons enable nvidia-device-plugin
+        minikube addons enable nvidia-gpu-device-plugin
+        minikube addons enable nvidia-driver-installer
 
         #---check for linkerd dependencies...for initial setup
         linkerd check --pre

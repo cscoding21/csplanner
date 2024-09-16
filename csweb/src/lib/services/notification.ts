@@ -10,22 +10,23 @@ import type { FetchResult, Observable } from '@apollo/client';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import { gql } from '@apollo/client/core';
 
-export const findNotifications = async (
-	input: PageAndFilter
-): Promise<NotificationResults> => {
+export const findNotifications = async (input: PageAndFilter): Promise<NotificationResults> => {
 	const client = getApolloClient();
 
-	return client.query({
-		query: FindUserNotificationsDocument,
-		variables: { input },
-		fetchPolicy: 'no-cache'
-	}).then(res => {
-        if(res) {
-            return res.data.findNotifications
-        }
-    }).catch(err => {
-        return err;
-    });
+	return client
+		.query({
+			query: FindUserNotificationsDocument,
+			variables: { input },
+			fetchPolicy: 'no-cache'
+		})
+		.then((res) => {
+			if (res) {
+				return res.data.findNotifications;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
 };
 
 export const subscribeToNotifications = (
@@ -77,14 +78,17 @@ export const getNotificationHeadline = (not: Notification): string => {
 	}
 };
 
-export const setNotificationsRead = async (ids: string[]) : Promise<Status> => {
+export const setNotificationsRead = async (ids: string[]): Promise<Status> => {
 	const client = getApolloClient();
 
-	return client.mutate({ mutation: SetNotificationsReadDocument, variables: { ids } }).then(res => {
-        if(res) {
-            return res.data.setNotificationsRead
-        }
-    }).catch(err => {
-        return err;
-    });
+	return client
+		.mutate({ mutation: SetNotificationsReadDocument, variables: { ids } })
+		.then((res) => {
+			if (res) {
+				return res.data.setNotificationsRead;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
 };

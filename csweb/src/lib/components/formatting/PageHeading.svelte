@@ -13,6 +13,8 @@
 	{title}
 
 	<span class="float-right">
-		{#if children} {@render children()} {/if}
+		{#if children}
+			{@render children()}
+		{/if}
 	</span>
 </Heading>

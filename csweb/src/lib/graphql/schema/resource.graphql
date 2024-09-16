@@ -9,6 +9,7 @@ fragment resourceFragment on Resource {
 	role
 	profileImage
 	isBot
+	type
 	createdAt
 	skills {
 		id
