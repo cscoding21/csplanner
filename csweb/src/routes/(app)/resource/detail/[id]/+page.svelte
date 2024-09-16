@@ -97,7 +97,7 @@
 						<Avatar size="lg" src={promiseData.profileImage as string} rounded
 							>{getInitialsFromName(promiseData.name)}</Avatar
 						>
-						<h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+						<h5 class="mt-2 mb-1 text-xl font-medium text-gray-900 dark:text-white">
 							{promiseData.name}
 						</h5>
 						<span class="text-sm text-gray-500 dark:text-gray-400">{promiseData.role}</span>
@@ -131,7 +131,7 @@
 					>
 						User skills
 						<p class="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-							Identifying user skills allows <b>analyzer</b> to properly estimate and propose project
+							Identifying user skills allows <b>csPlanner</b> to properly estimate and propose project
 							resourcing strategies.
 						</p>
 					</caption>

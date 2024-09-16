@@ -11,7 +11,10 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
+	"csserver/internal/services/resource"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -131,8 +134,16 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 	out := idl.CreateResourceResult{}
 	service := factory.GetResourceService()
 	res := csmap.UpdateResourceIdlToResource(input)
+	var result common.UpdateResult[resource.Resource]
+	var err error
 
-	result, err := service.UpdateResource(ctx, &res)
+	log.Info("got to UpdateResource mutation")
+
+	if len(res.ID) > 0 {
+		result, err = service.PatchResource(ctx, res)
+	} else {
+		result, err = service.CreateResource(ctx, &res)
+	}
 	if err != nil {
 		out.Status, _ = csmap.GetStatusFromError(err)
 	} else {

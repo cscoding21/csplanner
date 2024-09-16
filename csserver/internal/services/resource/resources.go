@@ -6,8 +6,32 @@ import (
 	"slices"
 
 	"github.com/cscoding21/csval/validate"
-	"github.com/opentracing/opentracing-go/log"
+
+	log "github.com/sirupsen/logrus"
 )
+
+// PatchResource performs a surgical update of a resource, specially handing certain fields
+func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) (common.UpdateResult[Resource], error) {
+	val := validate.NewSuccessValidationResult()
+
+	res, err := s.GetResourceByID(ctx, resource.ID)
+	if err != nil {
+		log.Error(err)
+		return common.NewUpdateResult(&val, res), err
+	}
+
+	res.Name = resource.Name
+	res.ProfileImage = resource.ProfileImage
+	res.Role = resource.Role
+
+	out, err := s.UpdateResource(ctx, res)
+	if err != nil {
+		log.Error(err)
+		return common.NewUpdateResult(&val, res), err
+	}
+
+	return out, nil
+}
 
 // UpdateSkillForResource add or update a skill to s resource
 func (s *ResourceService) UpdateSkillForResource(ctx context.Context, id string, skill Skill) (common.UpdateResult[Resource], error) {

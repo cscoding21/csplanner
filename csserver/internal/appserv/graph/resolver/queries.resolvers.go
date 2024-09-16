@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/augment"
 	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
@@ -169,6 +170,10 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(results.Results)),
 	}
 
+	for _, r := range out.Results {
+		augment.AugmentResource(r)
+	}
+
 	return &out, nil
 }
 
@@ -205,6 +210,7 @@ func (r *queryResolver) GetResource(ctx context.Context, id string) (*idl.Resour
 	}
 
 	out := csmap.ResourceResourceToIdl(*obj)
+	augment.AugmentResource(&out)
 
 	return &out, nil
 }

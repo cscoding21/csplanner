@@ -110,17 +110,16 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes: 
+- name: csserver-server-pv
+  hostPath:
+    path: /mnt/data
+    type: Directory
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+- mountPath: "/mnt/data"
+  name: csserver-server-pv
 
 nodeSelector: {}
 

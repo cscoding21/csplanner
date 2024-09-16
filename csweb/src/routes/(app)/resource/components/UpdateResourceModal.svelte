@@ -18,7 +18,7 @@
 	let formTitle = $state('New Resource');
 
 	interface UpdateResourceProps {
-		id: string | undefined;
+		id?: string | undefined;
 		children?: Snippet;
         update: Function;
 	}
@@ -71,6 +71,7 @@
 		const files = e.target.files;
 		if (files.length > 0) {
 			const file = files[0];
+			console.log("handleChange", file)
 
 			handleFileUpload(file, id as string, 'profile_image', handleUploadComplete);
 

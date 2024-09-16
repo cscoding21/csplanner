@@ -1,0 +1,37 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: docker.io/hostpath
+reclaimPolicy: Retain
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: csserver-pv
+  labels:
+    type: local
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 80Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /pv-data
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: csserver-pvc
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { ButtonGroup, Button } from 'flowbite-svelte';
+	import { ButtonGroup } from 'flowbite-svelte';
 	import { UserAddOutline } from 'flowbite-svelte-icons';
 	import { findAllResources } from '$lib/services/resource';
-	import { ResourceActionBar, ResourceCard } from './components';
+	import { ResourceActionBar, ResourceCard, UpdateResourceModal } from './components';
 	import { NoResults, PageHeading } from '$lib/components';
 	import { onMount } from 'svelte';
 	import type { ResourceResults } from '$lib/graphql/generated/sdk';
@@ -22,10 +22,10 @@
 
 <ResourceActionBar pageDetail="">
 	<ButtonGroup>
-		<Button href="/resource/new">
+		<UpdateResourceModal update={() => refresh()}>
 			<UserAddOutline class="mr-2 h-3 w-3" />
 			Add Resource
-		</Button>
+		</UpdateResourceModal>
 	</ButtonGroup>
 </ResourceActionBar>
 
