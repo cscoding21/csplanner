@@ -182,35 +182,38 @@ export function authService() {
 	/**
 	 * Tries to get a current user to ensure login is active
 	 */
-	function pingUser():Promise<User> {
+	function pingUser(): Promise<User> {
 		const client = getApolloClient();
 
-		return client.query({ query: CurrentUserDocument }).then(u => {
-			return u.data.currentUser;
-		}).catch(err => {
-			return null
-		})
+		return client
+			.query({ query: CurrentUserDocument })
+			.then((u) => {
+				return u.data.currentUser;
+			})
+			.catch(() => {
+				return null;
+			});
 	}
 
 	/**
 	 * Check if the user is logged in and return true if so.  Otherwise, it redirects to login page
 	 * @returns true if the user is logged in.
 	 */
-	function authCheck():Promise<boolean> {
+	function authCheck(): Promise<boolean> {
 		const accessToken = getAccessToken();
 		if (accessToken) {
-			return pingUser().then(r => {
+			return pingUser().then((r) => {
 				if (r != null) {
-					return true
+					return true;
 				} else {
-					return false
+					return false;
 				}
-			})
+			});
 		}
 
 		return new Promise<boolean>((resolve) => {
-			resolve(false)
-		})
+			resolve(false);
+		});
 	}
 
 	/**
@@ -242,15 +245,7 @@ export function authService() {
 	 * @returns the current refresh token if available
 	 */
 	function getRefreshToken() {
-		let token = getCookie('refreshToken');
-
-		if (token) {
-			return token;
-		}
-
-		token = localStorage.getItem('refreshToken') || '';
-
-		return token;
+		return getCookie('refreshToken');
 	}
 
 	/**

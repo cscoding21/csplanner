@@ -6,12 +6,14 @@ import type {
 	UpdateProjectMilestoneTask,
 	Project,
 	ProjectResults,
+	Status,
 	UpdateProjectValue,
 	UpdateProjectCost,
 	UpdateProjectDaci,
-	UpdateProjectBasics
+	UpdateProjectBasics,
+	CreateProjectResult,
+	ProjecttemplateResults
 } from '$lib/graphql/generated/sdk';
-import type { ApolloQueryResult } from '@apollo/client/core';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import {
 	DeleteProjectDocument,
@@ -56,11 +58,31 @@ export const findProjects = async (input: PageAndFilter): Promise<ProjectResults
 };
 
 /**
+ * Get a project from the backend based on the passed in ID
+ * @param id the ID of the project to retrieve
+ * @returns the full object graph of the specified project
+ */
+export const getProject = async (id: any): Promise<Project> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: GetProjectDocument, variables: { id } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.getProject;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
  * create a new project
  * @param input a project graph
  * @returns a result with the created project and operation status
  */
-export const createProject = async (input: UpdateProject) => {
+export const createProject = async (input: UpdateProject): Promise<CreateProjectResult> => {
 	const client = getApolloClient();
 	console.log(input);
 
@@ -74,4 +96,295 @@ export const createProject = async (input: UpdateProject) => {
 		.catch((err) => {
 			return err;
 		});
+};
+
+/**
+ * Delete a project from the portfolio
+ * @param id the ID of the project to delete
+ * @returns a status object indicating whether the operation was successful
+ */
+export const deleteProject = async (id: string): Promise<Status> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: DeleteProjectDocument, variables: { id } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.deleteProject;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Updates the complete properties of a project
+ * @param input the graph of the project to update
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProject = async (input: UpdateProject): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	input = convertProjectToUpdateProject(input);
+	//input = setExtraPropsForUpdate(input)
+
+	return client
+		.mutate({ mutation: UpdateProjectDocument, variables: { project: input } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.updateProject;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Updates the "basics" section of a project while leaving other sections in tact
+ * @param id the ID of the project to update
+ * @param input the basics section of the project
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectBasics = async (
+	id: string,
+	input: UpdateProjectBasics
+): Promise<CreateProjectResult> => {
+	const proj = await getProject(id);
+
+	const updateProj = convertProjectToUpdateProject(proj);
+	updateProj.projectBasics = input;
+
+	return updateProject(updateProj);
+};
+
+/**
+ * Updates the "value" section of a project while leaving other sections in tact
+ * @param id the ID of the project to update
+ * @param input the value section of the project
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectValue = async (
+	id: string,
+	input: UpdateProjectValue
+): Promise<CreateProjectResult> => {
+	const proj = await getProject(id);
+
+	const updateProj = convertProjectToUpdateProject(proj);
+	updateProj.projectValue = input;
+
+	return updateProject(updateProj);
+};
+
+/**
+ * Updates the "cost" section of a project while leaving other sections in tact
+ * @param id the ID of the project to update
+ * @param input the cost section of the project
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectCost = async (
+	id: string,
+	input: UpdateProjectCost
+): Promise<CreateProjectResult> => {
+	const proj = await getProject(id);
+
+	const updateProj = convertProjectToUpdateProject(proj);
+	updateProj.projectCost = input;
+
+	return updateProject(updateProj);
+};
+
+/**
+ * Updates the "DACI" section of a project while leaving other sections in tact
+ * @param id the ID of the project to update
+ * @param input the DACI section of the project
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectDaci = async (
+	id: string,
+	input: UpdateProjectDaci
+): Promise<CreateProjectResult> => {
+	const proj = await getProject(id);
+
+	const updateProj = convertProjectToUpdateProject(proj);
+	updateProj.projectDaci = input;
+
+	return updateProject(updateProj);
+};
+
+/**
+ * returns a list of all available project milestone templates
+ * @returns a list of all project templates
+ */
+export const findAllProjectTemplates = async (): Promise<ProjecttemplateResults> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: FindAllProjectTemplatesDocument })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.findAllProjectTemplates;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Copies the items from the selected template into the target project
+ * @param input The project id and template ID
+ * @returns a status of the operation and the updated project entity
+ */
+export const setProjectMilestonesFromTemplate = async (
+	input: UpdateProjectMilestoneTemplate
+): Promise<ProjecttemplateResults> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: SetProjectMilestonesFromTemplateDocument, variables: { input } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.setProjectMilestonesFromTemplate;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Create or update a feature for a given project
+ * @param input the project id and feature to add
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectFeature = async (
+	input: UpdateProjectFeature
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: UpdateProjectFeatureDocument, variables: { input } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.updateProjectFeature;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Remove the specified feature from the target project
+ * @param projectID the project ID to update
+ * @param featureID the feature ID to delete
+ * @returns a status of the operation and the updated project entity
+ */
+export const deleteProjectFeature = async (
+	projectID: string,
+	featureID: string
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: DeleteProjectFeatureDocument, variables: { projectID, featureID } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.deleteProjectFeature;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Create or update a task for a given project and milestone
+ * @param input the project, milestone, of the task to update and the task properties
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectTask = async (
+	input: UpdateProjectMilestoneTask
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	input = coalesceToType<UpdateProjectMilestoneTask>(input, taskSchema);
+
+	return client
+		.mutate({ mutation: UpdateProjectTaskDocument, variables: { input } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.updateProjectTask;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Delete a task from a project milestone
+ * @param projectID the ID of the project to update
+ * @param milestoneID the milestone frmo which to remove the task
+ * @param taskID the ID of the task to delete
+ * @returns a status of the operation and the updated project entity
+ */
+export const deleteProjectTask = async (
+	projectID: string,
+	milestoneID: string,
+	taskID: string
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: DeleteProjectTaskDocument, variables: { projectID, milestoneID, taskID } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.deleteProjectTask;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/*
+const setExtraPropsForUpdate = (project: UpdateProject):UpdateProject => {
+    if(project.projectFeatures && project.projectFeatures.length > 0) {
+        for(let i = 0; i < project.projectFeatures?.length; i++) {
+			if (project.projectFeatures[i] != null) {
+				project.projectFeatures[i].projectID = project.id  
+			}
+        }
+    }
+
+    if(project.projectMilestones && project.projectMilestones.length > 0) {
+        for(let i = 0; i < project.projectMilestones?.length; i++) {
+            for (let j = 0; j < project.projectMilestones[i]?.tasks?.length; j++) {
+                delete project.projectMilestones[i].tasks[j].skills
+                delete project.projectMilestones[i].tasks[j].resources
+
+                project.projectMilestones[i].tasks[j].projectID = project.id
+                project.projectMilestones[i].tasks[j].milestoneID = project.projectMilestones[i]?.id  
+            }
+        }
+    }
+
+    return project
+}
+*/
+
+export const convertProjectToUpdateProject = (project: any): UpdateProject => {
+	const up: UpdateProject = {
+		id: project.id
+	};
+
+	up.projectBasics = coalesceToType<UpdateProjectBasics>(project.projectBasics, basicSchema);
+	up.projectValue = coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema);
+	up.projectCost = coalesceToType<UpdateProjectCost>(project.projectCost, costSchema);
+	up.projectDaci = coalesceToType<UpdateProjectDaci>(project.projectDaci, daciSchema);
+
+	return up;
 };

@@ -7,8 +7,8 @@
 
 	onMount(async () => {
 		console.log('auth layout.svelte authenticated', as.authCheck());
-		if(await as.authCheck()) {
-			goto("/home");
+		if (await as.authCheck()) {
+			goto('/home');
 		}
 	});
 </script>

@@ -24,6 +24,7 @@ export { default as PageMessages } from './messages/PageMessages.svelte';
 export { default as Toast } from './messages/Toast.svelte';
 
 //---Widgets
+export { default as AutoSave } from './widgets/AutoSave.svelte';
 export { default as MoneyDisplay } from './widgets/MoneyDisplay.svelte';
 export { default as UserCard } from './widgets/UserCard.svelte';
 export { default as UserList } from './widgets/UserList.svelte';

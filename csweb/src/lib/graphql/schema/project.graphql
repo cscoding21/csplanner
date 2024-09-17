@@ -134,7 +134,12 @@ mutation toggleEmote($input: UpdateCommentEmote!) {
 
 mutation setProjectMilestonesFromTemplate($input: UpdateProjectMilestoneTemplate!) {
 	setProjectMilestonesFromTemplate(input: $input) {
-		...projectFragment
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
 	}
 }
 

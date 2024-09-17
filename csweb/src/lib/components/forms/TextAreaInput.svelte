@@ -10,7 +10,7 @@
 		});
 	}
 
-	let { fieldName, error, value, placeholder, rows = $bindable() } = $props();
+	let { fieldName, error, placeholder, value = $bindable(), rows = $bindable() } = $props();
 </script>
 
 <div class="mb-6">
