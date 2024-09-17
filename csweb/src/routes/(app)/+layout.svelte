@@ -36,6 +36,10 @@
 
 	onMount(async () => {
 		console.log('layout onMount');
+		if(!as.authCheck()) {
+			goto("/login");
+		}
+
 		as.refreshCycle();
 	});
 </script>

@@ -13,6 +13,8 @@ import (
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // CurrentUser is the resolver for the currentUser field.
@@ -52,6 +54,7 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 	}
 
 	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	log.Info(fi)
 	out := idl.ProjectResults{
 		Paging:  &pg,
 		Filters: &fi,

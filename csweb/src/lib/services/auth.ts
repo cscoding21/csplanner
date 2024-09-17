@@ -1,6 +1,7 @@
 import { appConfig } from '$lib/appConfig';
-import type { User } from '$lib/graphql/generated/sdk';
+import { type User, CurrentUserDocument } from '$lib/graphql/generated/sdk';
 import { getCookie, deleteCookie } from '$lib/utils/helpers';
+import { getApolloClient } from '$lib/graphql/gqlclient';
 
 let user: User | undefined;
 let refreshId: ReturnType<typeof setInterval>;
@@ -179,16 +180,37 @@ export function authService() {
 	}
 
 	/**
+	 * Tries to get a current user to ensure login is active
+	 */
+	function pingUser():Promise<User> {
+		const client = getApolloClient();
+
+		return client.query({ query: CurrentUserDocument }).then(u => {
+			return u.data.currentUser;
+		}).catch(err => {
+			return null
+		})
+	}
+
+	/**
 	 * Check if the user is logged in and return true if so.  Otherwise, it redirects to login page
 	 * @returns true if the user is logged in.
 	 */
-	function authCheck() {
+	function authCheck():Promise<boolean> {
 		const accessToken = getAccessToken();
 		if (accessToken) {
-			return true;
+			return pingUser().then(r => {
+				if (r != null) {
+					return true
+				} else {
+					return false
+				}
+			})
 		}
 
-		return false;
+		return new Promise<boolean>((resolve) => {
+			resolve(false)
+		})
 	}
 
 	/**
@@ -212,15 +234,7 @@ export function authService() {
 	 * @returns the current access token if available
 	 */
 	function getAccessToken(): string {
-		let token = getCookie('accessToken');
-
-		if (token) {
-			return token;
-		}
-
-		token = localStorage.getItem('accessToken') || '';
-
-		return token;
+		return getCookie('accessToken');
 	}
 
 	/**

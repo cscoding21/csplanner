@@ -11,3 +11,11 @@ query findAllUsers {
 		}
 	}
 }
+
+query currentUser {
+	currentUser {
+		firstName
+		lastName
+		email
+	}
+}

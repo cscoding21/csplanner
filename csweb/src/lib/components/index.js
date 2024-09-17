@@ -22,3 +22,8 @@ export { default as NoResults } from './messages/NoResults.svelte';
 export { default as NotificationList } from './messages/NotificationList.svelte';
 export { default as PageMessages } from './messages/PageMessages.svelte';
 export { default as Toast } from './messages/Toast.svelte';
+
+//---Widgets
+export { default as MoneyDisplay } from './widgets/MoneyDisplay.svelte';
+export { default as UserCard } from './widgets/UserCard.svelte';
+export { default as UserList } from './widgets/UserList.svelte';

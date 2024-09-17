@@ -20,7 +20,7 @@
 	interface UpdateResourceProps {
 		id?: string | undefined;
 		children?: Snippet;
-        update: Function;
+		update: Function;
 	}
 	let { id, update, children }: UpdateResourceProps = $props();
 
@@ -43,7 +43,7 @@
 					if (res.status?.success.valueOf()) {
 						editModalOpen = false;
 
-                        update()
+						update();
 
 						addToast({
 							message: 'Resource ' + rf.name + ' updated successfully',
@@ -71,7 +71,7 @@
 		const files = e.target.files;
 		if (files.length > 0) {
 			const file = files[0];
-			console.log("handleChange", file)
+			console.log('handleChange', file);
 
 			handleFileUpload(file, id as string, 'profile_image', handleUploadComplete);
 
@@ -94,12 +94,7 @@
 	{#if isUpdate}
 		<div class="flex items-center space-x-4 rtl:space-x-reverse">
 			<div>
-				<Dropzone
-					id="dropzone"
-					defaultClass="float-left mr-4"
-					on:success={(e) => console.log(e)}
-					on:change={handleChange}
-				>
+				<Dropzone id="dropzone" defaultClass="float-left mr-4" on:change={handleChange}>
 					<Avatar size="xl" src={rf.profileImage || ''} rounded class="hover:cursor-pointer"
 						>{getInitialsFromName(rf.name)}</Avatar
 					>

@@ -7,7 +7,7 @@ export const handleFileUpload = (
 	file: any,
 	context: string,
 	artifactType: string,
-	completed: any
+	completed: Function
 ) => {
 	const as = authService();
 
@@ -28,15 +28,16 @@ export const handleFileUpload = (
 		},
 		// Callback for errors which cannot be fixed using retries
 		onError: function (err) {
-			console.error('Failed because: ' + err);
+			console.error('handleFileUpload Failed because: ' + err);
 		},
 		// Callback for reporting upload progress
 		onProgress: function (bytesUploaded, bytesTotal) {
 			const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-			console.log(bytesUploaded, bytesTotal, percentage + '%');
+			console.log('handleFileUpload onProgress', bytesUploaded, bytesTotal, percentage + '%');
 		},
 		// Callback for once the upload is completed
 		onSuccess: function () {
+			console.log('handleFileUpload success!');
 			if (isFunction(completed)) {
 				completed(upload);
 			}

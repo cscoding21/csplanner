@@ -51,7 +51,8 @@ func buildWhereClauseFromFilters(filters *common.Filters) (string, map[string]in
 
 	for _, f := range filters.Filters {
 		stringFormat := getPhraseFromFilterOp(f.Operation)
-		builder.WriteString(fmt.Sprintf(stringFormat, f.Key, f.Key))
+		ky := strings.Replace(f.Key, ".", "_", 1)
+		builder.WriteString(fmt.Sprintf(stringFormat, f.Key, ky))
 	}
 
 	return builder.String(), filters.GetFiltersAsMap()

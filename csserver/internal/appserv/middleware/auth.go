@@ -176,7 +176,7 @@ func allowAnonomousOperation(r *http.Request) bool {
 	json.Unmarshal([]byte(body), &graphqlQuery)
 	log.Debug(graphqlQuery)
 
-	allowed := []string{"IntrospectionQuery", "login", "createUser", "currentUser"}
+	allowed := []string{"IntrospectionQuery", "login", "createUser"}
 
 	//---this will handle calls from the JS client
 	if slices.Contains(allowed, graphqlQuery.OperationName) {
@@ -197,6 +197,7 @@ func allowAnonomousOperation(r *http.Request) bool {
 
 // bypassSecurity check to see if security should be bypassed.  For local development
 func bypassSecurity(r *http.Request) bool {
+	//---TODO:  referrer can be spoofed.  Something more bulletproof here
 	_, isPlayground := strings.CutPrefix(r.Referer(), "http://localhost:5000/playground")
 
 	return config.Config.Security.BypassAuth || isPlayground

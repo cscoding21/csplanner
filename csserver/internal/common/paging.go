@@ -2,6 +2,7 @@ package common
 
 import (
 	"math"
+	"strings"
 )
 
 type FilterOperation string
@@ -101,7 +102,8 @@ func (filters *Filters) GetFiltersAsMap() map[string]interface{} {
 	out := make(map[string]interface{})
 
 	for _, f := range filters.Filters {
-		out[f.Key] = f.Value
+		ky := strings.Replace(f.Key, ".", "_", 1)
+		out[ky] = f.Value
 	}
 
 	return out

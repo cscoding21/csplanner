@@ -89,7 +89,9 @@
 					<div class="flex justify-end">
 						{#if !promiseData.isBot}
 							<ButtonGroup>
-								<UpdateResourceModal {id} update={() => refresh()}><PenOutline /></UpdateResourceModal>
+								<UpdateResourceModal {id} update={async () => refresh()}
+									><PenOutline /></UpdateResourceModal
+								>
 							</ButtonGroup>
 						{/if}
 					</div>
@@ -97,7 +99,7 @@
 						<Avatar size="lg" src={promiseData.profileImage as string} rounded
 							>{getInitialsFromName(promiseData.name)}</Avatar
 						>
-						<h5 class="mt-2 mb-1 text-xl font-medium text-gray-900 dark:text-white">
+						<h5 class="mb-1 mt-2 text-xl font-medium text-gray-900 dark:text-white">
 							{promiseData.name}
 						</h5>
 						<span class="text-sm text-gray-500 dark:text-gray-400">{promiseData.role}</span>

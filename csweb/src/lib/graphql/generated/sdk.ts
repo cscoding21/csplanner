@@ -1383,6 +1383,15 @@ export const FindAllUsersDocument = gql`
   }
 }
     ${PagingFragmentFragmentDoc}`;
+export const CurrentUserDocument = gql`
+    query currentUser {
+  currentUser {
+    firstName
+    lastName
+    email
+  }
+}
+    `;
 export type Requester<C = {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
 export function getSdk<C>(requester: Requester<C>) {
   return {
@@ -1487,6 +1496,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     findAllUsers(variables?: FindAllUsersQueryVariables, options?: C): Promise<FindAllUsersQuery> {
       return requester<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, variables, options) as Promise<FindAllUsersQuery>;
+    },
+    currentUser(variables?: CurrentUserQueryVariables, options?: C): Promise<CurrentUserQuery> {
+      return requester<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, variables, options) as Promise<CurrentUserQuery>;
     }
   };
 }
