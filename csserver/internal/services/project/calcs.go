@@ -24,6 +24,8 @@ func (p *Project) GetProjectNPV() float64 {
 		return 0.0
 	}
 
+	p.ProjectValue.NetPresentValue = npv
+
 	return npv
 }
 
@@ -43,6 +45,8 @@ func (p *Project) GetProjectIRR() float64 {
 		log.Error(err)
 		return 0.0
 	}
+
+	p.ProjectValue.InternalRateOfReturn = irr
 
 	return irr
 }
@@ -66,6 +70,9 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 			cost = cost + float64(t.HourEstimate)*(*p.ProjectCost.BlendedRate)
 		}
 	}
+
+	p.ProjectCost.HourEstimate = hours
+	p.ProjectCost.InitialCost = cost
 
 	return hours, cost
 }

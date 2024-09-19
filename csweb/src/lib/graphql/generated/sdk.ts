@@ -334,8 +334,8 @@ export type PortfolioSnapshot = {
 
 export type Project = {
 	__typename?: 'Project';
-	controlFields: ControlFields;
 	createdAt?: Maybe<Scalars['Time']['output']>;
+	createdBy?: Maybe<Scalars['String']['output']>;
 	id?: Maybe<Scalars['String']['output']>;
 	projectBasics: ProjectBasics;
 	projectCost: ProjectCost;
@@ -344,13 +344,14 @@ export type Project = {
 	projectMilestones?: Maybe<Array<ProjectMilestone>>;
 	projectValue: ProjectValue;
 	updatedAt?: Maybe<Scalars['Time']['output']>;
+	updatedBy?: Maybe<Scalars['String']['output']>;
 };
 
 export type ProjectBasics = {
 	__typename?: 'ProjectBasics';
 	description: Scalars['String']['output'];
 	name: Scalars['String']['output'];
-	ownerEmail?: Maybe<Scalars['String']['output']>;
+	ownerID?: Maybe<Scalars['String']['output']>;
 	startDate?: Maybe<Scalars['Time']['output']>;
 	status: Scalars['String']['output'];
 };
@@ -886,12 +887,16 @@ export const NotificationFragmentFragmentDoc = gql`
 export const ProjectFragmentFragmentDoc = gql`
 	fragment projectFragment on Project {
 		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
 		projectBasics {
 			name
 			description
 			status
 			startDate
-			ownerEmail
+			ownerID
 		}
 		projectValue {
 			fundingSource

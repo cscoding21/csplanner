@@ -1,16 +1,23 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
-	import { createEventDispatcher } from 'svelte';
+	import { callIf } from '$lib/utils/helpers';
 
-	const dispatch = createEventDispatcher();
-
-	function updated() {
-		dispatch('updated', {
-			text: 'Textarea input was updated'
-		});
+	interface TextAreaInputProps {
+		fieldName: string;
+		error: string;
+		placeholder?: string;
+		value: string;
+		rows: number;
+		update?: Function; 
 	}
-
-	let { fieldName, error, placeholder, value = $bindable(), rows = $bindable() } = $props();
+	let { 
+		fieldName, 
+		error, 
+		placeholder, 
+		update,
+		value = $bindable(), 
+		rows = $bindable() 
+	}:TextAreaInputProps = $props();
 </script>
 
 <div class="mb-6">
@@ -22,7 +29,7 @@
 		rows={rows as number}
 		bind:value
 		placeholder={placeholder as string}
-		onchange={updated}
+		onchange={() => callIf(update)}
 	></textarea>
 
 	<FormErrorMessage message={error} />

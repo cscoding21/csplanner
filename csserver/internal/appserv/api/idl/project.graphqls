@@ -6,11 +6,12 @@ type Project {
   id: String
   createdAt: Time
   updatedAt: Time
+  createdBy: String
+  updatedBy: String
   projectBasics: ProjectBasics!
   projectValue: ProjectValue!
   projectCost: ProjectCost!
   projectDaci: ProjectDaci!
-  controlFields: ControlFields!
   projectFeatures: [ProjectFeature!]
   projectMilestones: [ProjectMilestone!]
 }
@@ -21,7 +22,7 @@ type ProjectBasics {
   description: String!
   status: String!
   startDate: Time
-  ownerEmail: String
+  ownerID: String
 }
 
 

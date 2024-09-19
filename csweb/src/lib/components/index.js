@@ -9,6 +9,7 @@ export { default as SectionHeading } from './formatting/SectionHeading.svelte';
 export { default as EmailInput } from './forms/EmailInput.svelte';
 export { default as FormErrorMessage } from './forms/FormErrorMessage.svelte';
 export { default as MoneyInput } from './forms/MoneyInput.svelte';
+export { default as MultiSelectInput } from './forms/MultiSelectInput.svelte';
 export { default as NumberInput } from './forms/NumberInput.svelte';
 export { default as PasswordInput } from './forms/PasswordInput.svelte';
 export { default as PercentInput } from './forms/PercentInput.svelte';

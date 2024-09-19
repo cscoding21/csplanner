@@ -58,7 +58,26 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdatePr
 
 // UpdateProject is the resolver for the updateProject field.
 func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateProject - updateProject"))
+	service := factory.GetProjectService()
+
+	proj := csmap.UpdateProjectIdlToProject(input)
+
+	result, err := service.SaveProject(ctx, proj)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // DeleteProject is the resolver for the deleteProject field.
@@ -193,7 +212,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 }
 
 // SetProjectMilestonesFromTemplate is the resolver for the setProjectMilestonesFromTemplate field.
-func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.Project, error) {
+func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.CreateProjectResult, error) {
 	panic(fmt.Errorf("not implemented: SetProjectMilestonesFromTemplate - setProjectMilestonesFromTemplate"))
 }
 

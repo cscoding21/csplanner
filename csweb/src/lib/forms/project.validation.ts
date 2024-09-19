@@ -38,7 +38,7 @@ export const featureSchema = yup.object().shape({
 	projectID: yup.string().required(),
 	name: yup.string().required(),
 	description: yup.string().required(),
-	priority: yup.number().required().moreThan(0, 'Priority is required'),
+	priority: yup.string().required(),
 	status: yup.string().required()
 });
 
@@ -93,7 +93,7 @@ export const getNewFeature = (projectID: string): any => {
 		projectID: projectID,
 		id: '',
 		name: '',
-		priority: 0,
+		priority: '',
 		status: 'proposed',
 		description: ''
 	};

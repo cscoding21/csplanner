@@ -32,7 +32,7 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "This is my ticket to the big time",
-			OwnerEmail:  *allResources.Results[0].UserEmail,
+			OwnerID:     *&allResources.Results[0].ID,
 			Status:      ptypes.Draft,
 		},
 		ProjectCost: &project.ProjectCost{
@@ -150,7 +150,7 @@ func CreateTestProjects(ctx context.Context) error {
 	otherProjects := findPortfolioProjects()
 
 	for _, project := range otherProjects {
-		_, err := ps.CreateProject(ctx, &project)
+		_, err := ps.SaveProject(ctx, project)
 		if err != nil {
 			log.Error(err)
 		}
@@ -224,7 +224,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
 			Description: "Here's a video to add to the portfolio",
-			OwnerEmail:  *allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].UserEmail,
+			OwnerID:     allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].GetID(),
 			Status:      status,
 		},
 		ProjectCost: &project.ProjectCost{

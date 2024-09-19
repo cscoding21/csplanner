@@ -1,39 +1,30 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { Button } from 'flowbite-svelte';
-	import { resourceStore, refreshResourceStore } from '$lib/stores/resource';
+	import { Button, type SelectOptionType } from 'flowbite-svelte';
 	import { SelectInput, TextInput, TextAreaInput, SectionHeading } from '$lib/components';
-	import { createEventDispatcher } from 'svelte';
 	import { getProject, updateProjectBasics } from '$lib/services/project';
-	import { getDefaultProject, basicSchema } from '$lib/forms/project.validation';
+	import { basicSchema, getDefaultProject } from '$lib/forms/project.validation';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
-	import type { UpdateProjectBasics } from '$lib/graphql/generated/sdk';
+	import type { UpdateProjectBasics, Project } from '$lib/graphql/generated/sdk';
 	import { coalesceToType } from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
+	import { findAllResources } from '$lib/services/resource';
+	import { callIf } from '$lib/utils/helpers';
 
-	const dispatch = createEventDispatcher();
-
-	function updated() {
-		dispatch('updated', {
-			text: 'Project basics was updated'
-		});
+	interface ProjectBasicsProps {
+		id: string;
+		update?: Function;
 	}
+	let { 
+		id,
+		update 
+	}: ProjectBasicsProps = $props();
 
-	export let id: string;
-
-	let errors: any = {};
-	let resourceOpts: any[] = [];
-
-	onMount(async () => {
-		await refreshResourceStore();
-
-		load(id);
-	});
-
-	const load = async (id: string) => {
-		await getProject(id)
+	const load = async (): Promise<Project> => {
+		return await getProject(id)
 			.then((proj) => {
 				basicsForm = coalesceToType<UpdateProjectBasics>(proj.projectBasics, basicSchema);
+
+				return proj;
 			})
 			.catch((err) => {
 				addToast({
@@ -41,10 +32,12 @@
 					dismissible: true,
 					type: 'error'
 				});
+
+				return err;
 			});
 	};
 
-	const update = async () => {
+	const updateBasics = async () => {
 		errors = {};
 
 		const projectBasicsParsed = basicSchema.cast(basicsForm);
@@ -54,14 +47,14 @@
 				updateProjectBasics(id, projectBasicsParsed)
 					.then((res) => {
 						if (res.status?.success) {
-							load(id).then(() => {
+							load().then(() => {
 								addToast({
 									message: 'Project basics updated successfully',
 									dismissible: true,
 									type: 'success'
 								});
 
-								updated();
+								callIf(update);
 							});
 						} else {
 							addToast({
@@ -84,14 +77,30 @@
 			});
 	};
 
-	$: resourceOpts = $resourceStore.map((r) => ({ name: r.name, value: r.id }));
-	$: basicsForm = getDefaultProject().projectBasics;
-	$: project = getDefaultProject();
+	const loadPage = async () => {
+		findAllResources()
+			.then((r) => r)
+			.then((r) => {
+				resourceOpts = r.results?.map((r) => ({
+					name: r.name,
+					value: r.id as string
+				})) as SelectOptionType<string>[];
+			})
+			.then(() => {
+				load();
+			});
+	};
+
+	let errors:any = $state({ name: '', ownerID: '', description: '' });
+	let resourceOpts = $state([] as SelectOptionType<string>[]);
+	let basicsForm = $state(getDefaultProject().projectBasics);
+
+	loadPage();
 </script>
 
 <SectionHeading>Basics</SectionHeading>
 
-{#await project}
+{#await loadPage}
 	Loading...
 {:then promiseData}
 	{#if basicsForm}
@@ -103,14 +112,14 @@
 		/>
 
 		<SelectInput
-			bind:value={basicsForm.ownerID}
+			bind:value={basicsForm.ownerID as string}
 			fieldName="Owner"
 			error={errors.ownerID}
 			options={resourceOpts}
 		/>
 
 		<TextAreaInput
-			bind:value={basicsForm.description}
+			bind:value={basicsForm.description as string}
 			rows={8}
 			error={errors.description}
 			placeholder="Executive summary"
@@ -119,7 +128,7 @@
 
 		<div class="col-span-4">
 			<span class="float-right">
-				<Button on:click={update}>Update Basics</Button>
+				<Button on:click={updateBasics}>Update Basics</Button>
 			</span>
 			<br class="clear-both" />
 		</div>

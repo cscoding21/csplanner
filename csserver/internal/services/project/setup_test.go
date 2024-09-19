@@ -15,7 +15,7 @@ var testProject = Project{
 	ProjectBasics: &ProjectBasics{
 		Name:        "Test Project",
 		Description: "This is a test project",
-		OwnerEmail:  "user:123",
+		OwnerID:     "user:123",
 		Status:      ptypes.Draft,
 	},
 	ProjectCost: &ProjectCost{

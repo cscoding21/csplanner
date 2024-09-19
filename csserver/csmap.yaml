@@ -75,6 +75,33 @@ maps:
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+  - name: "project_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/project/models.go"
+    imports: 
+    - "csserver/internal/common"
+    - "csserver/internal/appserv/graph/idl"
+    map_overrides:
+    - source_name: "UpdateProject"
+      target_name: "Project"
+    - source_name: "UpdateProjectBasics"
+      target_name: "ProjectBasics"
+    - source_name: "UpdateProjectValue"
+      target_name: "ProjectValue"
+    - source_name: "UpdateProjectCost"
+      target_name: "ProjectCost"
+    - source_name: "UpdateProjectDaci"
+      target_name: "ProjectDaci"
+    - source_name: "UpdateProjectFeature"
+      target_name: "ProjectFeature"
+    - source_name: "UpdateProjectMilestone"
+      target_name: "ProjectMilestone"
+    - source_name: "UpdateProjectMilestonePhase"
+      target_name: "ProjectMilestonePhase"
+    - source_name: "UpdateProjectMilestoneTask"
+      target_name: "ProjectMilestoneTask"
+
+
   - name: "notification_target"
     source_path: "internal/services/notification/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"

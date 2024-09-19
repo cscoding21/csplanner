@@ -1,16 +1,22 @@
 <script lang="ts">
+	import { callIf } from '$lib/utils/helpers';
 	import FormErrorMessage from './FormErrorMessage.svelte';
-	import { createEventDispatcher } from 'svelte';
 
-	const dispatch = createEventDispatcher();
-
-	function updated() {
-		dispatch('updated', {
-			text: 'Text input was updated'
-		});
+	interface TextInputProps {
+		fieldName: string;
+		placeholder?: string;
+		error: string;
+		value: string;
+		update?: Function;
 	}
+	let { 
+		fieldName, 
+		placeholder, 
+		update,
+		error = $bindable(), 
+		value = $bindable() ,
+	}:TextInputProps = $props();
 
-	let { fieldName, placeholder, error = $bindable(), value = $bindable() } = $props();
 </script>
 
 <div class="mb-6">
@@ -24,7 +30,7 @@
 		placeholder={placeholder as string}
 		required
 		bind:value
-		onchange={updated}
+		onchange={() => callIf(update)}
 	/>
 
 	<FormErrorMessage message={error} />

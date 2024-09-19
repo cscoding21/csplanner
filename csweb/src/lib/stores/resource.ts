@@ -20,7 +20,7 @@ export const resourceAllocationStore = writable(getAllocationInitialValue());
 
 export const refreshResourceStore = async () => {
 	findAllResources().then((r) => {
-		resourceStore.set(r.data.findAllResources.results);
+		resourceStore.set(r.results as Resource[]);
 	});
 };
 

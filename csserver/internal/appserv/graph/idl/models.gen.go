@@ -179,11 +179,12 @@ type Project struct {
 	ID                *string             `json:"id,omitempty"`
 	CreatedAt         *time.Time          `json:"createdAt,omitempty"`
 	UpdatedAt         *time.Time          `json:"updatedAt,omitempty"`
+	CreatedBy         *string             `json:"createdBy,omitempty"`
+	UpdatedBy         *string             `json:"updatedBy,omitempty"`
 	ProjectBasics     *ProjectBasics      `json:"projectBasics"`
 	ProjectValue      *ProjectValue       `json:"projectValue"`
 	ProjectCost       *ProjectCost        `json:"projectCost"`
 	ProjectDaci       *ProjectDaci        `json:"projectDaci"`
-	ControlFields     *ControlFields      `json:"controlFields"`
 	ProjectFeatures   []*ProjectFeature   `json:"projectFeatures,omitempty"`
 	ProjectMilestones []*ProjectMilestone `json:"projectMilestones,omitempty"`
 }
@@ -193,7 +194,7 @@ type ProjectBasics struct {
 	Description string     `json:"description"`
 	Status      string     `json:"status"`
 	StartDate   *time.Time `json:"startDate,omitempty"`
-	OwnerEmail  *string    `json:"ownerEmail,omitempty"`
+	OwnerID     *string    `json:"ownerID,omitempty"`
 }
 
 type ProjectCost struct {

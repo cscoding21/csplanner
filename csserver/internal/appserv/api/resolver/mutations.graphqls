@@ -25,7 +25,7 @@ type Mutation {
     createOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
     updateOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
 
-    setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate) : Project!
+    setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate): CreateProjectResult!
 
     setNotificationsRead(input: [String!]!) : Status!
 }

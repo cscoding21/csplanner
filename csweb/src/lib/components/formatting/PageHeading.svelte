@@ -9,7 +9,7 @@
 	let { title, children = $bindable() }: PageHeadingProps = $props();
 </script>
 
-<Heading tag="h3" class="mb-4 px-2">
+<Heading tag="h4" class="mb-4 px-2">
 	{title}
 
 	<span class="float-right">

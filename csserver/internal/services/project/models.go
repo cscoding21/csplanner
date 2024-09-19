@@ -29,7 +29,7 @@ type ProjectBasics struct {
 	Description string              `json:"description"`
 	Status      ptypes.ProjectState `json:"status"`
 	StartDate   *time.Time          `json:"start_time"`
-	OwnerEmail  string              `json:"owner_email"`
+	OwnerID     string              `json:"owner_id"`
 }
 
 type ProjectValue struct {

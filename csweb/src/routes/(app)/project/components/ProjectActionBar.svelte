@@ -6,7 +6,10 @@
 		pageDetail: string;
 		children?: Snippet;
 	}
-	let { pageDetail, children }: ProjectActionBarProps = $props();
+	let { 
+		pageDetail = $bindable(), 
+		children 
+	}: ProjectActionBarProps = $props();
 </script>
 
 <div class="mb-4 grid w-full grid-cols-4">

@@ -222,8 +222,8 @@ type ComplexityRoot struct {
 	}
 
 	Project struct {
-		ControlFields     func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		ID                func(childComplexity int) int
 		ProjectBasics     func(childComplexity int) int
 		ProjectCost       func(childComplexity int) int
@@ -232,12 +232,13 @@ type ComplexityRoot struct {
 		ProjectMilestones func(childComplexity int) int
 		ProjectValue      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
+		UpdatedBy         func(childComplexity int) int
 	}
 
 	ProjectBasics struct {
 		Description func(childComplexity int) int
 		Name        func(childComplexity int) int
-		OwnerEmail  func(childComplexity int) int
+		OwnerID     func(childComplexity int) int
 		StartDate   func(childComplexity int) int
 		Status      func(childComplexity int) int
 	}
@@ -475,7 +476,7 @@ type MutationResolver interface {
 	DeleteResourceSkill(ctx context.Context, resourceID string, skillID string) (*idl.Status, error)
 	CreateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error)
 	UpdateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error)
-	SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.Project, error)
+	SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.CreateProjectResult, error)
 	SetNotificationsRead(ctx context.Context, input []string) (*idl.Status, error)
 }
 type QueryResolver interface {
@@ -1379,19 +1380,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PortfolioSnapshot.Projects(childComplexity), true
 
-	case "Project.controlFields":
-		if e.complexity.Project.ControlFields == nil {
-			break
-		}
-
-		return e.complexity.Project.ControlFields(childComplexity), true
-
 	case "Project.createdAt":
 		if e.complexity.Project.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Project.CreatedAt(childComplexity), true
+
+	case "Project.createdBy":
+		if e.complexity.Project.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Project.CreatedBy(childComplexity), true
 
 	case "Project.id":
 		if e.complexity.Project.ID == nil {
@@ -1449,6 +1450,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.UpdatedAt(childComplexity), true
 
+	case "Project.updatedBy":
+		if e.complexity.Project.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Project.UpdatedBy(childComplexity), true
+
 	case "ProjectBasics.description":
 		if e.complexity.ProjectBasics.Description == nil {
 			break
@@ -1463,12 +1471,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectBasics.Name(childComplexity), true
 
-	case "ProjectBasics.ownerEmail":
-		if e.complexity.ProjectBasics.OwnerEmail == nil {
+	case "ProjectBasics.ownerID":
+		if e.complexity.ProjectBasics.OwnerID == nil {
 			break
 		}
 
-		return e.complexity.ProjectBasics.OwnerEmail(childComplexity), true
+		return e.complexity.ProjectBasics.OwnerID(childComplexity), true
 
 	case "ProjectBasics.startDate":
 		if e.complexity.ProjectBasics.StartDate == nil {
@@ -2828,11 +2836,12 @@ type Project {
   id: String
   createdAt: Time
   updatedAt: Time
+  createdBy: String
+  updatedBy: String
   projectBasics: ProjectBasics!
   projectValue: ProjectValue!
   projectCost: ProjectCost!
   projectDaci: ProjectDaci!
-  controlFields: ControlFields!
   projectFeatures: [ProjectFeature!]
   projectMilestones: [ProjectMilestone!]
 }
@@ -2843,7 +2852,7 @@ type ProjectBasics {
   description: String!
   status: String!
   startDate: Time
-  ownerEmail: String
+  ownerID: String
 }
 
 
@@ -3153,7 +3162,7 @@ input UpdateUser {
     createOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
     updateOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
 
-    setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate) : Project!
+    setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate): CreateProjectResult!
 
     setNotificationsRead(input: [String!]!) : Status!
 }`, BuiltIn: false},
@@ -5742,6 +5751,10 @@ func (ec *executionContext) fieldContext_CreateProjectResult_project(_ context.C
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -5750,8 +5763,6 @@ func (ec *executionContext) fieldContext_CreateProjectResult_project(_ context.C
 				return ec.fieldContext_Project_projectCost(ctx, field)
 			case "projectDaci":
 				return ec.fieldContext_Project_projectDaci(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Project_controlFields(ctx, field)
 			case "projectFeatures":
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
@@ -7852,9 +7863,9 @@ func (ec *executionContext) _Mutation_setProjectMilestonesFromTemplate(ctx conte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*idl.Project)
+	res := resTmp.(*idl.CreateProjectResult)
 	fc.Result = res
-	return ec.marshalNProject2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx, field.Selections, res)
+	return ec.marshalNCreateProjectResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_setProjectMilestonesFromTemplate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7865,28 +7876,12 @@ func (ec *executionContext) fieldContext_Mutation_setProjectMilestonesFromTempla
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Project_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Project_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Project_updatedAt(ctx, field)
-			case "projectBasics":
-				return ec.fieldContext_Project_projectBasics(ctx, field)
-			case "projectValue":
-				return ec.fieldContext_Project_projectValue(ctx, field)
-			case "projectCost":
-				return ec.fieldContext_Project_projectCost(ctx, field)
-			case "projectDaci":
-				return ec.fieldContext_Project_projectDaci(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Project_controlFields(ctx, field)
-			case "projectFeatures":
-				return ec.fieldContext_Project_projectFeatures(ctx, field)
-			case "projectMilestones":
-				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "status":
+				return ec.fieldContext_CreateProjectResult_status(ctx, field)
+			case "project":
+				return ec.fieldContext_CreateProjectResult_project(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateProjectResult", field.Name)
 		},
 	}
 	defer func() {
@@ -9265,6 +9260,88 @@ func (ec *executionContext) fieldContext_Project_updatedAt(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_createdBy(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_updatedBy(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_updatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_updatedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_projectBasics(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_projectBasics(ctx, field)
 	if err != nil {
@@ -9312,8 +9389,8 @@ func (ec *executionContext) fieldContext_Project_projectBasics(_ context.Context
 				return ec.fieldContext_ProjectBasics_status(ctx, field)
 			case "startDate":
 				return ec.fieldContext_ProjectBasics_startDate(ctx, field)
-			case "ownerEmail":
-				return ec.fieldContext_ProjectBasics_ownerEmail(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_ProjectBasics_ownerID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectBasics", field.Name)
 		},
@@ -9488,70 +9565,6 @@ func (ec *executionContext) fieldContext_Project_projectDaci(_ context.Context, 
 				return ec.fieldContext_ProjectDaci_informed(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectDaci", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Project_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Project_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Project",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -9836,8 +9849,8 @@ func (ec *executionContext) fieldContext_ProjectBasics_startDate(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectBasics_ownerEmail(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectBasics_ownerEmail(ctx, field)
+func (ec *executionContext) _ProjectBasics_ownerID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectBasics_ownerID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9850,7 +9863,7 @@ func (ec *executionContext) _ProjectBasics_ownerEmail(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OwnerEmail, nil
+		return obj.OwnerID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9864,7 +9877,7 @@ func (ec *executionContext) _ProjectBasics_ownerEmail(ctx context.Context, field
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectBasics_ownerEmail(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectBasics_ownerID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectBasics",
 		Field:      field,
@@ -11525,6 +11538,10 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -11533,8 +11550,6 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 				return ec.fieldContext_Project_projectCost(ctx, field)
 			case "projectDaci":
 				return ec.fieldContext_Project_projectDaci(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Project_controlFields(ctx, field)
 			case "projectFeatures":
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
@@ -12609,6 +12624,10 @@ func (ec *executionContext) fieldContext_Query_getProject(ctx context.Context, f
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
 			case "projectValue":
@@ -12617,8 +12636,6 @@ func (ec *executionContext) fieldContext_Query_getProject(ctx context.Context, f
 				return ec.fieldContext_Project_projectCost(ctx, field)
 			case "projectDaci":
 				return ec.fieldContext_Project_projectDaci(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Project_controlFields(ctx, field)
 			case "projectFeatures":
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
@@ -20205,6 +20222,10 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Project_createdAt(ctx, field, obj)
 		case "updatedAt":
 			out.Values[i] = ec._Project_updatedAt(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._Project_createdBy(ctx, field, obj)
+		case "updatedBy":
+			out.Values[i] = ec._Project_updatedBy(ctx, field, obj)
 		case "projectBasics":
 			out.Values[i] = ec._Project_projectBasics(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -20222,11 +20243,6 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "projectDaci":
 			out.Values[i] = ec._Project_projectDaci(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "controlFields":
-			out.Values[i] = ec._Project_controlFields(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -20285,8 +20301,8 @@ func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.Selectio
 			}
 		case "startDate":
 			out.Values[i] = ec._ProjectBasics_startDate(ctx, field, obj)
-		case "ownerEmail":
-			out.Values[i] = ec._ProjectBasics_ownerEmail(ctx, field, obj)
+		case "ownerID":
+			out.Values[i] = ec._ProjectBasics_ownerID(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
