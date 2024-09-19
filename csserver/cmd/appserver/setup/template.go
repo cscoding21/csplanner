@@ -2,6 +2,7 @@ package setup
 
 import (
 	"context"
+	"fmt"
 
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
@@ -25,18 +26,28 @@ func CreateTestTemplates(ctx context.Context) error {
 			{ID: uuid.New().String(), Name: "Completion", Description: "This is the final phase of the project management process. The project closure stage indicates the end of the project after the final delivery. There are times when external talent is hired specifically for the project on contract. Terminating these contracts and completing the necessary paperwork is also the responsibility of the project manager.", PhaseOrder: 5},
 		},
 	}
-	ts.CreateProjecttemplate(ctx, template)
+	result, err := ts.CreateProjecttemplate(ctx, template)
+	if err != nil {
+		fmt.Printf("CreateTestTemplate Primary Error: %s\n", err)
+	} else {
+		fmt.Printf("CreateTestTemplate Primary: %v\n", result)
+	}
 
 	simpleTemplate := &projecttemplate.Projecttemplate{
 		ControlFields: common.ControlFields{
-			ID: "projecttemplate:primary",
+			ID: "projecttemplate:simple",
 		},
 		Name: "Simple",
 		Phases: []projecttemplate.ProjecttemplatePhase{
 			{ID: uuid.New().String(), Name: "Execution", Description: "A single-phase project plan suitable for smaller initiatives.", PhaseOrder: 1},
 		},
 	}
-	ts.CreateProjecttemplate(ctx, simpleTemplate)
+	result, err = ts.CreateProjecttemplate(ctx, simpleTemplate)
+	if err != nil {
+		fmt.Printf("CreateTestTemplate Simple Error: %s\n", err)
+	} else {
+		fmt.Printf("CreateTestTemplate Simple: %v\n", result)
+	}
 
 	return nil
 }

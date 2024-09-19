@@ -9,6 +9,7 @@ import (
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
+	"csserver/internal/services/notification"
 	"csserver/internal/services/project"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
@@ -153,6 +154,18 @@ func GetListService() *list.ListService {
 	}
 
 	return list.NewListService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetNotificationService get notification service instance
+func GetNotificationService() *notification.NotificationService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return notification.NewNotificationService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetResourceService return a resource service instance

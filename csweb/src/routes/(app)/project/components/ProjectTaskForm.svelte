@@ -1,7 +1,6 @@
 <script lang="ts">
     import { SectionHeading, TextInput, SelectInput, NumberInput, MultiSelectInput, TextAreaInput } from "$lib/components";
     import { Button, type SelectOptionType } from "flowbite-svelte";
-    import { skillListStore, sortListValues } from "$lib/stores/list";
     import { resourceStore } from "$lib/stores/resource";
     import type { UpdateProjectMilestoneTask } from "$lib/graphql/generated/sdk";
     import { taskSchema } from "$lib/forms/project.validation";
@@ -104,12 +103,7 @@
 			});
     }
 
-    // onMount(async () => {
-    //     await refreshListStore()
-    //     await refreshResourceStore()
-    // })
-
-    const getElibigleResources = (skillsList):any[] => {
+    const getElibigleResources = (skillsList:string[]):any[] => {
         //---TODO: figure out the reactivity and required logic to male
         //   list limited to resoures that have skills required by the task
         if (false && skillsList && skillsList.length > 0) {
@@ -148,9 +142,9 @@
 	};
 
     let taskForm = $state(getTaskForm())
-    let templateOpts = $state()
-    let resourceOpts = $state(getElibigleResources(taskForm.requiredSkillIDs))
-    let skillsOpts = $state(sortListValues($skillListStore))
+    let templateOpts = $state([] as SelectOptionType<string>[])
+    let resourceOpts = $state(getElibigleResources(taskForm.requiredSkillIDs as string[]))
+    let skillsOpts = $state([] as SelectOptionType<string>[])
 
     loadPage()
 </script>

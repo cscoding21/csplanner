@@ -19,7 +19,7 @@
 	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import { PageMessages /* , NotificationList */ } from '$lib/components';
+	import { PageMessages, NotificationList } from '$lib/components';
 
 	const as = authService();
 	const cu = as.currentUser();
@@ -66,7 +66,7 @@
 	</NavBrand>
 	<div class="flex items-center md:order-3">
 		<DarkMode class="mr-2 text-2xl" />
-		<!-- <NotificationList /> -->
+		<NotificationList /> 
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
 		>

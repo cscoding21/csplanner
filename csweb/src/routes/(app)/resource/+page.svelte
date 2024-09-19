@@ -4,7 +4,6 @@
 	import { findAllResources } from '$lib/services/resource';
 	import { ResourceActionBar, ResourceCard, UpdateResourceModal } from './components';
 	import { NoResults, PageHeading } from '$lib/components';
-	import { onMount } from 'svelte';
 	import type { ResourceResults } from '$lib/graphql/generated/sdk';
 
 	const refresh = async (): Promise<ResourceResults> => {
@@ -13,11 +12,14 @@
 		return res;
 	};
 
-	onMount(() => {
-		resources = refresh();
-	});
+	let resources = $state({} as ResourceResults);
+	const loadPage = async () => {
+        refresh().then(r => {
+            resources = r as ResourceResults
+        })
+	};
 
-	let resources = $state(refresh());
+	loadPage()
 </script>
 
 <ResourceActionBar pageDetail="">
@@ -31,12 +33,12 @@
 
 <PageHeading title="Resource Roster" />
 
-{#await resources}
+{#await loadPage}
 	<div>Loading...</div>
 {:then promiseData}
-	{#if promiseData.results != null}
+	{#if resources.results != null}
 		<div class="grid grid-cols-3 gap-3">
-			{#each promiseData.results as r}
+			{#each resources.results as r}
 				<ResourceCard resource={r} on:updated={refresh} />
 			{/each}
 		</div>

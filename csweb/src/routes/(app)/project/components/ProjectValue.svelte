@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { Heading, Button } from "flowbite-svelte";
+    import { Heading, Button, type SelectOptionType } from "flowbite-svelte";
     import { MoneyInput, PercentInput, SectionHeading, SelectInput } from '$lib/components';
-    import { fundingSourceListStore, sortListValues } from "$lib/stores/list";
     import { getDefaultProject, valueSchema } from "$lib/forms/project.validation";
     import { getProject, updateProjectValue } from "$lib/services/project";
-    import { parseErrors, mergeErrors, coalesceToType } from "$lib/forms/helpers";
+    import { parseErrors, mergeErrors, coalesceToType, findSelectOptsFromList } from "$lib/forms/helpers";
     import { addToast } from "$lib/stores/toasts";
     import { callIf } from "$lib/utils/helpers";
     import type { UpdateProjectValue } from "$lib/graphql/generated/sdk";
+	import { getList } from "$lib/services/list";
 
     let errors: any = $state({})
 
@@ -20,10 +20,7 @@
 
 	const load = async () => {
 		await getProject(id).then(proj => {
-			// @ts-ignore
-			project = proj
-
-            valueForm = coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema)
+            valueForm = coalesceToType<UpdateProjectValue>(proj.projectValue, valueSchema)
 		}).catch(err => {
 			addToast({ 
 				message: "Error loading project (ProjectValue): " + err, 
@@ -73,14 +70,18 @@
 	}
 
     const loadPage = async () => {
-		load().then(r => r)
+        getList("Funding Source").then(l => {
+            fundingSourceOpts = findSelectOptsFromList(l)
+        }).then(() => {
+            load().then(r => r)
+        })
+		
 	};
 
     loadPage()
 
 	let valueForm = $state(getDefaultProject().projectValue);
-    let project = $state(getDefaultProject());
-    let fundingSources = sortListValues($fundingSourceListStore)
+    let fundingSourceOpts = $state([] as SelectOptionType<string>[])
 </script>
   
 <SectionHeading>Value Proposition</SectionHeading>
@@ -94,7 +95,7 @@
 <SelectInput bind:value={valueForm.fundingSource as string}
     fieldName="Funding Source"
     error={errors.fundingSource}
-    options={fundingSources}
+    options={fundingSourceOpts}
     update={() => callIf(update)}
     />
   

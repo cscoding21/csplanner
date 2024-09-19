@@ -169,7 +169,7 @@
 
 					{#if !promiseData.isBot}
 						<hr class="my-4" />
-						<AddSkill resourceID={id} on:updated={refresh} />
+						<AddSkill resourceID={id} update={() => refresh()} />
 					{/if}
 				</Card>
 			</div>

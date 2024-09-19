@@ -185,6 +185,7 @@ func findPortfolioProjects() []project.Project {
 	for _, p := range names {
 		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status))
 
+		proj.ProjectValue.FundingSource = "external"
 		proj.ProjectValue.YearOneValue = 1000.0 * rand.Float64()
 		proj.ProjectValue.YearTwoValue = 1000.0 * rand.Float64()
 		proj.ProjectValue.YearThreeValue = 2000.0 * rand.Float64()

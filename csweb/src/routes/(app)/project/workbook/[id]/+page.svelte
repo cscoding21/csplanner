@@ -9,6 +9,7 @@
 		ProjectValue,
 		ProjectCost,
 		ProjectMilestones,
+		ProjectTemplateSelector,
 		ProjectDACI
 	} from '../../components';
 	import { ButtonGroup, Button, TabItem, Tabs } from 'flowbite-svelte';
@@ -77,13 +78,15 @@
 	</PageHeading>
 
 	<Tabs tabStyle="underline">
-		<TabItem open title="Basics">
-			<div slot="title" class="flex items-center gap-2">
-				<ScaleBalancedOutline size="sm" />
-				Basics
-			</div>
-			<div class="p-4"><ProjectBasics {id} {update} /></div>
-		</TabItem>
+		
+	<TabItem open title="Basics">
+		<div slot="title" class="flex items-center gap-2">
+			<ScaleBalancedOutline size="sm" />
+			Basics
+		</div>
+		<div class="p-4"><ProjectBasics {id} {update} /></div>
+	</TabItem>
+
     <TabItem title="Features">
         <div slot="title" class="flex items-center gap-2">
             <RectangleListOutline size="sm" />
@@ -91,6 +94,7 @@
           </div>
         <div class="p-4"><ProjectFeatures id={id} update={update} /></div>
     </TabItem>
+
     <TabItem title="Value Prop">
         <div slot="title" class="flex items-center gap-2">
             <DollarOutline size="sm" />
@@ -98,6 +102,7 @@
           </div>
         <div class="p-4"><ProjectValue id={id} update={update} /></div>
     </TabItem>
+
     <TabItem title="Costs">
         <div slot="title" class="flex items-center gap-2">
             <CashOutline size="sm" />
@@ -106,15 +111,17 @@
         <div class="p-4"><ProjectCost id={id} update={update} /></div>  
     </TabItem>
 
-    <!--
     <TabItem title="Milestones">
         <div slot="title" class="flex items-center gap-2">
             <CalendarMonthOutline size="sm" />
             Milestones
           </div>
-        <div class="p-4"><ProjectMilestones id={id} on:updated={update} /></div> 
+        <div class="p-4">
+			<ProjectTemplateSelector id={id} update={update} />
+			<!-- <ProjectMilestones id={id} on:updated={update} /> -->
+		
+		</div> 
     </TabItem>
-    -->
 
     <TabItem title="Team">
         <div slot="title" class="flex items-center gap-2">

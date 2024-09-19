@@ -15,7 +15,7 @@
 	});
 
 	onDestroy(() => {
-		unsubHandle.unsubscribe();
+		//unsubHandle.unsubscribe();
 	});
 
 	const refresh = async () => {
@@ -28,19 +28,18 @@
 		});
 	};
 
-	let sub = subscribeToUpdates();
+	// let sub = subscribeToUpdates();
 
-	let unsubHandle = sub.subscribe({
-		next: () => {
-			refreshNotificationStore();
-		}
-	});
+	// let unsubHandle = sub.subscribe({
+	// 	next: () => {
+	// 		refreshNotificationStore();
+	// 	}
+	// });
 
-	$: notificationIndicator = $notificationStore.some((n) => !n.isRead);
-	$: title =
-		$notificationStore.filter((n) => !n.isRead).length > 0
+	let notificationIndicator = $state($notificationStore.some((n) => !n.isRead));
+	let title = $state($notificationStore.filter((n) => !n.isRead).length > 0
 			? '(' + $notificationStore.filter((n) => !n.isRead).length + ') csPlanner'
-			: 'csPlanner';
+			: 'csPlanner');
 </script>
 
 <svelte:head>
@@ -85,7 +84,7 @@
 						</div>
 						{#if !n.isRead}
 							<button
-								on:click={() => {
+								onclick={() => {
 									markRead(n.id);
 								}}
 								class="text-xs">mark as read</button

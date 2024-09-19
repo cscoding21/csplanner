@@ -1,23 +1,14 @@
 <script lang="ts">
     import type { ProjectMilestone , Skill } from "$lib/graphql/generated/sdk";
-    import { P, Button, Hr, Modal, A , type SelectOptionType } from "flowbite-svelte";
+    import { P, Button, Hr, Modal } from "flowbite-svelte";
     import { ChevronDoubleRightOutline, ChevronRightOutline, EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
     import { SectionHeading, UserList } from "$lib/components";
-    import { SelectInput } from "$lib/components";
-    import { getTemplateFromStore } from "$lib/stores/project";
-    import { findAllProjectTemplates, setProjectMilestonesFromTemplate } from "$lib/services/project";
-    import { is } from "$lib/utils/check";
+    import { findAllProjectTemplates } from "$lib/services/project";
     import { getDefaultProject } from "$lib/forms/project.validation";
     import { ProjectTaskForm, DeleteProjectTask } from ".";
     import { formatToCommaSepList } from "$lib/utils/format";
     import { getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
-
-    function refresh() {
-        load(id, currentMilestone.id)
-
-        modalState = []
-    }
 
     interface ProjectMilestonesProps {
         id: string;
@@ -28,7 +19,7 @@
         update 
     }:ProjectMilestonesProps = $props()
 
-    let errors = $state({})
+    let errors = $state({ template: "" })
     let modalState:boolean[] = $state([]);
 
 	const load = async (id:string, milestoneID:string) => {
@@ -47,30 +38,14 @@
 		})
 	}
 
-    //---Legacy
-    let template = $state("");
+    function refresh() {
+        load(id, currentMilestone.id)
 
-
-    const showTemplateDetails = async () => {
-        getTemplateFromStore(template).then(tem => {
-            templateDetails = tem
-            console.log(tem)
-        })
+        modalState = []
     }
-
-    const selectTemplate = async () => {
-        console.log("setting template " + template + " to project " + id)
-
-        setProjectMilestonesFromTemplate({ projectId: id, templateId: template}).then(td => {
-            templateDetails = td
-        })
-
-        load(id, "")
-    }
-
 
     const getRequiredSkillsDisplay = (task:any):string => {
-        if (!is(task.skills)) {
+        if (task.skills == null || task.skills.length === 0) {
             return "Not set";
         }
 
@@ -101,21 +76,17 @@
     const loadPage = async () => {
 		findAllProjectTemplates()
 			.then((r) => r)
-			.then((r) => {
-				templateOpts = r.results?.map((r) => ({
-					name: r.name,
-					value: r.id as string
-				})) as SelectOptionType<string>[];
-			})
 			.then(() => {
 				load(id, "")
 			});
 	};
 
     let project = $state(getDefaultProject());
-    let templateDetails = $state()
-    let templateOpts =  $state([] as SelectOptionType<string>[]);
-    let currentMilestone = $state(setCurrentMilestone(""))
+    let currentMilestone = $state({})
+
+    currentMilestone = setCurrentMilestone("")
+
+    loadPage()
 </script>
 
 
@@ -196,29 +167,6 @@
     </div>
     
 {:else}
-    <SelectInput 
-        fieldName="Project Milestone Template"
-        on:updated={showTemplateDetails}
-        bind:value={template} 
-        error={errors.template}
-        options={templateOpts} />
-
-
-    {#if templateDetails !== undefined}
-        <SectionHeading>Milestones for {templateDetails.name} Template</SectionHeading>
-
-        {#if templateDetails.phases && templateDetails.phases.length > 0}
-        {#each templateDetails.phases as phase(phase)}
-            <SectionHeading>{phase.name}</SectionHeading>
-            <P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-400">{phase.description}</P>
-        {/each}
-        {/if}
-
-        <div class="mt-8">
-            <span class="">
-                <Button on:click={selectTemplate}> Use This Project Lifecycle </Button>
-            </span>
-        </div>
-    {/if}
+    Select template
 {/if}
 {/await}

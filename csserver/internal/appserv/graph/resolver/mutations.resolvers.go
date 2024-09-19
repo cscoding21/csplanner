@@ -11,10 +11,9 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
+	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -53,7 +52,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser)
 
 // CreateProject is the resolver for the createProject field.
 func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: CreateProject - createProject"))
+	//---create vs update is handled at the service level
+	return r.UpdateProject(ctx, input)
 }
 
 // UpdateProject is the resolver for the updateProject field.
@@ -88,22 +88,94 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*idl.S
 
 // UpdateProjectTask is the resolver for the updateProjectTask field.
 func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.UpdateProjectMilestoneTask) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateProjectTask - updateProjectTask"))
+	service := factory.GetProjectService()
+
+	task := csmap.UpdateProjectMilestoneTaskIdlToProject(input)
+
+	result, err := service.UpdateProjectTask(ctx, input.ProjectID, input.MilestoneID, task)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult[project.Project](*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // DeleteProjectTask is the resolver for the deleteProjectTask field.
 func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID string, milestoneID string, taskID string) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: DeleteProjectTask - deleteProjectTask"))
+	service := factory.GetProjectService()
+
+	result, err := service.DeleteTaskFromProject(ctx, projectID, milestoneID, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult[project.Project](*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // UpdateProjectFeature is the resolver for the updateProjectFeature field.
 func (r *mutationResolver) UpdateProjectFeature(ctx context.Context, input idl.UpdateProjectFeature) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateProjectFeature - updateProjectFeature"))
+	service := factory.GetProjectService()
+
+	feature := csmap.UpdateProjectFeatureIdlToProject(input)
+
+	result, err := service.UpdateProjectFeature(ctx, input.ProjectID, feature)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // DeleteProjectFeature is the resolver for the deleteProjectFeature field.
 func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID string, featureID string) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: DeleteProjectFeature - deleteProjectFeature"))
+	service := factory.GetProjectService()
+
+	result, err := service.DeleteFeatureFromProject(ctx, projectID, featureID)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // CreateProjectComment is the resolver for the createProjectComment field.
@@ -155,8 +227,6 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 	res := csmap.UpdateResourceIdlToResource(input)
 	var result common.UpdateResult[resource.Resource]
 	var err error
-
-	log.Info("got to UpdateResource mutation")
 
 	if len(res.ID) > 0 {
 		result, err = service.PatchResource(ctx, res)
@@ -213,12 +283,41 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 
 // SetProjectMilestonesFromTemplate is the resolver for the setProjectMilestonesFromTemplate field.
 func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: SetProjectMilestonesFromTemplate - setProjectMilestonesFromTemplate"))
+	service := factory.GetProjectService()
+	templateService := factory.GetProjectTemplateService()
+
+	//---get the selected template
+	template, err := templateService.GetProjecttemplateByID(ctx, input.TemplateID)
+	if err != nil {
+		return nil, err
+	}
+
+	//---update the project with the template structure
+	resp, err := service.SetProjectMilestonesFromTemplate(ctx, input.ProjectID, *template)
+	if err != nil {
+		return nil, err
+	}
+
+	//---map back the result
+	status, err := csmap.GetStatusFromUpdateResult[project.Project](*resp)
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*resp.Object)),
+	}
+
+	return &out, nil
 }
 
 // SetNotificationsRead is the resolver for the setNotificationsRead field.
 func (r *mutationResolver) SetNotificationsRead(ctx context.Context, input []string) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: SetNotificationsRead - setNotificationsRead"))
+	service := factory.GetNotificationService()
+
+	err := service.SetNotificationsRead(ctx, input)
+	if err != nil {
+		return csmap.GetStatusFromError(err)
+	}
+
+	return &idl.Status{Success: true}, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

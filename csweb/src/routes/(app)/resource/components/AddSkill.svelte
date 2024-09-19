@@ -1,32 +1,29 @@
 <script lang="ts">
 	import { SelectInput } from '$lib/components';
-	import { Button } from 'flowbite-svelte';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { Button, type SelectOptionType } from 'flowbite-svelte';
 	import { skillForm, skillSchema } from '$lib/forms/skill.validation';
-	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
+	import { mergeErrors, parseErrors, findSelectOptsFromList } from '$lib/forms/helpers';
 	import { updateResourceSkill } from '$lib/services/resource';
-	import { refreshListStore, skillListStore } from '$lib/stores/list';
 	import { addToast } from '$lib/stores/toasts';
+	import { callIf, deepCopy } from '$lib/utils/helpers';
+	import { getList } from '$lib/services/list';
 
-	export let resourceID: string;
-	let errors: any = {};
-
-	const dispatch = createEventDispatcher();
-
-	function updated() {
-		dispatch('updated', {
-			text: 'Skill was updated'
-		});
+	interface AddSkillProps {
+		resourceID: string;
+		update?: Function
 	}
+	let { 
+		resourceID,
+		update
+	}:AddSkillProps = $props()
 
-	onMount(async () => {
-		refreshListStore();
-	});
+	let errors: any = $state({ skillID: "", proficiency: "" });
+	let sf = $state(deepCopy(skillForm))
 
 	const add = () => {
 		errors = {};
 
-		const parsedSkillForm = skillSchema.cast(skillForm);
+		const parsedSkillForm = skillSchema.cast(sf);
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
@@ -44,7 +41,8 @@
 
 						skillForm.id = '';
 						skillForm.proficiency = '';
-						updated();
+						
+						callIf(update)
 					} else {
 						addToast({
 							message: 'Error creating resource: ' + res.message,
@@ -61,35 +59,42 @@
 			});
 	};
 
-	const proficiencyOptions = [
+	let availableSkillOpts = $state([] as SelectOptionType<string>[]);
+	const proficiencyOpts = [
 		{ value: 1, name: 'Novice' },
 		{ value: 2, name: 'Competent' },
 		{ value: 3, name: 'Expert' }
 	];
 
-	skillForm.resourceID = resourceID;
+	const loadPage = async () => {
+        getList("Skills").then(l => {
+            availableSkillOpts = findSelectOptsFromList(l)
+        }).then(() => {
+			skillForm.resourceID = resourceID;
+		})
+	};
 
-	$: availableSkills = $skillListStore.values;
+	loadPage()
 </script>
 
-{#await availableSkills}
+{#await loadPage}
 	<span>Loading...</span>
 {:then data}
 	<div class="grid grid-cols-5 gap-5">
 		<span class="col-span-2">
 			<SelectInput
 				fieldName="Skill"
-				bind:value={skillForm.skillID}
+				bind:value={sf.skillID}
 				error={errors.skillID}
-				options={data}
+				options={availableSkillOpts}
 			/>
 		</span>
 		<span class="col-span-2">
 			<SelectInput
 				fieldName="Proficiency"
-				bind:value={skillForm.proficiency}
+				bind:value={sf.proficiency}
 				error={errors.proficiency}
-				options={proficiencyOptions}
+				options={proficiencyOpts}
 			/>
 		</span>
 		<span class="w-1/5 pt-8">

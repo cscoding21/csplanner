@@ -1,5 +1,5 @@
 import { FindAllListsDocument, GetListDocument } from '$lib/graphql/generated/sdk';
-import type { List, ListResults } from '$lib/graphql/generated/sdk';
+import type { List, ListResults, ListItem } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 
 /**
@@ -39,4 +39,21 @@ export const getList = async (nameOrID: string): Promise<List> => {
 		.catch((err) => {
 			return err;
 		});
+};
+
+
+/**
+ * return a list of options in the list sorted by their name in ascending order
+ * @param list - the list whose values to sort
+ * @returns values fron the list sorted by their name
+ */
+export const sortListValues = (list: List): ListItem[] => {
+	if (list == null || list.values == null || list.values.length === 0) {
+		return list.values;
+	}
+
+	const sortedValues = JSON.parse(JSON.stringify(list.values));
+	sortedValues.sort((a: ListItem, b: ListItem) => a.name.localeCompare(b.name));
+
+	return sortedValues;
 };

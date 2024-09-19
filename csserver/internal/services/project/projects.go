@@ -38,9 +38,9 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	lastProject.ProjectCost = pro.ProjectCost
 	lastProject.ProjectDaci = pro.ProjectDaci
 
+	lastProject.GetProjectInitialCost()
 	lastProject.GetProjectNPV()
 	lastProject.GetProjectIRR()
-	lastProject.GetProjectInitialCost()
 
 	return s.UpdateProject(ctx, lastProject)
 }

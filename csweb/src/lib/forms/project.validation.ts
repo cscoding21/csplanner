@@ -48,7 +48,7 @@ export const taskSchema = yup.object().shape({
 	id: yup.string(),
 	name: yup.string().required(),
 	description: yup.string().required(),
-	hourEstimate: yup.number().nullable(),
+	hourEstimate: yup.number().required(),
 	requiredSkillIDs: yup.array(),
 	resourceIDs: yup.array(),
 	status: yup.string().required(),

@@ -19,8 +19,8 @@ import (
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
-	us := factory.GetUserService()
-	obj, err := us.GetCurrentUser(ctx)
+	service := factory.GetUserService()
+	obj, err := service.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -32,8 +32,8 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, error) {
-	us := factory.GetUserService()
-	obj, err := us.GetUser(ctx, id)
+	service := factory.GetUserService()
+	obj, err := service.GetUser(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +66,8 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 
 // GetProject is the resolver for the getProject field.
 func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project, error) {
-	ps := factory.GetProjectService()
-	obj, err := ps.GetProjectByID(ctx, id)
+	service := factory.GetProjectService()
+	obj, err := service.GetProjectByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -99,10 +99,10 @@ func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.C
 
 // FindActivity is the resolver for the findActivity field.
 func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error) {
-	as := factory.GetActivityService()
+	service := factory.GetActivityService()
 
 	//---TODO: make this find paged activities
-	activityResults, err := as.FindAllActivitys(ctx)
+	activityResults, err := service.FindAllActivitys(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -142,8 +142,8 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 
 // FindAllUsers is the resolver for the findAllUsers field.
 func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, error) {
-	us := factory.GetUserService()
-	userResults, err := us.FindAllUsers(ctx)
+	service := factory.GetUserService()
+	userResults, err := service.FindAllUsers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -160,8 +160,8 @@ func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, err
 
 // FindAllResources is the resolver for the findAllResources field.
 func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResults, error) {
-	rs := factory.GetResourceService()
-	results, err := rs.FindAllResources(ctx)
+	service := factory.GetResourceService()
+	results, err := service.FindAllResources(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -182,9 +182,9 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 
 // FindResources is the resolver for the findResources field.
 func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.ResourceResults, error) {
-	rs := factory.GetResourceService()
+	service := factory.GetResourceService()
 	paging, filters := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
-	results, err := rs.FindResources(ctx, paging, filters)
+	results, err := service.FindResources(ctx, paging, filters)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +201,21 @@ func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.Pa
 
 // FindUserNotifications is the resolver for the findUserNotifications field.
 func (r *queryResolver) FindUserNotifications(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.NotificationResults, error) {
-	panic(fmt.Errorf("not implemented: FindUserNotifications - findUserNotifications"))
+	service := factory.GetNotificationService()
+	paging, _ := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
+	results, err := service.FindUserNotifications(ctx, paging)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	out := idl.NotificationResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.NotificationNotificationToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
 }
 
 // GetResource is the resolver for the getResource field.
@@ -220,8 +234,8 @@ func (r *queryResolver) GetResource(ctx context.Context, id string) (*idl.Resour
 
 // FindAllLists is the resolver for the findAllLists field.
 func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, error) {
-	ls := factory.GetListService()
-	listResults, err := ls.FindAllLists(ctx)
+	service := factory.GetListService()
+	listResults, err := service.FindAllLists(ctx)
 	if err != nil {
 		return nil, err
 	}
