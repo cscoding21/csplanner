@@ -3001,7 +3001,7 @@ input UpdateProjectFeature {
   name: String!
   description: String!
   status: String!
-  priority: Int!
+  priority: String!
 }
 
 
@@ -18494,7 +18494,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectFeature(ctx context.Conte
 			it.Status = data
 		case "priority":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("priority"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

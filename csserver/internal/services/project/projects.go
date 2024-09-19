@@ -12,10 +12,6 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	//---TODO: update to proper validation
 	//val := pro.Validate()
 	val := validate.NewSuccessValidationResult()
-	// lastProject, err := s.GetProjectByID(ctx, pro.ID)
-	// if err != nil {
-	// 	return common.NewUpdateResult(&val, &pro), err
-	// }
 
 	if len(pro.ID) == 0 {
 		proj, err := s.CreateProject(ctx, &pro)
@@ -24,11 +20,27 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 		}
 
 		pro = *proj.Object
+
+		pro.GetProjectNPV()
+		pro.GetProjectIRR()
+		pro.GetProjectInitialCost()
+
+		return s.UpdateProject(ctx, &pro)
 	}
 
-	pro.GetProjectNPV()
-	pro.GetProjectIRR()
-	pro.GetProjectInitialCost()
+	lastProject, err := s.GetProjectByID(ctx, pro.ID)
+	if err != nil {
+		return common.NewUpdateResult(&val, &pro), err
+	}
 
-	return s.UpdateProject(ctx, &pro)
+	lastProject.ProjectBasics = pro.ProjectBasics
+	lastProject.ProjectValue = pro.ProjectValue
+	lastProject.ProjectCost = pro.ProjectCost
+	lastProject.ProjectDaci = pro.ProjectDaci
+
+	lastProject.GetProjectNPV()
+	lastProject.GetProjectIRR()
+	lastProject.GetProjectInitialCost()
+
+	return s.UpdateProject(ctx, lastProject)
 }

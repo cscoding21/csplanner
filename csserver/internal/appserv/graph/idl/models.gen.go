@@ -429,7 +429,7 @@ type UpdateProjectFeature struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Status      string  `json:"status"`
-	Priority    int     `json:"priority"`
+	Priority    string  `json:"priority"`
 }
 
 type UpdateProjectMilestone struct {

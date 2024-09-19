@@ -171,7 +171,7 @@ input UpdateProjectFeature {
   name: String!
   description: String!
   status: String!
-  priority: Int!
+  priority: String!
 }
 
 
