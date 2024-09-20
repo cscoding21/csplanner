@@ -11,6 +11,7 @@
         update?: Function;
     }
     let { id, update }:ProjectTemplateSelectorProps = $props()
+    
     let errors = $state({ templateID: "" })
     let templateID: string = $state("");
     let templateOpts:SelectOptionType<string>[] = $state([] as SelectOptionType<string>[])

@@ -24,6 +24,7 @@
 		errors = {};
 
 		const parsedSkillForm = skillSchema.cast(sf);
+		parsedSkillForm.resourceID = resourceID
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
