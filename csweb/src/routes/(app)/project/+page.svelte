@@ -7,9 +7,13 @@
 	import { onMount } from 'svelte';
 	import type { PageAndFilter, ProjectResults } from '$lib/graphql/generated/sdk';
 
+	// let pageAndFilter: PageAndFilter = {
+	// 	paging: { pageNumber: 1, resultsPerPage: 20 },
+	// 	filters: { filters: [{ key: 'basics.status', value: 'approved', operation: 'eq' }] }
+	// };
+
 	let pageAndFilter: PageAndFilter = {
-		paging: { pageNumber: 1, resultsPerPage: 10 },
-		filters: { filters: [{ key: 'basics.status', value: 'approved', operation: 'eq' }] }
+		paging: { pageNumber: 1, resultsPerPage: 20 },
 	};
 
 	const refresh = async (): Promise<ProjectResults> => {

@@ -3,6 +3,7 @@ package setup
 import (
 	"context"
 	"fmt"
+	"math"
 	"math/rand"
 	"time"
 
@@ -32,7 +33,7 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "This is my ticket to the big time",
-			OwnerID:     *&allResources.Results[0].ID,
+			OwnerID:     allResources.Results[0].ID,
 			Status:      ptypes.Draft,
 		},
 		ProjectCost: &project.ProjectCost{
@@ -186,11 +187,11 @@ func findPortfolioProjects() []project.Project {
 		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status))
 
 		proj.ProjectValue.FundingSource = "external"
-		proj.ProjectValue.YearOneValue = 1000.0 * rand.Float64()
-		proj.ProjectValue.YearTwoValue = 1000.0 * rand.Float64()
-		proj.ProjectValue.YearThreeValue = 2000.0 * rand.Float64()
-		proj.ProjectValue.YearFourValue = 1000.0 * rand.Float64()
-		proj.ProjectValue.YearFiveValue = 4000.0 * rand.Float64()
+		proj.ProjectValue.YearOneValue = math.Round(1000.0 * rand.Float64())
+		proj.ProjectValue.YearTwoValue = math.Round(1000.0 * rand.Float64())
+		proj.ProjectValue.YearThreeValue = math.Round(2000.0 * rand.Float64())
+		proj.ProjectValue.YearFourValue = math.Round(1000.0 * rand.Float64())
+		proj.ProjectValue.YearFiveValue = math.Round(4000.0 * rand.Float64())
 
 		outProjects = append(outProjects, *proj)
 	}
@@ -265,7 +266,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 				},
 				Tasks: []*project.ProjectMilestoneTask{
 					{
-						ID:               utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
+						ID:               utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:             "Research",
 						HourEstimate:     rand.Intn(10),
 						Status:           "new",
@@ -275,7 +276,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 						EndDate:          &endDate1,
 					},
 					{
-						ID:               utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
+						ID:               utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:             "Video Outline",
 						HourEstimate:     rand.Intn(11),
 						Status:           "new",
@@ -285,7 +286,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 						EndDate:          &endDate2,
 					},
 					{
-						ID:               utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
+						ID:               utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:             "Video Shoot",
 						HourEstimate:     rand.Intn(14),
 						Status:           "new",
@@ -295,7 +296,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 						EndDate:          &endDate3,
 					},
 					{
-						ID:               utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
+						ID:               utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:             "Edit Video",
 						HourEstimate:     rand.Intn(6),
 						Status:           "new",
@@ -305,7 +306,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 						EndDate:          &endDate4,
 					},
 					{
-						ID:               utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
+						ID:               utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:             "Upload to All Platforms",
 						HourEstimate:     rand.Intn(3),
 						Status:           "new",
@@ -315,7 +316,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 						EndDate:          &endDate5,
 					},
 					{
-						ID:               utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
+						ID:               utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:             "Promote Upload",
 						HourEstimate:     rand.Intn(3),
 						Status:           "new",

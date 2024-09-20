@@ -9,6 +9,7 @@
     import { formatToCommaSepList } from "$lib/utils/format";
     import { getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
+	import ProjectTemplateSelector from "./ProjectTemplateSelector.svelte";
 
     interface ProjectMilestonesProps {
         id: string;
@@ -19,13 +20,17 @@
         update 
     }:ProjectMilestonesProps = $props()
 
-    let errors = $state({ template: "" })
     let modalState:boolean[] = $state([]);
+    //let modalState:Map<string, boolean> = new Map<string, boolean>()
+    let hasMilestones:boolean = $state(true)
+    let project = $state(getDefaultProject());
+    let currentMilestone = $state({} as ProjectMilestone)
 
 	const load = async (id:string, milestoneID:string) => {
 		await getProject(id).then(proj => {
 			// @ts-ignore
 			project = proj
+            hasMilestones = (proj.projectMilestones && proj.projectMilestones.length > 0) as boolean;
 
             setCurrentMilestone(milestoneID)
 		}).catch(err => {
@@ -53,8 +58,13 @@
     }
 
     const setCurrentMilestone = (milestoneID:any):ProjectMilestone => {
-        if (project && project.projectMilestones && project.projectMilestones.length > 0) {
-            return currentMilestone;
+        if (!hasMilestones) {
+            //---TODO: handle this
+            return {} as ProjectMilestone
+        }
+
+        if(project == null || project.projectMilestones == null || project.projectMilestones.length == 0) {
+            return {} as ProjectMilestone
         }
 
         if (!milestoneID) {
@@ -62,7 +72,7 @@
         }
 
         for (let i = 0; i < project.projectMilestones.length; i++) {
-            const m = project.projectMilestones[i];
+            const m = project.projectMilestones[i] as ProjectMilestone;
 
             if (m.id == milestoneID) {
                 currentMilestone = m;
@@ -76,15 +86,13 @@
     const loadPage = async () => {
 		findAllProjectTemplates()
 			.then((r) => r)
-			.then(() => {
+			.then((r) => {
 				load(id, "")
-			});
+
+                return r
+			})
+            .then((r) => currentMilestone = setCurrentMilestone("") );
 	};
-
-    let project = $state(getDefaultProject());
-    let currentMilestone = $state({})
-
-    currentMilestone = setCurrentMilestone("")
 
     loadPage()
 </script>
@@ -102,13 +110,9 @@
                 {#each project.projectMilestones as milestone(milestone)}           
                 <li class="mb-10 ms-6">   
                     {#if currentMilestone.id === milestone?.id}          
-                        <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-700 dark:text-gray-50">
-                            <ChevronDoubleRightOutline size="xs" />
-                        </span>
+                        <span class="absolute flex items-center justify-center w-8 h-8 bg-green-200 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-green-700 dark:text-gray-50"><ChevronDoubleRightOutline size="xs" /></span>
                     {:else}
-                    <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700">
-                            <ChevronRightOutline size="xs" />
-                        </span>
+                    <span class="absolute flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full -start-4 ring-4 ring-white dark:ring-gray-900 dark:bg-gray-700"><ChevronRightOutline size="xs" /></span>
                     {/if}
                     <button onclick={(e) => setCurrentMilestone(milestone?.id)}>
                         <h3 class="font-medium leading-tight">{milestone?.phase.name}</h3>
@@ -120,7 +124,8 @@
         </div>
         <div class="col-span-3">
             {#if currentMilestone.tasks}
-            {#each currentMilestone.tasks as task(task)}
+            {#each currentMilestone.tasks as task(task.id)}
+                {@const taskID = task.id}
                 <div>
                     <span class="text-gray-100">{task.name}</span>
                     <P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-100 float-right">{task.hourEstimate} hours</P>         
@@ -132,7 +137,7 @@
                     <div class="pl-4"><UserList maxSize={4} size="xs" resourceIDs={task.resourceIDs || []} /></div>
                 </div>
                 <div class="mt-2">
-                    <Button size="xs" color="dark" on:click={() => { modalState[task.id] = true } }>
+                    <Button size="xs" color="dark" on:click={() => { modalState[taskID] = true } }>
                         <EditOutline size="xs" class="mr-2" />
                         Edit
                     </Button>
@@ -148,12 +153,12 @@
                     </DeleteProjectTask>
                 </div>
 
-                <Modal bind:open={modalState[task.id]} size="xl" autoclose={false}>
+                <Modal bind:open={modalState[taskID]} size="xl" autoclose={false}>
                     <ProjectTaskForm 
                         task={task} 
                         milestoneID={currentMilestone.id} 
                         projectID={id} 
-                        on:updated={refresh} /> 
+                        update={refresh} /> 
                 </Modal>
                 <br class="clear-both" />
             {/each}
@@ -167,6 +172,6 @@
     </div>
     
 {:else}
-    Select template
+    <ProjectTemplateSelector id={id}  />
 {/if}
 {/await}

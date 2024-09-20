@@ -1,21 +1,21 @@
 <script lang="ts">
     import { SectionHeading, TextInput, SelectInput, NumberInput, MultiSelectInput, TextAreaInput } from "$lib/components";
     import { Button, type SelectOptionType } from "flowbite-svelte";
-    import { resourceStore } from "$lib/stores/resource";
-    import type { UpdateProjectMilestoneTask } from "$lib/graphql/generated/sdk";
+    import type { UpdateProjectMilestoneTask, ProjectMilestoneTask, Resource } from "$lib/graphql/generated/sdk";
     import { taskSchema } from "$lib/forms/project.validation";
-    import { coalesceToType, mergeErrors, parseErrors } from "$lib/forms/helpers";
-    import { updateProjectTask , findAllProjectTemplates} from "$lib/services/project";
+    import { coalesceToType, mergeErrors, parseErrors, findSelectOptsFromList } from "$lib/forms/helpers";
+    import { updateProjectTask } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
     import { callIf } from "$lib/utils/helpers";
 	import { findAllResources } from "$lib/services/resource";
+	import { getList } from "$lib/services/list";
     
     let errors: any = $state({})
 
     interface ProjectTaskFormProps {
         milestoneID: string;
         projectID: string;
-        task?: UpdateProjectMilestoneTask
+        task?: ProjectMilestoneTask
         update?: Function;
     }
     let { 
@@ -106,8 +106,8 @@
     const getElibigleResources = (skillsList:string[]):any[] => {
         //---TODO: figure out the reactivity and required logic to male
         //   list limited to resoures that have skills required by the task
-        if (false && skillsList && skillsList.length > 0) {
-            return $resourceStore
+        if (skillsList && skillsList.length > 0) {
+            return resourceRoster
                 .filter(r => { 
                     if (r.skills && r.skills.length > 0) {
                         const val =  r.skills?.map(rs => rs.id).some(so => skillsList.includes(so))
@@ -120,19 +120,22 @@
                 .map(r => ({ "name": r.name, "value": r.id }))
         }
 
-        return $resourceStore.map(r => ({ "name": r.name, "value": r.id }))
+        return resourceRoster.map(r => ({ "name": r.name, "value": r.id }))
     }
 
     const loadPage = async () => {
-		findAllProjectTemplates()
-			.then((templates:any) => {
-				templateOpts = templates.results?.map((t:any) => ({
-					name: t.name,
-					value: t.id as string
-				})) as SelectOptionType<string>[];
+		getList("Skills")
+			.then((skillList:any) => {
+				skillsOpts = findSelectOptsFromList(skillList)
 			})
 			.then(() => {
-				findAllResources().then(ro => {
+				findAllResources()
+                .then(r => {
+                    resourceRoster = r.results as Resource[]
+
+                    return r
+                })
+                .then(ro => {
                 resourceOpts = ro.results?.map((t:any) => ({
 					name: t.name,
 					value: t.id as string
@@ -142,7 +145,7 @@
 	};
 
     let taskForm = $state(getTaskForm())
-    let templateOpts = $state([] as SelectOptionType<string>[])
+    let resourceRoster = [] as Resource[]
     let resourceOpts = $state(getElibigleResources(taskForm.requiredSkillIDs as string[]))
     let skillsOpts = $state([] as SelectOptionType<string>[])
 
@@ -161,6 +164,7 @@
 <div class="col-span-1">
     <NumberInput bind:value={taskForm.hourEstimate} 
         fieldName="Estimated Hours" 
+        min={0}
         error={errors.hourEstimate} />
 </div>
 <div class="col-span-1">

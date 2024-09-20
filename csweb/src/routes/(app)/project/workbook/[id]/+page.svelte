@@ -117,8 +117,8 @@
             Milestones
           </div>
         <div class="p-4">
-			<ProjectTemplateSelector id={id} update={update} />
-			<!-- <ProjectMilestones id={id} on:updated={update} /> -->
+			<!-- <ProjectTemplateSelector id={id} update={update} /> -->
+			<ProjectMilestones id={id} on:updated={update} />
 		
 		</div> 
     </TabItem>

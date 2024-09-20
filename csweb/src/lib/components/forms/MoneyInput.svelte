@@ -15,6 +15,8 @@
 		value = $bindable(),
 		update
 	}:MoneyInputProps = $props();
+
+	value = Math.round(value)
 </script>
 
 <div class="mb-6">

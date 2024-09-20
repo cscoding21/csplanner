@@ -61,6 +61,10 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 		Results: csmap.ProjectProjectToIdlSlice(common.ValToRefSlice(results.Results)),
 	}
 
+	for i := range out.Results {
+		augment.AugmentProject(out.Results[i])
+	}
+
 	return &out, nil
 }
 
@@ -73,6 +77,7 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 	}
 
 	out := csmap.ProjectProjectToIdl(*obj)
+	augment.AugmentProject(&out)
 
 	return &out, nil
 }
