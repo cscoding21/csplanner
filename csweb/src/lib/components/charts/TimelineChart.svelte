@@ -1,31 +1,18 @@
 <script lang="ts">
 	import { Chart } from 'flowbite-svelte';
+	import { type ApexOptions, default as ApexCharts } from 'apexcharts';
 
-	export let data: [];
-	export let height: string = '500';
+	interface Props {
+		data: [];
+		height: number;
+	}
+	let {
+		data = $bindable(),
+		height
+	}:Props = $props()
 
-	const ct:
-		| 'rangeBar'
-		| 'line'
-		| 'area'
-		| 'bar'
-		| 'pie'
-		| 'donut'
-		| 'radialBar'
-		| 'scatter'
-		| 'bubble'
-		| 'heatmap'
-		| 'candlestick'
-		| 'boxPlot'
-		| 'radar'
-		| 'polarArea'
-		| 'rangeArea'
-		| 'treemap'
-		| undefined = 'rangeBar';
-	const at: 'datetime' | 'category' | 'numeric' | undefined = 'datetime';
-
-	const getChartOptions = () => {
-		const o = {
+	const getChartOptions = ():ApexOptions  => {
+		const o:ApexOptions  = {
 			series: [
 				{
 					data: data
@@ -33,7 +20,7 @@
 			],
 			chart: {
 				height: height,
-				type: ct
+				type: "rangeBar"
 			},
 			plotOptions: {
 				bar: {
@@ -41,7 +28,7 @@
 				}
 			},
 			xaxis: {
-				type: at,
+				type: "datetime",
 				labels: {
 					style: {
 						colors: ['#ffffff']
@@ -76,6 +63,8 @@
 
 		return o;
 	};
+	let chart = new ApexCharts(document.querySelector("#chartPlaceholder"), getChartOptions())
 </script>
 
-<Chart options={getChartOptions()} />
+<Chart options={getChartOptions() as ApexOptions} chart={getChartOptions() as ApexCharts} />
+<div id="chartPlaceholder"></div>

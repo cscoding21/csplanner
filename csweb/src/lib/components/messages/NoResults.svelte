@@ -3,12 +3,12 @@
 	import { ArrowRightOutline } from 'flowbite-svelte-icons';
 	import type { Snippet } from 'svelte';
 
-	interface NoResultsProps {
+	interface Props {
 		title: string;
 		newUrl: string;
 		children: Snippet;
 	}
-	let { title, newUrl, children = $bindable() }: NoResultsProps = $props();
+	let { title, newUrl, children = $bindable() }: Props = $props();
 </script>
 
 <Card class="w-full" size="xl">

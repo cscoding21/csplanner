@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { formatCurrency } from '$lib/utils/format';
 
-	export let amount: number;
+	interface Props {
+		amount: number;
+	}
+	let { amount }:Props = $props();
 </script>
 
 {#if amount < 0.0}

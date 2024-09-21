@@ -8,7 +8,7 @@
 
     let popupModal = $state(false);
 
-    interface DeleteProjectTaskProps {
+    interface Props {
         id: string;
         projectID: string;
         milestoneID: string;
@@ -17,7 +17,7 @@
         update?: Function;
         children: Snippet;
     }
-    let { id, projectID, milestoneID, name, size, update, children }:DeleteProjectTaskProps = $props()
+    let { id, projectID, milestoneID, name, size, update, children }:Props = $props()
 
     const delTask = async (taskID: string) => {
         deleteProjectTask(projectID, milestoneID, taskID).then(res => {

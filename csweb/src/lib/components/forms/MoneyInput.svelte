@@ -3,7 +3,7 @@
 	import { callIf } from '$lib/utils/helpers';
 	import { DollarOutline } from 'flowbite-svelte-icons';
 
-	interface MoneyInputProps {
+	interface Props {
 		fieldName: string;
 		error: string;
 		value: number;
@@ -14,7 +14,7 @@
 		error = $bindable(), 
 		value = $bindable(),
 		update
-	}:MoneyInputProps = $props();
+	}:Props = $props();
 
 	value = Math.round(value)
 </script>

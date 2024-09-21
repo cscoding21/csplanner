@@ -2,10 +2,12 @@
 	import { Heading, Hr } from 'flowbite-svelte';
 	import type { Snippet } from 'svelte';
 
-	interface PageHeadingProps {
+	interface Props {
 		children?: Snippet;
 	}
-	let { children = $bindable() }: PageHeadingProps = $props();
+	let { 
+		children
+	 }: Props = $props();
 </script>
 
 <Heading tag="h6">

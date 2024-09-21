@@ -8,14 +8,14 @@
 	import { callIf, deepCopy } from '$lib/utils/helpers';
 	import { getList } from '$lib/services/list';
 
-	interface AddSkillProps {
+	interface Props {
 		resourceID: string;
 		update?: Function
 	}
 	let { 
 		resourceID,
 		update
-	}:AddSkillProps = $props()
+	}:Props = $props()
 
 	let errors: any = $state({ skillID: "", proficiency: "" });
 	let sf = $state(deepCopy(skillForm))

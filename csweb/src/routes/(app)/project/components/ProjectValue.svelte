@@ -11,11 +11,11 @@
 
     let errors: any = $state({})
 
-    interface ProjectValueProps {
+    interface Props {
         id: string;
         update?: Function
     }
-    let { id, update }:ProjectValueProps = $props()
+    let { id, update }:Props = $props()
 
 
 	const load = async () => {

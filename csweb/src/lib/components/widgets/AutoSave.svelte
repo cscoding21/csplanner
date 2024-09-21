@@ -3,9 +3,8 @@
 	import { Badge, Indicator } from 'flowbite-svelte';
 
 	let lastSaveTime: string;
-	let isSaving: boolean = false;
+	let isSaving: boolean = $state(false);
 
-	let timeDisplay: string = '';
 	const SECONDS_TO_UPDATE_EDIT_TIME = 10000;
 
 	export const saver = {
@@ -56,13 +55,14 @@
 		return display;
 	};
 
+	let timeDisplay = $state("");
+
 	onMount(async () => {
 		setInterval(() => {
 			timeDisplay = deltaDisplay(lastSaveTime);
 		}, SECONDS_TO_UPDATE_EDIT_TIME);
 	});
 
-	$: timeDisplay = deltaDisplay(lastSaveTime);
 </script>
 
 <div>

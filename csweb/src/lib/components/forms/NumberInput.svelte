@@ -2,7 +2,7 @@
 	import { FormErrorMessage } from '$lib/components';
 	import { callIf } from '$lib/utils/helpers';
 
-	interface NumberInputProps {
+	interface Props {
 		fieldName: string;
 		error: string;
 		value: number;
@@ -15,7 +15,7 @@
 		update, 
 		error = $bindable(), 
 		value = $bindable() 
-	}:NumberInputProps = $props();
+	}:Props = $props();
 </script>
 
 <div class="mb-6">

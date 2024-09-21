@@ -4,7 +4,10 @@
 	import { formatDate } from '$lib/utils/format';
 	import { UserList, MoneyDisplay } from '$lib/components';
 
-	export let project: Project;
+	interface Props {
+		project: Project;
+	}
+	let { project }: Props = $props();
 </script>
 
 <Card size="xl">

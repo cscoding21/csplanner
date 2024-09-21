@@ -19,13 +19,13 @@
         }
     })
 
-    interface ProjectFeatureFormProps {
+    interface Props {
         id?: string;
         feature:UpdateProjectFeature | undefined;
         projectID: string;
         update: Function
     }
-    let { id, feature, projectID, update } : ProjectFeatureFormProps = $props()
+    let { id, feature, projectID, update } : Props = $props()
 
     let errors: any = $state({})
 

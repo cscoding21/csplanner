@@ -81,6 +81,9 @@ importers:
       '@types/node':
         specifier: ^22.5.4
         version: 22.5.4
+      apexcharts:
+        specifier: ^3.53.0
+        version: 3.53.0
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.45)

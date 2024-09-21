@@ -2,7 +2,7 @@
 	import { FormErrorMessage } from '$lib/components';
 	import { Label, Select, type SelectOptionType } from 'flowbite-svelte';
 
-	interface SelectInputProps {
+	interface Props {
 		fieldName: string;
 		error: string;
 		value: string;
@@ -15,7 +15,7 @@
 		error = $bindable(),
 		value = $bindable(),
 		options = $bindable()
-	}: SelectInputProps = $props();
+	}: Props = $props();
 </script>
 
 <div class="mb-6">

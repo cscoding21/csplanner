@@ -5,12 +5,12 @@
     import { normalizeID } from "$lib/utils/id";
 	import type { Resource } from "$lib/graphql/generated/sdk";
 
-    interface UserDisplayProps {
+    interface Props {
         id: string
     }
     let { 
         id
-    }:UserDisplayProps = $props()
+    }:Props = $props()
 
     let resource:Resource = $state({} as Resource)
 

@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
-	import { createEventDispatcher } from 'svelte';
 	import { SalePercentOutline } from 'flowbite-svelte-icons';
+	import { callIf } from '$lib/utils/helpers';
 
-	const dispatch = createEventDispatcher();
-
-	function updated() {
-		dispatch('updated', {
-			text: 'Percent input was updated'
-		});
+	interface Props {
+		fieldName: string;
+		error: string;
+		value: string;
+		update?: Function;
 	}
-
-	let { fieldName, error, value = $bindable() } = $props();
+	let { 
+		fieldName, 
+		error, 
+		value = $bindable(), 
+		update }: Props = $props();
 </script>
 
 <div class="mb-6">
@@ -30,7 +32,7 @@
 			class="block w-full min-w-0 flex-1 rounded-none rounded-e-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 			placeholder=""
 			bind:value
-			onchange={updated}
+			onchange={() => callIf(update)}
 		/>
 	</div>
 	<FormErrorMessage message={error} />

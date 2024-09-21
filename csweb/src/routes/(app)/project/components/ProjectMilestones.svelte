@@ -9,14 +9,14 @@
     import { getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
 
-    interface ProjectMilestonesProps {
+    interface Props {
         id: string;
         update?: Function;
     }
     let { 
         id, 
         update 
-    }:ProjectMilestonesProps = $props()
+    }:Props = $props()
 
     let modalState:boolean[] = $state([]);
     //let modalState:Map<string, boolean> = new Map<string, boolean>()

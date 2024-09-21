@@ -2,14 +2,14 @@
 	import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
 	import type { Snippet } from 'svelte';
 
-	interface ProjectActionBarProps {
+	interface Props {
 		pageDetail: string;
 		children?: Snippet;
 	}
 	let { 
 		pageDetail = $bindable(), 
 		children 
-	}: ProjectActionBarProps = $props();
+	}: Props = $props();
 </script>
 
 <div class="mb-4 grid w-full grid-cols-4">

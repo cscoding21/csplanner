@@ -7,15 +7,12 @@
 	import type { Resource } from '$lib/graphql/generated/sdk';
 	import { getInitialsFromName } from '$lib/utils/format';
 
-	// export let size:"xs"|"sm"|"md"|"lg"|"xl"|undefined = "md"
-	// export let maxSize:number = 4
-
-	interface UserListProps {
+	interface Props {
 		resourceIDs: string[];
 		size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
 		maxSize: number;
 	}
-	let { resourceIDs, size, maxSize }: UserListProps = $props();
+	let { resourceIDs, size, maxSize }: Props = $props();
 
 	let resources: Resource[] = $state([]);
 

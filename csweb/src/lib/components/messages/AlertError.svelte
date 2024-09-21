@@ -1,5 +1,14 @@
 <script lang="ts">
-	let { showAlert, title, message = $bindable() } = $props();
+	interface Props {
+		showAlert: boolean;
+		title: string;
+		message: string;
+	}
+	let { 
+		showAlert, 
+		title, 
+		message = $bindable() 
+	}: Props = $props();
 </script>
 
 {#if showAlert}

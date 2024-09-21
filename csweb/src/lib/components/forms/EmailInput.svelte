@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
 
-	interface EmailInputProps {
+	interface Props {
 		fieldName: string;
 		error: string;
 		value: string;
@@ -13,7 +13,7 @@
 		error = $bindable(), 
 		value = $bindable(),
 		placeholder,
-		update }:EmailInputProps = $props();
+		update }:Props = $props();
 </script>
 
 <div class="mb-6">

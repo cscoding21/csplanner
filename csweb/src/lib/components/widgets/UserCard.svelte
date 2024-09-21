@@ -3,10 +3,10 @@
 	import { getInitialsFromName, formatDate } from '$lib/utils/format';
 	import type { Resource } from '$lib/graphql/generated/sdk';
 
-	interface UserCardProps {
+	interface Props {
 		resource: Resource;
 	}
-	let { resource }: UserCardProps = $props();
+	let { resource }: Props = $props();
 </script>
 
 <div class="p-2">

@@ -17,12 +17,12 @@
 	let rf = $state(deepCopy(resourceForm));
 	let formTitle = $state('New Resource');
 
-	interface UpdateResourceProps {
+	interface Props {
 		id?: string | undefined;
 		children?: Snippet;
 		update: Function;
 	}
-	let { id, update, children }: UpdateResourceProps = $props();
+	let { id, update, children }: Props = $props();
 
 	if (id) {
 		getResource(id as string).then((r) => {

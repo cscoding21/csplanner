@@ -10,11 +10,11 @@
 	import { coalesceToType } from "$lib/forms/helpers";
     import type { UpdateProjectCost, Project } from "$lib/graphql/generated/sdk";
 
-    interface ProjectCostProps {
+    interface Props {
         id: string;
         update: Function;
     }
-    let { id, update }:ProjectCostProps = $props()
+    let { id, update }:Props = $props()
 
 	let errors: any = $state({ ongoing: "", blendedRate: "" })
 

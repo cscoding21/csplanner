@@ -4,10 +4,10 @@
 
 	import type { Resource } from '$lib/graphql/generated/sdk';
 
-	interface ResourceCardProps {
+	interface Props {
 		resource: Resource;
 	}
-	let { resource = $bindable() }: ResourceCardProps = $props();
+	let { resource = $bindable() }: Props = $props();
 </script>
 
 <div

@@ -2,11 +2,11 @@
 	import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
 	import type { Snippet } from 'svelte';
 
-	interface ResourceActionBarProps {
+	interface Props {
 		pageDetail: string;
 		children: Snippet;
 	}
-	let { pageDetail, children }: ResourceActionBarProps = $props();
+	let { pageDetail, children }: Props = $props();
 </script>
 
 <div class="mb-4 grid w-full grid-cols-4">

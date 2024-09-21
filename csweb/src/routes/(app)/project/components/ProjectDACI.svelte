@@ -11,11 +11,11 @@
 	import { callIf } from '$lib/utils/helpers';
 
 
-	interface ProjectDACIProps {
+	interface Props {
         id: string;
         update?: Function;
     }
-    let { id, update }:ProjectDACIProps = $props()
+    let { id, update }:Props = $props()
 	let errors: any = $state({})
 
 

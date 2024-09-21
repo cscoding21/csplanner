@@ -7,7 +7,7 @@
 
     let popupModal = $state(false);
 
-    interface DeleteProjectFeatureProps {
+    interface Props {
         projectID: string;
         id: string;
         name: string;
@@ -15,7 +15,7 @@
         size: "xs" | "sm" | "lg" | "xl" | "md" | undefined
         update: Function
     }
-    let { projectID, id, name, size, update = $bindable(), children }:DeleteProjectFeatureProps = $props()
+    let { projectID, id, name, size, update = $bindable(), children }:Props = $props()
 
     const delFeature = async (featureID: string) => {
         deleteProjectFeature(projectID, featureID).then(res => {

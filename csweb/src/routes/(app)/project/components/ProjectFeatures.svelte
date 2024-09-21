@@ -7,12 +7,12 @@
     import { getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
 
-    interface ProjectFeaturesProps {
+    interface Props {
         id: string;
         update: Function;
     }
 
-    let { id, update }:ProjectFeaturesProps = $props()
+    let { id, update }:Props = $props()
 
     function refresh() {
         //---close all modals

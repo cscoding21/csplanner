@@ -8,13 +8,13 @@
 
 	let popupModal = $state(false);
 
-	interface DeleteProjectProps {
+	interface Props {
 		id: string;
 		name: string;
 		children: Snippet;
 	}
 
-	let { id, name, children }: DeleteProjectProps = $props();
+	let { id, name, children }: Props = $props();
 
 	const deleteItem = async () => {
 		if (!id) {

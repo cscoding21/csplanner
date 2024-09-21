@@ -1,16 +1,19 @@
 <script lang="ts">
     import { Chart } from 'flowbite-svelte';
+    import { type ApexOptions, default as ApexCharts } from 'apexcharts';
+    
+
 	import type { Project } from '$lib/graphql/generated/sdk';
     import { formatCurrency } from '$lib/utils/format';
 
-    interface ProjectValueChartProps {
+    interface Props {
         project: Project
     }
     let { 
         project  
-    }:ProjectValueChartProps = $props()
+    }:Props = $props()
 
-    let chartData = (p : Project) => {
+    let getChartOptions = (p : Project):ApexOptions => {
         return {
             colors: ['#1A56DB', '#FDBA8C'],
             series: [
@@ -111,7 +114,9 @@
             }
         };
     }
+    let chart = new ApexCharts(document.querySelector("#chartPlaceholder"), getChartOptions(project))
 </script>
 
 
-<Chart options={chartData(project)} />
+<Chart options={getChartOptions(project)} chart={chart} />
+<div id="chartPlaceholder"></div>

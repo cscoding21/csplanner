@@ -6,11 +6,11 @@
     import { CardPlaceholder, Button, P, type SelectOptionType } from "flowbite-svelte";
 	import { callIf } from "$lib/utils/helpers";
 
-    interface ProjectTemplateSelectorProps  {
+    interface Props  {
         id: string;
         update?: Function;
     }
-    let { id, update }:ProjectTemplateSelectorProps = $props()
+    let { id, update }:Props = $props()
     
     let errors = $state({ templateID: "" })
     let templateID: string = $state("");

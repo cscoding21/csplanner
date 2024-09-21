@@ -2,11 +2,11 @@
 	import { Heading } from 'flowbite-svelte';
 	import type { Snippet } from 'svelte';
 
-	interface PageHeadingProps {
+	interface Props {
 		title: string;
 		children?: Snippet;
 	}
-	let { title, children = $bindable() }: PageHeadingProps = $props();
+	let { title, children }: Props = $props();
 </script>
 
 <Heading tag="h4" class="mb-4 px-2">

@@ -2,7 +2,7 @@
 	import { callIf } from '$lib/utils/helpers';
 	import FormErrorMessage from './FormErrorMessage.svelte';
 
-	interface TextInputProps {
+	interface Props {
 		fieldName: string;
 		placeholder?: string;
 		error: string;
@@ -15,7 +15,7 @@
 		update,
 		error = $bindable(), 
 		value = $bindable() ,
-	}:TextInputProps = $props();
+	}:Props = $props();
 
 </script>
 

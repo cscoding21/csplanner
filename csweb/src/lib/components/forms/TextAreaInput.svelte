@@ -2,7 +2,7 @@
 	import { FormErrorMessage } from '$lib/components';
 	import { callIf } from '$lib/utils/helpers';
 
-	interface TextAreaInputProps {
+	interface Props {
 		fieldName: string;
 		error: string;
 		placeholder?: string;
@@ -17,7 +17,7 @@
 		update,
 		value = $bindable(), 
 		rows = $bindable() 
-	}:TextAreaInputProps = $props();
+	}:Props = $props();
 </script>
 
 <div class="mb-6">

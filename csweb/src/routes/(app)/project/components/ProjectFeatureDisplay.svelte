@@ -2,10 +2,10 @@
     import { Badge, Indicator, Heading, P, type ColorVariant, type IndicatorColorType } from "flowbite-svelte";
 	import type { UpdateProjectFeature } from "$lib/graphql/generated/sdk";
 
-    interface ProjectFeatureDisplayProps {
+    interface Props {
         feature: UpdateProjectFeature;
     }
-    let { feature }:ProjectFeatureDisplayProps = $props()
+    let { feature }:Props = $props()
 
     const setPriorityElements = (p:any):any => {
         if (!p) {

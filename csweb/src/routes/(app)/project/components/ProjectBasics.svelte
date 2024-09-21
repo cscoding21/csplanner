@@ -10,14 +10,14 @@
 	import { findAllResources } from '$lib/services/resource';
 	import { callIf } from '$lib/utils/helpers';
 
-	interface ProjectBasicsProps {
+	interface Props {
 		id: string;
 		update?: Function;
 	}
 	let { 
 		id,
 		update 
-	}: ProjectBasicsProps = $props();
+	}: Props = $props();
 
 	const load = async (): Promise<Project> => {
 		return await getProject(id)

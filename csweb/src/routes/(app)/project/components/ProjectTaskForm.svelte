@@ -12,7 +12,7 @@
     
     let errors: any = $state({})
 
-    interface ProjectTaskFormProps {
+    interface Props {
         milestoneID: string;
         projectID: string;
         task?: ProjectMilestoneTask
@@ -23,7 +23,7 @@
         projectID, 
         task,
         update
-    }:ProjectTaskFormProps = $props()
+    }:Props = $props()
 
     const statusOpts = [
         { value: "new", name: "New"},
