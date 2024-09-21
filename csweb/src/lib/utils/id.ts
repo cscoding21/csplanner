@@ -5,6 +5,9 @@
  * @returns a cleaned id value
  */
 export const normalizeID = (id: string) => {
+	if (!id) {
+		return '';
+	}
 	return id.replace(':', '_');
 };
 
@@ -14,5 +17,8 @@ export const normalizeID = (id: string) => {
  * @returns a string ID returned to its original form
  */
 export const denormalizeID = (id: string) => {
+	if (!id) {
+		return '';
+	}
 	return id.replace('_', ':');
 };

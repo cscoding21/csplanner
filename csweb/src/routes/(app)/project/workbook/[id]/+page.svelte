@@ -9,7 +9,6 @@
 		ProjectValue,
 		ProjectCost,
 		ProjectMilestones,
-		ProjectTemplateSelector,
 		ProjectDACI
 	} from '../../components';
 	import { ButtonGroup, Button, TabItem, Tabs } from 'flowbite-svelte';
@@ -29,20 +28,27 @@
 
 	const id = $page.params.id;
 
-	// @ts-expect-error - TS wants all properties to be defined in the default setting
-	let project: Project = $state({});
+	let project: Project = $state({} as Project);
 	let saver: any = $state({});
 
 	const refresh = async () => {
 		console.log('refresh');
 		getProject(id).then((p) => {
 			if (project && saver) {
-				saver.setNotSaving(project.updatedAt);
+				setNotSaving(project.updatedAt);
 			}
 
-            project = p
+			project = p;
 			return project;
 		});
+	};
+
+	const setSaving = (st: string) => {
+		console.log('setSaving', st);
+	};
+
+	const setNotSaving = (st: string) => {
+		console.log('setNotSaving', st);
 	};
 
 	const update = async (e: any) => {
@@ -74,62 +80,59 @@
 	</ProjectActionBar>
 
 	<PageHeading title={project?.projectBasics?.name}>
-		<AutoSave bind:saver />
+		<AutoSave bind:this={saver} {setSaving} setNotSaving={() => setNotSaving(project.updatedAt)} />
 	</PageHeading>
 
 	<Tabs tabStyle="underline">
-		
-	<TabItem open title="Basics">
-		<div slot="title" class="flex items-center gap-2">
-			<ScaleBalancedOutline size="sm" />
-			Basics
-		</div>
-		<div class="p-4"><ProjectBasics {id} {update} /></div>
-	</TabItem>
+		<TabItem open title="Basics">
+			<div slot="title" class="flex items-center gap-2">
+				<ScaleBalancedOutline size="sm" />
+				Basics
+			</div>
+			<div class="p-4"><ProjectBasics {id} {update} /></div>
+		</TabItem>
 
-    <TabItem title="Features">
-        <div slot="title" class="flex items-center gap-2">
-            <RectangleListOutline size="sm" />
-            Features
-          </div>
-        <div class="p-4"><ProjectFeatures id={id} update={update} /></div>
-    </TabItem>
+		<TabItem title="Features">
+			<div slot="title" class="flex items-center gap-2">
+				<RectangleListOutline size="sm" />
+				Features
+			</div>
+			<div class="p-4"><ProjectFeatures {id} {update} /></div>
+		</TabItem>
 
-    <TabItem title="Value Prop">
-        <div slot="title" class="flex items-center gap-2">
-            <DollarOutline size="sm" />
-            Value Prop
-          </div>
-        <div class="p-4"><ProjectValue id={id} update={update} /></div>
-    </TabItem>
+		<TabItem title="Value Prop">
+			<div slot="title" class="flex items-center gap-2">
+				<DollarOutline size="sm" />
+				Value Prop
+			</div>
+			<div class="p-4"><ProjectValue {id} {update} /></div>
+		</TabItem>
 
-    <TabItem title="Costs">
-        <div slot="title" class="flex items-center gap-2">
-            <CashOutline size="sm" />
-            Costs
-          </div>
-        <div class="p-4"><ProjectCost id={id} update={update} /></div>  
-    </TabItem>
+		<TabItem title="Costs">
+			<div slot="title" class="flex items-center gap-2">
+				<CashOutline size="sm" />
+				Costs
+			</div>
+			<div class="p-4"><ProjectCost {id} {update} /></div>
+		</TabItem>
 
-    <TabItem title="Milestones">
-        <div slot="title" class="flex items-center gap-2">
-            <CalendarMonthOutline size="sm" />
-            Milestones
-          </div>
-        <div class="p-4">
-			<!-- <ProjectTemplateSelector id={id} update={update} /> -->
-			<ProjectMilestones id={id} on:updated={update} />
-		
-		</div> 
-    </TabItem>
+		<TabItem title="Milestones">
+			<div slot="title" class="flex items-center gap-2">
+				<CalendarMonthOutline size="sm" />
+				Milestones
+			</div>
+			<div class="p-4">
+				<!-- <ProjectTemplateSelector id={id} update={update} /> -->
+				<ProjectMilestones {id} on:updated={update} />
+			</div>
+		</TabItem>
 
-    <TabItem title="Team">
-        <div slot="title" class="flex items-center gap-2">
-            <UsersGroupOutline size="sm" />
-            Team
-          </div>
-        <div class="p-4"><ProjectDACI id={id} on:updated={update} /></div> 
-    </TabItem>
-    
+		<TabItem title="Team">
+			<div slot="title" class="flex items-center gap-2">
+				<UsersGroupOutline size="sm" />
+				Team
+			</div>
+			<div class="p-4"><ProjectDACI {id} on:updated={update} /></div>
+		</TabItem>
 	</Tabs>
 {/await}

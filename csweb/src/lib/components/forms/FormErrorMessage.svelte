@@ -2,9 +2,7 @@
 	interface Props {
 		message: string;
 	}
-	let { 
-		message = $bindable() 
-	}: Props = $props();
+	let { message = $bindable() }: Props = $props();
 </script>
 
 {#if message}

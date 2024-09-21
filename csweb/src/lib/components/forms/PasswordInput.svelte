@@ -7,17 +7,12 @@
 	let show = $state(false);
 
 	interface Props {
-		fieldName: string,
-		error: string,
-		value: string,
-		update?: Function
+		fieldName: string;
+		error: string;
+		value: string;
+		update?: Function;
 	}
-	let { 
-		fieldName, 
-		error = $bindable(), 
-		value = $bindable(), 
-		update 
-	}: Props = $props();
+	let { fieldName, error = $bindable(), value = $bindable(), update }: Props = $props();
 </script>
 
 <div class="mb-6">

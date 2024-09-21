@@ -7,18 +7,24 @@
 
 	const SECONDS_TO_UPDATE_EDIT_TIME = 10000;
 
-	export const saver = {
-		setSaving(st: string) {
-			isSaving = true;
-			lastSaveTime = st;
-			deltaDisplay(st);
-		},
-		setNotSaving(st: string) {
-			isSaving = false;
-			lastSaveTime = st;
-			deltaDisplay(st);
-		}
-	};
+	interface Props {
+		setNotSaving: (st: string) => void;
+		setSaving: (st: string) => void;
+	}
+	let { setNotSaving = $bindable(), setSaving = $bindable() }: Props = $props();
+
+	// export const saver = {
+	// 	setSaving(st: string) {
+	// 		isSaving = true;
+	// 		lastSaveTime = st;
+	// 		deltaDisplay(st);
+	// 	},
+	// 	setNotSaving(st: string) {
+	// 		isSaving = false;
+	// 		lastSaveTime = st;
+	// 		deltaDisplay(st);
+	// 	}
+	// };
 
 	const deltaDisplay = (st: string) => {
 		if (st === null || st === undefined) {
@@ -55,14 +61,13 @@
 		return display;
 	};
 
-	let timeDisplay = $state("");
+	let timeDisplay = $state('');
 
 	onMount(async () => {
 		setInterval(() => {
 			timeDisplay = deltaDisplay(lastSaveTime);
 		}, SECONDS_TO_UPDATE_EDIT_TIME);
 	});
-
 </script>
 
 <div>

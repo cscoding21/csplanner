@@ -11,7 +11,7 @@
 	interface Props {
 		toast: Toast;
 	}
-	let { toast }:Props = $props();
+	let { toast }: Props = $props();
 </script>
 
 <div

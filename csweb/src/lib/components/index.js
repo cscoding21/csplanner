@@ -1,5 +1,16 @@
 //---Charts
 export { default as TimelineChart } from './charts/TimelineChart.svelte';
+export { default as DataCard } from './charts/DataCard.svelte';
+
+//---Chat
+export { default as CommentItem } from './chat/CommentItem.svelte';
+export { default as CommentList } from './chat/CommentList.svelte';
+export { default as DeleteComment } from './chat/DeleteComment.svelte';
+export { default as EmoteButtonAcknowledge } from './chat/EmoteButtonAcknowledge.svelte';
+export { default as EmoteButtonLove } from './chat/EmoteButtonLove.svelte';
+export { default as EmoteButtonLaugh } from './chat/EmoteButtonLaugh.svelte';
+export { default as EmoteButtonDislike } from './chat/EmoteButtonDislike.svelte';
+export { default as EmoteButtonLike } from './chat/EmoteButtonLike.svelte';
 
 //---Formatting
 export { default as PageHeading } from './formatting/PageHeading.svelte';
@@ -13,6 +24,7 @@ export { default as MultiSelectInput } from './forms/MultiSelectInput.svelte';
 export { default as NumberInput } from './forms/NumberInput.svelte';
 export { default as PasswordInput } from './forms/PasswordInput.svelte';
 export { default as PercentInput } from './forms/PercentInput.svelte';
+export { default as QuillEditor } from './forms/QuillEditor.svelte';
 export { default as SelectInput } from './forms/SelectInput.svelte';
 export { default as TextAreaInput } from './forms/TextAreaInput.svelte';
 export { default as TextInput } from './forms/TextInput.svelte';

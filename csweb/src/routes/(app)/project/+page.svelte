@@ -13,7 +13,7 @@
 	// };
 
 	let pageAndFilter: PageAndFilter = {
-		paging: { pageNumber: 1, resultsPerPage: 20 },
+		paging: { pageNumber: 1, resultsPerPage: 20 }
 	};
 
 	const refresh = async (): Promise<ProjectResults> => {

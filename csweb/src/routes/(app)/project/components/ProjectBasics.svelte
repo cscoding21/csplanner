@@ -14,10 +14,7 @@
 		id: string;
 		update?: Function;
 	}
-	let { 
-		id,
-		update 
-	}: Props = $props();
+	let { id, update }: Props = $props();
 
 	const load = async (): Promise<Project> => {
 		return await getProject(id)
@@ -91,7 +88,7 @@
 			});
 	};
 
-	let errors:any = $state({ name: '', ownerID: '', description: '' });
+	let errors: any = $state({ name: '', ownerID: '', description: '' });
 	let resourceOpts = $state([] as SelectOptionType<string>[]);
 	let basicsForm = $state(getDefaultProject().projectBasics);
 

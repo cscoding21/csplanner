@@ -4,11 +4,7 @@
 		title: string;
 		message: string;
 	}
-	let { 
-		showAlert, 
-		title, 
-		message = $bindable() 
-	}: Props = $props();
+	let { showAlert, title, message = $bindable() }: Props = $props();
 </script>
 
 {#if showAlert}

@@ -6,7 +6,7 @@ export { default as ProjectBasics } from './ProjectBasics.svelte';
 export { default as ProjectCard } from './ProjectCard.svelte';
 export { default as ProjectCost } from './ProjectCost.svelte';
 export { default as ProjectDACI } from './ProjectDACI.svelte';
-export { default as ProjectFeatureDisplay} from './ProjectFeatureDisplay.svelte';
+export { default as ProjectFeatureDisplay } from './ProjectFeatureDisplay.svelte';
 export { default as ProjectFeatureForm } from './ProjectFeatureForm.svelte';
 export { default as ProjectFeatures } from './ProjectFeatures.svelte';
 export { default as ProjectMilestones } from './ProjectMilestones.svelte';

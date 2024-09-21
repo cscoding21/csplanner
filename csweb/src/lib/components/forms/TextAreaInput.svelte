@@ -8,16 +8,16 @@
 		placeholder?: string;
 		value: string;
 		rows: number;
-		update?: Function; 
+		update?: Function;
 	}
-	let { 
-		fieldName, 
-		error, 
-		placeholder, 
+	let {
+		fieldName,
+		error,
+		placeholder,
 		update,
-		value = $bindable(), 
-		rows = $bindable() 
-	}:Props = $props();
+		value = $bindable(),
+		rows = $bindable()
+	}: Props = $props();
 </script>
 
 <div class="mb-6">

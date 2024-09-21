@@ -41,7 +41,6 @@ export const getList = async (nameOrID: string): Promise<List> => {
 		});
 };
 
-
 /**
  * return a list of options in the list sorted by their name in ascending order
  * @param list - the list whose values to sort

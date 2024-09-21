@@ -6,13 +6,10 @@
 		data: [];
 		height: number;
 	}
-	let {
-		data = $bindable(),
-		height
-	}:Props = $props()
+	let { data = $bindable(), height }: Props = $props();
 
-	const getChartOptions = ():ApexOptions  => {
-		const o:ApexOptions  = {
+	const getChartOptions = (): ApexOptions => {
+		const o: ApexOptions = {
 			series: [
 				{
 					data: data
@@ -20,7 +17,7 @@
 			],
 			chart: {
 				height: height,
-				type: "rangeBar"
+				type: 'rangeBar'
 			},
 			plotOptions: {
 				bar: {
@@ -28,7 +25,7 @@
 				}
 			},
 			xaxis: {
-				type: "datetime",
+				type: 'datetime',
 				labels: {
 					style: {
 						colors: ['#ffffff']
@@ -63,8 +60,8 @@
 
 		return o;
 	};
-	let chart = new ApexCharts(document.querySelector("#chartPlaceholder"), getChartOptions())
+	let chart = new ApexCharts(document.querySelector('#chartPlaceholder'), getChartOptions());
 </script>
 
-<Chart options={getChartOptions() as ApexOptions} chart={getChartOptions() as ApexCharts} />
+<Chart options={getChartOptions() as ApexOptions} chart={chart} />
 <div id="chartPlaceholder"></div>

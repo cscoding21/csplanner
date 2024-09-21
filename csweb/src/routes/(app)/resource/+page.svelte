@@ -14,12 +14,10 @@
 
 	let resources = $state({} as ResourceResults);
 	const loadPage = async () => {
-        refresh().then(r => {
-            resources = r as ResourceResults
-        })
+		refresh().then((r) => {
+			resources = r as ResourceResults;
+		});
 	};
-
-	loadPage()
 </script>
 
 <ResourceActionBar pageDetail="">
@@ -33,7 +31,7 @@
 
 <PageHeading title="Resource Roster" />
 
-{#await loadPage}
+{#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
 	{#if resources.results != null}

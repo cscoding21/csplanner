@@ -4,7 +4,7 @@
 	interface Props {
 		amount: number;
 	}
-	let { amount }:Props = $props();
+	let { amount }: Props = $props();
 </script>
 
 {#if amount < 0.0}

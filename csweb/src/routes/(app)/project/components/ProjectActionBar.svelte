@@ -6,10 +6,7 @@
 		pageDetail: string;
 		children?: Snippet;
 	}
-	let { 
-		pageDetail = $bindable(), 
-		children 
-	}: Props = $props();
+	let { pageDetail = $bindable(), children }: Props = $props();
 </script>
 
 <div class="mb-4 grid w-full grid-cols-4">

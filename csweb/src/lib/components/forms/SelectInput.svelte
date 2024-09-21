@@ -7,7 +7,7 @@
 		error: string;
 		value: string;
 		update?: Function;
-		options: SelectOptionType<string|number>[];
+		options: SelectOptionType<string | number>[];
 	}
 	let {
 		fieldName,

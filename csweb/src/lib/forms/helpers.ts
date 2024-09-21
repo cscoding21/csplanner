@@ -38,15 +38,14 @@ export const mergeErrors = (err1: any, err2: any) => {
  * @param list the list object to extract values from
  * @returns a select-box-friendly list of options
  */
-export const findSelectOptsFromList = (list:List):SelectOptionType<string>[] => {
+export const findSelectOptsFromList = (list: List): SelectOptionType<string>[] => {
 	const vals = sortListValues(list);
-	let opts:SelectOptionType<string>[] = [];
+	let opts: SelectOptionType<string>[] = [];
 
-	opts = vals.map((r:ListItem) => ({
+	opts = vals.map((r: ListItem) => ({
 		name: r.name,
 		value: r.value as string
 	})) as SelectOptionType<string>[];
 
 	return opts;
-}
-
+};

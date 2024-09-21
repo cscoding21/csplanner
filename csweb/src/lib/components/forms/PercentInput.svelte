@@ -9,11 +9,7 @@
 		value: string;
 		update?: Function;
 	}
-	let { 
-		fieldName, 
-		error, 
-		value = $bindable(), 
-		update }: Props = $props();
+	let { fieldName, error, value = $bindable(), update }: Props = $props();
 </script>
 
 <div class="mb-6">

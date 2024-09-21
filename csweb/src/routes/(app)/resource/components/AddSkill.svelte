@@ -10,21 +10,18 @@
 
 	interface Props {
 		resourceID: string;
-		update?: Function
+		update?: Function;
 	}
-	let { 
-		resourceID,
-		update
-	}:Props = $props()
+	let { resourceID, update }: Props = $props();
 
-	let errors: any = $state({ skillID: "", proficiency: "" });
-	let sf = $state(deepCopy(skillForm))
+	let errors: any = $state({ skillID: '', proficiency: '' });
+	let sf = $state(deepCopy(skillForm));
 
 	const add = () => {
 		errors = {};
 
 		const parsedSkillForm = skillSchema.cast(sf);
-		parsedSkillForm.resourceID = resourceID
+		parsedSkillForm.resourceID = resourceID;
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
@@ -42,8 +39,8 @@
 
 						skillForm.id = '';
 						skillForm.proficiency = '';
-						
-						callIf(update)
+
+						callIf(update);
 					} else {
 						addToast({
 							message: 'Error creating resource: ' + res.message,
@@ -68,14 +65,16 @@
 	];
 
 	const loadPage = async () => {
-        getList("Skills").then(l => {
-            availableSkillOpts = findSelectOptsFromList(l)
-        }).then(() => {
-			skillForm.resourceID = resourceID;
-		})
+		getList('Skills')
+			.then((l) => {
+				availableSkillOpts = findSelectOptsFromList(l);
+			})
+			.then(() => {
+				skillForm.resourceID = resourceID;
+			});
 	};
 
-	loadPage()
+	loadPage();
 </script>
 
 {#await loadPage}
