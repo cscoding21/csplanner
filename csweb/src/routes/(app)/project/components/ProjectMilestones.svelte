@@ -1,15 +1,13 @@
 <script lang="ts">
-    import type { ProjectMilestone , Skill } from "$lib/graphql/generated/sdk";
+    import type { ProjectMilestone , Skill, Project } from "$lib/graphql/generated/sdk";
     import { P, Button, Hr, Modal } from "flowbite-svelte";
     import { ChevronDoubleRightOutline, ChevronRightOutline, EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
     import { SectionHeading, UserList } from "$lib/components";
     import { findAllProjectTemplates } from "$lib/services/project";
-    import { getDefaultProject } from "$lib/forms/project.validation";
-    import { ProjectTaskForm, DeleteProjectTask } from ".";
+    import { ProjectTaskForm, DeleteProjectTask, ProjectTemplateSelector } from ".";
     import { formatToCommaSepList } from "$lib/utils/format";
     import { getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
-	import ProjectTemplateSelector from "./ProjectTemplateSelector.svelte";
 
     interface ProjectMilestonesProps {
         id: string;
@@ -23,12 +21,11 @@
     let modalState:boolean[] = $state([]);
     //let modalState:Map<string, boolean> = new Map<string, boolean>()
     let hasMilestones:boolean = $state(true)
-    let project = $state(getDefaultProject());
+    let project = $state({} as Project);
     let currentMilestone = $state({} as ProjectMilestone)
 
 	const load = async (id:string, milestoneID:string) => {
 		await getProject(id).then(proj => {
-			// @ts-ignore
 			project = proj
             hasMilestones = (proj.projectMilestones && proj.projectMilestones.length > 0) as boolean;
 
