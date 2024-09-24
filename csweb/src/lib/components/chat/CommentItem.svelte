@@ -4,7 +4,7 @@
     import { deleteComment, toggleCommentEmote, addCommentReply, updateComment } from "$lib/services/comment";
     import { authService } from "$lib/services/auth";
     import { formatDateTime, getInitialsFromName, pluralize } from "$lib/utils/format"
-    import { QuillEditor, UserDisplay } from "$lib/components";
+    import { UserDisplay } from "$lib/components";
     import { EmoteButtonLike, EmoteButtonDislike, EmoteButtonLove, EmoteButtonLaugh, EmoteButtonAcknowledge } from "$lib/components";
     import { DotsHorizontalOutline, CheckPlusCircleOutline } from 'flowbite-svelte-icons';
     import { is } from '$lib/utils/check';
@@ -35,13 +35,6 @@
     let replyMode:Boolean = $state(false)
     let html: any
 
-    // function setCommentRepliesOpen(id:string) {
-    //     $commentListStateStore[id] = true
-    // }
-
-    // function setCommentRepliesClosed(id:string) {
-    //     $commentListStateStore[id] = false
-    // }
 
     const toggleReaction = async (commentID:string, type:string) => {
         toggleCommentEmote({ commentID: commentID, emoteType: type }).then(res => {
@@ -250,24 +243,4 @@
             {/if}
         </div>
     </footer>
-    {#if userCreatedComment && editMode}
-        <QuillEditor post={updateComm} attachContext={id} contents={comment.text} />
-    {:else}
-        <p class="text-gray-500 dark:text-gray-400 text-sm mb-1">{@html html}</p>
-    {/if}
-
-    <button type="button"
-        onclick={() => { replyMode=!replyMode }}
-        class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-300 font-medium">
-        <svg class="mr-1.5 w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
-        </svg>                
-        Reply
-    </button>
-
-    {#if replyMode}
-    <div class="mt-4">
-        <QuillEditor post={createCommentReply} attachContext={id} contents="" />
-    </div>
-    {/if}
 </article>

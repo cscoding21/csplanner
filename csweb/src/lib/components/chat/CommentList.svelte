@@ -34,6 +34,11 @@
     <div>
         {#each comments as comment(comment.id)}
             <CommentItem {comment} projectID={id} update={update} />
+            {#if comment.replies}
+                {#each comment.replies as reply(reply.id)}
+                    <CommentItem comment={reply} projectID={id} update={update} />
+                {/each}
+            {/if}
         {/each}
     </div>
 </div>

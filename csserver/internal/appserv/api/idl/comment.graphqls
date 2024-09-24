@@ -13,7 +13,11 @@ type Comment {
   isEdited: Boolean!
 }
 
-
+type CommentResults {
+  paging: Pagination!
+  filters: Filters!
+  results: [Comment]
+}
 
 input UpdateComment {
   projectId: String!

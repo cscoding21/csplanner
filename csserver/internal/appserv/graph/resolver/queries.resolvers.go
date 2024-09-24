@@ -93,13 +93,37 @@ func (r *queryResolver) ResourceSnapshot(ctx context.Context) (*idl.ResourceSnap
 }
 
 // FindProjectComments is the resolver for the findProjectComments field.
-func (r *queryResolver) FindProjectComments(ctx context.Context, projectID string) ([]*idl.Comment, error) {
-	panic(fmt.Errorf("not implemented: FindProjectComments - findProjectComments"))
+func (r *queryResolver) FindProjectComments(ctx context.Context, projectID string) (*idl.CommentResults, error) {
+	service := factory.GetCommentService()
+
+	results, err := service.FindProjectComments(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(results)
+
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	out := idl.CommentResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.CommentCommentToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
 }
 
 // GetCommentThread is the resolver for the getCommentThread field.
 func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.Comment, error) {
-	panic(fmt.Errorf("not implemented: GetCommentThread - getCommentThread"))
+	service := factory.GetCommentService()
+	obj, err := service.GetCommentThread(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.CommentCommentToIdl(*obj)
+
+	return &out, nil
 }
 
 // FindActivity is the resolver for the findActivity field.

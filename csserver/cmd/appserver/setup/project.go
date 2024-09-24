@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"csserver/internal/appserv/factory"
+	"csserver/internal/common"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes"
 	"csserver/internal/utils"
@@ -30,6 +31,9 @@ func CreateTestProjects(ctx context.Context) error {
 	//allResources := ar.Results
 
 	updateProject := project.Project{
+		ControlFields: common.ControlFields{
+			ID: "project:1",
+		},
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "This is my ticket to the big time",

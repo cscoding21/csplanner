@@ -126,7 +126,6 @@
 				</ul>
 
 				<SectionHeading>Team</SectionHeading>
-
 				<ul class="list">
 					{#if project.projectDaci?.driver}
 						<li>
@@ -184,7 +183,9 @@
 			<Card size="xl">
 				<SectionHeading>Comments / Activity</SectionHeading>
 				<!-- <CommentList projectID={id} /> -->
-				 <QuillEditor post={() => {}} contents={""} attachContext={id} />
+				 <div class="mb-6 border-b border-gray-200 pb-4">
+				 <QuillEditor getContent={() => {}} contents={""} attachContext={id} error="" />
+				</div>
 			</Card>
 		</div>
 	</div>

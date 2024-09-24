@@ -6,6 +6,7 @@ import (
 	"csserver/internal/providers/nats"
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/activity"
+	"csserver/internal/services/comment"
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
@@ -94,6 +95,18 @@ func GetKeycloakClient() *gocloak.GoCloak {
 	return client
 }
 
+// GetActivityService get activity service instance
+func GetActivityService() *activity.ActivityService {
+	surrealClient := GetDBClient()
+	contextHelper := config.ContextHelper{}
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+	return activity.NewActivityService(*surrealClient, contextHelper, pubsub)
+}
+
 // GetAuthService get user service instance
 func GetAuthService(ctx context.Context) *auth.AuthService {
 	kc := GetKeycloakClient()
@@ -111,37 +124,16 @@ func GetAuthService(ctx context.Context) *auth.AuthService {
 		config.Config.Security.KeycloakRealm)
 }
 
-// GetActivityService get activity service instance
-func GetActivityService() *activity.ActivityService {
+// GetCommentService get comment service instance
+func GetCommentService() *comment.CommentService {
 	surrealClient := GetDBClient()
-	contextHelper := config.ContextHelper{}
-	pubsub, err := GetPubSubClient()
-	if err != nil {
-		log.Error(err)
-		return nil
-	}
-	return activity.NewActivityService(*surrealClient, contextHelper, pubsub)
-}
-
-// GetUserService get user service instance
-func GetUserService() *user.UserService {
-	contextHelper := config.ContextHelper{}
-	client := GetKeycloakClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	svc := user.NewUserService(
-		contextHelper,
-		client,
-		pubsub,
-		config.Config.Security.KeycloakRealm,
-		config.Config.Security.KeycloakAdminUser,
-		config.Config.Security.KeycloakAdminPass)
-
-	return &svc
+	return comment.NewCommentService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetListService get list service instance
@@ -168,18 +160,6 @@ func GetNotificationService() *notification.NotificationService {
 	return notification.NewNotificationService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
-// GetResourceService return a resource service instance
-func GetResourceService() *resource.ResourceService {
-	surrealClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
-	if err != nil {
-		log.Error(err)
-		return nil
-	}
-
-	return resource.NewResourceService(*surrealClient, config.ContextHelper{}, pubsub)
-}
-
 // GetProjectService return a project service instance
 func GetProjectService() *project.ProjectService {
 	surrealClient := GetDBClient()
@@ -202,4 +182,37 @@ func GetProjectTemplateService() *projecttemplate.ProjecttemplateService {
 	}
 
 	return projecttemplate.NewProjecttemplateService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetResourceService return a resource service instance
+func GetResourceService() *resource.ResourceService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return resource.NewResourceService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetUserService get user service instance
+func GetUserService() *user.UserService {
+	contextHelper := config.ContextHelper{}
+	client := GetKeycloakClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	svc := user.NewUserService(
+		contextHelper,
+		client,
+		pubsub,
+		config.Config.Security.KeycloakRealm,
+		config.Config.Security.KeycloakAdminUser,
+		config.Config.Security.KeycloakAdminPass)
+
+	return &svc
 }

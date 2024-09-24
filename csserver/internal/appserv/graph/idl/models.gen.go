@@ -44,6 +44,12 @@ type Comment struct {
 	IsEdited      bool           `json:"isEdited"`
 }
 
+type CommentResults struct {
+	Paging  *Pagination `json:"paging"`
+	Filters *Filters    `json:"filters"`
+	Results []*Comment  `json:"results,omitempty"`
+}
+
 type ControlFields struct {
 	CreatedAt    time.Time  `json:"createdAt"`
 	UpdatedAt    time.Time  `json:"updatedAt"`

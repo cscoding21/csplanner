@@ -7,7 +7,7 @@ type Query {
     portfolioSnapshot: PortfolioSnapshot!
     resourceSnapshot: ResourceSnapshot!
 
-    findProjectComments(projectID: String!) :[Comment!]!  
+    findProjectComments(projectID: String!) :CommentResults!  
     getCommentThread(id: String!): Comment!
         
     findActivity(pageAndFilter: PageAndFilter!): ActivityResults!

@@ -7,6 +7,7 @@ https://medium.com/@_orcaman/package-financial-for-golang-the-math-behind-the-ir
 
 import (
 	"errors"
+	"fmt"
 	"math"
 )
 
@@ -37,7 +38,7 @@ func IRR(values []float64) (float64, error) {
 		}
 		x0 = x1
 	}
-	return 0, errors.New("could not find irr for the provided values")
+	return 0, fmt.Errorf("could not find irr for the provided values: %v", values)
 }
 
 // FV gets the present value, the interest rate (compounded annually if needed) and the number of periods and returns the future value.

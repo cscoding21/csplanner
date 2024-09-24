@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"csserver/internal/appserv/factory"
-	listPackage "csserver/internal/services/list"
+	"csserver/internal/services/list"
 
 	"github.com/google/uuid"
 
@@ -13,9 +13,9 @@ import (
 
 func CreateTestLists(ctx context.Context) error {
 	service := factory.GetListService()
-	skillsList := listPackage.List{
+	skillsList := list.List{
 		Name: "Skills",
-		Values: []listPackage.ListItem{
+		Values: []list.ListItem{
 			{Value: uuid.New().String(), Name: "Backend Development"},
 			{Value: uuid.New().String(), Name: "Frontend Development"},
 			{Value: uuid.New().String(), Name: "Database Development"},
@@ -33,9 +33,9 @@ func CreateTestLists(ctx context.Context) error {
 		},
 	}
 
-	fundingSourceList := listPackage.List{
+	fundingSourceList := list.List{
 		Name: "Funding Source",
-		Values: []listPackage.ListItem{
+		Values: []list.ListItem{
 			{Value: "internal", Name: "Internal"},
 			{Value: "external", Name: "External"},
 		},
