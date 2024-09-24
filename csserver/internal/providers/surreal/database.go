@@ -129,8 +129,10 @@ func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filte
 // GetCount returns an int representing the number of records in a database
 func (db *DBClient) GetCount(sql string, filters common.Filters) (*int, error) {
 	countSql := getCountSql(sql)
-	countData, err := db.Client.Query(countSql, filters)
+
+	countData, err := db.Client.Query(countSql, filters.GetFiltersAsMap())
 	if err != nil {
+		log.Error(err)
 		return common.HandleReturnWithValue[int](nil, err)
 	}
 

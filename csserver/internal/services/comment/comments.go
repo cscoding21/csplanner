@@ -238,16 +238,24 @@ func (s *CommentService) GetCommentThread(ctx context.Context, commentID string)
 	if comment.ProjectID == "" {
 		sql := `SELECT *
 			FROM comment
-			WHERE <-belongsto<-(comment where id = $commentID)
+			WHERE <-is_a_reply_to<-(comment where id = $commentID)
 			`
 		outCommentRaw, err := s.DBClient.GetObject(sql, filters.GetFiltersAsMap())
 		if err != nil {
 			return nil, err
 		}
 
-		outComment, err = marshal.SurrealUnmarshal[Comment](outCommentRaw)
+		log.Warnf("outCommentRaw: %v", outCommentRaw)
+		outCommentSlice, err := marshal.SurrealSmartUnmarshal[[]Comment](outCommentRaw)
 		if err != nil {
 			return nil, err
+		}
+
+		log.Warnf("outCommentSlice: %v", outCommentSlice)
+		if len(*outCommentSlice) > 0 {
+			outComment = &(*outCommentSlice)[0]
+		} else {
+			return nil, fmt.Errorf("no comment thread found for comment %s", commentID)
 		}
 	} else {
 		outComment = comment

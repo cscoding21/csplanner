@@ -101,8 +101,6 @@ func (r *queryResolver) FindProjectComments(ctx context.Context, projectID strin
 		return nil, err
 	}
 
-	fmt.Println(results)
-
 	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
 	out := idl.CommentResults{
 		Paging:  &pg,

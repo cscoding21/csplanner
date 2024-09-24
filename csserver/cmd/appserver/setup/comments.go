@@ -37,13 +37,13 @@ func CreateTestComments(ctx context.Context) error {
 	}
 
 	for _, c := range comments {
-		result, err := service.AddComment(ctx, c)
+		_, err := service.AddComment(ctx, c)
 		if err != nil {
 			log.Errorf("error adding comment: %v", err)
 			return err
 		}
 
-		log.Infof("comment: %v", result)
+		//log.Infof("comment: %v", result)
 	}
 
 	replyDelta := quilljs.New(nil)
@@ -63,13 +63,13 @@ func CreateTestComments(ctx context.Context) error {
 	}
 
 	for _, r := range replies {
-		result, err := service.AddCommentReply(ctx, r, "comment:1")
+		_, err := service.AddCommentReply(ctx, r, "comment:1")
 		if err != nil {
 			log.Errorf("error adding reply: %v", err)
 			return err
 		}
 
-		log.Infof("reply: %v", result)
+		//log.Infof("reply: %v", result)
 	}
 
 	return nil
