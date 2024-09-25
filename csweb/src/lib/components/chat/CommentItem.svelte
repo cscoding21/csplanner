@@ -12,7 +12,7 @@
     // import { commentListStateStore } from '$lib/stores/comment'
     import { addToast } from '$lib/stores/toasts';
     import { callIf } from '$lib/utils/helpers';
-    import { getDeltaHTML } from '$lib/utils/quill';
+    import { QuillEditor } from '..';
 
 
     interface Props {
@@ -34,7 +34,7 @@
     let userCreatedComment: boolean = (userID === comment.user.email)
     let editMode: Boolean = $state(false)
     let replyMode:Boolean = $state(false)
-    let html: any
+
 
 
     const toggleReaction = async (commentID:string, type:string) => {
@@ -101,8 +101,6 @@
             }
         })
     }
-
-    html = getDeltaHTML(comment.text); 
 </script>
 
 <article class="p-6 mb-6 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
@@ -247,9 +245,5 @@
         </div>
     </footer>
 
-    {#if userCreatedComment && editMode}
-        <!-- <QuillEditor post={updateComm} attachContext={id} contents={comment.text} /> -->
-    {:else}
-        <p class="text-gray-500 dark:text-gray-400 text-sm mb-1">{@html html}</p>
-    {/if}
+    <QuillEditor getContent={updateComm} error={""} attachContext={id} contents={comment.text} enabled={(userCreatedComment && editMode) as boolean} />
 </article>

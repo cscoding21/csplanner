@@ -315,12 +315,14 @@ func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID strin
 
 	existingRelation, err := s.DBClient.TestRelationshipExist(ctx, userEmail, commentID, string(emote))
 	if err != nil {
+		log.Errorf("testRelationshipExixts: %v\n", err)
 		return err
 	}
 
 	if existingRelation != nil {
 		err = s.DeleteCommentEmote(ctx, existingRelation.ID)
 		if err != nil {
+			log.Errorf("deletCommentEmote: %v\n", err)
 			return err
 		}
 
@@ -329,6 +331,7 @@ func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID strin
 
 	err = s.CreateCommentEmote(ctx, commentID, emote)
 	if err != nil {
+		log.Errorf("createCommentEmote: %v\n", err)
 		return err
 	}
 

@@ -35,7 +35,9 @@ func (db *DBClient) RelateTo(ctx context.Context,
 		"edge": edgeID,
 	}
 
-	objectData, err := db.Client.Query(getRelationshipSQL(relationship), criteria)
+	sql := getRelationshipSQL(relationship)
+	log.Warnf("relationship SQL: %v (%v)\n", sql, criteria)
+	objectData, err := db.Client.Query(sql, criteria)
 	if err != nil {
 		log.Error(err)
 		return nil, err

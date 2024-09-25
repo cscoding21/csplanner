@@ -85,7 +85,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
-		log.Debugf("AUTH Validation Result for token %s: %v", token, result)
+		log.Infof("AUTH Validation Result for token %s: %v", token, result)
 		if !result.Success {
 			err := fmt.Errorf("login failed for token %s", token)
 			log.Error(err)
@@ -94,7 +94,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 		}
 
 		if result.Success {
-			log.Debugf("Authentication success for user %s", result.User.Email)
+			log.Infof("Authentication success for user %s", result.User.Email)
 
 			ctx := context.WithValue(r.Context(), config.UserEmailKey, result.User.Email)
 			ctx = context.WithValue(ctx, config.UserIDKey, result.User.ID)

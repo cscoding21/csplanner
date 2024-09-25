@@ -33,7 +33,6 @@
 <div>
     {#each comments as comment(comment.id)}
         <CommentItem {comment} projectID={id} update={update} />
-        <h1>{comment.text}</h1>
         {#if comment.replies}
             <div class="pl-12">
                 {#each comment.replies as reply(reply.id)}

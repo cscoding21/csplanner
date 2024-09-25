@@ -2,6 +2,7 @@
     import { onMount } from "svelte"
     import { FormErrorMessage } from '$lib/components'
     import Quill from 'quill';
+    import { normalizeID } from "$lib/utils/id";
 
     import 'quill/dist/quill.core.css'
     import 'quill/dist/quill.snow.css'
@@ -16,10 +17,20 @@
         attachContext: string;
         fieldName?: string;
         error: string;
+        enabled: boolean;
     }
-    let { getContent, contents, attachContext, fieldName, error }:Props = $props();
+    let { 
+        getContent, 
+        contents, 
+        attachContext, 
+        fieldName, 
+        error, 
+        enabled 
+    }:Props = $props();
 
     let quill : Quill;
+
+    const editorID = "editor_" + normalizeID(attachContext)
 
     // const MentionBlot = Quill.import("blots/mention");
     // class StyledMentionBlot extends MentionBlot {
@@ -53,9 +64,9 @@
             ['clean']                                         // remove formatting button
         ]
 
+        // debug: 'log',
         //mention: mentionOpts
-        quill = new Quill("#editorId", {
-            debug: 'log',
+        quill = new Quill("#" + editorID, {
             theme: "bubble",
             modules: {
                 toolbar: toolbarOptions,
@@ -63,10 +74,10 @@
             }
         });
 
-        if (contents) {
-            quill.setText(contents, "user");
-        }
+        console.log("contents", contents)
+        quill.setContents(JSON.parse(contents), "user");
 
+        //quill.enable(enabled)
         quill.focus()
     });
 
@@ -137,7 +148,7 @@
 
     <div
         class="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-        <div id="editorId"></div>
+        <div id="{editorID}"></div>
     </div>
     
 	<FormErrorMessage message={error} />

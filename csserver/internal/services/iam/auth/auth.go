@@ -5,8 +5,10 @@ import (
 	"csserver/internal/providers/nats"
 	"csserver/internal/services/iam/user"
 	"fmt"
+	"strings"
 
 	"github.com/Nerzal/gocloak/v13"
+	"github.com/golang-jwt/jwt/v5"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -56,17 +58,20 @@ func (s *AuthService) ValidateToken(ctx context.Context, token string) (AuthResu
 		return NewFailingAuthResult(token, err), err
 	}
 
-	decoded, claims, err := s.KCClient.DecodeAccessToken(ctx, token, s.KCRealm)
+	_, claims, err := s.KCClient.DecodeAccessToken(ctx, token, s.KCRealm)
 	if err != nil {
 		return NewFailingAuthResult(token, err), err
 	}
 
-	log.Infof("%s - status: %v\n", token, rptResult)
-	log.Infof("decoded: %v\n", decoded)
-	log.Infof("claimss: %v\n", claims)
-
 	if rptResult.Active != nil && *rptResult.Active {
-		return NewSuccessAuthResult(token, ""), nil
+		ret := NewSuccessAuthResult(token, "")
+
+		ret.User.Email = GetKeyFromClaims(*claims, "email").(string)
+		ret.User.FirstName = GetKeyFromClaims(*claims, "given_name").(string)
+		ret.User.LastName = GetKeyFromClaims(*claims, "family_name").(string)
+		ret.User.ID = GetKeyFromClaims(*claims, "email").(string)
+
+		return ret, nil
 	}
 
 	err = fmt.Errorf("token not active")
@@ -90,10 +95,10 @@ func (s *AuthService) Signout(ctx context.Context, refreshToken string) error {
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
-	log.Info(creds)
-	log.Info(s.KCClientID)
-	log.Info(s.KCClientSecret)
-	log.Info(s.KCRealm)
+	log.Debug(creds)
+	log.Debug(s.KCClientID)
+	log.Debug(s.KCClientSecret)
+	log.Debug(s.KCRealm)
 
 	token, err := s.KCClient.Login(ctx,
 		s.KCClientID,
@@ -115,6 +120,13 @@ func NewSuccessAuthResult(token string, refreshToken string) AuthResult {
 		Success:      true,
 		Token:        token,
 		RefreshToken: refreshToken,
+		User: user.User{
+			Email:        "",
+			FirstName:    "",
+			LastName:     "",
+			ID:           "",
+			ProfileImage: "",
+		},
 	}
 }
 
@@ -125,4 +137,15 @@ func NewFailingAuthResult(token string, err error) AuthResult {
 		Token:   token,
 		Message: err.Error(),
 	}
+}
+
+// GetKeyFromClaims iterate over the claims and return the value of the key if found
+func GetKeyFromClaims(claims jwt.MapClaims, key string) interface{} {
+	for k, v := range claims {
+		if strings.EqualFold(k, key) {
+			return v
+		}
+	}
+
+	return ""
 }
