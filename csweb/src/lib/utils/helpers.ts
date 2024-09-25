@@ -17,6 +17,17 @@ export const deDupeArray = (arr: any[]): any[] => {
 };
 
 /**
+ * Ensures that an array is instantiated and not null
+ * @param a - an array that may be null
+ * @returns the pass in array or an empty array
+ */
+export const safeArray = (a:any[]):any[] => {
+	let out:any[] = []
+	out = out.concat(a)
+	return out
+}
+
+/**
  * Return the value of a cookie by coercing the cookie string into kvps
  * and retrieving the on with a matching keey
  * @param cookieName the name of the cookies to be retrieved

@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { findAllResources } from '$lib/services/resource';
 	import { MultiSelectInput, SectionHeading } from '$lib/components';
-	import { getDefaultProject, daciSchema } from '$lib/forms/project.validation';
+	import { daciSchema } from '$lib/forms/project.validation';
 	import { getProject, updateProjectDaci } from '$lib/services/project';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { Button, type SelectOptionType } from 'flowbite-svelte';
-	import type { UpdateProjectDaci } from '$lib/graphql/generated/sdk';
-	import { coalesceToType } from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
-	import { callIf } from '$lib/utils/helpers';
+	import { callIf, safeArray } from '$lib/utils/helpers';
 
 	interface Props {
 		id: string;
@@ -16,11 +14,23 @@
 	}
 	let { id, update }: Props = $props();
 	let errors: any = $state({});
+	let df = $state({
+		driverIDs: [] as string[],
+		approverIDs: [] as string[],
+		contributorIDs: [] as string[],
+		informedIDs: [] as string[]
+	});
 
 	const load = async () => {
 		await getProject(id)
 			.then((proj) => {
-				daciForm = coalesceToType<UpdateProjectDaci>(proj.projectDaci, daciSchema);
+				// daciForm = coalesceToType<UpdateProjectDaci>(proj.projectDaci, daciSchema);
+				df = {
+					driverIDs: safeArray(proj.projectDaci?.driver?.map((d) => d?.id) as string[]),
+					approverIDs: safeArray(proj.projectDaci?.approver?.map((d) => d?.id) as string[]),
+					contributorIDs: safeArray(proj.projectDaci?.contributor?.map((d) => d?.id) as string[]),
+					informedIDs: safeArray(proj.projectDaci?.informed?.map((d) => d?.id) as string[])
+				};
 			})
 			.catch((err) => {
 				addToast({
@@ -34,11 +44,11 @@
 	const updateDACI = async () => {
 		errors = {};
 
-		const projectDaciParsed = daciSchema.cast(daciForm);
+		const dfParsed = daciSchema.cast(df);
 		daciSchema
-			.validate(projectDaciParsed, { abortEarly: false })
+			.validate(dfParsed, { abortEarly: false })
 			.then(async () => {
-				await updateProjectDaci(id, projectDaciParsed)
+				await updateProjectDaci(id, dfParsed)
 					.then((res) => {
 						if (res.status?.success) {
 							load().then((p) => {
@@ -88,22 +98,19 @@
 	};
 
 	let resourceOpts = $state([] as SelectOptionType<string>[]);
-	let daciForm = $state(getDefaultProject().projectDaci);
-
-	loadPage();
 </script>
 
 <SectionHeading>DACI</SectionHeading>
 
-{#await loadPage}
+{#await loadPage()}
 	Loading...
 {:then promiseData}
-	{#if daciForm}
+	{#if df}
 		<MultiSelectInput
 			fieldName="Drivers"
 			error={errors.driver}
 			options={resourceOpts}
-			bind:value={daciForm.driver as string[]}
+			bind:value={df.driverIDs as string[]}
 			update={() => callIf(update)}
 		/>
 
@@ -111,7 +118,7 @@
 			fieldName="Approvers"
 			error={errors.approver}
 			options={resourceOpts}
-			bind:value={daciForm.approver as string[]}
+			bind:value={df.approverIDs as string[]}
 			update={() => callIf(update)}
 		/>
 
@@ -119,7 +126,7 @@
 			fieldName="Contributors"
 			error={errors.contributor}
 			options={resourceOpts}
-			bind:value={daciForm.contributor as string[]}
+			bind:value={df.contributorIDs as string[]}
 			update={() => callIf(update)}
 		/>
 
@@ -127,7 +134,7 @@
 			fieldName="Informed"
 			error={errors.informed}
 			options={resourceOpts}
-			bind:value={daciForm.informed as string[]}
+			bind:value={df.informedIDs as string[]}
 			update={() => callIf(update)}
 		/>
 

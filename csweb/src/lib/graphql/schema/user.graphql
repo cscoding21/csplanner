@@ -1,21 +1,24 @@
+fragment userFragment on User {
+	firstName
+	lastName
+	email
+	id
+	profileImage
+}
+
 query findAllUsers {
 	findAllUsers {
 		paging {
 			...pagingFragment
 		}
 		results {
-			firstName
-			lastName
-			email
-			id
+			...userFragment
 		}
 	}
 }
 
 query currentUser {
 	currentUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 }

@@ -12,13 +12,14 @@ import (
 )
 
 type CommentRelationshipType string
+type CommentEmoteType string
 
 const (
-	Likes       CommentRelationshipType = "likes"
-	Dislikes    CommentRelationshipType = "dislikes"
-	Loves       CommentRelationshipType = "loves"
-	LaughsAt    CommentRelationshipType = "laughs_at"
-	Acknowledge CommentRelationshipType = "acknowledges"
+	Likes       CommentEmoteType = "likes"
+	Dislikes    CommentEmoteType = "dislikes"
+	Loves       CommentEmoteType = "loves"
+	LaughsAt    CommentEmoteType = "laughs_at"
+	Acknowledge CommentEmoteType = "acknowledges"
 
 	Mentioned CommentRelationshipType = "mentioned"
 
@@ -245,13 +246,11 @@ func (s *CommentService) GetCommentThread(ctx context.Context, commentID string)
 			return nil, err
 		}
 
-		log.Warnf("outCommentRaw: %v", outCommentRaw)
 		outCommentSlice, err := marshal.SurrealSmartUnmarshal[[]Comment](outCommentRaw)
 		if err != nil {
 			return nil, err
 		}
 
-		log.Warnf("outCommentSlice: %v", outCommentSlice)
 		if len(*outCommentSlice) > 0 {
 			outComment = &(*outCommentSlice)[0]
 		} else {
@@ -311,7 +310,7 @@ func (s *CommentService) FindCommentReplies(ctx context.Context, commentID strin
 }
 
 // ToggleCommentEmote if a user has emoted to the comment...remove the existing emote.  Otherwise add it
-func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID string, emote CommentRelationshipType) error {
+func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
 	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
 
 	existingRelation, err := s.DBClient.TestRelationshipExist(ctx, userEmail, commentID, string(emote))
@@ -337,7 +336,7 @@ func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID strin
 }
 
 // CreateCommentEmote add an emote to an comment
-func (s *CommentService) CreateCommentEmote(ctx context.Context, commentID string, emote CommentRelationshipType) error {
+func (s *CommentService) CreateCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
 	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
 
 	_, err := s.DBClient.RelateTo(ctx, userEmail, commentID, string(emote))

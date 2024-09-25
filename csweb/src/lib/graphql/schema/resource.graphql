@@ -2,9 +2,7 @@ fragment resourceFragment on Resource {
 	name
 	id
 	user {
-		firstName
-		lastName
-		email
+		...userFragment	
 	}
 	role
 	profileImage

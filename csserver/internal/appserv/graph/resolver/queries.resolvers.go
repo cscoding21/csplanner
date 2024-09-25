@@ -13,8 +13,6 @@ import (
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // CurrentUser is the resolver for the currentUser field.
@@ -53,16 +51,18 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 		return nil, err
 	}
 
+	outResults := []*idl.Project{}
+	for _, r := range results.Results {
+		thisResult := csmap.ProjectProjectToIdl(r)
+		augment.AugmentProject(&r, &thisResult)
+		outResults = append(outResults, &thisResult)
+	}
+
 	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
-	log.Info(fi)
 	out := idl.ProjectResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ProjectProjectToIdlSlice(common.ValToRefSlice(results.Results)),
-	}
-
-	for i := range out.Results {
-		augment.AugmentProject(out.Results[i])
+		Results: outResults,
 	}
 
 	return &out, nil
@@ -77,7 +77,7 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 	}
 
 	out := csmap.ProjectProjectToIdl(*obj)
-	augment.AugmentProject(&out)
+	augment.AugmentProject(obj, &out)
 
 	return &out, nil
 }
@@ -108,6 +108,8 @@ func (r *queryResolver) FindProjectComments(ctx context.Context, projectID strin
 		Results: csmap.CommentCommentToIdlSlice(common.ValToRefSlice(results.Results)),
 	}
 
+	augment.AugmentCommentSlice(&out.Results)
+
 	return &out, nil
 }
 
@@ -120,7 +122,7 @@ func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.C
 	}
 
 	out := csmap.CommentCommentToIdl(*obj)
-
+	augment.AugmentComment(&out)
 	return &out, nil
 }
 

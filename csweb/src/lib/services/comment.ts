@@ -1,5 +1,5 @@
 import { getApolloClient } from "$lib/graphql/gqlclient";
-import type { UpdateComment, UpdateCommentReply, UpdateCommentEmote, Comment } from "$lib/graphql/generated/sdk";
+import type { UpdateComment, UpdateCommentReply, UpdateCommentEmote, CommentResults } from "$lib/graphql/generated/sdk";
 import { FindProjectCommentsDocument, CreateProjectCommentDocument, CreateProjectCommentReplyDocument, DeleteProjectCommentDocument, ToggleEmoteDocument, UpdateProjectCommentDocument, GetCommentThreadDocument } from "$lib/graphql/generated/sdk";
 
 /**
@@ -7,7 +7,7 @@ import { FindProjectCommentsDocument, CreateProjectCommentDocument, CreateProjec
  * @param projectID - the ID of the project
  * @returns a promise of all comments for the project
  */
-export const findProjectComments = async (projectID: string):Promise<Comment[]> => {
+export const findProjectComments = async (projectID: string):Promise<CommentResults> => {
     const client = getApolloClient()
 
     return client.query({ query: FindProjectCommentsDocument, variables: { projectID }, fetchPolicy: "no-cache" }).then((res) => {

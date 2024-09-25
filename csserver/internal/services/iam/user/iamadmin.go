@@ -147,10 +147,11 @@ func (s *UserService) GetUser(ctx context.Context, idOrEmail string) (*User, err
 	u := users[0]
 
 	user := User{
-		FirstName: *u.FirstName,
-		LastName:  *u.LastName,
-		Email:     *u.Email,
-		ID:        *u.ID,
+		FirstName:    *u.FirstName,
+		LastName:     *u.LastName,
+		Email:        *u.Email,
+		ID:           *u.ID,
+		ProfileImage: getProfileImage(u.Attributes),
 	}
 	return common.HandleReturnWithValue(&user, err)
 }
@@ -177,10 +178,11 @@ func (s *UserService) FindAllUsers(ctx context.Context) (common.PagedResults[Use
 
 	for _, u := range users {
 		user := User{
-			FirstName: *u.FirstName,
-			LastName:  *u.LastName,
-			Email:     *u.Email,
-			ID:        *u.ID,
+			FirstName:    *u.FirstName,
+			LastName:     *u.LastName,
+			Email:        *u.Email,
+			ID:           *u.ID,
+			ProfileImage: getProfileImage(u.Attributes),
 		}
 
 		out = append(out, user)
@@ -191,4 +193,18 @@ func (s *UserService) FindAllUsers(ctx context.Context) (common.PagedResults[Use
 	pagingResults.Pagination.TotalResults = &resultCount
 
 	return pagingResults, nil
+}
+
+func getProfileImage(attrs *map[string][]string) string {
+	profileImg := ""
+
+	if attrs != nil {
+		attrs := *attrs
+		st := attrs["profileImage"]
+		if len(st) > 0 {
+			profileImg = st[0]
+		}
+	}
+
+	return profileImg
 }

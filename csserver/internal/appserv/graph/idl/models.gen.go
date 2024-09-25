@@ -30,18 +30,20 @@ type Artifact struct {
 }
 
 type Comment struct {
-	ID            string         `json:"id"`
-	ProjectID     string         `json:"projectId"`
-	Text          string         `json:"text"`
-	Resource      *Resource      `json:"resource"`
-	Replies       []*Comment     `json:"replies,omitempty"`
-	ControlFields *ControlFields `json:"controlFields"`
-	Likes         []string       `json:"likes,omitempty"`
-	Loves         []string       `json:"loves,omitempty"`
-	Dislikes      []string       `json:"dislikes,omitempty"`
-	LaughsAt      []string       `json:"laughsAt,omitempty"`
-	Acknowledges  []string       `json:"acknowledges,omitempty"`
-	IsEdited      bool           `json:"isEdited"`
+	ID           string     `json:"id"`
+	ProjectID    string     `json:"projectId"`
+	Text         string     `json:"text"`
+	CreatedBy    string     `json:"createdBy"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    time.Time  `json:"updatedAt"`
+	User         *User      `json:"user"`
+	Replies      []*Comment `json:"replies,omitempty"`
+	Likes        []string   `json:"likes,omitempty"`
+	Loves        []string   `json:"loves,omitempty"`
+	Dislikes     []string   `json:"dislikes,omitempty"`
+	LaughsAt     []string   `json:"laughsAt,omitempty"`
+	Acknowledges []string   `json:"acknowledges,omitempty"`
+	IsEdited     bool       `json:"isEdited"`
 }
 
 type CommentResults struct {
@@ -211,10 +213,10 @@ type ProjectCost struct {
 }
 
 type ProjectDaci struct {
-	Driver      []*string `json:"driver,omitempty"`
-	Approver    []*string `json:"approver,omitempty"`
-	Contributor []*string `json:"contributor,omitempty"`
-	Informed    []*string `json:"informed,omitempty"`
+	Driver      []*Resource `json:"driver,omitempty"`
+	Approver    []*Resource `json:"approver,omitempty"`
+	Contributor []*Resource `json:"contributor,omitempty"`
+	Informed    []*Resource `json:"informed,omitempty"`
 }
 
 type ProjectFeature struct {
@@ -423,10 +425,10 @@ type UpdateProjectCost struct {
 }
 
 type UpdateProjectDaci struct {
-	Driver      []*string `json:"driver,omitempty"`
-	Approver    []*string `json:"approver,omitempty"`
-	Contributor []*string `json:"contributor,omitempty"`
-	Informed    []*string `json:"informed,omitempty"`
+	DriverIDs      []*string `json:"driverIDs,omitempty"`
+	ApproverIDs    []*string `json:"approverIDs,omitempty"`
+	ContributorIDs []*string `json:"contributorIDs,omitempty"`
+	InformedIDs    []*string `json:"informedIDs,omitempty"`
 }
 
 type UpdateProjectFeature struct {

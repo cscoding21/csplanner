@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Avatar, Popover } from 'flowbite-svelte';
-    import type { Comment } from "$lib/graphql/generated/sdk";
+    import type { Comment, User } from "$lib/graphql/generated/sdk";
     import { deleteComment, toggleCommentEmote, addCommentReply, updateComment } from "$lib/services/comment";
     import { authService } from "$lib/services/auth";
     import { formatDateTime, getInitialsFromName, pluralize } from "$lib/utils/format"
@@ -12,6 +12,7 @@
     // import { commentListStateStore } from '$lib/stores/comment'
     import { addToast } from '$lib/stores/toasts';
     import { callIf } from '$lib/utils/helpers';
+    import { getDeltaHTML } from '$lib/utils/quill';
 
 
     interface Props {
@@ -30,7 +31,7 @@
     const id = comment.id
     const userID:string = as.currentUser()?.id as string
 
-    let userCreatedComment: boolean = (userID === comment.controlFields?.createdBy)
+    let userCreatedComment: boolean = (userID === comment.user.email)
     let editMode: Boolean = $state(false)
     let replyMode:Boolean = $state(false)
     let html: any
@@ -38,10 +39,10 @@
 
     const toggleReaction = async (commentID:string, type:string) => {
         toggleCommentEmote({ commentID: commentID, emoteType: type }).then(res => {
-            if(res.data.toggleEmote.success) {
+            if(res.success) {
                 callIf(update)
             } else {
-                console.log(res.data.toggleEmote.message)
+                console.log(res.message)
             }
         })
     }
@@ -52,7 +53,7 @@
 
     const deleteComm = async (commentID:string) => {
         deleteComment(commentID || "").then(res => {
-            if(res.data.deleteProjectComment.success) {
+            if(res.success) {
                 addToast({ 
                     message: "Comment deleted successfully", 
                     dismissible: true, 
@@ -61,7 +62,7 @@
 
                 callIf(update)
             } else {
-                console.log(res.data.deleteProjectComment.message)
+                console.log(res?.message)
             }
         })
     }
@@ -75,7 +76,7 @@
                 callIf(update)
             } else {
                 addToast({ 
-                    message: "Error creating reply: " + res.data.createProjectCommentReply.status.message, 
+                    message: "Error creating reply: " + res.status.message, 
                     dismissible: true, 
                     type: "error"}
                 )
@@ -86,32 +87,34 @@
     
     const updateComm = async (text:string) => {
         updateComment({ projectId: projectID, id: id, text: text }).then(res => {
-            if(res.data.updateProjectComment.status?.success) {
+            if(res.status?.success) {
                 editMode = false
 
                 //setCommentRepliesOpen(id)
                 callIf(update)
             } else {
                 addToast({ 
-                    message: "Error updating comment: " + res.data.updateProjectComment.status.message, 
+                    message: "Error updating comment: " + res.status.message, 
                     dismissible: true, 
                     type: "error"}
                 )
             }
         })
     }
+
+    html = getDeltaHTML(comment.text); 
 </script>
 
 <article class="p-6 mb-6 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
     <footer class="flex justify-between items-center mb-2">
         <div class="flex items-center">
-            <Avatar class="mr-2 w-8 h-8 rounded-lg" src={comment.resource?.profileImage || ""}>{getInitialsFromName(comment.resource?.name || "")}</Avatar>
+            <Avatar class="mr-2 w-8 h-8 rounded-lg" src={comment.user?.profileImage || ""}>{getInitialsFromName(comment.user?.firstName + " " + comment.user?.lastName)}</Avatar>
             <div>
-                <span class="text-sm font-semibold text-gray-900 dark:text-white"><UserDisplay id={comment.resource?.id as string} /></span> 
+                <span class="text-sm font-semibold text-gray-900 dark:text-white"><UserDisplay user={comment.user as User} /></span> 
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                    <time datetime="2022-02-08" title={formatDateTime(comment.controlFields?.createdAt.valueOf())}>{formatDateTime(comment.controlFields?.createdAt.valueOf())}</time>
+                    <time datetime="2022-02-08" title={formatDateTime(comment.createdAt)}>{formatDateTime(comment.createdAt)}</time>
                     {#if comment.isEdited}
-                        <span class="text-xs text-yellow-700 dark:text-yellow-200"> (edited {formatDateTime(comment.controlFields?.updatedAt.valueOf())}) </span>
+                        <span class="text-xs text-yellow-700 dark:text-yellow-200"> (edited {formatDateTime(comment.updatedAt)}) </span>
                     {/if}
                 </p>
             </div>    
@@ -243,4 +246,10 @@
             {/if}
         </div>
     </footer>
+
+    {#if userCreatedComment && editMode}
+        <!-- <QuillEditor post={updateComm} attachContext={id} contents={comment.text} /> -->
+    {:else}
+        <p class="text-gray-500 dark:text-gray-400 text-sm mb-1">{@html html}</p>
+    {/if}
 </article>

@@ -73,18 +73,20 @@ type ComplexityRoot struct {
 	}
 
 	Comment struct {
-		Acknowledges  func(childComplexity int) int
-		ControlFields func(childComplexity int) int
-		Dislikes      func(childComplexity int) int
-		ID            func(childComplexity int) int
-		IsEdited      func(childComplexity int) int
-		LaughsAt      func(childComplexity int) int
-		Likes         func(childComplexity int) int
-		Loves         func(childComplexity int) int
-		ProjectID     func(childComplexity int) int
-		Replies       func(childComplexity int) int
-		Resource      func(childComplexity int) int
-		Text          func(childComplexity int) int
+		Acknowledges func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		CreatedBy    func(childComplexity int) int
+		Dislikes     func(childComplexity int) int
+		ID           func(childComplexity int) int
+		IsEdited     func(childComplexity int) int
+		LaughsAt     func(childComplexity int) int
+		Likes        func(childComplexity int) int
+		Loves        func(childComplexity int) int
+		ProjectID    func(childComplexity int) int
+		Replies      func(childComplexity int) int
+		Text         func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		User         func(childComplexity int) int
 	}
 
 	CommentResults struct {
@@ -634,12 +636,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Comment.Acknowledges(childComplexity), true
 
-	case "Comment.controlFields":
-		if e.complexity.Comment.ControlFields == nil {
+	case "Comment.createdAt":
+		if e.complexity.Comment.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Comment.ControlFields(childComplexity), true
+		return e.complexity.Comment.CreatedAt(childComplexity), true
+
+	case "Comment.createdBy":
+		if e.complexity.Comment.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Comment.CreatedBy(childComplexity), true
 
 	case "Comment.dislikes":
 		if e.complexity.Comment.Dislikes == nil {
@@ -697,19 +706,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Comment.Replies(childComplexity), true
 
-	case "Comment.resource":
-		if e.complexity.Comment.Resource == nil {
-			break
-		}
-
-		return e.complexity.Comment.Resource(childComplexity), true
-
 	case "Comment.text":
 		if e.complexity.Comment.Text == nil {
 			break
 		}
 
 		return e.complexity.Comment.Text(childComplexity), true
+
+	case "Comment.updatedAt":
+		if e.complexity.Comment.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Comment.UpdatedAt(childComplexity), true
+
+	case "Comment.user":
+		if e.complexity.Comment.User == nil {
+			break
+		}
+
+		return e.complexity.Comment.User(childComplexity), true
 
 	case "CommentResults.filters":
 		if e.complexity.CommentResults.Filters == nil {
@@ -2648,9 +2664,11 @@ type RelateArtifact {
   id: String!
   projectId: String!
   text: String!
-  resource: Resource!
+  createdBy: String!
+  createdAt: Time!
+  updatedAt: Time!
+  user: User!
   replies: [Comment!]
-  controlFields: ControlFields!
   likes: [String!]
   loves: [String!]
   dislikes: [String!]
@@ -2909,10 +2927,10 @@ type ProjectCost {
 
 
 type ProjectDaci {
-  driver: [String]
-  approver: [String]
-  contributor: [String]
-  informed: [String]
+  driver: [Resource]
+  approver: [Resource]
+  contributor: [Resource]
+  informed: [Resource]
 }
 
 type ProjectFeature {
@@ -3020,10 +3038,10 @@ input UpdateProjectCost {
 
 
 input UpdateProjectDACI {
-  driver: [String]
-  approver: [String]
-  contributor: [String]
-  informed: [String]
+  driverIDs : [String]
+  approverIDs: [String]
+  contributorIDs: [String]
+  informedIDs: [String]
 }
 
 input UpdateProjectFeature {
@@ -4613,8 +4631,8 @@ func (ec *executionContext) fieldContext_Comment_text(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_resource(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_resource(ctx, field)
+func (ec *executionContext) _Comment_createdBy(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_createdBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -4627,7 +4645,7 @@ func (ec *executionContext) _Comment_resource(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Resource, nil
+		return obj.CreatedBy, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4639,12 +4657,144 @@ func (ec *executionContext) _Comment_resource(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*idl.Resource)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNResource2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Comment_resource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Comment_createdBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Comment_createdAt(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Comment_updatedAt(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Comment_user(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Comment",
 		Field:      field,
@@ -4653,25 +4803,17 @@ func (ec *executionContext) fieldContext_Comment_resource(_ context.Context, fie
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Resource_id(ctx, field)
-			case "type":
-				return ec.fieldContext_Resource_type(ctx, field)
-			case "name":
-				return ec.fieldContext_Resource_name(ctx, field)
-			case "role":
-				return ec.fieldContext_Resource_role(ctx, field)
-			case "user":
-				return ec.fieldContext_Resource_user(ctx, field)
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
 			case "profileImage":
-				return ec.fieldContext_Resource_profileImage(ctx, field)
-			case "skills":
-				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Resource_createdAt(ctx, field)
+				return ec.fieldContext_User_profileImage(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -4719,12 +4861,16 @@ func (ec *executionContext) fieldContext_Comment_replies(_ context.Context, fiel
 				return ec.fieldContext_Comment_projectId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "resource":
-				return ec.fieldContext_Comment_resource(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Comment_createdBy(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "user":
+				return ec.fieldContext_Comment_user(ctx, field)
 			case "replies":
 				return ec.fieldContext_Comment_replies(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Comment_controlFields(ctx, field)
 			case "likes":
 				return ec.fieldContext_Comment_likes(ctx, field)
 			case "loves":
@@ -4739,70 +4885,6 @@ func (ec *executionContext) fieldContext_Comment_replies(_ context.Context, fiel
 				return ec.fieldContext_Comment_isEdited(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Comment_controlFields(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_controlFields(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ControlFields, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*idl.ControlFields)
-	fc.Result = res
-	return ec.marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Comment_controlFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Comment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "createdAt":
-				return ec.fieldContext_ControlFields_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_ControlFields_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_ControlFields_createdBy(ctx, field)
-			case "createByUser":
-				return ec.fieldContext_ControlFields_createByUser(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_ControlFields_updatedBy(ctx, field)
-			case "updateByUser":
-				return ec.fieldContext_ControlFields_updateByUser(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_ControlFields_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_ControlFields_deletedBy(ctx, field)
-			case "deleteByUser":
-				return ec.fieldContext_ControlFields_deleteByUser(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlFields", field.Name)
 		},
 	}
 	return fc, nil
@@ -5201,12 +5283,16 @@ func (ec *executionContext) fieldContext_CommentResults_results(_ context.Contex
 				return ec.fieldContext_Comment_projectId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "resource":
-				return ec.fieldContext_Comment_resource(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Comment_createdBy(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "user":
+				return ec.fieldContext_Comment_user(ctx, field)
 			case "replies":
 				return ec.fieldContext_Comment_replies(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Comment_controlFields(ctx, field)
 			case "likes":
 				return ec.fieldContext_Comment_likes(ctx, field)
 			case "loves":
@@ -5835,12 +5921,16 @@ func (ec *executionContext) fieldContext_CreateProjectCommentResult_comment(_ co
 				return ec.fieldContext_Comment_projectId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "resource":
-				return ec.fieldContext_Comment_resource(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Comment_createdBy(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "user":
+				return ec.fieldContext_Comment_user(ctx, field)
 			case "replies":
 				return ec.fieldContext_Comment_replies(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Comment_controlFields(ctx, field)
 			case "likes":
 				return ec.fieldContext_Comment_likes(ctx, field)
 			case "loves":
@@ -10280,9 +10370,9 @@ func (ec *executionContext) _ProjectDaci_driver(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]*idl.Resource)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10292,7 +10382,27 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Resource_id(ctx, field)
+			case "type":
+				return ec.fieldContext_Resource_type(ctx, field)
+			case "name":
+				return ec.fieldContext_Resource_name(ctx, field)
+			case "role":
+				return ec.fieldContext_Resource_role(ctx, field)
+			case "user":
+				return ec.fieldContext_Resource_user(ctx, field)
+			case "profileImage":
+				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "skills":
+				return ec.fieldContext_Resource_skills(ctx, field)
+			case "isBot":
+				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
 	}
 	return fc, nil
@@ -10321,9 +10431,9 @@ func (ec *executionContext) _ProjectDaci_approver(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]*idl.Resource)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10333,7 +10443,27 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Resource_id(ctx, field)
+			case "type":
+				return ec.fieldContext_Resource_type(ctx, field)
+			case "name":
+				return ec.fieldContext_Resource_name(ctx, field)
+			case "role":
+				return ec.fieldContext_Resource_role(ctx, field)
+			case "user":
+				return ec.fieldContext_Resource_user(ctx, field)
+			case "profileImage":
+				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "skills":
+				return ec.fieldContext_Resource_skills(ctx, field)
+			case "isBot":
+				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
 	}
 	return fc, nil
@@ -10362,9 +10492,9 @@ func (ec *executionContext) _ProjectDaci_contributor(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]*idl.Resource)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10374,7 +10504,27 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Resource_id(ctx, field)
+			case "type":
+				return ec.fieldContext_Resource_type(ctx, field)
+			case "name":
+				return ec.fieldContext_Resource_name(ctx, field)
+			case "role":
+				return ec.fieldContext_Resource_role(ctx, field)
+			case "user":
+				return ec.fieldContext_Resource_user(ctx, field)
+			case "profileImage":
+				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "skills":
+				return ec.fieldContext_Resource_skills(ctx, field)
+			case "isBot":
+				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
 	}
 	return fc, nil
@@ -10403,9 +10553,9 @@ func (ec *executionContext) _ProjectDaci_informed(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]*idl.Resource)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10415,7 +10565,27 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Resource_id(ctx, field)
+			case "type":
+				return ec.fieldContext_Resource_type(ctx, field)
+			case "name":
+				return ec.fieldContext_Resource_name(ctx, field)
+			case "role":
+				return ec.fieldContext_Resource_role(ctx, field)
+			case "user":
+				return ec.fieldContext_Resource_user(ctx, field)
+			case "profileImage":
+				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "skills":
+				return ec.fieldContext_Resource_skills(ctx, field)
+			case "isBot":
+				return ec.fieldContext_Resource_isBot(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Resource_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
 	}
 	return fc, nil
@@ -13062,12 +13232,16 @@ func (ec *executionContext) fieldContext_Query_getCommentThread(ctx context.Cont
 				return ec.fieldContext_Comment_projectId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "resource":
-				return ec.fieldContext_Comment_resource(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Comment_createdBy(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Comment_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Comment_updatedAt(ctx, field)
+			case "user":
+				return ec.fieldContext_Comment_user(ctx, field)
 			case "replies":
 				return ec.fieldContext_Comment_replies(ctx, field)
-			case "controlFields":
-				return ec.fieldContext_Comment_controlFields(ctx, field)
 			case "likes":
 				return ec.fieldContext_Comment_likes(ctx, field)
 			case "loves":
@@ -18584,41 +18758,41 @@ func (ec *executionContext) unmarshalInputUpdateProjectDACI(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"driver", "approver", "contributor", "informed"}
+	fieldsInOrder := [...]string{"driverIDs", "approverIDs", "contributorIDs", "informedIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "driver":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("driver"))
+		case "driverIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("driverIDs"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Driver = data
-		case "approver":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("approver"))
+			it.DriverIDs = data
+		case "approverIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("approverIDs"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Approver = data
-		case "contributor":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contributor"))
+			it.ApproverIDs = data
+		case "contributorIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contributorIDs"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Contributor = data
-		case "informed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("informed"))
+			it.ContributorIDs = data
+		case "informedIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("informedIDs"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Informed = data
+			it.InformedIDs = data
 		}
 	}
 
@@ -19349,18 +19523,28 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "resource":
-			out.Values[i] = ec._Comment_resource(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._Comment_createdBy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._Comment_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._Comment_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user":
+			out.Values[i] = ec._Comment_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "replies":
 			out.Values[i] = ec._Comment_replies(ctx, field, obj)
-		case "controlFields":
-			out.Values[i] = ec._Comment_controlFields(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "likes":
 			out.Values[i] = ec._Comment_likes(ctx, field, obj)
 		case "loves":
@@ -22647,16 +22831,6 @@ func (ec *executionContext) marshalNCommentResults2ᚖcsserverᚋinternalᚋapps
 	return ec._CommentResults(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNControlFields2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐControlFields(ctx context.Context, sel ast.SelectionSet, v *idl.ControlFields) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._ControlFields(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNCreateOrganizationResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateOrganizationResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateOrganizationResult) graphql.Marshaler {
 	return ec._CreateOrganizationResult(ctx, sel, &v)
 }
@@ -24372,6 +24546,47 @@ func (ec *executionContext) marshalOProjecttemplate2ᚕᚖcsserverᚋinternalᚋ
 			return graphql.Null
 		}
 	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx context.Context, sel ast.SelectionSet, v []*idl.Resource) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOResource2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
 
 	return ret
 }

@@ -60,10 +60,10 @@ func CreateTestProjects(ctx context.Context) error {
 			YearFiveValue:  40000.0,
 		},
 		ProjectDaci: &project.ProjectDaci{
-			Driver:      []*string{&allResources.Results[0].ID, &allResources.Results[1].ID},
-			Approver:    []*string{&allResources.Results[3].ID, &allResources.Results[4].ID},
-			Contributor: []*string{&allResources.Results[6].ID, &allResources.Results[7].ID, &allResources.Results[8].ID},
-			Informed:    []*string{&allResources.Results[9].ID},
+			DriverIDs:      []*string{&allResources.Results[0].ID, &allResources.Results[1].ID},
+			ApproverIDs:    []*string{&allResources.Results[3].ID, &allResources.Results[4].ID},
+			ContributorIDs: []*string{&allResources.Results[6].ID, &allResources.Results[7].ID, &allResources.Results[8].ID},
+			InformedIDs:    []*string{&allResources.Results[9].ID},
 		},
 		ProjectMilestones: []*project.ProjectMilestone{
 			{
@@ -252,10 +252,10 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 			YearFiveValue:  400.0,
 		},
 		ProjectDaci: &project.ProjectDaci{
-			Driver:      []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-			Approver:    []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID, &allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-			Contributor: []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID, &allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-			Informed:    []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
+			DriverIDs:      []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
+			ApproverIDs:    []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID, &allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
+			ContributorIDs: []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID, &allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
+			InformedIDs:    []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
 		},
 		ProjectMilestones: []*project.ProjectMilestone{
 			{

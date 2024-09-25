@@ -107,11 +107,23 @@ maps:
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+  
   - name: "comment_target"
     source_path: "internal/services/comment/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+  - name: "comment_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/comment/models.go"
+    imports: 
+    - "csserver/internal/common"
+    map_overrides:
+    - source_name: "UpdateComment"
+      target_name: "Comment"
+  
+  
+  
   - name: "projecttemplate_target"
     source_path: "internal/services/projecttemplate/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"

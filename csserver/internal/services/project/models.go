@@ -52,10 +52,10 @@ type ProjectCost struct {
 }
 
 type ProjectDaci struct {
-	Driver      []*string `json:"driver"`
-	Approver    []*string `json:"approver"`
-	Contributor []*string `json:"contributor"`
-	Informed    []*string `json:"informed"`
+	DriverIDs      []*string `json:"driver_ids"`
+	ApproverIDs    []*string `json:"approver_ids"`
+	ContributorIDs []*string `json:"contributor_ids"`
+	InformedIDs    []*string `json:"informed_ids"`
 }
 
 type ProjectFeature struct {

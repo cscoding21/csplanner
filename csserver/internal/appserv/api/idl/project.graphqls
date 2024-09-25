@@ -48,10 +48,10 @@ type ProjectCost {
 
 
 type ProjectDaci {
-  driver: [String]
-  approver: [String]
-  contributor: [String]
-  informed: [String]
+  driver: [Resource]
+  approver: [Resource]
+  contributor: [Resource]
+  informed: [Resource]
 }
 
 type ProjectFeature {
@@ -159,10 +159,10 @@ input UpdateProjectCost {
 
 
 input UpdateProjectDACI {
-  driver: [String]
-  approver: [String]
-  contributor: [String]
-  informed: [String]
+  driverIDs : [String]
+  approverIDs: [String]
+  contributorIDs: [String]
+  informedIDs: [String]
 }
 
 input UpdateProjectFeature {

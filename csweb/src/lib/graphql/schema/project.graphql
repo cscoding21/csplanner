@@ -29,10 +29,18 @@ fragment projectFragment on Project {
 		hourEstimate
 	}
 	projectDaci {
-		driver
-		approver
-		contributor
-		informed
+		driver {
+			...resourceFragment
+		}
+		approver {
+			...resourceFragment
+		}
+		contributor {
+			...resourceFragment
+		}
+		informed {
+			...resourceFragment
+		}
 	}
 	projectFeatures {
 		id

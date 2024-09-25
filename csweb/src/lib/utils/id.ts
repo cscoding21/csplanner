@@ -8,7 +8,7 @@ export const normalizeID = (id: string) => {
 	if (!id) {
 		return '';
 	}
-	return id.replace(':', '_');
+	return id.replace(':', '_').replace('@', '_').replace('.', '_');
 };
 
 /**
@@ -20,5 +20,5 @@ export const denormalizeID = (id: string) => {
 	if (!id) {
 		return '';
 	}
-	return id.replace('_', ':');
+	return id.replace('_', ':').replace('|', '@').replace('-', '.');
 };

@@ -4,8 +4,7 @@
 	import { getProject } from '$lib/services/project';
 	import { ProjectActionBar, ProjectValueChart, DeleteProject } from '../../components';
 	import {
-		UserList,
-		UserDisplay,
+		ResourceList,
 		SectionHeading,
 		PageHeading,
 		MoneyDisplay,
@@ -14,7 +13,7 @@
 	import { formatDate, formatCurrency, formatPercent } from '$lib/utils/format';
 	import { CommentList } from "$lib/components";
 	import { AdjustmentsHorizontalSolid, TrashBinOutline } from 'flowbite-svelte-icons';
-	import { type Project } from '$lib/graphql/generated/sdk';
+	import type { Project, Resource } from '$lib/graphql/generated/sdk';
 
 	const id = $page.params.id;
 
@@ -109,7 +108,7 @@
 						<span>Owner</span>
 						<span class="float-right flex-auto font-semibold">
 							{#if project.projectBasics?.ownerID}
-								<UserDisplay id={project.projectBasics?.ownerID as string} />
+								<!-- <UserDisplay id={project.projectBasics?.ownerID as string} /> -->
 							{/if}
 						</span>
 					</li>
@@ -131,10 +130,10 @@
 						<li>
 							<div>Drivers</div>
 							<div class="px-4 pb-2 text-left font-semibold">
-								<UserList
+								<ResourceList
 									size="md"
 									maxSize={4}
-									resourceIDs={project.projectDaci?.driver as string[]}
+									resources={project.projectDaci?.driver as Resource[]}
 								/>
 							</div>
 						</li>
@@ -143,10 +142,10 @@
 						<li>
 							<div>Approvers</div>
 							<div class="px-4 pb-2 text-left font-semibold">
-								<UserList
+								<ResourceList
 									size="md"
 									maxSize={4}
-									resourceIDs={project.projectDaci?.approver as string[]}
+									resources={project.projectDaci?.approver as Resource[]}
 								/>
 							</div>
 						</li>
@@ -155,10 +154,10 @@
 						<li>
 							<div>Contributors</div>
 							<div class="px-4 pb-2 text-left font-semibold">
-								<UserList
+								<ResourceList
 									size="md"
 									maxSize={4}
-									resourceIDs={project.projectDaci?.contributor as string[]}
+									resources={project.projectDaci?.contributor as Resource[]}
 								/>
 							</div>
 						</li>
@@ -167,10 +166,10 @@
 						<li>
 							<div>Informed</div>
 							<div class="px-4 pb-2 text-left font-semibold">
-								<UserList
+								<ResourceList
 									size="md"
 									maxSize={4}
-									resourceIDs={project.projectDaci?.informed as string[]}
+									resources={project.projectDaci?.informed as Resource[]}
 								/>
 							</div>
 						</li>
@@ -182,9 +181,9 @@
 		<div class="col-span-4">
 			<Card size="xl">
 				<SectionHeading>Comments / Activity</SectionHeading>
-				<!-- <CommentList projectID={id} /> -->
+				<CommentList id={id} />
 				 <div class="mb-6 border-b border-gray-200 pb-4">
-				 <QuillEditor getContent={() => {}} contents={""} attachContext={id} error="" />
+				 <!-- <QuillEditor getContent={() => {}} contents={""} attachContext={id} error="" /> -->
 				</div>
 			</Card>
 		</div>

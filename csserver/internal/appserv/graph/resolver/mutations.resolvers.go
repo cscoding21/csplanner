@@ -11,6 +11,7 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
+	"csserver/internal/services/comment"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"fmt"
@@ -97,7 +98,7 @@ func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.Upda
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult[project.Project](*result)
+	status, err := csmap.GetStatusFromUpdateResult(*result)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +120,7 @@ func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID stri
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult[project.Project](*result)
+	status, err := csmap.GetStatusFromUpdateResult(*result)
 	if err != nil {
 		return nil, err
 	}
@@ -180,27 +181,90 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 
 // CreateProjectComment is the resolver for the createProjectComment field.
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	panic(fmt.Errorf("not implemented: CreateProjectComment - createProjectComment"))
+	service := factory.GetCommentService()
+
+	comment := csmap.UpdateCommentIdlToComment(input)
+
+	result, err := service.AddComment(ctx, comment)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectCommentResult{
+		Status:  status,
+		Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // CreateProjectCommentReply is the resolver for the createProjectCommentReply field.
 func (r *mutationResolver) CreateProjectCommentReply(ctx context.Context, input idl.UpdateCommentReply) (*idl.CreateProjectCommentResult, error) {
-	panic(fmt.Errorf("not implemented: CreateProjectCommentReply - createProjectCommentReply"))
+	service := factory.GetCommentService()
+
+	comment := comment.Comment{
+		Text: input.Text,
+	}
+
+	result, err := service.AddCommentReply(ctx, comment, input.ParentCommentID)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectCommentResult{
+		Status:  status,
+		Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // DeleteProjectComment is the resolver for the deleteProjectComment field.
 func (r *mutationResolver) DeleteProjectComment(ctx context.Context, id string) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: DeleteProjectComment - deleteProjectComment"))
+	service := factory.GetCommentService()
+
+	return csmap.GetStatusFromError(service.DeleteComment(ctx, id))
 }
 
 // UpdateProjectComment is the resolver for the updateProjectComment field.
 func (r *mutationResolver) UpdateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateProjectComment - updateProjectComment"))
+	service := factory.GetCommentService()
+
+	comment := csmap.UpdateCommentIdlToComment(input)
+
+	result, err := service.ModifyComment(ctx, comment)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectCommentResult{
+		Status:  status,
+		Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // ToggleEmote is the resolver for the toggleEmote field.
 func (r *mutationResolver) ToggleEmote(ctx context.Context, input idl.UpdateCommentEmote) (*idl.Status, error) {
-	panic(fmt.Errorf("not implemented: ToggleEmote - toggleEmote"))
+	service := factory.GetCommentService()
+
+	return csmap.GetStatusFromError(service.ToggleCommentEmote(ctx, input.CommentID, comment.CommentEmoteType(input.EmoteType)))
 }
 
 // CreateResource is the resolver for the createResource field.

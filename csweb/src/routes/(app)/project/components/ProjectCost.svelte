@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Heading, Button } from 'flowbite-svelte';
 	import { MoneyInput, SectionHeading } from '$lib/components';
 	import { formatCurrency } from '$lib/utils/format';
@@ -15,12 +14,7 @@
 		update: Function;
 	}
 	let { id, update }: Props = $props();
-
 	let errors: any = $state({ ongoing: '', blendedRate: '' });
-
-	onMount(async () => {
-		load();
-	});
 
 	const load = async () => {
 		await getProject(id)
@@ -83,8 +77,6 @@
 		load().then((r) => r);
 	};
 
-	loadPage();
-
 	let costForm = $state(getDefaultProject().projectCost);
 
 	// @ts-ignore
@@ -93,7 +85,7 @@
 
 <SectionHeading>Estimated Implementation Cost</SectionHeading>
 
-{#await loadPage}
+{#await loadPage()}
 	Loading...
 {:then promiseData}
 	{#if costForm}

@@ -1,24 +1,23 @@
 <script lang="ts">
 	import { Avatar } from 'flowbite-svelte';
-	import { getInitialsFromName, formatDate } from '$lib/utils/format';
-	import type { Resource } from '$lib/graphql/generated/sdk';
+	import { getInitialsFromName } from '$lib/utils/format';
+	import type { User } from '$lib/graphql/generated/sdk';
 
 	interface Props {
-		resource: Resource;
+		user: User;
 	}
-	let { resource }: Props = $props();
+	let { user }: Props = $props();
 </script>
 
+{#if user}
 <div class="p-2">
-	<Avatar src={resource.profileImage as string} class="float-left mr-3 h-16 w-16" rounded
-		>{getInitialsFromName(resource.name)}</Avatar
+	<Avatar src={user.profileImage || ''} class="float-left mr-3 h-16 w-16" rounded
+		>{getInitialsFromName(user.firstName + " " + user.lastName)}</Avatar
 	>
 	<div class="text-left">
-		<div><a href="/resource/detail/{resource.id}" class="font-semibold">{resource.name}</a></div>
-		{#if resource.user}
-			<div><p>{resource.user?.email}</p></div>
-		{/if}
-		<div><p>{formatDate(resource.createdAt)}</p></div>
+		<div>{user.firstName} {user.lastName}</div>
+		<div><p>{user.email}</p></div>
 		<div class="clear-both"></div>
 	</div>
 </div>
+{/if}

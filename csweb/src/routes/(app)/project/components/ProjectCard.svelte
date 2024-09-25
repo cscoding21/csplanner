@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Card, Heading, Hr, P, Badge } from 'flowbite-svelte';
-	import type { Project } from '$lib/graphql/generated/sdk';
+	import type { Project, Resource } from '$lib/graphql/generated/sdk';
 	import { formatDate } from '$lib/utils/format';
-	import { UserList, MoneyDisplay } from '$lib/components';
+	import { ResourceList, MoneyDisplay } from '$lib/components';
+	import { safeArray } from '$lib/utils/helpers';
 
 	interface Props {
 		project: Project;
@@ -30,13 +31,13 @@
 	<Hr classHr="mt-2 mb-4" />
 	<div class="px-4">
 		<span>
-			<UserList
+			<ResourceList
 				maxSize={4}
-				resourceIDs={[
-					...(project.projectDaci?.driver as string[]),
-					...(project.projectDaci?.approver as string[]),
-					...(project.projectDaci?.contributor as string[]),
-					...(project.projectDaci?.informed as string[])
+				resources={[
+					...safeArray(project.projectDaci?.driver as Resource[]),
+					...safeArray(project.projectDaci?.approver as Resource[]),
+					...safeArray(project.projectDaci?.contributor as Resource[]),
+					...safeArray(project.projectDaci?.informed as Resource[])
 				]}
 				size="sm"
 			/>

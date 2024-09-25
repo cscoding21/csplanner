@@ -16,30 +16,31 @@
     let comments = $state([] as Comment[])
 
     const loadPage = async () => {
-        await findProjectComments(id)
+        return await findProjectComments(id)
             .then((c) => {
-            comments = c
+            comments = c.results as Comment[]
+
+            console.log("comments loadPage", comments)
 
             return comments
         })
     }
-
-    loadPage()
 </script>
 
-{#await comments}
+{#await loadPage()}
     <span>Loading...</span>
 {:then}
 <div>
-    <div>
-        {#each comments as comment(comment.id)}
-            <CommentItem {comment} projectID={id} update={update} />
-            {#if comment.replies}
+    {#each comments as comment(comment.id)}
+        <CommentItem {comment} projectID={id} update={update} />
+        <h1>{comment.text}</h1>
+        {#if comment.replies}
+            <div class="pl-12">
                 {#each comment.replies as reply(reply.id)}
                     <CommentItem comment={reply} projectID={id} update={update} />
                 {/each}
-            {/if}
-        {/each}
-    </div>
+            </div>
+        {/if}
+    {/each}
 </div>
 {/await}

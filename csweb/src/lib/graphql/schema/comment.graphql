@@ -3,18 +3,17 @@ fragment commentFragment on Comment {
 	text
 	isEdited
 	projectId
-	resource {
-		...resourceFragment
+	user {
+		...userFragment
 	}
+	createdAt
+	updatedAt
 	replies {
 		id
 		text
 		isEdited
-		resource {
-			...resourceFragment
-		}
-		controlFields {
-			...controlFieldsFragment
+		user {
+			...userFragment
 		}
 		likes
 		loves
@@ -73,7 +72,12 @@ mutation deleteProjectComment($id: String!) {
 
 query findProjectComments($projectID: String!) {
 	findProjectComments(projectID: $projectID) {
-		...commentFragment
+		paging {
+			...pagingFragment
+		}
+		results {
+			...commentFragment
+		}
 	}
 }
 

@@ -2,9 +2,11 @@ type Comment {
   id: String!
   projectId: String!
   text: String!
-  resource: Resource!
+  createdBy: String!
+  createdAt: Time!
+  updatedAt: Time!
+  user: User!
   replies: [Comment!]
-  controlFields: ControlFields!
   likes: [String!]
   loves: [String!]
   dislikes: [String!]

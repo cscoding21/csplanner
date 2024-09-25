@@ -28,10 +28,10 @@ export const costSchema = yup.object().shape({
 });
 
 export const daciSchema = yup.object().shape({
-	driver: yup.array().nullable(),
-	approver: yup.array().nullable(),
-	contributor: yup.array().nullable(),
-	informed: yup.array().nullable()
+	driverIDs: yup.array().nullable(),
+	approverIDs: yup.array().nullable(),
+	contributorIDs: yup.array().nullable(),
+	informedIDs: yup.array().nullable()
 });
 
 export const featureSchema = yup.object().shape({
@@ -78,10 +78,10 @@ export const getDefaultProject = (): UpdateProject => {
 			blendedRate: 0.0
 		},
 		projectDaci: {
-			driver: [],
-			approver: [],
-			contributor: [],
-			informed: []
+			driverIDs: [],
+			approverIDs: [],
+			contributorIDs: [],
+			informedIDs: []
 		},
 		projectFeatures: [],
 		projectMilestones: []

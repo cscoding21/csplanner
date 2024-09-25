@@ -7,7 +7,7 @@
 		EditOutline,
 		TrashBinOutline
 	} from 'flowbite-svelte-icons';
-	import { SectionHeading, UserList } from '$lib/components';
+	import { SectionHeading, ResourceList } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/project';
 	import { ProjectTaskForm, DeleteProjectTask, ProjectTemplateSelector } from '.';
 	import { formatToCommaSepList } from '$lib/utils/format';
@@ -151,7 +151,7 @@
 							</div>
 
 							<div class="pl-4">
-								<UserList maxSize={4} size="xs" resourceIDs={task.resourceIDs || []} />
+								<ResourceList maxSize={4} size="xs" resources={task.resources || []} />
 							</div>
 						</div>
 						<div class="mt-2">
