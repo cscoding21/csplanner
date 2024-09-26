@@ -20,7 +20,7 @@ import (
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
 	out := idl.CreateUserResult{}
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 	user := csmap.UpdateUserIdlToUser(input)
 
 	result, err := service.CreateUser(ctx, &user)
@@ -37,7 +37,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input idl.UpdateUser)
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
 	out := idl.CreateUserResult{}
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 	user := csmap.UpdateUserIdlToUser(input)
 
 	result, err := service.UpdateUser(ctx, &user)

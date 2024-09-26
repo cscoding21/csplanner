@@ -311,9 +311,9 @@ func (s *CommentService) FindCommentReplies(ctx context.Context, commentID strin
 
 // ToggleCommentEmote if a user has emoted to the comment...remove the existing emote.  Otherwise add it
 func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
+	dbID := s.ContextHelper.GetUserIDFromContext(ctx)
 
-	existingRelation, err := s.DBClient.TestRelationshipExist(ctx, userEmail, commentID, string(emote))
+	existingRelation, err := s.DBClient.TestRelationshipExist(ctx, dbID, commentID, string(emote))
 	if err != nil {
 		log.Errorf("testRelationshipExixts: %v\n", err)
 		return err
@@ -340,7 +340,7 @@ func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID strin
 
 // CreateCommentEmote add an emote to an comment
 func (s *CommentService) CreateCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
+	userEmail := s.ContextHelper.GetUserIDFromContext(ctx)
 
 	_, err := s.DBClient.RelateTo(ctx, userEmail, commentID, string(emote))
 	return err

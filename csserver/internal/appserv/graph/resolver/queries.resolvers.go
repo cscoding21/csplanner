@@ -17,7 +17,7 @@ import (
 
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 	obj, err := service.GetCurrentUser(ctx)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, error) {
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 	obj, err := service.GetUser(ctx, id)
 	if err != nil {
 		return nil, err
@@ -171,7 +171,7 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 
 // FindAllUsers is the resolver for the findAllUsers field.
 func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, error) {
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 	userResults, err := service.FindAllUsers(ctx)
 	if err != nil {
 		return nil, err

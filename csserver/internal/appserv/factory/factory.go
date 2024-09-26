@@ -196,23 +196,37 @@ func GetResourceService() *resource.ResourceService {
 	return resource.NewResourceService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
-// GetUserService get user service instance
-func GetUserService() *user.UserService {
+// GetIAMAdminService get user service instance
+func GetIAMAdminService() *auth.IAMAdminService {
 	contextHelper := config.ContextHelper{}
 	client := GetKeycloakClient()
+	userService := GetUserService()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	svc := user.NewUserService(
+	svc := auth.NewIAMAdminService(
 		contextHelper,
 		client,
 		pubsub,
 		config.Config.Security.KeycloakRealm,
 		config.Config.Security.KeycloakAdminUser,
-		config.Config.Security.KeycloakAdminPass)
+		config.Config.Security.KeycloakAdminPass,
+		*userService)
 
 	return &svc
+}
+
+// GetUserService return a resource service instance
+func GetUserService() *user.UserService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return user.NewUserService(*surrealClient, config.ContextHelper{}, pubsub)
 }

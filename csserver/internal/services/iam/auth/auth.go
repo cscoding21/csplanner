@@ -58,18 +58,8 @@ func (s *AuthService) ValidateToken(ctx context.Context, token string) (AuthResu
 		return NewFailingAuthResult(token, err), err
 	}
 
-	_, claims, err := s.KCClient.DecodeAccessToken(ctx, token, s.KCRealm)
-	if err != nil {
-		return NewFailingAuthResult(token, err), err
-	}
-
 	if rptResult.Active != nil && *rptResult.Active {
-		ret := NewSuccessAuthResult(token, "")
-
-		ret.User.Email = GetKeyFromClaims(*claims, "email").(string)
-		ret.User.FirstName = GetKeyFromClaims(*claims, "given_name").(string)
-		ret.User.LastName = GetKeyFromClaims(*claims, "family_name").(string)
-		ret.User.ID = GetKeyFromClaims(*claims, "email").(string)
+		ret := s.NewSuccessAuthResult(ctx, token, "")
 
 		return ret, nil
 	}
@@ -85,7 +75,7 @@ func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (Au
 		return NewFailingAuthResult(refreshToken, err), err
 	}
 
-	return NewSuccessAuthResult(newAuthToken.AccessToken, newAuthToken.RefreshToken), nil
+	return s.NewSuccessAuthResult(ctx, newAuthToken.AccessToken, newAuthToken.RefreshToken), nil
 }
 
 // Signout issue a signout command to the auth server which will invalidate the refresh token
@@ -111,21 +101,26 @@ func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (
 		return NewFailingAuthResult("", err), err
 	}
 
-	return NewSuccessAuthResult(token.AccessToken, token.RefreshToken), nil
+	return s.NewSuccessAuthResult(ctx, token.AccessToken, token.RefreshToken), nil
 }
 
 // NewSuccessAuthResult return a new AuthResult with a success flag set to true and the given token
-func NewSuccessAuthResult(token string, refreshToken string) AuthResult {
+func (s *AuthService) NewSuccessAuthResult(ctx context.Context, token string, refreshToken string) AuthResult {
+	_, claims, err := s.KCClient.DecodeAccessToken(ctx, token, s.KCRealm)
+	if err != nil {
+
+	}
+
 	return AuthResult{
 		Success:      true,
 		Token:        token,
 		RefreshToken: refreshToken,
 		User: user.User{
-			Email:        "",
-			FirstName:    "",
-			LastName:     "",
-			ID:           "",
-			ProfileImage: "",
+			Email:        GetKeyFromClaims(*claims, "email").(string),
+			FirstName:    GetKeyFromClaims(*claims, "given_name").(string),
+			LastName:     GetKeyFromClaims(*claims, "family_name").(string),
+			DBID:         GetKeyFromClaims(*claims, "dbid").(string),
+			ProfileImage: GetKeyFromClaims(*claims, "profileImage").(string),
 		},
 	}
 }

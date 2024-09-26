@@ -255,7 +255,6 @@ func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, pag
 
 	rawResults, count, err := s.DBClient.FindPagedObjects(sql, paging, filters)
 	if err != nil {
-		log.Error(err)
 		return out, err
 	}
 
@@ -268,7 +267,6 @@ func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, pag
 	out.Results = common.RefToVal(unpacked)
 	return out, nil
 }
-
 `
 
 var modelsTemplateString = `

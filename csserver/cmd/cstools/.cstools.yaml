@@ -17,5 +17,7 @@ services:
     path: ""
   - name: Resource
     path: ""
+  - name: User
+    path: "iam"
   
   

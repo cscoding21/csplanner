@@ -12,7 +12,7 @@ import (
 )
 
 func CreateOrGetBot(ctx context.Context) *userPackage.User {
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 
 	user, err := service.GetUser(ctx, config.Config.Default.BotUserEmail)
 	if err != nil {
@@ -46,7 +46,7 @@ func CreateOrGetBot(ctx context.Context) *userPackage.User {
 
 // CreateTestUsers create a set of users for testing
 func CreateTestUsers(ctx context.Context) error {
-	service := factory.GetUserService()
+	service := factory.GetIAMAdminService()
 
 	usrs := []userPackage.User{
 		//---users

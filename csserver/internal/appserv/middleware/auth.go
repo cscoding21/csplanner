@@ -53,7 +53,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		us := factory.GetUserService()
+		us := factory.GetIAMAdminService()
 		bctx := r.Context()
 
 		if allowAnonomousOperation(r) || bypassSecurity(r) {
@@ -97,7 +97,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 			log.Infof("Authentication success for user %s", result.User.Email)
 
 			ctx := context.WithValue(r.Context(), config.UserEmailKey, result.User.Email)
-			ctx = context.WithValue(ctx, config.UserIDKey, result.User.ID)
+			ctx = context.WithValue(ctx, config.UserIDKey, result.User.DBID)
 			r = r.WithContext(ctx)
 
 			next.ServeHTTP(w, r)
@@ -143,7 +143,7 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 		log.Debugf("WebSocket authentication success for user %s", result.User.Email)
 
 		bctx = context.WithValue(bctx, config.UserEmailKey, result.User.Email)
-		bctx = context.WithValue(bctx, config.UserIDKey, result.User.ID)
+		bctx = context.WithValue(bctx, config.UserIDKey, result.User.DBID)
 
 		return bctx, &initPayload, nil
 	}

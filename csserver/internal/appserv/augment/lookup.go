@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// ---TODO: impelement caching
+// ---TODO: impelement better caching
 var (
 	_skillCache    *[]list.ListItem
 	_resourceCache *[]resource.Resource
@@ -100,7 +100,7 @@ func findUsers() *[]user.User {
 	defer _userCacheLock.Unlock()
 
 	ctx := context.Background()
-	us := factory.GetUserService()
+	us := factory.GetIAMAdminService()
 
 	users, err := us.FindAllUsers(ctx)
 	if err != nil {

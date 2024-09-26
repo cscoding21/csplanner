@@ -12,7 +12,7 @@ import (
 )
 
 func CreateTestResources(ctx context.Context) error {
-	us := factory.GetUserService()
+	us := factory.GetIAMAdminService()
 	rs := factory.GetResourceService()
 	exitingResources, _ := rs.FindAllResources(ctx)
 
