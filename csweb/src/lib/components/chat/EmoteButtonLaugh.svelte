@@ -21,12 +21,12 @@
 
 <button type="button" onclick={() => toggleReaction(commentID, "laughs_at")} class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
     {#if users?.includes(userID)}
-    <span class="text-blue-400">
+    <span class="text-yellow-200">
         <FaceLaughSolid size={size} />
     </span>
     {:else}
     <span class="">
-        <span class="hover:text-blue-400">
+        <span class="hover:text-yellow-200">
         <FaceLaughOutline size={size} />
     </span>
     </span>

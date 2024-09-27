@@ -178,8 +178,10 @@ func (s *CommentService) FindProjectComments(ctx context.Context, projectID stri
 		<-laughs_at<-user.id as laughs_at,
 		<-acknowledges<-user.id as acknowledges
 	FROM comment
-	WHERE ->belongsto->(project where id = $project)
-	ORDER BY control_fields.created_at
+	WHERE true
+		AND ->belongsto->(project where id = $project)
+		AND deleted_at = null
+	ORDER BY created_at
 	`
 
 	paging := common.NewPagedResultsForAllRecords[Comment]()
@@ -283,7 +285,7 @@ func (s *CommentService) FindCommentReplies(ctx context.Context, commentID strin
 		<-acknowledges<-user.id as acknowledges
 	FROM comment 
 	WHERE ->is_a_reply_to->(comment where id = $comment) 
-	ORDER BY control_fields.created_at
+	ORDER BY created_at
 	`
 
 	paging := common.NewPagedResultsForAllRecords[Comment]()
@@ -340,28 +342,28 @@ func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID strin
 
 // CreateCommentEmote add an emote to an comment
 func (s *CommentService) CreateCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
-	userEmail := s.ContextHelper.GetUserIDFromContext(ctx)
+	dbID := s.ContextHelper.GetUserIDFromContext(ctx)
 
-	_, err := s.DBClient.RelateTo(ctx, userEmail, commentID, string(emote))
+	_, err := s.DBClient.RelateTo(ctx, dbID, commentID, string(emote))
 	return err
 }
 
 // DeleteCommentEmote deletes an emote previously creatd by a user
 func (s *CommentService) DeleteCommentEmote(ctx context.Context, relationshipID string) error {
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
+	dbID := s.ContextHelper.GetUserIDFromContext(ctx)
 
 	emoteRelationship, err := s.DBClient.GetRelationship(ctx, relationshipID)
 	if err != nil {
 		return err
 	}
 
-	if emoteRelationship.In == userEmail {
-		err = s.DBClient.DeleteObject(userEmail, relationshipID)
+	if emoteRelationship.In == dbID {
+		err = s.DBClient.DeleteObject(dbID, relationshipID)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = fmt.Errorf("emote does not belong to user %s...no work was done", userEmail)
+		err = fmt.Errorf("emote does not belong to user %s...no work was done", dbID)
 		return err
 	}
 

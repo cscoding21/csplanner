@@ -21,12 +21,12 @@
 
 <button type="button" onclick={() => toggleReaction(commentID, "likes")} class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
     {#if users?.includes(userID)}
-    <span class="text-blue-400">
+    <span class="text-green-400">
         <ThumbsUpSolid size={size} />
     </span>
     {:else}
     <span class="">
-        <span class="hover:text-blue-400">
+        <span class="hover:text-green-400">
         <ThumbsUpOutline size={size} />
     </span>
     </span>

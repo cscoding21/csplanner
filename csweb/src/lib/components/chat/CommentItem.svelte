@@ -5,7 +5,7 @@
     import { authService } from "$lib/services/auth";
     import { formatDateTime, getInitialsFromName, pluralize } from "$lib/utils/format"
     import { UserDisplay } from "$lib/components";
-    import { EmoteButtonLike, EmoteButtonDislike, EmoteButtonLove, EmoteButtonLaugh, EmoteButtonAcknowledge } from "$lib/components";
+    import { EmoteButtonLike, EmoteButtonDislike, EmoteButtonLove, EmoteButtonLaugh, EmoteButtonAcknowledge, DeleteComment } from "$lib/components";
     import { DotsHorizontalOutline, CheckPlusCircleOutline } from 'flowbite-svelte-icons';
     import { is } from '$lib/utils/check';
     import { normalizeID } from '$lib/utils/id';
@@ -30,10 +30,13 @@
 
     const id = comment.id
     const userID:string = as.currentUser()?.id as string
+    const userEmail:string = as.currentUser()?.email as string
 
-    let userCreatedComment: boolean = (userID === comment.user.email)
-    let editMode: Boolean = $state(false)
-    let replyMode:Boolean = $state(false)
+    let userCreatedComment: boolean = (userEmail === comment.user.email)
+    let editMode:boolean = $state(false)
+    let replyMode:boolean = $state(false)
+
+    let qe:any
 
 
 
@@ -49,6 +52,10 @@
 
     const openDeleteModal = async (commentID:string) => {
         await deleteComm(commentID)
+    }
+
+    const toggleEdit = () => {
+        qe.toggleEnabled()
     }
 
     const deleteComm = async (commentID:string) => {
@@ -103,7 +110,7 @@
     }
 </script>
 
-<article class="p-6 mb-6 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+<article class="px-6 pt-6 mb-6 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
     <footer class="flex justify-between items-center mb-2">
         <div class="flex items-center">
             <Avatar class="mr-2 w-8 h-8 rounded-lg" src={comment.user?.profileImage || ""}>{getInitialsFromName(comment.user?.firstName + " " + comment.user?.lastName)}</Avatar>
@@ -124,7 +131,7 @@
                         toggleReaction={toggleReaction}
                         commentID={id}
                         users={comment.likes??[]}
-                        size="xs"
+                        size="sm"
                         />
             {/if}
 
@@ -134,7 +141,7 @@
                         toggleReaction={toggleReaction}
                         commentID={id}
                         users={comment.laughsAt??[]}
-                        size="xs"
+                        size="sm"
                         />
             {/if}
 
@@ -144,7 +151,7 @@
                         toggleReaction={toggleReaction}
                         commentID={id}
                         users={comment.dislikes??[]}
-                        size="xs"
+                        size="sm"
                         />
             {/if}
 
@@ -154,7 +161,7 @@
                         toggleReaction={toggleReaction}
                         commentID={id}
                         users={comment.loves??[]}
-                        size="xs"
+                        size="sm"
                         />
             {/if}
 
@@ -164,7 +171,7 @@
                         toggleReaction={toggleReaction}
                         commentID={id}
                         users={comment.acknowledges??[]}
-                        size="xs"
+                        size="sm"
                         />
             {/if}
 
@@ -234,10 +241,10 @@
             <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
                 aria-labelledby="commentUserMenu">
                 <li>
-                    <button onclick={() => editMode = !editMode } class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</button>
+                    <button onclick={() => toggleEdit()} class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</button>
                 </li>
                 <li>
-                    <button onclick={() => openDeleteModal(id)} class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Remove</button>
+                    <DeleteComment id={id} update={update}>Delete</DeleteComment>
                 </li>
             </ul>
             </Popover>
@@ -245,5 +252,5 @@
         </div>
     </footer>
 
-    <QuillEditor getContent={updateComm} error={""} attachContext={id} contents={comment.text} enabled={(userCreatedComment && editMode) as boolean} />
+    <QuillEditor error={""} attachContext={id} contents={comment.text} bind:quillEditor={qe} />
 </article>

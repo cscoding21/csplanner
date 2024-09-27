@@ -12,58 +12,64 @@
     import { handleFileUpload } from "$lib/services/file";
 
     interface Props {
-        getContent: Function;
         contents:any;
         attachContext: string;
         fieldName?: string;
         error: string;
-        enabled: boolean;
+        quillEditor: any;
     }
     let { 
-        getContent, 
-        contents, 
+        contents = $bindable(), 
         attachContext, 
         fieldName, 
-        error, 
-        enabled 
+        error = $bindable(), 
+        quillEditor = $bindable()
     }:Props = $props();
 
     let quill : Quill;
 
     const editorID = "editor_" + normalizeID(attachContext)
+    let enabled = $state(false)
+    let wrapperClass = $state("mb-4 w-full rounded-lg")
 
-    // const MentionBlot = Quill.import("blots/mention");
-    // class StyledMentionBlot extends MentionBlot {
-    //     static render(data) {
-    //     const element = document.createElement("span");
-    //     element.innerText = data.value;
-    //     element.style.color = data.color;
-    //     return element;
-    //     }
-    // }
-    // StyledMentionBlot.blotName = "styled-mention";
+    quillEditor = {
+        clear: () => {
+            quill.setContents([{ "insert": "\n" }]);
+        },
+        toggleEnabled: () => {
+            enabled = !enabled
 
-    // Quill.register(StyledMentionBlot);
+            quill.enable(enabled)
+
+            if (enabled) {
+                wrapperClass = "mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
+            } else {
+                wrapperClass = "mb-4 w-full rounded-lg"
+            }
+
+            console.log("enabled", enabled)
+            console.log("wrapperClass", wrapperClass)
+        }
+    }
+
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        ['blockquote'],
+
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+
+        [{ 'header': [1, 2, 3, 4, false] }],
+
+        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        [{ 'align': [] }],
+
+        ["link", "image", "video"],
+
+        ['clean']                                         // remove formatting button
+    ]
 	
     onMount(async () => {
-
-        let toolbarOptions = [
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-            ['blockquote'],
-
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-
-            [{ 'header': [1, 2, 3, 4, false] }],
-
-            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-            [{ 'align': [] }],
-
-            ["link", "image", "video"],
-
-            ['clean']                                         // remove formatting button
-        ]
-
         // debug: 'log',
         //mention: mentionOpts
         quill = new Quill("#" + editorID, {
@@ -74,10 +80,15 @@
             }
         });
 
-        console.log("contents", contents)
-        quill.setContents(JSON.parse(contents), "user");
+        if (contents) {
+            console.log("content", contents)
+            quill.setContents(JSON.parse(contents), "user");
+        }
 
-        //quill.enable(enabled)
+        quill.on('text-change', (delta, oldDelta, source) => {
+            contents = quill.getContents()
+        });
+
         quill.focus()
     });
 
@@ -117,24 +128,6 @@
                 }
             }
         }
-
-
-    const clearEditor = () => {
-        quill.setContents([{ "insert": "\n" }]);
-    }
-
-    const submitEditor = async () => {
-        let text = JSON.stringify(quill.getContents())
-        if(text.length === 0) {
-            return
-        }
-
-        if (typeof getContent === 'function') {
-            getContent(text)
-
-            clearEditor()
-        }
-    }
 </script>
 
 
@@ -147,18 +140,9 @@
     {/if}
 
     <div
-        class="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+        class={wrapperClass}>
         <div id="{editorID}"></div>
     </div>
     
 	<FormErrorMessage message={error} />
-    
 </div>
-
-    
-
-<style>
-    ul > li.selected {
-        background-color: #fff !important;
-    }
-</style>

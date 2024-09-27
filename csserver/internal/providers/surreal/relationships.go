@@ -36,7 +36,6 @@ func (db *DBClient) RelateTo(ctx context.Context,
 	}
 
 	sql := getRelationshipSQL(relationship)
-	log.Warnf("relationship SQL: %v (%v)\n", sql, criteria)
 	objectData, err := db.Client.Query(sql, criteria)
 	if err != nil {
 		log.Error(err)

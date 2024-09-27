@@ -27,8 +27,8 @@ func (s *UserService) GetUser(idOrEmail string) (*User, error) {
 	return common.HandleReturnWithValue(&u, err)
 }
 
-// UpsertUser create or update a user using the email as a key
-func (s *UserService) UpsertUser(ctx context.Context, usr User) (*common.UpdateResult[User], error) {
+// UpsertUserByEmail create or update a user using the email as a key
+func (s *UserService) UpsertUserByEmail(ctx context.Context, usr User) (*common.UpdateResult[User], error) {
 	existingUser, _ := s.GetUser(usr.Email)
 
 	if existingUser == nil {

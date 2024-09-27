@@ -71,6 +71,7 @@ func GenService(props GenProps) error {
 	builder.WriteString(csgen.ExecuteTemplate("service_find", findTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_create", createTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_update", updateTemplateString, props))
+	builder.WriteString(csgen.ExecuteTemplate("service_upsert", upsertTemplateString, props))
 	builder.WriteString(csgen.ExecuteTemplate("service_delete", deleteTemplateString, props))
 
 	fullPath := csgen.GetFileName(
@@ -218,7 +219,24 @@ func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, in
 
 	return common.NewUpdateResult[{{.ServiceName}}](&val, outObj), nil
 }
-	
+
+`
+
+var upsertTemplateString = `
+// Upsert{{.ServiceName}} create or update a {{.ServiceName}}
+func (s *{{.ServiceName}}Service) Upsert{{.ServiceName}}(ctx context.Context, obj {{.ServiceName}}) (*common.UpdateResult[{{.ServiceName}}], error) {
+	existingObj, _ := s.Get{{.ServiceName}}ByID(ctx, obj.ID)
+
+	if existingObj == nil {
+		resp, err := s.Create{{.ServiceName}}(ctx, &obj)
+		return &resp, err
+	}
+
+	obj.ID = existingObj.ID
+	resp, err := s.Update{{.ServiceName}}(ctx, &obj)
+	return &resp, err
+}
+
 `
 
 var findAllTemplateString = `

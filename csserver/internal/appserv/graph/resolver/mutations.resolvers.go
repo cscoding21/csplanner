@@ -183,7 +183,10 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
 	service := factory.GetCommentService()
 
-	comment := csmap.UpdateCommentIdlToComment(input)
+	comment := comment.Comment{
+		ProjectID: input.ProjectID,
+		Text:      input.Text,
+	}
 
 	result, err := service.AddComment(ctx, comment)
 	if err != nil {

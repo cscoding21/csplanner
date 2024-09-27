@@ -1,7 +1,10 @@
 <script lang="ts">
+    import { Button } from "flowbite-svelte";
     import { CommentItem } from "$lib/components";
-    import { findProjectComments } from "$lib/services/comment";
+    import { findProjectComments, addComment  } from "$lib/services/comment";
     import type { Comment } from "$lib/graphql/generated/sdk";
+	import QuillEditor from "../forms/QuillEditor.svelte";
+	import { onMount } from "svelte";
     
 
     interface Props {
@@ -9,21 +12,47 @@
     }
     let { id }:Props = $props()
 
-    const update = () => {
+    let qe:any;
+
+    const update = async () => {
         console.log("update")
+        return await findProjectComments(id)
+            .then((c) => {
+                comments = c.results as Comment[]
+
+                console.log("comments loadPage", comments)
+
+                return comments
+        })
+    }
+
+    const postComment = async () => {
+        return await addComment({ text: JSON.stringify(editorContent), projectId: id})
+            .then(r => {
+                if(r.status.success) {
+                    update().then(r => {
+                        qe.clear()
+
+                        return r
+                })
+                } else {
+                    console.error(r.status.message )
+                }
+            })
     }
 
     let comments = $state([] as Comment[])
+    let editorContent = $state()
+    
+    onMount(() => {
+        qe.toggleEnabled();
+    })
 
     const loadPage = async () => {
-        return await findProjectComments(id)
+        return await update()
             .then((c) => {
-            comments = c.results as Comment[]
-
-            console.log("comments loadPage", comments)
-
-            return comments
-        })
+                return c
+            })
     }
 </script>
 
@@ -42,4 +71,9 @@
         {/if}
     {/each}
 </div>
+
+<QuillEditor error={""} attachContext={id} bind:contents={editorContent} bind:quillEditor={qe} />
+
+<Button onclick={postComment}>Post</Button>
+
 {/await}
