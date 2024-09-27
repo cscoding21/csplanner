@@ -4,7 +4,6 @@
     import { findProjectComments, addComment  } from "$lib/services/comment";
     import type { Comment } from "$lib/graphql/generated/sdk";
 	import QuillEditor from "../forms/QuillEditor.svelte";
-	import { onMount } from "svelte";
     
 
     interface Props {
@@ -12,6 +11,7 @@
     }
     let { id }:Props = $props()
 
+    let showReplies:[] = $state([])
     let qe:any;
 
     const update = async () => {
@@ -19,8 +19,6 @@
         return await findProjectComments(id)
             .then((c) => {
                 comments = c.results as Comment[]
-
-                console.log("comments loadPage", comments)
 
                 return comments
         })
@@ -43,10 +41,6 @@
 
     let comments = $state([] as Comment[])
     let editorContent = $state()
-    
-    onMount(() => {
-        qe.toggleEnabled();
-    })
 
     const loadPage = async () => {
         return await update()
@@ -61,19 +55,31 @@
 {:then}
 <div>
     {#each comments as comment(comment.id)}
-        <CommentItem {comment} projectID={id} update={update} />
-        {#if comment.replies}
-            <div class="pl-12">
-                {#each comment.replies as reply(reply.id)}
-                    <CommentItem comment={reply} projectID={id} update={update} />
-                {/each}
+        <div class="px-6 pt-6 mb-4 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+            <div class="mb-2">
+                <CommentItem {comment} projectID={id} update={update} />
             </div>
-        {/if}
+            {#if comment.replies && comment.replies.length > 0}
+                
+                {#if showReplies }
+                <div class="pl-12">
+                    {#each comment.replies as reply(reply.id)}
+                        <CommentItem comment={reply} projectID={id} update={update} />
+                    {/each}
+                </div>
+                {/if}
+            {/if}
+        </div>
     {/each}
 </div>
 
 <QuillEditor error={""} attachContext={id} bind:contents={editorContent} bind:quillEditor={qe} />
 
-<Button onclick={postComment}>Post</Button>
+<div class="col-span-4">
+    <span class="float-right">
+        <Button onclick={postComment}>Post</Button>
+    </span>
+    <br class="clear-both" />
+</div>
 
 {/await}

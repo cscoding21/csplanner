@@ -1,18 +1,18 @@
 <script lang="ts">
     import { Avatar, Popover } from 'flowbite-svelte';
     import type { Comment, User } from "$lib/graphql/generated/sdk";
-    import { deleteComment, toggleCommentEmote, addCommentReply, updateComment } from "$lib/services/comment";
+    import { toggleCommentEmote, updateComment } from "$lib/services/comment";
     import { authService } from "$lib/services/auth";
     import { formatDateTime, getInitialsFromName, pluralize } from "$lib/utils/format"
     import { UserDisplay } from "$lib/components";
     import { EmoteButtonLike, EmoteButtonDislike, EmoteButtonLove, EmoteButtonLaugh, EmoteButtonAcknowledge, DeleteComment } from "$lib/components";
-    import { DotsHorizontalOutline, CheckPlusCircleOutline } from 'flowbite-svelte-icons';
+    import { DotsHorizontalOutline, CheckPlusCircleOutline, ReplyOutline } from 'flowbite-svelte-icons';
     import { is } from '$lib/utils/check';
     import { normalizeID } from '$lib/utils/id';
     // import { commentListStateStore } from '$lib/stores/comment'
     import { addToast } from '$lib/stores/toasts';
     import { callIf } from '$lib/utils/helpers';
-    import { QuillEditor } from '..';
+    import { QuillEditor, QuillDisplay, ReplyToComment } from '..';
 
 
     interface Props {
@@ -23,7 +23,7 @@
     let { 
         comment, 
         projectID, 
-        update 
+        update
     }:Props = $props()
 
     const as = authService()
@@ -31,14 +31,12 @@
     const id = comment.id
     const userID:string = as.currentUser()?.id as string
     const userEmail:string = as.currentUser()?.email as string
+    let editorContent = $state(comment.text)
 
     let userCreatedComment: boolean = (userEmail === comment.user.email)
     let editMode:boolean = $state(false)
-    let replyMode:boolean = $state(false)
 
     let qe:any
-
-
 
     const toggleReaction = async (commentID:string, type:string) => {
         toggleCommentEmote({ commentID: commentID, emoteType: type }).then(res => {
@@ -50,54 +48,22 @@
         })
     }
 
-    const openDeleteModal = async (commentID:string) => {
-        await deleteComm(commentID)
-    }
-
     const toggleEdit = () => {
-        qe.toggleEnabled()
+        editMode = !editMode
     }
-
-    const deleteComm = async (commentID:string) => {
-        deleteComment(commentID || "").then(res => {
-            if(res.success) {
-                addToast({ 
-                    message: "Comment deleted successfully", 
-                    dismissible: true, 
-                    type: "success"}
-                )
-
-                callIf(update)
-            } else {
-                console.log(res?.message)
-            }
-        })
-    }
-
-    const createCommentReply = async (text:string) => {
-        addCommentReply({ parentCommentID: id, text: text }).then(res => {
-            if(res.data.createProjectCommentReply.status?.success) {
-                replyMode = false
-
-                //setCommentRepliesOpen(id)
-                callIf(update)
-            } else {
-                addToast({ 
-                    message: "Error creating reply: " + res.status.message, 
-                    dismissible: true, 
-                    type: "error"}
-                )
-            }
-        })
-    }
-
     
-    const updateComm = async (text:string) => {
-        updateComment({ projectId: projectID, id: id, text: text }).then(res => {
+    const updateComm = async () => {
+        const text = JSON.stringify(editorContent)
+        const updateDelta = { projectId: projectID, id: id, text: text }
+
+        console.log("updateDelta", updateDelta)
+        updateComment(updateDelta).then(res => {
             if(res.status?.success) {
                 editMode = false
 
-                //setCommentRepliesOpen(id)
+                console.log("updatedText", res.comment.text)
+                editorContent = res.comment.text
+
                 callIf(update)
             } else {
                 addToast({ 
@@ -110,8 +76,8 @@
     }
 </script>
 
-<article class="px-6 pt-6 mb-6 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
-    <footer class="flex justify-between items-center mb-2">
+<article class="">
+    <footer class="flex justify-between items-center">
         <div class="flex items-center">
             <Avatar class="mr-2 w-8 h-8 rounded-lg" src={comment.user?.profileImage || ""}>{getInitialsFromName(comment.user?.firstName + " " + comment.user?.lastName)}</Avatar>
             <div>
@@ -231,6 +197,11 @@
                 </span>
                 </div>
             </Popover>
+
+            <ReplyToComment comment={comment} update={update}>
+                <ReplyOutline />
+            </ReplyToComment>
+
             {#if userCreatedComment}
             <button id="user_{normalizeID(id)}" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <DotsHorizontalOutline />
@@ -252,5 +223,10 @@
         </div>
     </footer>
 
-    <QuillEditor error={""} attachContext={id} contents={comment.text} bind:quillEditor={qe} />
+    {#if editMode }
+        <QuillEditor error={""} attachContext={id} bind:contents={editorContent} bind:quillEditor={qe} />
+        <button onclick={() => updateComm() }>Save</button>
+    {:else}
+        <QuillDisplay attachContext={id} bind:contents={editorContent} />
+    {/if}
 </article>

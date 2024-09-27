@@ -2,6 +2,7 @@
     import { onMount } from "svelte"
     import { FormErrorMessage } from '$lib/components'
     import Quill from 'quill';
+    import type { Delta } from "quill/core";
     import { normalizeID } from "$lib/utils/id";
 
     import 'quill/dist/quill.core.css'
@@ -10,6 +11,7 @@
     import "quill-mention/autoregister";
 
     import { handleFileUpload } from "$lib/services/file";
+	
 
     interface Props {
         contents:any;
@@ -29,26 +31,13 @@
     let quill : Quill;
 
     const editorID = "editor_" + normalizeID(attachContext)
-    let enabled = $state(false)
-    let wrapperClass = $state("mb-4 w-full rounded-lg")
 
     quillEditor = {
         clear: () => {
             quill.setContents([{ "insert": "\n" }]);
         },
-        toggleEnabled: () => {
-            enabled = !enabled
-
-            quill.enable(enabled)
-
-            if (enabled) {
-                wrapperClass = "mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
-            } else {
-                wrapperClass = "mb-4 w-full rounded-lg"
-            }
-
-            console.log("enabled", enabled)
-            console.log("wrapperClass", wrapperClass)
+        setContent: (content:Delta) => {
+            quill.setContents(content);
         }
     }
 
@@ -89,6 +78,7 @@
             contents = quill.getContents()
         });
 
+        quill.enable(true)
         quill.focus()
     });
 
@@ -132,15 +122,13 @@
 
 
 
-<div class="mb-6">
+<div class="my-1">
     {#if fieldName}
-	<label for="input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-		>{fieldName}</label
-	>
+	    <label for="input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{fieldName}</label>
     {/if}
 
     <div
-        class={wrapperClass}>
+        class="mb-2 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
         <div id="{editorID}"></div>
     </div>
     

@@ -11,6 +11,7 @@ export { default as EmoteButtonLove } from './chat/EmoteButtonLove.svelte';
 export { default as EmoteButtonLaugh } from './chat/EmoteButtonLaugh.svelte';
 export { default as EmoteButtonDislike } from './chat/EmoteButtonDislike.svelte';
 export { default as EmoteButtonLike } from './chat/EmoteButtonLike.svelte';
+export { default as ReplyToComment } from './chat/ReplyToComment.svelte';
 
 //---Formatting
 export { default as PageHeading } from './formatting/PageHeading.svelte';
@@ -24,6 +25,7 @@ export { default as MultiSelectInput } from './forms/MultiSelectInput.svelte';
 export { default as NumberInput } from './forms/NumberInput.svelte';
 export { default as PasswordInput } from './forms/PasswordInput.svelte';
 export { default as PercentInput } from './forms/PercentInput.svelte';
+export { default as QuillDisplay } from './forms/QuillDisplay.svelte';
 export { default as QuillEditor } from './forms/QuillEditor.svelte';
 export { default as SelectInput } from './forms/SelectInput.svelte';
 export { default as TextAreaInput } from './forms/TextAreaInput.svelte';
