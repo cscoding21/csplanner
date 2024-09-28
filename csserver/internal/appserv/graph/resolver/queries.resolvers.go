@@ -225,6 +225,10 @@ func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.Pa
 		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(results.Results)),
 	}
 
+	for _, r := range out.Results {
+		augment.AugmentResource(r)
+	}
+
 	return &out, nil
 }
 

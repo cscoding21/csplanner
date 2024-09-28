@@ -6,6 +6,10 @@ import (
 
 // AugmentResource fills in object data for a single reaource
 func AugmentResource(res *idl.Resource) {
+	if res.UserEmail != nil {
+		res.User = getUserByEmail(*res.UserEmail)
+	}
+
 	if len(res.Skills) == 0 {
 		return
 	}

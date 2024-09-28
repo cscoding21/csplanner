@@ -6,6 +6,7 @@ fragment resourceFragment on Resource {
 	}
 	role
 	profileImage
+	userEmail
 	isBot
 	type
 	createdAt

@@ -577,6 +577,7 @@ export type Resource = {
   skills?: Maybe<Array<Skill>>;
   type: Scalars['String']['output'];
   user?: Maybe<User>;
+  userEmail?: Maybe<Scalars['String']['output']>;
 };
 
 export type ResourceResults = {
@@ -916,6 +917,7 @@ export const ResourceFragmentFragmentDoc = gql`
   }
   role
   profileImage
+  userEmail
   isBot
   type
   createdAt

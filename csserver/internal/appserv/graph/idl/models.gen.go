@@ -310,6 +310,7 @@ type Resource struct {
 	Type         string     `json:"type"`
 	Name         string     `json:"name"`
 	Role         string     `json:"role"`
+	UserEmail    *string    `json:"userEmail,omitempty"`
 	User         *User      `json:"user,omitempty"`
 	ProfileImage *string    `json:"profileImage,omitempty"`
 	Skills       []*Skill   `json:"skills,omitempty"`

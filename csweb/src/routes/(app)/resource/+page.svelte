@@ -37,7 +37,7 @@
 	{#if resources.results != null}
 		<div class="grid grid-cols-3 gap-3">
 			{#each resources.results as r}
-				<ResourceCard resource={r} on:updated={refresh} />
+				<ResourceCard resource={r} />
 			{/each}
 		</div>
 	{:else}

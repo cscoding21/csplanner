@@ -379,6 +379,7 @@ type ComplexityRoot struct {
 		Skills       func(childComplexity int) int
 		Type         func(childComplexity int) int
 		User         func(childComplexity int) int
+		UserEmail    func(childComplexity int) int
 	}
 
 	ResourceResults struct {
@@ -2180,6 +2181,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.User(childComplexity), true
 
+	case "Resource.userEmail":
+		if e.complexity.Resource.UserEmail == nil {
+			break
+		}
+
+		return e.complexity.Resource.UserEmail(childComplexity), true
+
 	case "ResourceResults.filters":
 		if e.complexity.ResourceResults.Filters == nil {
 			break
@@ -3088,6 +3096,7 @@ input UpdateProjectMilestoneTask {
   type: String!
   name: String!
   role: String!
+  userEmail: String
   user: User
   profileImage: String
   skills: [Skill!]
@@ -4147,6 +4156,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -6160,6 +6171,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -10391,6 +10404,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -10452,6 +10467,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -10513,6 +10530,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -10574,6 +10593,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -11583,6 +11604,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -13716,6 +13739,8 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -14246,6 +14271,47 @@ func (ec *executionContext) fieldContext_Resource_role(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Resource_userEmail(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_userEmail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserEmail, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_userEmail(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Resource_user(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Resource_user(ctx, field)
 	if err != nil {
@@ -14617,6 +14683,8 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
@@ -21848,6 +21916,8 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "userEmail":
+			out.Values[i] = ec._Resource_userEmail(ctx, field, obj)
 		case "user":
 			out.Values[i] = ec._Resource_user(ctx, field, obj)
 		case "profileImage":

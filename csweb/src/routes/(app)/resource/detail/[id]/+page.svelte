@@ -27,16 +27,13 @@
 	import { getInitialsFromName } from '$lib/utils/format';
 	import type { Resource } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
-	import { onMount } from 'svelte';
 
 	const id = $page.params.id;
 
-	const refresh = async () => {
-		resourcePromise = getResource(id).then((r) => {
-			return r;
-		});
+	const refresh = async ():Promise<Resource> => {
+		const res = getResource(id);
 
-		return resourcePromise;
+		return res;
 	};
 
 	const deleteSkill = async (skillID: string) => {
@@ -48,7 +45,7 @@
 					type: 'success'
 				});
 
-				resourcePromise = refresh();
+				//resourcePromise = refresh();
 			} else {
 				addToast({
 					message: 'Error updating resource: ' + res.message,
@@ -59,21 +56,22 @@
 		});
 	};
 
-	let resourcePromise: Promise<Resource> = $state(refresh());
-
-	onMount(async () => {
-		refresh();
-	});
+	let resourcePromise:Resource = $state({} as Resource);
+	const loadPage = async () => {
+		refresh().then((r) => {
+			resourcePromise = r as Resource;
+		});
+	}
 </script>
 
-{#await resourcePromise}
+{#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
-	{#if promiseData}
-		<ResourceActionBar pageDetail={promiseData.name}>
-			{#if !promiseData.isBot}
+	{#if resourcePromise}
+		<ResourceActionBar pageDetail={resourcePromise.name}>
+			{#if !resourcePromise.isBot}
 				<ButtonGroup>
-					<DeleteResource id={promiseData.id || ''} name={promiseData.name}>
+					<DeleteResource id={resourcePromise.id || ''} name={resourcePromise.name}>
 						<TrashBinOutline class="mr-2 h-3 w-3" />
 						Delete
 					</DeleteResource>
@@ -81,13 +79,13 @@
 			{/if}
 		</ResourceActionBar>
 
-		<PageHeading title={promiseData.name} />
+		<PageHeading title={resourcePromise.name} />
 
 		<div class="grid grid-cols-2">
 			<div class="mr-4">
 				<Card padding="sm" size="xl">
 					<div class="flex justify-end">
-						{#if !promiseData.isBot}
+						{#if !resourcePromise.isBot}
 							<ButtonGroup>
 								<UpdateResourceModal {id} update={async () => refresh()}
 									><PenOutline /></UpdateResourceModal
@@ -96,25 +94,25 @@
 						{/if}
 					</div>
 					<div class="flex flex-col items-center pb-4">
-						<Avatar size="lg" src={promiseData.profileImage as string} rounded
-							>{getInitialsFromName(promiseData.name)}</Avatar
+						<Avatar size="lg" src={resourcePromise.profileImage as string} rounded
+							>{getInitialsFromName(resourcePromise.name)}</Avatar
 						>
 						<h5 class="mb-1 mt-2 text-xl font-medium text-gray-900 dark:text-white">
-							{promiseData.name}
+							{resourcePromise.name}
 						</h5>
-						<span class="text-sm text-gray-500 dark:text-gray-400">{promiseData.role}</span>
+						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.role}</span>
 					</div>
 					<hr class="mb-4 mt-2" />
 					<div>
 						<ul class="list">
 							<li>
 								<span>Role</span>
-								<span class="float-right flex-auto font-semibold">{promiseData.role}</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.role}</span>
 							</li>
 							<li>
 								<span>User</span>
-								{#if promiseData.user?.id}
-									<span class="float-right flex-auto font-semibold">{promiseData.user?.email}</span>
+								{#if resourcePromise}
+									<span class="float-right flex-auto font-semibold">{resourcePromise.user?.email}</span>
 								{:else}
 									<span class="float-right flex-auto font-semibold">No User Account</span>
 								{/if}
@@ -122,7 +120,7 @@
 							<li>
 								<span>Created Date</span>
 								<span class="float-right flex-auto font-semibold"
-									>{formatDate(promiseData.createdAt)}</span
+									>{formatDate(resourcePromise.createdAt)}</span
 								>
 							</li>
 						</ul>
@@ -138,7 +136,7 @@
 						</p>
 					</caption>
 
-					{#if promiseData.skills && promiseData.skills.length > 0}
+					{#if resourcePromise.skills && resourcePromise.skills.length > 0}
 						<Table>
 							<TableHead>
 								<TableHeadCell>Skill</TableHeadCell>
@@ -148,7 +146,7 @@
 								</TableHeadCell>
 							</TableHead>
 							<TableBody>
-								{#each promiseData.skills as s (s)}
+								{#each resourcePromise.skills as s (s)}
 									<TableBodyRow>
 										<TableBodyCell>{s.name}</TableBodyCell>
 										<TableBodyCell
@@ -167,7 +165,7 @@
 						<Alert>No skills have been added for this resource.</Alert>
 					{/if}
 
-					{#if !promiseData.isBot}
+					{#if !resourcePromise.isBot}
 						<hr class="my-4" />
 						<AddSkill resourceID={id} update={() => refresh()} />
 					{/if}

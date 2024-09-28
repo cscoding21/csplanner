@@ -3,6 +3,7 @@ type Resource {
   type: String!
   name: String!
   role: String!
+  userEmail: String
   user: User
   profileImage: String
   skills: [Skill!]
