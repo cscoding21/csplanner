@@ -23,7 +23,10 @@ export const deDupeArray = (arr: any[]): any[] => {
  */
 export const safeArray = (a:any[]):any[] => {
 	let out:any[] = []
-	out = out.concat(a)
+
+	if (a !== null && a !== undefined && a.length > 0)
+		out = out.concat(a)
+
 	return out
 }
 

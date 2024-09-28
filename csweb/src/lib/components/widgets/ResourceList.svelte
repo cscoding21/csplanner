@@ -25,6 +25,10 @@
 	const translateResource = (): Resource[] => {
 		let toShow:Resource[] = [];
 		for (let i = 0; i < loopLength; i++) {
+			if (deDuped[i] === null) {
+				continue
+			}
+
 			toShow.push(deDuped[i]);
 		}
 
@@ -34,6 +38,7 @@
 	const rss = translateResource();
 </script>
 
+{#if rss != null && rss.length > 0 }
 <div class="flex">
 	{#each rss as res (res.id)}
 		<Avatar
@@ -57,4 +62,7 @@
 		<span class="ml-1 p-1">+{more}</span>
 	{/if}
 </div>
+{:else}
+	<span></span>
+{/if}
 

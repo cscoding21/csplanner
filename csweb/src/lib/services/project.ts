@@ -6,6 +6,7 @@ import type {
 	UpdateProjectMilestoneTask,
 	Project,
 	ProjectResults,
+	Resource,
 	Status,
 	UpdateProjectValue,
 	UpdateProjectCost,
@@ -29,11 +30,11 @@ import {
 	GetProjectDocument
 } from '$lib/graphql/generated/sdk';
 import { coalesceToType } from '$lib/forms/helpers';
+import { safeArray } from '$lib/utils/helpers';
 import {
 	basicSchema,
 	valueSchema,
 	costSchema,
-	daciSchema,
 	taskSchema
 } from '$lib/forms/project.validation';
 
@@ -84,7 +85,6 @@ export const getProject = async (id: any): Promise<Project> => {
  */
 export const createProject = async (input: UpdateProject): Promise<CreateProjectResult> => {
 	const client = getApolloClient();
-	console.log(input);
 
 	return client
 		.mutate({ mutation: CreateProjectDocument, variables: { project: input } })
@@ -125,9 +125,6 @@ export const deleteProject = async (id: string): Promise<Status> => {
  */
 export const updateProject = async (input: UpdateProject): Promise<CreateProjectResult> => {
 	const client = getApolloClient();
-
-	input = convertProjectToUpdateProject(input);
-	//input = setExtraPropsForUpdate(input)
 
 	return client
 		.mutate({ mutation: UpdateProjectDocument, variables: { project: input } })
@@ -350,32 +347,6 @@ export const deleteProjectTask = async (
 		});
 };
 
-/*
-const setExtraPropsForUpdate = (project: UpdateProject):UpdateProject => {
-    if(project.projectFeatures && project.projectFeatures.length > 0) {
-        for(let i = 0; i < project.projectFeatures?.length; i++) {
-			if (project.projectFeatures[i] != null) {
-				project.projectFeatures[i].projectID = project.id  
-			}
-        }
-    }
-
-    if(project.projectMilestones && project.projectMilestones.length > 0) {
-        for(let i = 0; i < project.projectMilestones?.length; i++) {
-            for (let j = 0; j < project.projectMilestones[i]?.tasks?.length; j++) {
-                delete project.projectMilestones[i].tasks[j].skills
-                delete project.projectMilestones[i].tasks[j].resources
-
-                project.projectMilestones[i].tasks[j].projectID = project.id
-                project.projectMilestones[i].tasks[j].milestoneID = project.projectMilestones[i]?.id  
-            }
-        }
-    }
-
-    return project
-}
-*/
-
 export const convertProjectToUpdateProject = (project: any): UpdateProject => {
 	const up: UpdateProject = {
 		id: project.id
@@ -384,7 +355,15 @@ export const convertProjectToUpdateProject = (project: any): UpdateProject => {
 	up.projectBasics = coalesceToType<UpdateProjectBasics>(project.projectBasics, basicSchema);
 	up.projectValue = coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema);
 	up.projectCost = coalesceToType<UpdateProjectCost>(project.projectCost, costSchema);
-	up.projectDaci = coalesceToType<UpdateProjectDaci>(project.projectDaci, daciSchema);
+
+	const df = {
+		driverIDs: safeArray(project.projectDaci?.driver?.map((d:Resource) => d?.id) as string[]),
+		approverIDs: safeArray(project.projectDaci?.approver?.map((d:Resource) => d?.id) as string[]),
+		contributorIDs: safeArray(project.projectDaci?.contributor?.map((d:Resource) => d?.id) as string[]),
+		informedIDs: safeArray(project.projectDaci?.informed?.map((d:Resource) => d?.id) as string[])
+	};
+
+	up.projectDaci = df;
 
 	return up;
 };

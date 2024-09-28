@@ -39,29 +39,37 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 	if model.ProjectDaci != nil {
 		if len(model.ProjectDaci.DriverIDs) > 0 {
 			for _, r := range model.ProjectDaci.DriverIDs {
-				resource := getResourceById(*resourceList, *r)
-				proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
+				if r != nil {
+					resource := getResourceById(*resourceList, *r)
+					proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
+				}
 			}
 		}
 
 		if len(model.ProjectDaci.ApproverIDs) > 0 {
 			for _, r := range model.ProjectDaci.ApproverIDs {
-				resource := getResourceById(*resourceList, *r)
-				proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
+				if r != nil {
+					resource := getResourceById(*resourceList, *r)
+					proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
+				}
 			}
 		}
 
 		if len(model.ProjectDaci.ContributorIDs) > 0 {
 			for _, r := range model.ProjectDaci.ContributorIDs {
-				resource := getResourceById(*resourceList, *r)
-				proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
+				if r != nil {
+					resource := getResourceById(*resourceList, *r)
+					proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
+				}
 			}
 		}
 
 		if len(model.ProjectDaci.InformedIDs) > 0 {
 			for _, r := range model.ProjectDaci.InformedIDs {
-				resource := getResourceById(*resourceList, *r)
-				proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
+				if r != nil {
+					resource := getResourceById(*resourceList, *r)
+					proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
+				}
 			}
 		}
 	}

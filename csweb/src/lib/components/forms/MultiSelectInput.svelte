@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
+	import { callIf } from '$lib/utils/helpers';
 	import { Label, MultiSelect, type SelectOptionType } from 'flowbite-svelte';
 
 	interface Props {
@@ -26,9 +27,7 @@
 			items={options}
 			bind:value
 			on:change={() => {
-				if (update) {
-					update();
-				}
+				callIf(update)
 			}}
 		/>
 	</Label>

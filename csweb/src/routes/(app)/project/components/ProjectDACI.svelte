@@ -7,6 +7,7 @@
 	import { Button, type SelectOptionType } from 'flowbite-svelte';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, safeArray } from '$lib/utils/helpers';
+	import type { UpdateProjectDaci } from '$lib/graphql/generated/sdk';
 
 	interface Props {
 		id: string;
@@ -14,17 +15,27 @@
 	}
 	let { id, update }: Props = $props();
 	let errors: any = $state({});
-	let df = $state({
+	let df:UpdateProjectDaci = {
 		driverIDs: [] as string[],
 		approverIDs: [] as string[],
 		contributorIDs: [] as string[],
 		informedIDs: [] as string[]
-	});
+	};
+
+	let dids:string[] = $state([])
+	let aids:string[] = $state([])
+	let cids:string[] = $state([])
+	let iids:string[] = $state([])
 
 	const load = async () => {
 		await getProject(id)
 			.then((proj) => {
 				// daciForm = coalesceToType<UpdateProjectDaci>(proj.projectDaci, daciSchema);
+				dids = safeArray(proj.projectDaci?.driver?.map((d) => d?.id) as string[])
+				aids = safeArray(proj.projectDaci?.approver?.map((d) => d?.id) as string[])
+				cids = safeArray(proj.projectDaci?.contributor?.map((d) => d?.id) as string[])
+				iids = safeArray(proj.projectDaci?.informed?.map((d) => d?.id) as string[])
+
 				df = {
 					driverIDs: safeArray(proj.projectDaci?.driver?.map((d) => d?.id) as string[]),
 					approverIDs: safeArray(proj.projectDaci?.approver?.map((d) => d?.id) as string[]),
@@ -44,10 +55,16 @@
 	const updateDACI = async () => {
 		errors = {};
 
+		df.driverIDs = dids
+		df.approverIDs = aids
+		df.contributorIDs = cids
+		df.informedIDs = iids
+
 		const dfParsed = daciSchema.cast(df);
 		daciSchema
 			.validate(dfParsed, { abortEarly: false })
 			.then(async () => {
+
 				await updateProjectDaci(id, dfParsed)
 					.then((res) => {
 						if (res.status?.success) {
@@ -110,7 +127,7 @@
 			fieldName="Drivers"
 			error={errors.driver}
 			options={resourceOpts}
-			bind:value={df.driverIDs as string[]}
+			bind:value={dids}
 			update={() => callIf(update)}
 		/>
 
@@ -118,7 +135,7 @@
 			fieldName="Approvers"
 			error={errors.approver}
 			options={resourceOpts}
-			bind:value={df.approverIDs as string[]}
+			bind:value={aids}
 			update={() => callIf(update)}
 		/>
 
@@ -126,7 +143,7 @@
 			fieldName="Contributors"
 			error={errors.contributor}
 			options={resourceOpts}
-			bind:value={df.contributorIDs as string[]}
+			bind:value={cids}
 			update={() => callIf(update)}
 		/>
 
@@ -134,7 +151,7 @@
 			fieldName="Informed"
 			error={errors.informed}
 			options={resourceOpts}
-			bind:value={df.informedIDs as string[]}
+			bind:value={iids}
 			update={() => callIf(update)}
 		/>
 

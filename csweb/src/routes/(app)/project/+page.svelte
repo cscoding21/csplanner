@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ButtonGroup, Button } from 'flowbite-svelte';
+	import { ButtonGroup, Button, CardPlaceholder } from 'flowbite-svelte';
 	import { NewspaperOutline } from 'flowbite-svelte-icons';
 	import { findProjects } from '$lib/services/project';
 	import { ProjectActionBar, ProjectCard } from './components';
@@ -41,12 +41,14 @@
 <PageHeading title="Projects Portfolio" />
 
 {#await projects}
-	<div>Loading...</div>
+	<CardPlaceholder />
+	<CardPlaceholder />
+	<CardPlaceholder />
 {:then promiseData}
 	{#if promiseData.results != null}
 		<div class="grid grid-cols-3 gap-3">
 			{#each promiseData.results as p}
-				<ProjectCard project={p} on:updated={refresh} />
+				<ProjectCard project={p} />
 			{/each}
 		</div>
 	{:else}

@@ -32,7 +32,6 @@
 	let saver: any = $state({});
 
 	const refresh = async () => {
-		console.log('refresh');
 		getProject(id).then((p) => {
 			if (project && saver) {
 				setNotSaving(project.updatedAt);
@@ -123,7 +122,7 @@
 			</div>
 			<div class="p-4">
 				<!-- <ProjectTemplateSelector id={id} update={update} /> -->
-				<ProjectMilestones {id} on:updated={update} />
+				<ProjectMilestones {id} {update} />
 			</div>
 		</TabItem>
 
@@ -132,7 +131,7 @@
 				<UsersGroupOutline size="sm" />
 				Team
 			</div>
-			<div class="p-4"><ProjectDACI {id} on:updated={update} /></div>
+			<div class="p-4"><ProjectDACI {id} {update} /></div>
 		</TabItem>
 	</Tabs>
 {/await}
