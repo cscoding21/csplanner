@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount } from "svelte"
-    import { FormErrorMessage } from '$lib/components'
     import Quill from 'quill';
     import type { Delta } from "quill/core";
     import { normalizeID } from "$lib/utils/id";
@@ -16,15 +15,11 @@
     interface Props {
         contents:any;
         attachContext: string;
-        fieldName?: string;
-        error: string;
         quillEditor: any;
     }
     let { 
         contents = $bindable(), 
         attachContext, 
-        fieldName, 
-        error = $bindable(), 
         quillEditor = $bindable()
     }:Props = $props();
 
@@ -121,16 +116,8 @@
 </script>
 
 
-
-<div class="my-1">
-    {#if fieldName}
-	    <label for="input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{fieldName}</label>
-    {/if}
-
-    <div
-        class="mb-2 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-        <div id="{editorID}"></div>
-    </div>
-    
-	<FormErrorMessage message={error} />
+<!-- bg-gray-50 border border-gray-200 dark:bg-gray-700 dark:border-gray-600 -->
+<div
+    class="w-full rounded-lg ">
+    <div id="{editorID}"></div>
 </div>

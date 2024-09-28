@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Button, Modal } from 'flowbite-svelte';
+    import { Modal, ToolbarButton } from 'flowbite-svelte';
+    import { PaperClipOutline, PaperPlaneOutline } from 'flowbite-svelte-icons';
     import { type Comment, type UpdateCommentReply } from '$lib/graphql/generated/sdk';
     import { addCommentReply } from '$lib/services/comment';
 	import type { Snippet } from 'svelte';
@@ -56,15 +57,28 @@
   <Modal bind:open={popupModal} size="lg" autoclose>
     <h3>Reply to comment</h3>
     <QuillDisplay attachContext={comment.id} bind:contents={comment.text} />
-    <div>
-        <QuillEditor attachContext={comment.id} error="" bind:contents={editorContents} quillEditor={qe} />
 
-        <div class="col-span-4">
-            <span class="float-right">
-                <Button color="alternative">Cancel</Button>
-                <Button class="mr-2" on:click={postReply}>Reply</Button>
-            </span>
-            <br class="clear-both" />
+    <div>
+    <form>
+        <label for="chat" class="sr-only">Your message</label>
+        <div class="flex px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+            <div>
+                <ToolbarButton color="dark" class="text-gray-500 dark:text-gray-400">
+                <PaperClipOutline class="w-6 h-6" />
+                <span class="sr-only">Upload image</span>
+                </ToolbarButton>
+            </div>
+            <div class="w-full">
+                <QuillEditor attachContext={comment.id} bind:contents={editorContents} quillEditor={qe} />
+            </div>
+            <div>
+                <ToolbarButton type="submit" color="blue" class="rounded-full text-primary-600 dark:text-primary-500" onclick={postReply}>
+                <PaperPlaneOutline class="w-6 h-6 rotate-45" />
+                <span class="sr-only">Send message</span>
+                </ToolbarButton>
+            </div>
         </div>
+    </form>
     </div>
+
   </Modal>

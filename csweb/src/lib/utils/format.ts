@@ -45,11 +45,11 @@ const getDateDisplay = (input: Date): string => {
 	const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
 
 	if (input.toLocaleDateString() === today.toLocaleDateString()) {
-		return 'Today';
+		return '';
 	}
 
 	if (input.toLocaleDateString() === yesterday.toLocaleDateString()) {
-		return 'Yesterday';
+		return 'yesterday';
 	}
 
 	return input.toLocaleDateString();

@@ -836,6 +836,8 @@ export const CommentFragmentFragmentDoc = gql`
     id
     text
     isEdited
+    createdAt
+    updatedAt
     user {
       ...userFragment
     }

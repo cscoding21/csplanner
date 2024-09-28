@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Avatar, Popover } from 'flowbite-svelte';
+    import { Avatar, Popover, ToolbarButton } from 'flowbite-svelte';
+    import { PaperPlaneOutline, PaperClipOutline } from 'flowbite-svelte-icons';
     import type { Comment, User } from "$lib/graphql/generated/sdk";
     import { toggleCommentEmote, updateComment } from "$lib/services/comment";
     import { authService } from "$lib/services/auth";
@@ -19,11 +20,13 @@
         comment: Comment
         projectID: string
         update: Function
+        canReply: boolean
     }
     let { 
         comment, 
         projectID, 
-        update
+        update,
+        canReply
     }:Props = $props()
 
     const as = authService()
@@ -61,7 +64,6 @@
             if(res.status?.success) {
                 editMode = false
 
-                console.log("updatedText", res.comment.text)
                 editorContent = res.comment.text
 
                 callIf(update)
@@ -198,9 +200,11 @@
                 </div>
             </Popover>
 
+            {#if canReply}
             <ReplyToComment comment={comment} update={update}>
                 <ReplyOutline />
             </ReplyToComment>
+            {/if}
 
             {#if userCreatedComment}
             <button id="user_{normalizeID(id)}" class="inline-flex items-center text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -224,8 +228,28 @@
     </footer>
 
     {#if editMode }
-        <QuillEditor error={""} attachContext={id} bind:contents={editorContent} bind:quillEditor={qe} />
-        <button onclick={() => updateComm() }>Save</button>
+        <div>
+            <form>
+                <label for="chat" class="sr-only">Your message</label>
+                <div class="flex px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <div>
+                        <ToolbarButton color="dark" class="text-gray-500 dark:text-gray-400">
+                        <PaperClipOutline class="w-6 h-6" />
+                        <span class="sr-only">Upload image</span>
+                        </ToolbarButton>
+                    </div>
+                    <div class="w-full">
+                        <QuillEditor attachContext={comment.id} bind:contents={editorContent} quillEditor={qe} />
+                    </div>
+                    <div>
+                        <ToolbarButton type="submit" color="blue" class="rounded-full text-primary-600 dark:text-primary-500" onclick={updateComm}>
+                        <PaperPlaneOutline class="w-6 h-6 rotate-45" />
+                        <span class="sr-only">Send message</span>
+                        </ToolbarButton>
+                    </div>
+                </div>
+            </form>
+            </div>
     {:else}
         <QuillDisplay attachContext={id} bind:contents={editorContent} />
     {/if}

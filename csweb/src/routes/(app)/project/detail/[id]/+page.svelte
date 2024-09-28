@@ -178,13 +178,9 @@
 			</Card>
 		</div>
 
-		<div class="col-span-4">
+		<div class="col-span-4 h-screen">
 			<Card size="xl">
-				<SectionHeading>Comments / Activity</SectionHeading>
 				<CommentList id={id} />
-				 <div class="mb-6 border-b border-gray-200 pb-4">
-				 <!-- <QuillEditor getContent={() => {}} contents={""} attachContext={id} error="" /> -->
-				</div>
 			</Card>
 		</div>
 	</div>

@@ -12,6 +12,8 @@ fragment commentFragment on Comment {
 		id
 		text
 		isEdited
+		createdAt
+		updatedAt	
 		user {
 			...userFragment
 		}
