@@ -9,7 +9,7 @@
 	let { pageDetail = $bindable(), children }: Props = $props();
 </script>
 
-<div class="mb-4 grid w-full grid-cols-4">
+<div class="grid w-full grid-cols-4">
 	<div class="col-span-2 justify-start p-2">
 		<Breadcrumb aria-label="Solid background breadcrumb example">
 			<BreadcrumbItem href="/" home>Home</BreadcrumbItem>

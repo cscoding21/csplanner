@@ -6,7 +6,7 @@
 	interface Props {
 		fieldName: string;
 		error: string;
-		value: string;
+		value: number;
 		update?: Function;
 	}
 	let { fieldName, error, value = $bindable(), update }: Props = $props();

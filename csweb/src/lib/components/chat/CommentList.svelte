@@ -1,18 +1,20 @@
 <script lang="ts">
-    import { Button, Toolbar, ToolbarButton } from "flowbite-svelte";
+    import { ToolbarButton } from "flowbite-svelte";
     import { PaperClipOutline, PaperPlaneOutline } from "flowbite-svelte-icons";
-    import { CommentItem } from "$lib/components";
+    import { CommentItem, NoResults } from "$lib/components";
     import { findProjectComments, addComment  } from "$lib/services/comment";
     import type { Comment } from "$lib/graphql/generated/sdk";
 	import QuillEditor from "../forms/QuillEditor.svelte";
-    
+    import { pluralize } from "$lib/utils/format";
+    import type { AssociativeArray } from '$lib/types/array'    
 
     interface Props {
         id: string
     }
     let { id }:Props = $props()
 
-    let showReplies:[] = $state([])
+    // @ts-expect-error - TS parser doesn't like the the instantiation is "never"
+    let showReplies:AssociativeArray = $state([])
     let qe:any;
 
     const update = async () => {
@@ -51,30 +53,49 @@
     }
 </script>
 
+<!-- h-full -->
+<div class="flex flex-col justify-end w-full">
 {#await loadPage()}
     <span>Loading...</span>
 {:then}
-<div class="flex flex-col justify-between w-full h-full content-end">
+<div class="grow scrollbar overflow-y-auto">
+    {#if comments && comments.length > 0}
     {#each comments as comment(comment.id)}
-        <div class="px-6 pt-6 mb-4 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+        <div class="px-2 pt-4 mb-2 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
             <div class="mb-2">
                 <CommentItem {comment} projectID={id} update={update} canReply={true} />
             </div>
             {#if comment.replies && comment.replies.length > 0}
-                
-                {#if showReplies }
-                <div class="pl-12">
+                {#if showReplies[comment.id] }
+                <div class="pl-12">  
                     {#each comment.replies as reply(reply.id)}
                         <CommentItem comment={reply} projectID={id} update={update} canReply={false} />
                     {/each}
                 </div>
+                <button class="text-xs ml-2 mb-2 flex" onclick={() => showReplies[comment.id] = false}>
+                    <svg class="mr-1.5 w-3.5 h-3.5 mt-.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
+                    </svg> 
+                    Hide {comment.replies.length} {pluralize("reply", comment.replies.length)}
+                </button>
+                {:else}
+                    <button class="text-xs ml-2 mb-2 flex" onclick={() => showReplies[comment.id] = true}>
+                        <svg class="mr-1.5 w-3.5 h-3.5 mt-.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
+                        </svg> 
+                        Show {comment.replies.length} {pluralize("reply", comment.replies.length)}
+                    </button>
                 {/if}
+                
             {/if}
         </div>
     {/each}
+    {:else}
+        <NoResults title="No comments yet..." newUrl="">Jump in and get the discussion started.</NoResults>
+    {/if}
 </div>
 
-<div>
+<div class="mt-2">
 <form>
     <label for="chat" class="sr-only">Your message</label>
     <div class="flex px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-700">
@@ -98,3 +119,4 @@
 </div>
 
 {/await}
+</div>

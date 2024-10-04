@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { findAllResources } from '$lib/services/resource';
 	import { MultiSelectInput, SectionHeading } from '$lib/components';
-	import { daciSchema } from '$lib/forms/project.validation';
+	import { daciSchema, getDefaultProject } from '$lib/forms/project.validation';
 	import { getProject, updateProjectDaci } from '$lib/services/project';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { Button, type SelectOptionType } from 'flowbite-svelte';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, safeArray } from '$lib/utils/helpers';
-	import type { UpdateProjectDaci } from '$lib/graphql/generated/sdk';
+	import type { UpdateProjectDaci, Project } from '$lib/graphql/generated/sdk';
 
 	interface Props {
 		id: string;
 		update?: Function;
 	}
 	let { id, update }: Props = $props();
+
+	let project:Project = $state(getDefaultProject() as Project)
 	let errors: any = $state({});
 	let df:UpdateProjectDaci = {
 		driverIDs: [] as string[],
@@ -27,8 +29,8 @@
 	let cids:string[] = $state([])
 	let iids:string[] = $state([])
 
-	const load = async () => {
-		await getProject(id)
+	const load = async (): Promise<Project> => {
+		return await getProject(id)
 			.then((proj) => {
 				// daciForm = coalesceToType<UpdateProjectDaci>(proj.projectDaci, daciSchema);
 				dids = safeArray(proj.projectDaci?.driver?.map((d) => d?.id) as string[])
@@ -42,6 +44,8 @@
 					contributorIDs: safeArray(proj.projectDaci?.contributor?.map((d) => d?.id) as string[]),
 					informedIDs: safeArray(proj.projectDaci?.informed?.map((d) => d?.id) as string[])
 				};
+
+				return proj
 			})
 			.catch((err) => {
 				addToast({
@@ -49,6 +53,8 @@
 					dismissible: true,
 					type: 'error'
 				});
+
+				return err
 			});
 	};
 
@@ -110,18 +116,22 @@
 				})) as SelectOptionType<string>[];
 			})
 			.then(() => {
-				load();
+				load().then(p => {
+					project = p
+				});
 			});
 	};
 
 	let resourceOpts = $state([] as SelectOptionType<string>[]);
 </script>
 
-<SectionHeading>DACI</SectionHeading>
-
 {#await loadPage()}
 	Loading...
 {:then promiseData}
+	{#if project}
+		<SectionHeading>DACI: {project.projectBasics.name}</SectionHeading>
+	{/if}
+
 	{#if df}
 		<MultiSelectInput
 			fieldName="Drivers"

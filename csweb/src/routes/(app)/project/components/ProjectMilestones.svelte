@@ -1,18 +1,17 @@
 <script lang="ts">
 	import type { ProjectMilestone, Skill, Project } from '$lib/graphql/generated/sdk';
-	import { P, Button, Hr, Modal } from 'flowbite-svelte';
+	import { Hr } from 'flowbite-svelte';
 	import {
 		ChevronDoubleRightOutline,
 		ChevronRightOutline,
-		EditOutline,
-		TrashBinOutline
 	} from 'flowbite-svelte-icons';
-	import { SectionHeading, ResourceList } from '$lib/components';
+	import { SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/project';
-	import { ProjectTaskForm, DeleteProjectTask, ProjectTemplateSelector } from '.';
+	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector } from '.';
 	import { formatToCommaSepList } from '$lib/utils/format';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
+	import { getDefaultProject } from '$lib/forms/project.validation';
 
 	interface Props {
 		id: string;
@@ -21,9 +20,8 @@
 	let { id, update }: Props = $props();
 
 	let modalState: boolean[] = $state([]);
-	//let modalState:Map<string, boolean> = new Map<string, boolean>()
 	let hasMilestones: boolean = $state(true);
-	let project = $state({} as Project);
+	let project = $state(getDefaultProject() as Project);
 	let currentMilestone = $state({} as ProjectMilestone);
 
 	const load = async (id: string, milestoneID: string) => {
@@ -98,15 +96,15 @@
 			})
 			.then((r) => (currentMilestone = setCurrentMilestone('')));
 	};
-
-	loadPage();
 </script>
 
-<SectionHeading>Implementation Plan & Milestones</SectionHeading>
-
-{#await loadPage}
+{#await loadPage()}
 	Loading...
 {:then promiseData}
+	{#if project}
+		<SectionHeading>Implementation Plan & Milestones: {project.projectBasics.name}</SectionHeading>
+	{/if}
+
 	{#if project.projectMilestones && project.projectMilestones.length > 0}
 		<div class="grid grid-cols-4 gap-8">
 			<div class="col-span-1">
@@ -137,60 +135,11 @@
 			<div class="col-span-3">
 				{#if currentMilestone.tasks}
 					{#each currentMilestone.tasks as task (task.id)}
-						{@const taskID = task.id}
-						<div>
-							<span class="text-gray-100">{task.name}</span>
-							<P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-100 float-right"
-								>{task.hourEstimate} hours</P
-							>
-						</div>
-						<div>
-							<div class="text-sm text-gray-400">{task.description}</div>
-							<div class="my-2 text-sm text-gray-100">
-								Skills Required: {getRequiredSkillsDisplay(task)}
-							</div>
-
-							<div class="pl-4">
-								<ResourceList maxSize={4} size="xs" resources={task.resources || []} />
-							</div>
-						</div>
-						<div class="mt-2">
-							<Button
-								size="xs"
-								color="dark"
-								on:click={() => {
-									modalState[taskID] = true;
-								}}
-							>
-								<EditOutline size="xs" class="mr-2" />
-								Edit
-							</Button>
-							<DeleteProjectTask
-								name={task.name}
-								size="xs"
-								projectID={id}
-								milestoneID={currentMilestone.id}
-								on:updated={refresh}
-								id={task.id}
-							>
-								<TrashBinOutline size="xs" class="mr-2" />
-								Delete
-							</DeleteProjectTask>
-						</div>
-
-						<Modal bind:open={modalState[taskID]} size="xl" autoclose={false}>
-							<ProjectTaskForm
-								{task}
-								milestoneID={currentMilestone.id}
-								projectID={id}
-								update={refresh}
-							/>
-						</Modal>
-						<br class="clear-both" />
+						<ProjectTaskDisplay projectID={id} milestoneID={currentMilestone.id} update={() => refresh()} {task} />
 					{/each}
 				{/if}
 				<Hr />
-				<ProjectTaskForm milestoneID={currentMilestone.id} projectID={id} on:updated={refresh} />
+				<ProjectTaskForm milestoneID={currentMilestone.id} projectID={id} update={() => refresh()} />
 			</div>
 		</div>
 	{:else}

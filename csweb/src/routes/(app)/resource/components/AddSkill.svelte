@@ -73,11 +73,9 @@
 				skillForm.resourceID = resourceID;
 			});
 	};
-
-	loadPage();
 </script>
 
-{#await loadPage}
+{#await loadPage()}
 	<span>Loading...</span>
 {:then data}
 	<div class="grid grid-cols-5 gap-5">

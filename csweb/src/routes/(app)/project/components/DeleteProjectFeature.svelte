@@ -38,7 +38,7 @@
 	};
 </script>
 
-<Button {size} color="dark" on:click={() => (popupModal = true)}>
+<Button {size} color="dark" onclick={() => (popupModal = true)}>
 	{@render children()}
 </Button>
 
@@ -48,7 +48,7 @@
 		<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
 			Are you sure you want to delete the feature, "{name}"?
 		</h3>
-		<Button color="red" class="mr-2" on:click={() => delFeature(id)}>Yes, I'm sure</Button>
+		<Button color="red" class="mr-2" onclick={() => delFeature(id)}>Yes, I'm sure</Button>
 		<Button color="alternative">No, cancel</Button>
 	</div>
 </Modal>

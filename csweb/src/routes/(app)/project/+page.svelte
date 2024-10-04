@@ -38,8 +38,7 @@
 	</ButtonGroup>
 </ProjectActionBar>
 
-<PageHeading title="Projects Portfolio" />
-
+<div class="p-4">
 {#await projects}
 	<CardPlaceholder />
 	<CardPlaceholder />
@@ -55,3 +54,4 @@
 		<NoResults title="No Projects" newUrl="/resource/new">No projects...create one now.</NoResults>
 	{/if}
 {/await}
+</div>

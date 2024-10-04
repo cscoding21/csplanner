@@ -13,14 +13,19 @@
 		id: string;
 		update: Function;
 	}
+
 	let { id, update }: Props = $props();
+	let project:Project = $state(getDefaultProject() as Project)
+
 	let errors: any = $state({ ongoing: '', blendedRate: '' });
 
-	const load = async () => {
-		await getProject(id)
+	const load = async ():Promise<Project> => {
+		return await getProject(id)
 			.then((proj) => {
 				project = proj;
 				costForm = coalesceToType<UpdateProjectCost>(proj.projectCost, costSchema);
+
+				return proj
 			})
 			.catch((err) => {
 				addToast({
@@ -28,6 +33,8 @@
 					dismissible: true,
 					type: 'error'
 				});
+
+				return err
 			});
 	};
 
@@ -74,20 +81,20 @@
 	};
 
 	const loadPage = async () => {
-		load().then((r) => r);
+		load().then(p => {
+			project = p
+		});
 	};
 
 	let costForm = $state(getDefaultProject().projectCost);
-
-	// @ts-ignore
-	let project: Project = $state({ projectCost: { initialCost: 0, hourEstimate: 0 } });
 </script>
-
-<SectionHeading>Estimated Implementation Cost</SectionHeading>
 
 {#await loadPage()}
 	Loading...
 {:then promiseData}
+	{#if project} 
+		<SectionHeading>Estimated Implementation Cost: {project.projectBasics.name}</SectionHeading>
+	{/if}
 	{#if costForm}
 		<Heading tag="h6">Project Implementation Cost</Heading>
 		<p class="text-gray-500 dark:text-gray-400">

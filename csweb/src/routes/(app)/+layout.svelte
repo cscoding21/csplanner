@@ -44,6 +44,7 @@
 	});
 </script>
 
+<div class="w-full h-screen">
 <Navbar fluid={true}>
 	<NavBrand href="/">
 		<span class="self-center whitespace-nowrap text-3xl font-semibold dark:text-white"
@@ -112,8 +113,12 @@
 	</NavUl>
 </Navbar>
 
-<div class="p-4">
+<!-- py-2 px-2 -->
+<div class="">
 	{@render children()}
 </div>
 
+</div>
+
 <PageMessages />
+

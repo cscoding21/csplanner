@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { Button, Hr, Modal } from 'flowbite-svelte';
+	import { Hr } from 'flowbite-svelte';
 	import { NoResults, SectionHeading } from '$lib/components';
-	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
-	import { getDefaultProject } from '$lib/forms/project.validation';
-	import { ProjectFeatureDisplay, DeleteProjectFeature, ProjectFeatureForm } from '.';
+	import { ProjectFeatureDisplay, ProjectFeatureForm } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
+	import type { Project } from '$lib/graphql/generated/sdk';
+	import { getDefaultProject } from '$lib/forms/project.validation';
 
 	interface Props {
 		id: string;
@@ -14,20 +14,21 @@
 
 	let { id, update }: Props = $props();
 
-	function refresh() {
-		//---close all modals
-		modalState = [];
+	let project:Project = $state(getDefaultProject() as Project)
 
-		load();
-		update();
+	function refresh() {
+		console.log('refreshing')
+		load().then(p => {
+			project = p
+
+			update();
+		})
 	}
 
-	let modalState: boolean[] = $state([]);
-
-	const load = async () => {
-		await getProject(id)
+	const load = async ():Promise<Project> => {
+		return await getProject(id)
 			.then((proj) => {
-				project = proj;
+				return proj
 			})
 			.catch((err) => {
 				addToast({
@@ -35,53 +36,32 @@
 					dismissible: true,
 					type: 'error'
 				});
+
+				return err
 			});
 	};
 
-	// @ts-ignore
-	let project: Project = $state(getDefaultProject());
-
 	const loadPage = async () => {
-		load().then((r) => r);
+        load().then(p => {
+            project = p
+        });
 	};
 
-	loadPage();
 </script>
 
-<SectionHeading>Features</SectionHeading>
+{#await loadPage()}
+	loading...
+{:then promiseData} 
+	
+{#if project}
+<SectionHeading>Features: {project.projectBasics.name}</SectionHeading>
 
 <div class="mb-8">
 	{#if project.projectFeatures && project.projectFeatures.length > 0}
 		{#each project.projectFeatures as feature (feature.id)}
 			{#if feature && feature.id}
-				<ProjectFeatureDisplay {feature} />
-				<div class="mb-4 mt-2">
-					<Button
-						size="xs"
-						color="dark"
-						on:click={() => {
-							modalState[feature.id] = true;
-						}}
-					>
-						<EditOutline size="xs" class="mr-2" />
-						Edit
-					</Button>
-					<DeleteProjectFeature
-						id={feature.id || ''}
-						name={feature.name}
-						projectID={id}
-						size="xs"
-						update={refresh}
-					>
-						<TrashBinOutline size="xs" class="mr-2" />
-						Delete
-					</DeleteProjectFeature>
-				</div>
-
-				<Modal bind:open={modalState[feature.id]} size="xl">
-					<ProjectFeatureForm projectID={id} {feature} update={refresh} />
-				</Modal>
-				<Hr hrClass="h-px mt-2 mb-6 bg-gray-200 border-0 dark:bg-gray-700" />
+				<ProjectFeatureDisplay {feature} update={refresh} projectID={project.id as string} />
+				<Hr hrClass="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
 			{/if}
 		{/each}
 	{:else}
@@ -91,4 +71,7 @@
 	{/if}
 </div>
 
-<ProjectFeatureForm projectID={id} feature={undefined} update={refresh} />
+<ProjectFeatureForm projectID={id} feature={undefined} update={() => refresh()} />
+
+{/if}
+{/await}

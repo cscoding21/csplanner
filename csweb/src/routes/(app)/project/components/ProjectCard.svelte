@@ -13,7 +13,7 @@
 
 <Card size="xl">
 	<Heading tag="h6">
-		<a href="project/workbook/{project.id}">
+		<a href="project/detail/{project.id}#snapshot">
 			{project.projectBasics?.name}
 		</a>
 		<Badge color="blue">{project.projectBasics?.status}</Badge>

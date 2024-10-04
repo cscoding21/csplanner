@@ -64,6 +64,7 @@
 	}
 </script>
 
+<div class="p-4">
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
@@ -78,8 +79,6 @@
 				</ButtonGroup>
 			{/if}
 		</ResourceActionBar>
-
-		<PageHeading title={resourcePromise.name} />
 
 		<div class="grid grid-cols-2">
 			<div class="mr-4">
@@ -167,7 +166,7 @@
 
 					{#if !resourcePromise.isBot}
 						<hr class="my-4" />
-						<AddSkill resourceID={id} update={() => refresh()} />
+						<AddSkill resourceID={id} update={refresh} />
 					{/if}
 				</Card>
 			</div>
@@ -181,3 +180,5 @@
 		</div>
 	{/if}
 {/await}
+
+</div>

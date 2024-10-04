@@ -1,6 +1,7 @@
 export { default as DeleteProject } from './DeleteProject.svelte';
 export { default as DeleteProjectFeature } from './DeleteProjectFeature.svelte';
 export { default as DeleteProjectTask } from './DeleteProjectTask.svelte';
+export { default as NavBar } from './NavBar.svelte';
 export { default as ProjectActionBar } from './ProjectActionBar.svelte';
 export { default as ProjectBasics } from './ProjectBasics.svelte';
 export { default as ProjectCard } from './ProjectCard.svelte';
@@ -10,6 +11,8 @@ export { default as ProjectFeatureDisplay } from './ProjectFeatureDisplay.svelte
 export { default as ProjectFeatureForm } from './ProjectFeatureForm.svelte';
 export { default as ProjectFeatures } from './ProjectFeatures.svelte';
 export { default as ProjectMilestones } from './ProjectMilestones.svelte';
+export { default as ProjectSnapshot } from './ProjectSnapshot.svelte';
+export { default as ProjectTaskDisplay } from './ProjectTaskDisplay.svelte';
 export { default as ProjectTaskForm } from './ProjectTaskForm.svelte';
 export { default as ProjectTemplateSelector } from './ProjectTemplateSelector.svelte';
 export { default as ProjectValue } from './ProjectValue.svelte';

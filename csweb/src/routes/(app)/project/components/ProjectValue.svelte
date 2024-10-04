@@ -11,7 +11,7 @@
 	} from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
-	import type { UpdateProjectValue } from '$lib/graphql/generated/sdk';
+	import type { UpdateProjectValue, Project } from '$lib/graphql/generated/sdk';
 	import { getList } from '$lib/services/list';
 
 	let errors: any = $state({});
@@ -22,10 +22,14 @@
 	}
 	let { id, update }: Props = $props();
 
-	const load = async () => {
-		await getProject(id)
+	let project:Project = $state(getDefaultProject() as Project)
+
+	const load = async ():Promise<Project> => {
+		return await getProject(id)
 			.then((proj) => {
 				valueForm = coalesceToType<UpdateProjectValue>(proj.projectValue, valueSchema);
+
+				return proj
 			})
 			.catch((err) => {
 				addToast({
@@ -33,6 +37,8 @@
 					dismissible: true,
 					type: 'error'
 				});
+
+				return err
 			});
 	};
 
@@ -85,21 +91,24 @@
 				fundingSourceOpts = findSelectOptsFromList(l);
 			})
 			.then(() => {
-				load().then((r) => r);
+				load().then(p => {
+					project = p
+				});
 			});
 	};
-
-	loadPage();
 
 	let valueForm = $state(getDefaultProject().projectValue);
 	let fundingSourceOpts = $state([] as SelectOptionType<string>[]);
 </script>
 
-<SectionHeading>Value Proposition</SectionHeading>
 
-{#await loadPage}
+{#await loadPage()}
 	Loading...
 {:then promiseData}
+	{#if project}
+	<SectionHeading>Value Proposition: {project.projectBasics.name}</SectionHeading>
+	{/if}
+
 	{#if valueForm}
 		<SelectInput
 			bind:value={valueForm.fundingSource as string}
@@ -110,10 +119,10 @@
 		/>
 
 		<PercentInput
-			bind:value={valueForm.discountRate}
+			bind:value={valueForm.discountRate as number}
 			fieldName="Discount Rate"
 			error={errors.discountRate}
-			on:updated={() => callIf(update)}
+			update={() => callIf(update)}
 		/>
 
 		<Heading tag="h6">Five Year Forecast</Heading>
@@ -122,35 +131,35 @@
 			bind:value={valueForm.yearOneValue as number}
 			fieldName="Estimated Year One Returns"
 			error={errors.yearOneValue}
-			on:updated={() => callIf(update)}
+			update={() => callIf(update)}
 		/>
 
 		<MoneyInput
 			bind:value={valueForm.yearTwoValue as number}
 			fieldName="Estimated Year Two Returns"
 			error={errors.yearTwoValue}
-			on:updated={() => callIf(update)}
+			update={() => callIf(update)}
 		/>
 
 		<MoneyInput
 			bind:value={valueForm.yearThreeValue as number}
 			fieldName="Estimated Year Tnree Returns"
 			error={errors.yearThreeValue}
-			on:updated={() => callIf(update)}
+			update={() => callIf(update)}
 		/>
 
 		<MoneyInput
 			bind:value={valueForm.yearFourValue as number}
 			fieldName="Estimated Year Four Returns"
 			error={errors.yearFourValue}
-			on:updated={() => callIf(update)}
+			update={() => callIf(update)}
 		/>
 
 		<MoneyInput
 			bind:value={valueForm.yearFiveValue as number}
 			fieldName="Estimated Year Five Returns"
 			error={errors.yearFiveValue}
-			on:updated={() => callIf(update)}
+			update={() => callIf(update)}
 		/>
 
 		<div class="col-span-4">

@@ -9,11 +9,50 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"fmt"
+	"time"
 )
 
 // CurrentTime is the resolver for the currentTime field.
 func (r *subscriptionResolver) CurrentTime(ctx context.Context) (<-chan *idl.TimeResponse, error) {
-	panic(fmt.Errorf("not implemented: CurrentTime - currentTime"))
+	//https://gqlgen.com/recipes/subscriptions/
+	// First you'll need to `make()` your channel. Use your type here!
+	ch := make(chan *idl.TimeResponse)
+
+	// You can (and probably should) handle your channels in a central place outside of `schema.resolvers.go`.
+	// For this example we'll simply use a Goroutine with a simple loop.
+	go func() {
+		// Handle deregistration of the channel here. Note the `defer`
+		defer close(ch)
+
+		for {
+			// In our example we'll send the current time every second.
+			time.Sleep(1 * time.Second)
+			fmt.Println("Tick")
+
+			// Prepare your object.
+			currentTime := time.Now()
+			t := &idl.TimeResponse{
+				UnixTime:  int(currentTime.Unix()),
+				TimeStamp: currentTime.Format(time.RFC3339),
+			}
+
+			// The subscription may have got closed due to the client disconnecting.
+			// Hence we do send in a select block with a check for context cancellation.
+			// This avoids goroutine getting blocked forever or panicking,
+			select {
+			case <-ctx.Done(): // This runs when context gets cancelled. Subscription closes.
+				fmt.Println("Subscription Closed")
+				// Handle deregistration of the channel here. `close(ch)`
+				return // Remember to return to end the routine.
+
+			case ch <- t: // This is the actual send.
+				// Our message went through, do nothing
+			}
+		}
+	}()
+
+	// We return the channel and no error.
+	return ch, nil
 }
 
 // NotificationUpdate is the resolver for the notificationUpdate field.

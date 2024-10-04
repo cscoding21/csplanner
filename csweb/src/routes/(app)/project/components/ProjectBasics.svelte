@@ -16,6 +16,8 @@
 	}
 	let { id, update }: Props = $props();
 
+	let project:Project = $state(getDefaultProject() as Project)
+
 	const load = async (): Promise<Project> => {
 		return await getProject(id)
 			.then((proj) => {
@@ -84,23 +86,25 @@
 				})) as SelectOptionType<string>[];
 			})
 			.then(() => {
-				load();
+				load().then(p => {
+					project = p
+				});
 			});
 	};
 
 	let errors: any = $state({ name: '', ownerID: '', description: '' });
 	let resourceOpts = $state([] as SelectOptionType<string>[]);
 	let basicsForm = $state(getDefaultProject().projectBasics);
-
-	loadPage();
 </script>
 
-<SectionHeading>Basics</SectionHeading>
-
-{#await loadPage}
+{#await loadPage()}
 	Loading...
 {:then promiseData}
-	{#if basicsForm}
+	{#if project}
+		<SectionHeading>Basics: {project.projectBasics.name}</SectionHeading>
+	{/if}
+
+	{#if basicsForm}	
 		<TextInput
 			bind:value={basicsForm.name}
 			fieldName="Project Name"

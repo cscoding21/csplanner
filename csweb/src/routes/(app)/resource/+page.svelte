@@ -31,6 +31,7 @@
 
 <PageHeading title="Resource Roster" />
 
+<div class="p-4">
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
@@ -46,3 +47,4 @@
 		</NoResults>
 	{/if}
 {/await}
+</div>

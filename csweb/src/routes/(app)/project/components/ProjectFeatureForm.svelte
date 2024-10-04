@@ -6,9 +6,10 @@
 	import { onMount } from 'svelte';
 	import { updateProjectFeature } from '$lib/services/project';
 	import { is } from '$lib/utils/check';
-	import type { UpdateProjectFeature } from '$lib/graphql/generated/sdk';
+	import type { ProjectFeature } from '$lib/graphql/generated/sdk';
 	import { TextAreaInput } from '$lib/components';
 	import { addToast } from '$lib/stores/toasts';
+	import { callIf } from '$lib/utils/helpers';
 
 	onMount(async () => {
 		if (feature && feature.id) {
@@ -21,11 +22,16 @@
 
 	interface Props {
 		id?: string;
-		feature: UpdateProjectFeature | undefined;
+		feature: ProjectFeature | undefined;
 		projectID: string;
-		update: Function;
+		update?: Function;
 	}
-	let { id, feature, projectID, update }: Props = $props();
+	let { 
+		id, 
+		feature = $bindable(), 
+		projectID, 
+		update 
+	}: Props = $props();
 
 	let errors: any = $state({});
 
@@ -52,7 +58,7 @@
 						});
 
 						featureForm = getNewFeature(projectID);
-						update();
+						callIf(update);
 					} else {
 						addToast({
 							message: 'Error updating project features: ' + res.status?.message,
