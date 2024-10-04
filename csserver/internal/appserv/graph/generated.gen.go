@@ -370,16 +370,17 @@ type ComplexityRoot struct {
 	}
 
 	Resource struct {
-		CreatedAt    func(childComplexity int) int
-		ID           func(childComplexity int) int
-		IsBot        func(childComplexity int) int
-		Name         func(childComplexity int) int
-		ProfileImage func(childComplexity int) int
-		Role         func(childComplexity int) int
-		Skills       func(childComplexity int) int
-		Type         func(childComplexity int) int
-		User         func(childComplexity int) int
-		UserEmail    func(childComplexity int) int
+		AnnualizedCost func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		ID             func(childComplexity int) int
+		InitialCost    func(childComplexity int) int
+		Name           func(childComplexity int) int
+		ProfileImage   func(childComplexity int) int
+		Role           func(childComplexity int) int
+		Skills         func(childComplexity int) int
+		Type           func(childComplexity int) int
+		User           func(childComplexity int) int
+		UserEmail      func(childComplexity int) int
 	}
 
 	ResourceResults struct {
@@ -2118,6 +2119,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RelateArtifact.LinkID(childComplexity), true
 
+	case "Resource.annualizedCost":
+		if e.complexity.Resource.AnnualizedCost == nil {
+			break
+		}
+
+		return e.complexity.Resource.AnnualizedCost(childComplexity), true
+
 	case "Resource.createdAt":
 		if e.complexity.Resource.CreatedAt == nil {
 			break
@@ -2132,12 +2140,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.ID(childComplexity), true
 
-	case "Resource.isBot":
-		if e.complexity.Resource.IsBot == nil {
+	case "Resource.initialCost":
+		if e.complexity.Resource.InitialCost == nil {
 			break
 		}
 
-		return e.complexity.Resource.IsBot(childComplexity), true
+		return e.complexity.Resource.InitialCost(childComplexity), true
 
 	case "Resource.name":
 		if e.complexity.Resource.Name == nil {
@@ -3099,8 +3107,9 @@ input UpdateProjectMilestoneTask {
   userEmail: String
   user: User
   profileImage: String
+  initialCost: Float
+  annualizedCost: Float
   skills: [Skill!]
-  isBot: Boolean!
   createdAt: Time
 }
 
@@ -3119,6 +3128,8 @@ input UpdateResource {
   role: String
   userID: String
   email: String
+  initialCost: Float
+  annualizedCost: Float
   profileImage: String
   skills: [UpdateSkill!]
 }
@@ -4162,10 +4173,12 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -6177,10 +6190,12 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -10410,10 +10425,12 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -10473,10 +10490,12 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -10536,10 +10555,12 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -10599,10 +10620,12 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -11610,10 +11633,12 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -13745,10 +13770,12 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -14406,6 +14433,88 @@ func (ec *executionContext) fieldContext_Resource_profileImage(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Resource_initialCost(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_initialCost(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InitialCost, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_initialCost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Resource_annualizedCost(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_annualizedCost(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AnnualizedCost, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_annualizedCost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Resource_skills(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Resource_skills(ctx, field)
 	if err != nil {
@@ -14450,50 +14559,6 @@ func (ec *executionContext) fieldContext_Resource_skills(_ context.Context, fiel
 				return ec.fieldContext_Skill_proficiency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Skill", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Resource_isBot(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Resource_isBot(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsBot, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Resource_isBot(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Resource",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -14689,10 +14754,12 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_user(ctx, field)
 			case "profileImage":
 				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
 			case "skills":
 				return ec.fieldContext_Resource_skills(ctx, field)
-			case "isBot":
-				return ec.fieldContext_Resource_isBot(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			}
@@ -19232,7 +19299,7 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "type", "name", "role", "userID", "email", "profileImage", "skills"}
+	fieldsInOrder := [...]string{"id", "type", "name", "role", "userID", "email", "initialCost", "annualizedCost", "profileImage", "skills"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19281,6 +19348,20 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 				return it, err
 			}
 			it.Email = data
+		case "initialCost":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("initialCost"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InitialCost = data
+		case "annualizedCost":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("annualizedCost"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AnnualizedCost = data
 		case "profileImage":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileImage"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -21922,13 +22003,12 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Resource_user(ctx, field, obj)
 		case "profileImage":
 			out.Values[i] = ec._Resource_profileImage(ctx, field, obj)
+		case "initialCost":
+			out.Values[i] = ec._Resource_initialCost(ctx, field, obj)
+		case "annualizedCost":
+			out.Values[i] = ec._Resource_annualizedCost(ctx, field, obj)
 		case "skills":
 			out.Values[i] = ec._Resource_skills(ctx, field, obj)
-		case "isBot":
-			out.Values[i] = ec._Resource_isBot(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "createdAt":
 			out.Values[i] = ec._Resource_createdAt(ctx, field, obj)
 		default:

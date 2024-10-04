@@ -6,8 +6,9 @@ type Resource {
   userEmail: String
   user: User
   profileImage: String
+  initialCost: Float
+  annualizedCost: Float
   skills: [Skill!]
-  isBot: Boolean!
   createdAt: Time
 }
 
@@ -26,6 +27,8 @@ input UpdateResource {
   role: String
   userID: String
   email: String
+  initialCost: Float
+  annualizedCost: Float
   profileImage: String
   skills: [UpdateSkill!]
 }

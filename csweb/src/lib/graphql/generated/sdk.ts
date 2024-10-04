@@ -568,9 +568,10 @@ export type RelateArtifact = {
 
 export type Resource = {
   __typename?: 'Resource';
+  annualizedCost?: Maybe<Scalars['Float']['output']>;
   createdAt?: Maybe<Scalars['Time']['output']>;
   id?: Maybe<Scalars['String']['output']>;
-  isBot: Scalars['Boolean']['output'];
+  initialCost?: Maybe<Scalars['Float']['output']>;
   name: Scalars['String']['output'];
   profileImage?: Maybe<Scalars['String']['output']>;
   role: Scalars['String']['output'];
@@ -760,8 +761,10 @@ export type UpdateProjectValue = {
 };
 
 export type UpdateResource = {
+  annualizedCost?: InputMaybe<Scalars['Float']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
+  initialCost?: InputMaybe<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
   profileImage?: InputMaybe<Scalars['String']['input']>;
   role?: InputMaybe<Scalars['String']['input']>;
@@ -920,7 +923,8 @@ export const ResourceFragmentFragmentDoc = gql`
   role
   profileImage
   userEmail
-  isBot
+  initialCost
+  annualizedCost
   type
   createdAt
   skills {

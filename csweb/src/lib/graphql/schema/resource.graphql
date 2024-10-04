@@ -7,7 +7,8 @@ fragment resourceFragment on Resource {
 	role
 	profileImage
 	userEmail
-	isBot
+	initialCost
+	annualizedCost
 	type
 	createdAt
 	skills {

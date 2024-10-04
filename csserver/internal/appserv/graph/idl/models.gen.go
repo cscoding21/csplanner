@@ -306,16 +306,17 @@ type RelateArtifact struct {
 }
 
 type Resource struct {
-	ID           *string    `json:"id,omitempty"`
-	Type         string     `json:"type"`
-	Name         string     `json:"name"`
-	Role         string     `json:"role"`
-	UserEmail    *string    `json:"userEmail,omitempty"`
-	User         *User      `json:"user,omitempty"`
-	ProfileImage *string    `json:"profileImage,omitempty"`
-	Skills       []*Skill   `json:"skills,omitempty"`
-	IsBot        bool       `json:"isBot"`
-	CreatedAt    *time.Time `json:"createdAt,omitempty"`
+	ID             *string    `json:"id,omitempty"`
+	Type           string     `json:"type"`
+	Name           string     `json:"name"`
+	Role           string     `json:"role"`
+	UserEmail      *string    `json:"userEmail,omitempty"`
+	User           *User      `json:"user,omitempty"`
+	ProfileImage   *string    `json:"profileImage,omitempty"`
+	InitialCost    *float64   `json:"initialCost,omitempty"`
+	AnnualizedCost *float64   `json:"annualizedCost,omitempty"`
+	Skills         []*Skill   `json:"skills,omitempty"`
+	CreatedAt      *time.Time `json:"createdAt,omitempty"`
 }
 
 type ResourceResults struct {
@@ -485,14 +486,16 @@ type UpdateProjectValue struct {
 }
 
 type UpdateResource struct {
-	ID           *string        `json:"id,omitempty"`
-	Type         string         `json:"type"`
-	Name         string         `json:"name"`
-	Role         *string        `json:"role,omitempty"`
-	UserID       *string        `json:"userID,omitempty"`
-	Email        *string        `json:"email,omitempty"`
-	ProfileImage *string        `json:"profileImage,omitempty"`
-	Skills       []*UpdateSkill `json:"skills,omitempty"`
+	ID             *string        `json:"id,omitempty"`
+	Type           string         `json:"type"`
+	Name           string         `json:"name"`
+	Role           *string        `json:"role,omitempty"`
+	UserID         *string        `json:"userID,omitempty"`
+	Email          *string        `json:"email,omitempty"`
+	InitialCost    *float64       `json:"initialCost,omitempty"`
+	AnnualizedCost *float64       `json:"annualizedCost,omitempty"`
+	ProfileImage   *string        `json:"profileImage,omitempty"`
+	Skills         []*UpdateSkill `json:"skills,omitempty"`
 }
 
 type UpdateSkill struct {
