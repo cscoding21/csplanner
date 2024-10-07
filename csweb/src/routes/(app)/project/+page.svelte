@@ -3,13 +3,14 @@
 	import { NewspaperOutline } from 'flowbite-svelte-icons';
 	import { findProjects } from '$lib/services/project';
 	import { ProjectActionBar, ProjectCard } from './components';
-	import { NoResults, PageHeading } from '$lib/components';
+	import { NoResults } from '$lib/components';
 	import { onMount } from 'svelte';
 	import type { PageAndFilter, ProjectResults } from '$lib/graphql/generated/sdk';
+	import SearchFilters from './components/SearchFilters.svelte';
 
 	// let pageAndFilter: PageAndFilter = {
 	// 	paging: { pageNumber: 1, resultsPerPage: 20 },
-	// 	filters: { filters: [{ key: 'basics.status', value: 'approved', operation: 'eq' }] }
+	// 	filters: { filters: [{ key: 'basics.name', value: 'flig', operation: 'eq' }] }
 	// };
 
 	let pageAndFilter: PageAndFilter = {
@@ -44,6 +45,10 @@
 	<CardPlaceholder />
 	<CardPlaceholder />
 {:then promiseData}
+	<!-- <div class="mb-2">
+		<SearchFilters />
+	</div> -->
+
 	{#if promiseData.results != null}
 		<div class="grid grid-cols-3 gap-3">
 			{#each promiseData.results as p}

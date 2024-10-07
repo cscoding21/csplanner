@@ -58,14 +58,20 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
+	dbu, err := s.UserService.GetUser(user.Email)
+	if err != nil {
+		log.Errorf("iamadmin getUser: %s", err)
+	}
+	if dbu != nil {
+		user.ID = dbu.ID
+	}
+
 	dbUser, err := s.UserService.UpsertUser(ctx, *user)
 	if err != nil {
-		log.Errorf("iamadmin createUser: %s", err)
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
 	if dbUser == nil {
-		log.Error("iamadmin upsertUser returned nil")
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
@@ -85,11 +91,13 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 
 	uid, err := s.KCClient.CreateUser(ctx, token.AccessToken, s.KCRealm, u)
 	if err != nil {
+		log.Errorf("iamadmin keycloak createUser: %s", err)
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
 	err = s.KCClient.SetPassword(ctx, token.AccessToken, uid, s.KCRealm, user.Password, false)
 	if err != nil {
+		log.Errorf("iamadmin keycloak setPassword: %s", err)
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 

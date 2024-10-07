@@ -6,6 +6,8 @@ import (
 	"csserver/internal/marshal"
 	"csserver/internal/utils"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // GetUser return a user based on their ID or email address
@@ -17,6 +19,8 @@ func (s *UserService) GetUser(idOrEmail string) (*User, error) {
 	if err != nil {
 		return common.HandleReturnWithValue[User](nil, err)
 	}
+
+	log.Infof("UserRaw: %v", userRaw)
 
 	userArray, err := marshal.SurrealSmartUnmarshal[[]User](userRaw)
 	if len(*userArray) == 0 || err != nil {

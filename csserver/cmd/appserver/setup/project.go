@@ -28,7 +28,6 @@ func CreateTestProjects(ctx context.Context) error {
 	}
 
 	allResources, _ := rs.FindAllResources(ctx)
-	//allResources := ar.Results
 
 	updateProject := project.Project{
 		ControlFields: common.ControlFields{
@@ -147,17 +146,21 @@ func CreateTestProjects(ctx context.Context) error {
 		},
 	}
 
-	_, err := ps.CreateProject(ctx, &updateProject)
+	pr, err := ps.SaveProject(ctx, updateProject)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("Save Project Error (YTS): %s", err)
+	} else {
+		log.Infof("PROJECT CREATED: %s", pr.Object.ProjectBasics.Name)
 	}
 
 	otherProjects := findPortfolioProjects()
 
 	for _, project := range otherProjects {
-		_, err := ps.SaveProject(ctx, project)
+		pr, err = ps.SaveProject(ctx, project)
 		if err != nil {
-			log.Error(err)
+			log.Errorf("Save Project Error (OTHER): %s", err)
+		} else {
+			log.Infof("PROJECT CREATED: %s", pr.Object.ProjectBasics.Name)
 		}
 	}
 

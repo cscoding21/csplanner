@@ -14,23 +14,13 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	val := validate.NewSuccessValidationResult()
 
 	if len(pro.ID) == 0 {
-		proj, err := s.CreateProject(ctx, &pro)
-		if err != nil {
-			return common.NewUpdateResult(&val, &pro), err
-		}
-
-		pro = *proj.Object
-
-		pro.GetProjectNPV()
-		pro.GetProjectIRR()
-		pro.GetProjectInitialCost()
-
-		return s.UpdateProject(ctx, &pro)
+		return s.newProject(ctx, pro, val)
 	}
 
 	lastProject, err := s.GetProjectByID(ctx, pro.ID)
 	if err != nil {
-		return common.NewUpdateResult(&val, &pro), err
+		//---existing project does not exist...create
+		return s.newProject(ctx, pro, val)
 	}
 
 	lastProject.ProjectBasics = pro.ProjectBasics
@@ -43,4 +33,19 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	lastProject.GetProjectIRR()
 
 	return s.UpdateProject(ctx, lastProject)
+}
+
+func (s *ProjectService) newProject(ctx context.Context, pro Project, val validate.ValidationResult) (common.UpdateResult[Project], error) {
+	proj, err := s.CreateProject(ctx, &pro)
+	if err != nil {
+		return common.NewUpdateResult(&val, &pro), err
+	}
+
+	pro = *proj.Object
+
+	pro.GetProjectInitialCost()
+	pro.GetProjectNPV()
+	pro.GetProjectIRR()
+
+	return s.UpdateProject(ctx, &pro)
 }

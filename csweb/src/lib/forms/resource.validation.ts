@@ -7,7 +7,9 @@ export const resourceForm: any = {
 	userID: '',
 	role: '',
 	email: '',
-	profileImage: ''
+	profileImage: '',
+	initialCost: 0.0,
+	annulaizedCost: 0.0
 };
 
 export const resetFormValues = (form: any) => {
@@ -18,14 +20,18 @@ export const resetFormValues = (form: any) => {
 	form.role = '';
 	form.email = '';
 	form.profileImage = '';
+	form.initialCost = 0.0;
+	form.annulaizedCost = 0.0;
 };
 
 export const resourceSchema = yup.object().shape({
 	id: yup.string(),
 	name: yup.string().required(),
-	type: yup.string(),
+	type: yup.string().required(),
 	userID: yup.string(),
 	role: yup.string().required(),
 	email: yup.string().email(),
-	profileImage: yup.string()
+	profileImage: yup.string(),
+	initialCost: yup.number(),
+	annualizedCost: yup.number()
 });

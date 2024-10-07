@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Avatar, Button, Dropzone, Hr, Modal } from 'flowbite-svelte';
-	import { TextInput } from '$lib/components';
+	import { Avatar, Button, Dropzone, Hr, Modal, type SelectOptionType } from 'flowbite-svelte';
+	import { TextInput, MoneyInput, SelectInput } from '$lib/components';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import { resourceSchema, resourceForm } from '$lib/forms/resource.validation';
 	import { getResource, updateResource } from '$lib/services/resource';
@@ -13,7 +13,7 @@
 
 	let editModalOpen: boolean = $state(false);
 	let isUpdate = $state(false);
-	let errors = $state({ name: '', role: '' });
+	let errors = $state({ name: '', role: '', initialCost: '', annualizedCost: '', type: '' });
 	let rf = $state(deepCopy(resourceForm));
 	let formTitle = $state('New Resource');
 
@@ -31,6 +31,12 @@
 			rf = coalesceToType<UpdateResource>(r, resourceSchema);
 		});
 	}
+
+	let typeOpts:SelectOptionType<string>[] = [
+		{name: "Human", value: "human"},
+		{name: "Software", value: "software"},
+		{name: "Equipment", value: "equipment"},
+	]
 
 	const updateRes = async () => {
 		const resourceSchemaParsed = resourceSchema.cast(rf);
@@ -105,6 +111,14 @@
 
 		<Hr />
 	{/if}
+
+	<SelectInput
+		bind:value={rf.type as string}
+		fieldName="Type"
+		error={errors.type}
+		options={typeOpts}
+	/>
+
 	<TextInput
 		bind:value={rf.name}
 		fieldName="Name"
@@ -117,6 +131,18 @@
 		fieldName="Role"
 		placeholder="Resource role"
 		error={errors.role}
+	/>
+
+	<MoneyInput
+		bind:value={rf.initialCost}
+		fieldName="Initial Cost"
+		error={errors.initialCost}
+	/>
+
+	<MoneyInput
+		bind:value={rf.annualizedCost}
+		fieldName="Annualized Cost"
+		error={errors.annualizedCost}
 	/>
 
 	<svelte:fragment slot="footer">
