@@ -576,6 +576,7 @@ export type Resource = {
   profileImage?: Maybe<Scalars['String']['output']>;
   role: Scalars['String']['output'];
   skills?: Maybe<Array<Skill>>;
+  status: Scalars['String']['output'];
   type: Scalars['String']['output'];
   user?: Maybe<User>;
   userEmail?: Maybe<Scalars['String']['output']>;
@@ -769,6 +770,7 @@ export type UpdateResource = {
   profileImage?: InputMaybe<Scalars['String']['input']>;
   role?: InputMaybe<Scalars['String']['input']>;
   skills?: InputMaybe<Array<UpdateSkill>>;
+  status: Scalars['String']['input'];
   type: Scalars['String']['input'];
   userID?: InputMaybe<Scalars['String']['input']>;
 };
@@ -926,6 +928,7 @@ export const ResourceFragmentFragmentDoc = gql`
   initialCost
   annualizedCost
   type
+  status
   createdAt
   skills {
     id

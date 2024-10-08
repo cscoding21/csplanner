@@ -308,6 +308,7 @@ type RelateArtifact struct {
 type Resource struct {
 	ID             *string    `json:"id,omitempty"`
 	Type           string     `json:"type"`
+	Status         string     `json:"status"`
 	Name           string     `json:"name"`
 	Role           string     `json:"role"`
 	UserEmail      *string    `json:"userEmail,omitempty"`
@@ -488,6 +489,7 @@ type UpdateProjectValue struct {
 type UpdateResource struct {
 	ID             *string        `json:"id,omitempty"`
 	Type           string         `json:"type"`
+	Status         string         `json:"status"`
 	Name           string         `json:"name"`
 	Role           *string        `json:"role,omitempty"`
 	UserID         *string        `json:"userID,omitempty"`

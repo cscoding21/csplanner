@@ -114,7 +114,7 @@
 </Navbar>
 
 <!-- py-2 px-2 -->
-<div class="">
+<div>
 	{@render children()}
 </div>
 

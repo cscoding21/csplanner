@@ -378,6 +378,7 @@ type ComplexityRoot struct {
 		ProfileImage   func(childComplexity int) int
 		Role           func(childComplexity int) int
 		Skills         func(childComplexity int) int
+		Status         func(childComplexity int) int
 		Type           func(childComplexity int) int
 		User           func(childComplexity int) int
 		UserEmail      func(childComplexity int) int
@@ -2175,6 +2176,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.Skills(childComplexity), true
 
+	case "Resource.status":
+		if e.complexity.Resource.Status == nil {
+			break
+		}
+
+		return e.complexity.Resource.Status(childComplexity), true
+
 	case "Resource.type":
 		if e.complexity.Resource.Type == nil {
 			break
@@ -3102,6 +3110,7 @@ input UpdateProjectMilestoneTask {
 	{Name: "../api/idl/resource.graphqls", Input: `type Resource {
   id: String
   type: String!
+  status: String!
   name: String!
   role: String!
   userEmail: String
@@ -3124,6 +3133,7 @@ type Skill {
 input UpdateResource {
   id: String
   type: String!
+  status: String!
   name: String!
   role: String
   userID: String
@@ -4163,6 +4173,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -6180,6 +6192,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -10415,6 +10429,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -10480,6 +10496,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -10545,6 +10563,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -10610,6 +10630,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -11623,6 +11645,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -13760,6 +13784,8 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -14198,6 +14224,50 @@ func (ec *executionContext) _Resource_type(ctx context.Context, field graphql.Co
 }
 
 func (ec *executionContext) fieldContext_Resource_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Resource_status(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Resource",
 		Field:      field,
@@ -14744,6 +14814,8 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_id(ctx, field)
 			case "type":
 				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
 			case "role":
@@ -19299,7 +19371,7 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "type", "name", "role", "userID", "email", "initialCost", "annualizedCost", "profileImage", "skills"}
+	fieldsInOrder := [...]string{"id", "type", "status", "name", "role", "userID", "email", "initialCost", "annualizedCost", "profileImage", "skills"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19320,6 +19392,13 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 				return it, err
 			}
 			it.Type = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -21984,6 +22063,11 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Resource_id(ctx, field, obj)
 		case "type":
 			out.Values[i] = ec._Resource_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._Resource_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

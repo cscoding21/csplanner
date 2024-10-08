@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { ButtonGroup } from 'flowbite-svelte';
+	import { ButtonGroup, Drawer, Button } from 'flowbite-svelte';
 	import { getProject } from '$lib/services/project';
 	import { 
 		ProjectActionBar, 
@@ -16,6 +16,7 @@
 	import { CommentList, Section } from "$lib/components";
 	import { TrashBinOutline } from 'flowbite-svelte-icons';
 	import type { Project } from '$lib/graphql/generated/sdk';
+	import { sineIn } from 'svelte/easing';
 
 	const id = $page.params.id;
 	let hash = $state($page.url.hash);
@@ -31,6 +32,13 @@
 			project = p;
 			return p;
 		});
+	};
+
+	let hidden6 = $state(true);
+	let transitionParamsRight = {
+		x: 1000,
+		duration: 200,
+		easing: sineIn
 	};
 </script>
 
@@ -51,11 +59,14 @@
 				<TrashBinOutline size="sm" class="mr-2" />
 				Delete
 			</DeleteProject>
+			<Button onclick={() => hidden6 = !hidden6}>	
+				Chat
+			</Button>
 		</ButtonGroup>
 	</ProjectActionBar>
 
-	<div class="grid grid-cols-5 h-full">
-	<div class="flex w-full col-span-3 h-full">
+	<div class="grid grid-cols-5">
+	<div class="flex w-full col-span-5">
 		{#if hash == "#snapshot"}
 			<Section>
 				<ProjectSnapshot {id} />
@@ -87,11 +98,15 @@
 		{/if}
 	</div>
 
-	<div class="ml-4 col-span-2">
+	<!-- <div class="ml-4 col-span-2">
 		<Section>
 			<CommentList {id} />
 		</Section>
-	</div>
+	</div> -->
 	
 	</div>
 {/await}
+
+<Drawer placement="right" width="w-300" transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={hidden6} backdrop={false} id="sidebar6">
+	<CommentList {id} />
+</Drawer>

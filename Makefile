@@ -5,6 +5,13 @@ help:
 	@echo 'Usage:'
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
 
+
+## goinstalls: install golang tools used by this project
+.PHONY: goinstalls
+goinstalls:
+	cd ./csserver && \
+	../scripts/install.sh
+
 ## up: start the minikube server if not running and configure if necessary
 .PHONY: up
 up:
