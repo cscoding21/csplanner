@@ -20,4 +20,16 @@ do
     fi
 done
 
+echo -e "---------------------"
 
+if [[ $GOROOT ]]; then
+    echo -e " ${CHECKMARK} GOROOT ${GREEN}already configured to ${GOROOT} ${NC}"
+else
+    echo -e " * GOROOT ${YELLOW}not configured ${NC}"   
+fi
+
+if [[ $GOPATH ]]; then
+    echo -e " ${CHECKMARK} GOPATH ${GREEN}already configured to ${GOPATH} ${NC}"
+else
+    echo -e " * GOPATH ${YELLOW}not configured ${NC}"   
+fi
