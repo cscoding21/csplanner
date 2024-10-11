@@ -4,11 +4,13 @@ import type {
 	Resource,
 	ResourceResults,
 	Status,
-	CreateResourceResult
+	CreateResourceResult,
+	PageAndFilter
 } from '$lib/graphql/generated/sdk';
 
 import {
 	FindAllResourcesDocument,
+	FindResourcesDocument,
 	GetResourceDocument,
 	CreateResourceDocument,
 	DeleteResourceDocument,
@@ -29,6 +31,26 @@ export const findAllResources = async (): Promise<ResourceResults> => {
 		.then((res) => {
 			if (res) {
 				return res.data.findAllResources;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * return an list of resources based on passed in filter and paging criteria
+ * @param input object with paging and filtering details
+ * @returns a paged list of resources
+ */
+export const findResources = async (input: PageAndFilter): Promise<ResourceResults> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: FindResourcesDocument, variables: { input } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.findResources;
 			}
 		})
 		.catch((err) => {

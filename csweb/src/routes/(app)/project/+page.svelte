@@ -1,57 +1,70 @@
 <script lang="ts">
 	import { ButtonGroup, Button, CardPlaceholder } from 'flowbite-svelte';
+	import { TableHeader } from 'flowbite-svelte-blocks'
 	import { NewspaperOutline } from 'flowbite-svelte-icons';
 	import { findProjects } from '$lib/services/project';
-	import { ProjectActionBar, ProjectCard } from './components';
+	import { ProjectActionBar, ProjectCard, ProjectSearchFilters } from './components';
 	import { NoResults } from '$lib/components';
-	import { onMount } from 'svelte';
-	import type { PageAndFilter, ProjectResults } from '$lib/graphql/generated/sdk';
-	import SearchFilters from './components/SearchFilters.svelte';
+	import type { PageAndFilter, ProjectResults, InputFilters } from '$lib/graphql/generated/sdk';
 
-	// let pageAndFilter: PageAndFilter = {
-	// 	paging: { pageNumber: 1, resultsPerPage: 20 },
-	// 	filters: { filters: [{ key: 'basics.name', value: 'flig', operation: 'eq' }] }
-	// };
+	let filters:InputFilters = $state({}) as InputFilters;
 
-	let pageAndFilter: PageAndFilter = {
-		paging: { pageNumber: 1, resultsPerPage: 20 }
-	};
+	const getFilters = ():PageAndFilter => {
+		let pageAndFilter: PageAndFilter = {
+			paging: { pageNumber: 1, resultsPerPage: 20 },
+		};
+
+		pageAndFilter.filters = filters
+
+		return pageAndFilter
+	} 
 
 	const refresh = async (): Promise<ProjectResults> => {
-		const res = await findProjects(pageAndFilter);
+		const res = await findProjects(getFilters());
 
 		return res;
 	};
 
-	onMount(() => {
-		projects = refresh();
-	});
+	const filterChange = (f:any) => {
+		filters = f
 
-	let projects = $state(refresh());
+		refresh().then((p) => {
+			projects = p as ProjectResults;
+		});
+	}
+
+	let projects = $state({} as ProjectResults);
+	const loadPage = async () => {
+		refresh().then((p) => {
+			projects = p as ProjectResults;
+		});
+	};
 </script>
 
 <ProjectActionBar pageDetail="">
 	<ButtonGroup>
 		<Button href="/project/new">
-			<NewspaperOutline class="mr-2 h-3 w-3" />
+			<NewspaperOutline class="mr-2 h-4 w-4" />
 			Add Project
 		</Button>
 	</ButtonGroup>
 </ProjectActionBar>
 
+<div class="px-4">
+<TableHeader headerType="search">
+	<ProjectSearchFilters change={filterChange} />
+</TableHeader>
+</div>
+
 <div class="p-4">
-{#await projects}
+{#await loadPage()}
 	<CardPlaceholder />
 	<CardPlaceholder />
 	<CardPlaceholder />
 {:then promiseData}
-	<!-- <div class="mb-2">
-		<SearchFilters />
-	</div> -->
-
-	{#if promiseData.results != null}
+	{#if projects.results != null}
 		<div class="grid grid-cols-3 gap-3">
-			{#each promiseData.results as p}
+			{#each projects.results as p}
 				<ProjectCard project={p} />
 			{/each}
 		</div>

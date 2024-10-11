@@ -1,16 +1,36 @@
 <script lang="ts">
 	import { ButtonGroup } from 'flowbite-svelte';
+	import { TableHeader } from 'flowbite-svelte-blocks'
 	import { UserAddOutline } from 'flowbite-svelte-icons';
-	import { findAllResources } from '$lib/services/resource';
-	import { ResourceActionBar, ResourceCard, UpdateResourceModal } from './components';
-	import { NoResults, PageHeading } from '$lib/components';
-	import type { ResourceResults } from '$lib/graphql/generated/sdk';
+	import { findResources } from '$lib/services/resource';
+	import { ResourceActionBar, ResourceCard, UpdateResourceModal, ResourceSearchFilters } from './components';
+	import { NoResults } from '$lib/components';
+	import type { ResourceResults, PageAndFilter, InputFilters } from '$lib/graphql/generated/sdk';
 
+	let filters:InputFilters = $state({}) as InputFilters;
 	const refresh = async (): Promise<ResourceResults> => {
-		const res = await findAllResources();
+		const res = await findResources(getFilters());
 
 		return res;
 	};
+
+	const getFilters = ():PageAndFilter => {
+		let pageAndFilter: PageAndFilter = {
+			paging: { pageNumber: 1, resultsPerPage: 20 },
+		};
+
+		pageAndFilter.filters = filters
+
+		return pageAndFilter
+	} 
+
+	const filterChange = (f:any) => {
+		filters = f
+
+		refresh().then(r => {
+			resources = r as ResourceResults;
+		});
+	}
 
 	let resources = $state({} as ResourceResults);
 	const loadPage = async () => {
@@ -23,13 +43,17 @@
 <ResourceActionBar pageDetail="">
 	<ButtonGroup>
 		<UpdateResourceModal update={() => refresh()}>
-			<UserAddOutline class="mr-2 h-3 w-3" />
+			<UserAddOutline class="mr-2 h-4 w-4" />
 			Add Resource
 		</UpdateResourceModal>
 	</ButtonGroup>
 </ResourceActionBar>
 
-<PageHeading title="Resource Roster" />
+<div class="px-4">
+	<TableHeader headerType="search">
+		<ResourceSearchFilters change={filterChange} />
+	</TableHeader>
+</div>
 
 <div class="p-4">
 {#await loadPage()}

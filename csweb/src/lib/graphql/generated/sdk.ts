@@ -1418,6 +1418,19 @@ export const FindAllResourcesDocument = gql`
 }
     ${PagingFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
+export const FindResourcesDocument = gql`
+    query findResources($input: PageAndFilter!) {
+  findResources(pageAndFilter: $input) {
+    paging {
+      ...pagingFragment
+    }
+    results {
+      ...resourceFragment
+    }
+  }
+}
+    ${PagingFragmentFragmentDoc}
+${ResourceFragmentFragmentDoc}`;
 export const FindAllUsersDocument = gql`
     query findAllUsers {
   findAllUsers {
@@ -1539,6 +1552,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     findAllResources(variables?: FindAllResourcesQueryVariables, options?: C): Promise<FindAllResourcesQuery> {
       return requester<FindAllResourcesQuery, FindAllResourcesQueryVariables>(FindAllResourcesDocument, variables, options) as Promise<FindAllResourcesQuery>;
+    },
+    findResources(variables: FindResourcesQueryVariables, options?: C): Promise<FindResourcesQuery> {
+      return requester<FindResourcesQuery, FindResourcesQueryVariables>(FindResourcesDocument, variables, options) as Promise<FindResourcesQuery>;
     },
     findAllUsers(variables?: FindAllUsersQueryVariables, options?: C): Promise<FindAllUsersQuery> {
       return requester<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, variables, options) as Promise<FindAllUsersQuery>;

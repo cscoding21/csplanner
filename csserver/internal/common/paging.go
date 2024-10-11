@@ -16,6 +16,7 @@ const (
 	FilterOperationLessOrEqual    FilterOperation = "le"
 	FilterOperationIn             FilterOperation = "in"
 	FilterOperationNotIn          FilterOperation = "nin"
+	FilterFuzzyLike               FilterOperation = "fl"
 )
 
 // NewPagedResults helper method for generating a paged results object

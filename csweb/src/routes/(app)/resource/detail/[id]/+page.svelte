@@ -15,7 +15,6 @@
 	} from 'flowbite-svelte';
 	import { TrashBinOutline, PenOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/stores';
-	import { PageHeading } from '$lib/components';
 	import {
 		ResourceActionBar,
 		AddSkill,
@@ -23,7 +22,7 @@
 		UpdateResourceModal
 	} from '../../components';
 	import { getResource, deleteResourceSkill } from '$lib/services/resource';
-	import { formatDate } from '$lib/utils/format';
+	import { formatDate, formatCurrency } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import type { Resource } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
@@ -70,27 +69,23 @@
 {:then promiseData}
 	{#if resourcePromise}
 		<ResourceActionBar pageDetail={resourcePromise.name}>
-			{#if !resourcePromise.isBot}
-				<ButtonGroup>
-					<DeleteResource id={resourcePromise.id || ''} name={resourcePromise.name}>
-						<TrashBinOutline class="mr-2 h-3 w-3" />
-						Delete
-					</DeleteResource>
-				</ButtonGroup>
-			{/if}
+			<ButtonGroup>
+				<DeleteResource id={resourcePromise.id || ''} name={resourcePromise.name}>
+					<TrashBinOutline class="mr-2 h-3 w-3" />
+					Delete
+				</DeleteResource>
+			</ButtonGroup>
 		</ResourceActionBar>
 
 		<div class="grid grid-cols-2">
 			<div class="mr-4">
 				<Card padding="sm" size="xl">
 					<div class="flex justify-end">
-						{#if !resourcePromise.isBot}
-							<ButtonGroup>
-								<UpdateResourceModal {id} update={async () => refresh()}
-									><PenOutline /></UpdateResourceModal
-								>
-							</ButtonGroup>
-						{/if}
+						<ButtonGroup>
+							<UpdateResourceModal {id} update={async () => refresh()}
+								><PenOutline /></UpdateResourceModal
+							>
+						</ButtonGroup>
 					</div>
 					<div class="flex flex-col items-center pb-4">
 						<Avatar size="lg" src={resourcePromise.profileImage as string} rounded
@@ -105,6 +100,14 @@
 					<div>
 						<ul class="list">
 							<li>
+								<span>Type</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.type}</span>
+							</li>
+							<li>
+								<span>Status</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.status}</span>
+							</li>
+							<li>
 								<span>Role</span>
 								<span class="float-right flex-auto font-semibold">{resourcePromise.role}</span>
 							</li>
@@ -115,6 +118,14 @@
 								{:else}
 									<span class="float-right flex-auto font-semibold">No User Account</span>
 								{/if}
+							</li>
+							<li>
+								<span>Initial Cost</span>
+								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.initialCost as number)}</span>
+							</li>
+							<li>
+								<span>Annualized Cost</span>
+								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.annualizedCost as number)}</span>
 							</li>
 							<li>
 								<span>Created Date</span>
@@ -164,10 +175,8 @@
 						<Alert>No skills have been added for this resource.</Alert>
 					{/if}
 
-					{#if !resourcePromise.isBot}
-						<hr class="my-4" />
-						<AddSkill resourceID={id} update={refresh} />
-					{/if}
+					<hr class="my-4" />
+					<AddSkill resourceID={id} update={refresh} />
 				</Card>
 			</div>
 

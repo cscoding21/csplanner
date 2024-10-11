@@ -11,10 +11,10 @@ export { default as ProjectFeatureDisplay } from './ProjectFeatureDisplay.svelte
 export { default as ProjectFeatureForm } from './ProjectFeatureForm.svelte';
 export { default as ProjectFeatures } from './ProjectFeatures.svelte';
 export { default as ProjectMilestones } from './ProjectMilestones.svelte';
+export { default as ProjectSearchFilters } from './ProjectSearchFilters.svelte';
 export { default as ProjectSnapshot } from './ProjectSnapshot.svelte';
 export { default as ProjectTaskDisplay } from './ProjectTaskDisplay.svelte';
 export { default as ProjectTaskForm } from './ProjectTaskForm.svelte';
 export { default as ProjectTemplateSelector } from './ProjectTemplateSelector.svelte';
 export { default as ProjectValue } from './ProjectValue.svelte';
 export { default as ProjectValueChart } from './ProjectValueChart.svelte';
-export { default as SearchFilters } from './SearchFilters.svelte';

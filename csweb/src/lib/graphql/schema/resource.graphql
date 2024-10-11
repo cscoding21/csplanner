@@ -79,3 +79,14 @@ query findAllResources {
 		}
 	}
 }
+
+query findResources($input: PageAndFilter!) {
+	findResources(pageAndFilter: $input) {
+		paging {
+			...pagingFragment
+		}
+		results {
+			...resourceFragment
+		}
+	}
+}

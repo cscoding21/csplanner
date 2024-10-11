@@ -15,7 +15,7 @@ export { default as ReplyToComment } from './chat/ReplyToComment.svelte';
 
 //---Formatting
 export { default as PageHeading } from './formatting/PageHeading.svelte';
-export { default as Section } from './formatting/Section.svelte';
+export { default as CSSection } from './formatting/CSSection.svelte';
 export { default as SectionHeading } from './formatting/SectionHeading.svelte';
 
 //---Forms

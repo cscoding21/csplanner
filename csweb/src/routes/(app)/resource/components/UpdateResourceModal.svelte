@@ -13,7 +13,7 @@
 
 	let editModalOpen: boolean = $state(false);
 	let isUpdate = $state(false);
-	let errors = $state({ name: '', role: '', initialCost: '', annualizedCost: '', type: '' });
+	let errors = $state({ name: '', role: '', initialCost: '', annualizedCost: '', type: '', status: '' });
 	let rf = $state(deepCopy(resourceForm));
 	let formTitle = $state('New Resource');
 
@@ -36,6 +36,11 @@
 		{name: "Human", value: "human"},
 		{name: "Software", value: "software"},
 		{name: "Equipment", value: "equipment"},
+	]
+
+	let statusOpts:SelectOptionType<string>[] = [
+		{name: "In House", value: "inhouse"},
+		{name: "Proposed", value: "proposed"},
 	]
 
 	const updateRes = async () => {
@@ -112,6 +117,13 @@
 		<Hr />
 	{/if}
 
+	<TextInput
+		bind:value={rf.name}
+		fieldName="Name"
+		placeholder="Resource name"
+		error={errors.name}
+	/>
+
 	<SelectInput
 		bind:value={rf.type as string}
 		fieldName="Type"
@@ -119,11 +131,11 @@
 		options={typeOpts}
 	/>
 
-	<TextInput
-		bind:value={rf.name}
-		fieldName="Name"
-		placeholder="Resource name"
-		error={errors.name}
+	<SelectInput
+		bind:value={rf.status as string}
+		fieldName="Status"
+		error={errors.status}
+		options={statusOpts}
 	/>
 
 	<TextInput

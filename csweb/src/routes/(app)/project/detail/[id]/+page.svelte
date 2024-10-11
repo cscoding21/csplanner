@@ -13,7 +13,7 @@
 		ProjectValue,
 		ProjectCost
 	} from '../../components';
-	import { CommentList, Section } from "$lib/components";
+	import { CommentList, CSSection } from "$lib/components";
 	import { TrashBinOutline } from 'flowbite-svelte-icons';
 	import type { Project } from '$lib/graphql/generated/sdk';
 	import { sineIn } from 'svelte/easing';
@@ -68,33 +68,33 @@
 	<div class="grid grid-cols-5">
 	<div class="flex w-full col-span-5">
 		{#if hash == "#snapshot"}
-			<Section>
+			<CSSection>
 				<ProjectSnapshot {id} />
-			</Section>
+			</CSSection>
 		{:else if hash == '#basics'}
-			<Section>
+			<CSSection>
 				<ProjectBasics {id} update={() => console.log("update")} />
-			</Section>
+			</CSSection>
 		{:else if hash == '#daci'}
-			<Section>
+			<CSSection>
 				<ProjectDACI {id} update={() => console.log("update")} />
-			</Section>
+			</CSSection>
 		{:else if hash == '#features'}
-			<Section>
+			<CSSection>
 				<ProjectFeatures {id} update={() => console.log("update")} />
-			</Section>
+			</CSSection>
 		{:else if hash == '#milestones'}
-			<Section>
+			<CSSection>
 				<ProjectMilestones {id} update={() => console.log("update")} />
-			</Section>
+			</CSSection>
 		{:else if hash == '#value'}
-			<Section>
+			<CSSection>
 				<ProjectValue {id} update={() => console.log("update")} />
-			</Section>
+			</CSSection>
 		{:else if hash == '#costs'}
-			<Section>
+			<CSSection>
 				<ProjectCost {id} update={() => console.log("update")} />
-			</Section>
+			</CSSection>
 		{/if}
 	</div>
 
