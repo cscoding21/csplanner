@@ -13,7 +13,7 @@
     }
     let { id }:Props = $props()
 
-    // @ts-expect-error - TS parser doesn't like the the instantiation is "never"
+    // @ts-expect-error - TS parser doesn't like the instantiation is "never"
     let showReplies:AssociativeArray = $state([])
     let qe:any;
 
@@ -61,7 +61,7 @@
 <div class="grow scrollbar overflow-y-auto">
     {#if comments && comments.length > 0}
     {#each comments as comment(comment.id)}
-        <div class="px-2 pt-4 mb-2 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+        <div class="px-2 pt-4 mb-2 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700 text-gray-500 dark:text-gray-400">
             <div class="mb-2">
                 <CommentItem {comment} projectID={id} update={update} canReply={true} />
             </div>

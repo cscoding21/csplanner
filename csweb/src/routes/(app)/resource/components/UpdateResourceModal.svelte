@@ -157,9 +157,14 @@
 		error={errors.annualizedCost}
 	/>
 
-	<svelte:fragment slot="footer">
-		<div class="place-content-end">
-			<Button on:click={updateRes}>Update Resource</Button>
+	<Hr />
+	<div class="float-right">
+		<Button color="primary" onclick={updateRes}>Update Resource</Button>
+	</div>
+
+	<!-- <svelte:fragment slot="footer">
+		<div class="float-right">
+			<Button color="primary" onclick={updateRes}>Update Resource</Button>
 		</div>
-	</svelte:fragment>
+	</svelte:fragment> -->
 </Modal>

@@ -46,7 +46,7 @@
     {/if}
 
     <div
-        class="w-full rounded-lg">
+        class="w-full rounded-lg text-gray-100">
         <div id="{editorID}"></div>
     </div>
 </div>

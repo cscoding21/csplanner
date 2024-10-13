@@ -48,6 +48,7 @@ func NewIAMAdminService(
 
 // CreateUser create a new Keycloak user
 func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User) (common.UpdateResult[userService.User], error) {
+	log.Debug("---------------------------------")
 	val := user.Validate()
 	if !val.Pass {
 		return common.NewUpdateResult[userService.User](&val, nil), fmt.Errorf("validation failed")
@@ -89,9 +90,18 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 		Attributes: &props,
 	}
 
-	uid, err := s.KCClient.CreateUser(ctx, token.AccessToken, s.KCRealm, u)
+	existingKCUser, _ := s.GetUser(ctx, user.Email)
+
+	var uid string
+
+	if existingKCUser == nil {
+		uid, err = s.KCClient.CreateUser(ctx, token.AccessToken, s.KCRealm, u)
+	} else {
+		uid = existingKCUser.ID
+		u.ID = &uid
+		err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, u)
+	}
 	if err != nil {
-		log.Errorf("iamadmin keycloak createUser: %s", err)
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
@@ -177,6 +187,9 @@ func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userS
 	u := users[0]
 
 	user := userService.User{
+		ControlFields: common.ControlFields{
+			ID: *u.ID,
+		},
 		FirstName:    *u.FirstName,
 		LastName:     *u.LastName,
 		Email:        *u.Email,

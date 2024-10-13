@@ -23,6 +23,10 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) 
 	res.Name = resource.Name
 	res.ProfileImage = resource.ProfileImage
 	res.Role = resource.Role
+	res.AnnualizedCost = resource.AnnualizedCost
+	res.InitialCost = resource.InitialCost
+	res.Type = resource.Type
+	res.Status = resource.Status
 
 	out, err := s.UpdateResource(ctx, res)
 	if err != nil {

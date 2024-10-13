@@ -96,7 +96,7 @@
 			/>
 		</span>
 		<span class="w-1/5 pt-8">
-			<Button on:click={add}>Add</Button>
+			<Button onclick={add}>Add</Button>
 		</span>
 	</div>
 {/await}

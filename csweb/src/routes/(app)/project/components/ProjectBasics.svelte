@@ -129,7 +129,7 @@
 
 		<div class="col-span-4">
 			<span class="float-right">
-				<Button on:click={updateBasics}>Update Basics</Button>
+				<Button onclick={updateBasics}>Update Basics</Button>
 			</span>
 			<br class="clear-both" />
 		</div>

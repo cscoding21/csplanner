@@ -55,11 +55,16 @@
 		});
 	};
 
-	let resourcePromise:Resource = $state({} as Resource);
-	const loadPage = async () => {
+	const updateResource = () => {
 		refresh().then((r) => {
 			resourcePromise = r as Resource;
 		});
+	}
+
+
+	let resourcePromise:Resource = $state({} as Resource);
+	const loadPage = async () => {
+		updateResource()
 	}
 </script>
 
@@ -82,7 +87,7 @@
 				<Card padding="sm" size="xl">
 					<div class="flex justify-end">
 						<ButtonGroup>
-							<UpdateResourceModal {id} update={async () => refresh()}
+							<UpdateResourceModal {id} update={updateResource}
 								><PenOutline /></UpdateResourceModal
 							>
 						</ButtonGroup>
@@ -176,7 +181,7 @@
 					{/if}
 
 					<hr class="my-4" />
-					<AddSkill resourceID={id} update={refresh} />
+					<AddSkill resourceID={id} update={updateResource} />
 				</Card>
 			</div>
 

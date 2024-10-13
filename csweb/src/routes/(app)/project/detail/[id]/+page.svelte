@@ -34,9 +34,8 @@
 		});
 	};
 
-	let hidden6 = $state(true);
+	let chatBarHidden = $state(true);
 	let transitionParamsRight = {
-		x: 1000,
 		duration: 200,
 		easing: sineIn
 	};
@@ -45,8 +44,6 @@
 <svelte:window
 	on:hashchange={() => {
 		hash = $page.url.hash
-	    // console.log($page.url.hash, 'store');
-		// console.log(window.location.hash, 'location');
 	}}
 />
 
@@ -59,7 +56,7 @@
 				<TrashBinOutline size="sm" class="mr-2" />
 				Delete
 			</DeleteProject>
-			<Button onclick={() => hidden6 = !hidden6}>	
+			<Button onclick={() => chatBarHidden = !chatBarHidden}>	
 				Chat
 			</Button>
 		</ButtonGroup>
@@ -107,6 +104,12 @@
 	</div>
 {/await}
 
-<Drawer placement="right" width="w-300" transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={hidden6} backdrop={false} id="sidebar6">
+<Drawer 
+	placement="right" 
+	width="w-1/3" 
+	transitionType="fly" 
+	transitionParams={transitionParamsRight} 
+	bind:hidden={chatBarHidden} 
+	backdrop={false} id="chatbar">
 	<CommentList {id} />
 </Drawer>
