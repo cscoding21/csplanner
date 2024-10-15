@@ -10,12 +10,14 @@
     interface Props {
         task: ProjectMilestoneTask
         update: Function
+        editClick: Function
         milestoneID: string
         projectID: string
     }
     let { 
         task, 
         update,
+        editClick,
         milestoneID,
         projectID
     }:Props = $props()
@@ -43,7 +45,7 @@
             size="sm"
             color="dark"
             onclick={() => {
-                modalState = true;
+                editClick()
             }}
         >
             <EditOutline size="sm" class="" />
@@ -68,7 +70,7 @@
     </div>
 
     <div class="pl-4">
-        <ResourceList maxSize={4} size="xs" resources={task.resources || []} />
+        <ResourceList maxSize={4} size="sm" resources={task.resources || []} />
     </div>
 </div>
 <div class="mt-2">

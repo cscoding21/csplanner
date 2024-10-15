@@ -1,3 +1,7 @@
+export { default as BadgeMilestoneStatus } from './BadgeMilestoneStatus.svelte';
+export { default as BadgeFeaturePriority } from './BadgeFeaturePriority.svelte';
+export { default as BadgeFeatureStatus } from './BadgeFeatureStatus.svelte';
+export { default as BadgeProjectStatus } from './BadgeProjectStatus.svelte';
 export { default as DeleteProject } from './DeleteProject.svelte';
 export { default as DeleteProjectFeature } from './DeleteProjectFeature.svelte';
 export { default as DeleteProjectTask } from './DeleteProjectTask.svelte';

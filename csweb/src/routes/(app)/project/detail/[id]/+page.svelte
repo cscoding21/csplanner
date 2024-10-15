@@ -14,7 +14,7 @@
 		ProjectCost
 	} from '../../components';
 	import { CommentList, CSSection } from "$lib/components";
-	import { TrashBinOutline } from 'flowbite-svelte-icons';
+	import { TrashBinOutline, MessagesOutline } from 'flowbite-svelte-icons';
 	import type { Project } from '$lib/graphql/generated/sdk';
 	import { sineIn } from 'svelte/easing';
 
@@ -36,8 +36,9 @@
 
 	let chatBarHidden = $state(true);
 	let transitionParamsRight = {
+		x: 320,
 		duration: 200,
-		easing: sineIn
+		easing: sineIn,
 	};
 </script>
 
@@ -57,6 +58,7 @@
 				Delete
 			</DeleteProject>
 			<Button onclick={() => chatBarHidden = !chatBarHidden}>	
+				<MessagesOutline size="sm" class="mr-2" />
 				Chat
 			</Button>
 		</ButtonGroup>
@@ -94,12 +96,6 @@
 			</CSSection>
 		{/if}
 	</div>
-
-	<!-- <div class="ml-4 col-span-2">
-		<Section>
-			<CommentList {id} />
-		</Section>
-	</div> -->
 	
 	</div>
 {/await}

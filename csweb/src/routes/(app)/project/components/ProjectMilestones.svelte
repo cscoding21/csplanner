@@ -1,14 +1,12 @@
 <script lang="ts">
-	import type { ProjectMilestone, Skill, Project } from '$lib/graphql/generated/sdk';
-	import { Hr } from 'flowbite-svelte';
+	import type { ProjectMilestone, Project } from '$lib/graphql/generated/sdk';
+	import { Hr, Tabs, TabItem } from 'flowbite-svelte';
 	import {
-		ChevronDoubleRightOutline,
 		ChevronRightOutline,
 	} from 'flowbite-svelte-icons';
 	import { SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/project';
 	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector } from '.';
-	import { formatToCommaSepList } from '$lib/utils/format';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { getDefaultProject } from '$lib/forms/project.validation';
@@ -22,15 +20,13 @@
 	let modalState: boolean[] = $state([]);
 	let hasMilestones: boolean = $state(true);
 	let project = $state(getDefaultProject() as Project);
-	let currentMilestone = $state({} as ProjectMilestone);
+	let editTask = $state("")
 
-	const load = async (id: string, milestoneID: string) => {
+	const load = async (id: string) => {
 		await getProject(id)
 			.then((proj) => {
 				project = proj;
 				hasMilestones = (proj.projectMilestones && proj.projectMilestones.length > 0) as boolean;
-
-				setCurrentMilestone(milestoneID);
 			})
 			.catch((err) => {
 				console.log('Error on get ', err);
@@ -43,58 +39,27 @@
 	};
 
 	function refresh() {
-		load(id, currentMilestone.id);
+		load(id);
 
 		modalState = [];
 	}
 
-	const getRequiredSkillsDisplay = (task: any): string => {
-		if (task.skills == null || task.skills.length === 0) {
-			return 'Not set';
-		}
+	const editTaskComplete = () => {
+		editTask = ""
+		console.log("editTask", editTask)
 
-		return formatToCommaSepList(task.skills.map((s: Skill) => s.name));
-	};
-
-	const setCurrentMilestone = (milestoneID: any): ProjectMilestone => {
-		if (!hasMilestones) {
-			//---TODO: handle this
-			return {} as ProjectMilestone;
-		}
-
-		if (
-			project == null ||
-			project.projectMilestones == null ||
-			project.projectMilestones.length == 0
-		) {
-			return {} as ProjectMilestone;
-		}
-
-		if (!milestoneID) {
-			currentMilestone = project.projectMilestones[0] as ProjectMilestone;
-		}
-
-		for (let i = 0; i < project.projectMilestones.length; i++) {
-			const m = project.projectMilestones[i] as ProjectMilestone;
-
-			if (m.id == milestoneID) {
-				currentMilestone = m;
-				break;
-			}
-		}
-
-		return currentMilestone;
-	};
+		refresh()
+	}
 
 	const loadPage = async () => {
 		findAllProjectTemplates()
 			.then((r) => r)
 			.then((r) => {
-				load(id, '');
+				load(id);
 
 				return r;
 			})
-			.then((r) => (currentMilestone = setCurrentMilestone('')));
+			.then((r) => r);
 	};
 </script>
 
@@ -106,42 +71,41 @@
 	{/if}
 
 	{#if project.projectMilestones && project.projectMilestones.length > 0}
-		<div class="grid grid-cols-4 gap-8">
-			<div class="col-span-1">
-				<ol
-					class="relative border-s border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400"
-				>
+		<div class="">
+			<div class="">
+				<Tabs tabStyle="underline">
 					{#each project.projectMilestones as milestone (milestone)}
-						<li class="mb-10 ms-6">
-							{#if currentMilestone.id === milestone?.id}
-								<span
-									class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-200 ring-4 ring-white dark:bg-green-700 dark:text-gray-50 dark:ring-gray-900"
-									><ChevronDoubleRightOutline size="xs" /></span
-								>
-							{:else}
-								<span
-									class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
-									><ChevronRightOutline size="xs" /></span
-								>
+					<TabItem open>
+						<div slot="title" class="flex items-center gap-2">
+						  <ChevronRightOutline size="md" />
+						  {milestone.phase.name}
+						</div>
+						<div class="text-sm text-gray-500 dark:text-gray-400">
+							<b>{milestone.phase.name}: </b>
+							{milestone.phase.description}
+							<Hr />
+							{#if milestone.tasks}
+								{#each milestone.tasks as task (task.id)}
+									{#if editTask === task.id} 
+									<div class="my-3">
+									<ProjectTaskForm {task} milestoneID={milestone.id} projectID={id} update={() => editTaskComplete()} />
+									</div>
+										<Hr />
+									{:else}
+									<ProjectTaskDisplay projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} {task} />
+									{/if}
+								{/each}
 							{/if}
-							<button onclick={(e) => setCurrentMilestone(milestone?.id)}>
-								<h3 class="font-medium leading-tight">{milestone?.phase.name}</h3>
-							</button>
-							<p class="text-xs">{milestone?.phase.description}</p>
-						</li>
+							<Hr />
+							<SectionHeading>Add New Task to Milestone {milestone.phase.name}</SectionHeading>
+							<ProjectTaskForm milestoneID={milestone.id} projectID={id} update={() => refresh()} />
+
+						</div>
+					  </TabItem>
 					{/each}
-				</ol>
+					</Tabs>	
 			</div>
-			<div class="col-span-3">
-				{#if currentMilestone.tasks}
-					{#each currentMilestone.tasks as task (task.id)}
-						<ProjectTaskDisplay projectID={id} milestoneID={currentMilestone.id} update={() => refresh()} {task} />
-					{/each}
-				{/if}
-				<Hr />
-				<ProjectTaskForm milestoneID={currentMilestone.id} projectID={id} update={() => refresh()} />
-			</div>
-		</div>
+		</div>	
 	{:else}
 		<ProjectTemplateSelector {id} />
 	{/if}

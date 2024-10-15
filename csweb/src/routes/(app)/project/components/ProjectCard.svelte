@@ -4,6 +4,7 @@
 	import { formatDate } from '$lib/utils/format';
 	import { ResourceList, MoneyDisplay } from '$lib/components';
 	import { safeArray } from '$lib/utils/helpers';
+	import { BadgeProjectStatus } from '.';
 
 	interface Props {
 		project: Project;
@@ -16,7 +17,7 @@
 		<a href="project/detail/{project.id}#snapshot">
 			{project.projectBasics?.name}
 		</a>
-		<Badge color="blue">{project.projectBasics?.status}</Badge>
+		<BadgeProjectStatus status={project.projectBasics.status}  />
 		{#if project.projectValue?.netPresentValue}
 			<span class="float-right text-lg">
 				<MoneyDisplay amount={project.projectValue?.netPresentValue} />

@@ -87,7 +87,6 @@
 			.validate(taskFormParsed, { abortEarly: false })
 			.then(() => {
 				updateProjectTask(taskFormParsed).then((res) => {
-					console.log(res);
 					if (res.status?.success) {
 						addToast({
 							message: 'Project milestone tasks updated successfully',
@@ -96,7 +95,9 @@
 						});
 
 						resetNewTask();
+						console.log(update)
 						callIf(update);
+						console.log("end of updateProjectTask")
 					} else {
 						addToast({
 							message: 'Error updating project milestone tasks: ' + res.status?.message,
@@ -162,7 +163,6 @@
 	loadPage();
 </script>
 
-<SectionHeading>Add a Task</SectionHeading>
 {#if resourceOpts && skillsOpts && taskForm}
 	<form>
 		<div class="grid grid-cols-4 gap-4">
@@ -223,6 +223,7 @@
 					<Button on:click={submitForm}>Add Task</Button>
 				{/if}
 			</span>
+			<br class="clear-both" />
 		</div>
 	</form>
 {/if}

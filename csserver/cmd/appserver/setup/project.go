@@ -35,7 +35,7 @@ func CreateTestProjects(ctx context.Context) error {
 		},
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
-			Description: "This is my ticket to the big time",
+			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
 			OwnerID:     allResources.Results[0].ID,
 			Status:      ptypes.Draft,
 		},

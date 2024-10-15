@@ -2,15 +2,19 @@
     import { 
         SectionHeading,
         MoneyDisplay,
-        ResourceList,
+        ResourceList
     } from "$lib/components";
+    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus } from ".";
+    import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover } from "flowbite-svelte";
+    import { QuestionCircleSolid } from "flowbite-svelte-icons";
     import { 
         ProjectValueChart
     } from '../components'
     import type { Project, Resource } from '$lib/graphql/generated/sdk'
-    import { formatPercent, formatCurrency, formatDate } from "$lib/utils/format";
+    import { formatPercent, formatCurrency } from "$lib/utils/format";
     import { getProject } from "$lib/services/project";
     import { getDefaultProject } from "$lib/forms/project.validation";
+    import { normalizeGUID } from "$lib/utils/id";
 
     interface Props {
         id: string
@@ -38,137 +42,165 @@
 
 </script>
 
+<div class="grid grid-cols-3 gap-4">
+
 
 {#await loadPage()}
 	Loading...
 {:then promiseData}
 
 {#if project}
-<SectionHeading>Financials: {project.projectBasics.name}</SectionHeading>
+<!-- col span 3 -->
+<div class="col-span-3">
+<SectionHeading>
+    Financials: {project.projectBasics.name}
+    <span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+</SectionHeading>
+</div>
 {/if}
 
-<div class="mb-6">
-    <ProjectValueChart {project}></ProjectValueChart>
+<div class="col-span-1">
+    <!-- col span 1 -->
+    <SectionHeading>Executive Summary</SectionHeading>
+    <p class="mb-6 text-sm">{project.projectBasics?.description}</p>
 </div>
-<ul class="list mb-6">
-    <li>
-        <span>Net Present Value</span>
-        <span class="float-right flex-auto font-semibold">
-            <MoneyDisplay amount={project.projectValue?.netPresentValue || 0} />
-        </span>
-    </li>
 
-    <li>
-        <span>Internal Rate of Return</span>
-        <span class="float-right flex-auto font-semibold"
-            >{formatPercent.format(project.projectValue?.internalRateOfReturn || 0)}</span
-        >
-    </li>
 
-    <li>
-        <span>Funding Source</span>
-        <span class="float-right flex-auto font-semibold"
-            >{project.projectValue?.fundingSource}</span
-        >
-    </li>
+<div class="col-span-1">
+    <!-- col span 1 -->
+    <SectionHeading>Financials</SectionHeading>
+    <ProjectValueChart {project}></ProjectValueChart>
+    <ul class="list mb-6 col-span-2 text-xs p-2">
+        <li>
+            <span>Net Present Value</span>
+            <span class="float-right flex-auto font-semibold">
+                <MoneyDisplay amount={project.projectValue?.netPresentValue || 0} />
+            </span>
+        </li>
 
-    <li>
-        <span>Development Cost</span>
-        <span class="float-right flex-auto font-semibold"
-            >{formatCurrency.format(project.projectCost?.initialCost || 0)}</span
-        >
-    </li>
+        <li>
+            <span>Internal Rate of Return</span>
+            <span class="float-right flex-auto font-semibold"
+                >{formatPercent.format(project.projectValue?.internalRateOfReturn || 0)}</span
+            >
+        </li>
 
-    <li>
-        <span>Development Hours</span>
-        <span class="float-right flex-auto font-semibold"
-            >{project.projectCost?.hourEstimate}</span
-        >
-    </li>
+        <li>
+            <span>Funding Source</span>
+            <span class="float-right flex-auto font-semibold"
+                >{project.projectValue?.fundingSource}</span
+            >
+        </li>
 
-    <li>
-        <span>Blended Hourly Rate</span>
-        <span class="float-right flex-auto font-semibold"
-            >{formatCurrency.format(project.projectCost?.blendedRate || 0)}</span
-        >
-    </li>
-</ul>
+        <li>
+            <span>Development Cost</span>
+            <span class="float-right flex-auto font-semibold"
+                >{formatCurrency.format(project.projectCost?.initialCost || 0)}</span
+            >
+        </li>
 
-<SectionHeading>Executive Summary</SectionHeading>
-<p class="mb-6 text-xs">{project.projectBasics?.description}</p>
+        <li>
+            <span>Development Hours</span>
+            <span class="float-right flex-auto font-semibold"
+                >{project.projectCost?.hourEstimate}</span
+            >
+        </li>
 
-<SectionHeading>Details</SectionHeading>
-<ul class="list mb-6">
+        <li>
+            <span>Blended Hourly Rate</span>
+            <span class="float-right flex-auto font-semibold"
+                >{formatCurrency.format(project.projectCost?.blendedRate || 0)}</span
+            >
+        </li>
+    </ul>
+</div>
+
+
+<div class="col-span-1">
+    <!-- col span 1 -->
+<SectionHeading>Team</SectionHeading>
+<ul class="-m-3 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
     <li>
         <span>Owner</span>
         <span class="float-right flex-auto font-semibold">
             {#if project.projectBasics?.ownerID}
-                <!-- <UserDisplay id={project.projectBasics?.ownerID as string} /> -->
+                {project.projectBasics.ownerID}
             {/if}
         </span>
     </li>
-
-    <li>
-        <span>Created</span>
-        <span class="float-right flex-auto font-semibold">{formatDate(project.createdAt)}</span>
-    </li>
-
-    <li>
-        <span>Status</span>
-        <span class="float-right flex-auto font-semibold">{project.projectBasics?.status}</span>
-    </li>
-</ul>
-
-<SectionHeading>Team</SectionHeading>
-<ul class="list">
     {#if project.projectDaci?.driver}
-        <li>
-            <div>Drivers</div>
-            <div class="px-4 pb-2 text-left font-semibold">
-                <ResourceList
-                    size="md"
-                    maxSize={4}
-                    resources={project.projectDaci?.driver as Resource[]}
-                />
-            </div>
-        </li>
+        {@render teamSection("Drivers", project.projectDaci?.driver as Resource[])}
     {/if}
     {#if project.projectDaci?.approver}
-        <li>
-            <div>Approvers</div>
-            <div class="px-4 pb-2 text-left font-semibold">
-                <ResourceList
-                    size="md"
-                    maxSize={4}
-                    resources={project.projectDaci?.approver as Resource[]}
-                />
-            </div>
-        </li>
+        {@render teamSection("Approvers", project.projectDaci?.approver as Resource[])}
     {/if}
     {#if project.projectDaci?.contributor}
-        <li>
-            <div>Contributors</div>
-            <div class="px-4 pb-2 text-left font-semibold">
-                <ResourceList
-                    size="md"
-                    maxSize={4}
-                    resources={project.projectDaci?.contributor as Resource[]}
-                />
-            </div>
-        </li>
+        {@render teamSection("Contributors", project.projectDaci?.contributor as Resource[])}
     {/if}
     {#if project.projectDaci?.informed}
-        <li>
-            <div>Informed</div>
-            <div class="px-4 pb-2 text-left font-semibold">
-                <ResourceList
-                    size="md"
-                    maxSize={4}
-                    resources={project.projectDaci?.informed as Resource[]}
-                />
-            </div>
-        </li>
+        {@render teamSection("Informed", project.projectDaci?.informed as Resource[])}
     {/if}
 </ul>
+</div>
+
+
+
+<div class="col-span-2">
+    <!-- col span 2 -->
+    <SectionHeading>Features</SectionHeading>
+    <Table>
+        <TableHead>
+          <TableHeadCell>Feature</TableHeadCell>
+          <TableHeadCell>Priority</TableHeadCell>
+          <TableHeadCell>Status</TableHeadCell>
+        </TableHead>
+        <TableBody tableBodyClass="divide-y">
+        {#if project.projectFeatures}
+            {#each project.projectFeatures as feature}
+          <TableBodyRow>
+            <TableBodyCell>
+                {feature.name}
+                <button id={'feat' + normalizeGUID(feature.id)}>
+                    <QuestionCircleSolid class="w-3 h-3 ms-1.5" />
+                    <span class="sr-only">Show information</span>
+                </button>
+                  <Popover triggeredBy={'#feat' + normalizeGUID(feature.id)} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400" placement="bottom-start">
+                    <div class="p-3 space-y-2">
+                      {feature.description}
+                    </div>
+                  </Popover>
+            </TableBodyCell>
+            <TableBodyCell><BadgeFeaturePriority {feature} /></TableBodyCell>
+            <TableBodyCell><BadgeFeatureStatus {feature} /></TableBodyCell>
+          </TableBodyRow>
+          {/each}
+        {/if}
+        </TableBody>
+    </Table>
+</div>
 
 {/await}
+
+</div>
+
+{#snippet teamSection(title:string, resources:Resource[])}
+<li class="py-3 sm:py-3.5">
+<div class="flex items-center justify-between">
+<div class="flex min-w-0 items-center">
+    <div class="ml-3">
+        <p class="truncate font-medium text-gray-900 dark:text-white">
+            {title}
+        </p>
+    </div>
+    
+</div>
+<div class="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
+    <ResourceList
+        size="md"
+        maxSize={4}
+        {resources}
+    />
+</div>
+</div>
+</li>
+{/snippet}

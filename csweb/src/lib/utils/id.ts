@@ -12,6 +12,18 @@ export const normalizeID = (id: string) => {
 };
 
 /**
+ * Replace a guid with underscores replacing dashes.  This allows it to be used as an DOM element ID
+ * @param id - the GUID to normalize
+ * @returns the passed in GUID without the dash
+ */
+export const normalizeGUID = (id: string) => {
+	if (!id) {
+		return '';
+	}
+	return id.replaceAll('-', '_').replaceAll(':', '_');
+}
+
+/**
  * Takes a value that has previously been normalized for Svelte and returns it in its original form
  * @param id a string value that has previously been normalized
  * @returns a string ID returned to its original form
