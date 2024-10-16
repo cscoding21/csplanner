@@ -2,7 +2,6 @@ fragment userFragment on User {
 	firstName
 	lastName
 	email
-	id
 	profileImage
 }
 

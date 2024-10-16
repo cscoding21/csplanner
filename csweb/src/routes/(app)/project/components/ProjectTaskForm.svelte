@@ -114,25 +114,22 @@
 			});
 	};
 
-	const getElibigleResources = (skillsList: string[]): any[] => {
-		//---TODO: figure out the reactivity and required logic to male
-		//   list limited to resoures that have skills required by the task
-		if (skillsList && skillsList.length > 0) {
-			return resourceRoster
-				.filter((r) => {
-					if (r.skills && r.skills.length > 0) {
-						const val = r.skills?.map((rs) => rs.id).some((so) => skillsList.includes(so));
-						console.log('val: ', val);
+	$effect(() => {
+		if (taskForm.requiredSkillIDs && taskForm.requiredSkillIDs.length > 0) {
+			resourceOpts = resourceRoster
+				.filter((res) => {
+					if (res.skills && res.skills.length > 0) {
+						const val = res.skills?.map((rs) => rs.id).some((so) => taskForm.requiredSkillIDs?.includes(so));
 						return val;
 					} else {
 						return false;
 					}
 				})
-				.map((r) => ({ name: r.name, value: r.id }));
+				.map((r) => ({ name: r.name as string, value: r.id as string }));
+		} else {
+			resourceOpts = resourceRoster.map((r) => ({ name: r.name as string, value: r.id as string }));
 		}
-
-		return resourceRoster.map((r) => ({ name: r.name, value: r.id }));
-	};
+	})
 
 	const loadPage = async () => {
 		getList('Skills')
@@ -146,18 +143,12 @@
 
 						return r;
 					})
-					.then((ro) => {
-						resourceOpts = ro.results?.map((t: any) => ({
-							name: t.name,
-							value: t.id as string
-						})) as SelectOptionType<string>[];
-					});
 			});
 	};
 
 	let taskForm = $state(getTaskForm());
-	let resourceRoster = [] as Resource[];
-	let resourceOpts = $state(getElibigleResources(taskForm.requiredSkillIDs as string[]));
+	let resourceRoster = $state([] as Resource[]);
+	let resourceOpts = $state([] as SelectOptionType<string>[]);
 	let skillsOpts = $state([] as SelectOptionType<string>[]);
 
 	loadPage();
@@ -201,7 +192,7 @@
 				<MultiSelectInput
 					bind:value={taskForm.requiredSkillIDs as string[]}
 					fieldName="Required Skills"
-					options={skillsOpts}
+					bind:options={skillsOpts}
 					error={errors.requiredSkills}
 				/>
 			</div>
@@ -209,7 +200,7 @@
 				<MultiSelectInput
 					bind:value={taskForm.resourceIDs as string[]}
 					fieldName="Resources"
-					options={resourceOpts}
+					bind:options={resourceOpts}
 					error={errors.resourceIDs}
 				/>
 			</div>
@@ -217,10 +208,13 @@
 
 		<div class="col-span-4">
 			<span class="float-right">
+				<span class="mr-2">
+				<Button color="alternative" onclick={() => callIf(update)}>Cancel</Button>
+			</span>
 				{#if taskForm && taskForm.id}
-					<Button on:click={submitForm}>Edit Task</Button>
+					<Button onclick={submitForm}>Edit Task</Button>
 				{:else}
-					<Button on:click={submitForm}>Add Task</Button>
+					<Button onclick={submitForm}>Add Task</Button>
 				{/if}
 			</span>
 			<br class="clear-both" />

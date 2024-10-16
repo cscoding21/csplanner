@@ -74,8 +74,8 @@
 		<div class="">
 			<div class="">
 				<Tabs tabStyle="underline">
-					{#each project.projectMilestones as milestone (milestone)}
-					<TabItem open>
+					{#each project.projectMilestones as milestone, index}
+					<TabItem open={index === 0}>
 						<div slot="title" class="flex items-center gap-2">
 						  <ChevronRightOutline size="md" />
 						  {milestone.phase.name}

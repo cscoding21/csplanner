@@ -823,7 +823,6 @@ export const UserFragmentFragmentDoc = gql`
   firstName
   lastName
   email
-  id
   profileImage
 }
     `;

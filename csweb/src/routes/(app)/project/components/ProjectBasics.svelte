@@ -7,8 +7,8 @@
 	import type { UpdateProjectBasics, Project } from '$lib/graphql/generated/sdk';
 	import { coalesceToType } from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
-	import { findAllResources } from '$lib/services/resource';
 	import { callIf } from '$lib/utils/helpers';
+	import { findAllUsers } from '$lib/services/user';
 
 	interface Props {
 		id: string;
@@ -77,13 +77,14 @@
 	};
 
 	const loadPage = async () => {
-		findAllResources()
-			.then((r) => r)
+		findAllUsers()
 			.then((r) => {
-				resourceOpts = r.results?.map((r) => ({
-					name: r.name,
-					value: r.id as string
+				userOpts = r.results?.map((r) => ({
+					name: r.firstName + ' ' + r.lastName,
+					value: r.email as string
 				})) as SelectOptionType<string>[];
+
+				return r;
 			})
 			.then(() => {
 				load().then(p => {
@@ -93,7 +94,7 @@
 	};
 
 	let errors: any = $state({ name: '', ownerID: '', description: '' });
-	let resourceOpts = $state([] as SelectOptionType<string>[]);
+	let userOpts = $state([] as SelectOptionType<string>[]);
 	let basicsForm = $state(getDefaultProject().projectBasics);
 </script>
 
@@ -116,7 +117,7 @@
 			bind:value={basicsForm.ownerID as string}
 			fieldName="Owner"
 			error={errors.ownerID}
-			options={resourceOpts}
+			options={userOpts}
 		/>
 
 		<TextAreaInput
