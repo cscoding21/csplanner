@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		SectionHeading,
 		TextInput,
 		SelectInput,
 		NumberInput,

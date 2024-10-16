@@ -4,67 +4,49 @@
         Indicator,
         type ColorVariant,
 		type IndicatorColorType } from "flowbite-svelte";
-    import type { ProjectMilestoneTask } from "$lib/graphql/generated/sdk";
 
 interface Props {
-		task: ProjectMilestoneTask;
+		status: string;
 	}
 	let { 
-		task = $bindable(),  
+		status = $bindable(),  
 	}: Props = $props();
 
-    const setElements = (p: any): any => {
-		if (!p) {
-			return;
-		}
+	let badgeName = $state("")
+	let badgeColor = $state("default" as ColorVariant)
+	let badgeIndicatorColor = $state("default" as IndicatorColorType)
 
-		switch (p) {
+	$effect(() => {
+		switch (status) {
 			case 'new':
-				display.name = 'New';
-				display.color = 'yellow';
-				display.indicatorColor = 'yellow';
-				return display;
+				badgeName = 'New';
+				badgeColor = 'yellow';
+				badgeIndicatorColor = 'yellow';
+				break;
 			case 'accepted':
-                display.name = 'Accepted';
-                display.color = 'blue';
-                display.indicatorColor = 'blue';
-				return display;
+				badgeName = 'Accepted';
+				badgeColor = 'blue';
+				badgeIndicatorColor = 'blue';
+				break;
 			case 'removed':
-                display.name = 'Removed';
-                display.color = 'dark';
-                display.indicatorColor = 'dark';
-				return display;
-			case 'done':
-                display.name = 'Done';
-                display.color = 'green';
-                display.indicatorColor = 'green';
-				return display;
+				badgeName = 'Removed';
+				badgeColor = 'red';
+				badgeIndicatorColor = 'red';
+				break;
+			case 'done':				
+				badgeName = 'Done';
+				badgeColor = 'green';
+				badgeIndicatorColor = 'green';
+				break;
 		}
-
-		return display;
-	};
-
-	interface PriorityDisplay {
-		name: string;
-		color: ColorVariant | undefined;
-		indicatorColor: IndicatorColorType | undefined;
-	}
-
-	let display: PriorityDisplay = $state({
-		name: '',
-		color: undefined,
-		indicatorColor: undefined
-	});
-
-	setElements(task.status);
-
+	})
 </script>
 
 
-<Badge color={display.color} rounded class="px-2.5 py-1">
+<Badge color={badgeColor} rounded class="px-2.5 py-1">
     <Indicator
-        color={display.indicatorColor}
+        color={badgeIndicatorColor}
         size="xs"
         class="mr-1"
-    />{display.name}
+    />{badgeName}
 </Badge>

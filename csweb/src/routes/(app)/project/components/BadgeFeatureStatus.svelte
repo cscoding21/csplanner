@@ -4,67 +4,49 @@
         Indicator,
         type ColorVariant,
 		type IndicatorColorType } from "flowbite-svelte";
-    import type { ProjectFeature } from "$lib/graphql/generated/sdk";
 
 interface Props {
-		feature: ProjectFeature;
+		status: string;
 	}
 	let { 
-		feature = $bindable(),  
+		status = $bindable(),  
 	}: Props = $props();
 
-    const setElements = (p: any): any => {
-		if (!p) {
-			return;
-		}
+	let badgeName = $state("")
+	let badgeColor = $state("default" as ColorVariant)
+	let badgeIndicatorColor = $state("default" as IndicatorColorType)
 
-		switch (p) {
+	$effect(() => {
+		switch (status) {
 			case 'proposed':
-                display.name = 'Proposed';
-                display.color = 'blue';
-                display.indicatorColor = 'blue';
-				return display;
+				badgeName = 'Proposed';
+				badgeColor = 'yellow';
+				badgeIndicatorColor = 'yellow';
+				break;
 			case 'accepted':
-                display.name = 'Accepted';
-                display.color = 'green';
-                display.indicatorColor = 'green';
-				return display;
+				badgeName = 'Accepted';
+				badgeColor = 'blue';
+				badgeIndicatorColor = 'blue';
+				break;
 			case 'deferred':
-                display.name = 'Deferred';
-                display.color = 'yellow';
-                display.indicatorColor = 'yellow';
-				return display;
-			case 'removed':
-            display.name = 'Removed';
-				display.color = 'red';
-				display.indicatorColor = 'red';
-				return display;
+				badgeName = 'Deferred';
+				badgeColor = 'yellow';
+				badgeIndicatorColor = 'yellow';
+				break;
+			case 'removed':				
+				badgeName = 'Removed';
+				badgeColor = 'red';
+				badgeIndicatorColor = 'red';
+				break;
 		}
-
-		return display;
-	};
-
-	interface Display {
-		name: string;
-		color: ColorVariant | undefined;
-		indicatorColor: IndicatorColorType | undefined;
-	}
-
-	let display: Display = $state({
-		name: '',
-		color: undefined,
-		indicatorColor: undefined
-	});
-
-	setElements(feature.status);
-
+	})
 </script>
 
 
-<Badge color={display.color} rounded class="px-2.5 py-1">
+<Badge color={badgeColor} rounded class="px-2.5 py-1">
     <Indicator
-        color={display.indicatorColor}
+        color={badgeIndicatorColor}
         size="xs"
         class="mr-1"
-    />{display.name}
+    />{badgeName}
 </Badge>

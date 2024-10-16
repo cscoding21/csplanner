@@ -167,8 +167,8 @@
                     </div>
                   </Popover>
             </TableBodyCell>
-            <TableBodyCell><BadgeFeaturePriority {feature} /></TableBodyCell>
-            <TableBodyCell><BadgeFeatureStatus {feature} /></TableBodyCell>
+            <TableBodyCell><BadgeFeaturePriority priority={feature.priority} /></TableBodyCell>
+            <TableBodyCell><BadgeFeatureStatus status={feature.status} /></TableBodyCell>
           </TableBodyRow>
           {/each}
         {/if}

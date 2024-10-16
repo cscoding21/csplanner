@@ -4,67 +4,49 @@
         Indicator,
         type ColorVariant,
 		type IndicatorColorType } from "flowbite-svelte";
-    import type { ProjectFeature } from "$lib/graphql/generated/sdk";
 
-interface Props {
-		feature: ProjectFeature;
+	interface Props {
+		priority: string;
 	}
 	let { 
-		feature = $bindable(),  
+		priority = $bindable(),  
 	}: Props = $props();
 
-    const setElements = (p: any): any => {
-		if (!p) {
-			return;
-		}
+	let badgeName = $state("")
+	let badgeColor = $state("default" as ColorVariant)
+	let badgeIndicatorColor = $state("default" as IndicatorColorType)
 
-		switch (p) {
+	$effect(() => {
+		switch (priority) {
 			case 'veryhigh':
-				priorityDisplay.name = 'Must Have';
-				priorityDisplay.color = 'red';
-				priorityDisplay.indicatorColor = 'red';
-				return priorityDisplay;
+				badgeName = 'Must Have';
+				badgeColor = 'red';
+				badgeIndicatorColor = 'red';
+				break;
 			case 'high':
-				priorityDisplay.name = 'High';
-				priorityDisplay.color = 'yellow';
-				priorityDisplay.indicatorColor = 'yellow';
-				return priorityDisplay;
+				badgeName = 'High';
+				badgeColor = 'yellow';
+				badgeIndicatorColor = 'yellow';
+				break;
 			case 'medium':
-				priorityDisplay.name = 'Medium';
-				priorityDisplay.color = 'blue';
-				priorityDisplay.indicatorColor = 'blue';
-				return priorityDisplay;
-			case 'low':
-				priorityDisplay.name = 'Low';
-				priorityDisplay.color = 'purple';
-				priorityDisplay.indicatorColor = 'purple';
-				return priorityDisplay;
+				badgeName = 'Medium';
+				badgeColor = 'blue';
+				badgeIndicatorColor = 'blue';
+				break;
+			case 'low':				
+				badgeName = 'Low';
+				badgeColor = 'purple';
+				badgeIndicatorColor = 'purple';
+				break;
 		}
-
-		return priorityDisplay;
-	};
-
-	interface PriorityDisplay {
-		name: string;
-		color: ColorVariant | undefined;
-		indicatorColor: IndicatorColorType | undefined;
-	}
-
-	let priorityDisplay: PriorityDisplay = $state({
-		name: '',
-		color: undefined,
-		indicatorColor: undefined
-	});
-
-	setElements(feature.priority);
-
+	})
 </script>
 
 
-<Badge color={priorityDisplay.color} rounded class="px-2.5 py-1">
+<Badge color={badgeColor} rounded class="px-2.5 py-1">
     <Indicator
-        color={priorityDisplay.indicatorColor}
+        color={badgeIndicatorColor}
         size="xs"
         class="mr-1"
-    />{priorityDisplay.name}
+    />{badgeName}
 </Badge>
