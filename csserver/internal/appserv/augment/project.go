@@ -13,6 +13,8 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 	skillList := getSkills()
 	resourceList := findResources()
 
+	proj.ProjectBasics.Owner = getUserByEmail(model.ProjectBasics.OwnerID)
+
 	for i, m := range proj.ProjectMilestones {
 		if len(m.Tasks) == 0 {
 			continue

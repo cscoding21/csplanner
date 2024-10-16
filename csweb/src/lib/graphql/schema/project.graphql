@@ -10,6 +10,9 @@ fragment projectFragment on Project {
 		status
 		startDate
 		ownerID
+		owner {
+			...userFragment
+		}
 	}
 	projectValue {
 		fundingSource

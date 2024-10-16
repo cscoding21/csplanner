@@ -23,6 +23,7 @@ type ProjectBasics {
   status: String!
   startDate: Time
   ownerID: String
+  owner: User
 }
 
 

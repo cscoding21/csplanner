@@ -379,6 +379,7 @@ export type ProjectBasics = {
   __typename?: 'ProjectBasics';
   description: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  owner?: Maybe<User>;
   ownerID?: Maybe<Scalars['String']['output']>;
   startDate?: Maybe<Scalars['Time']['output']>;
   status: Scalars['String']['output'];
@@ -950,6 +951,9 @@ export const ProjectFragmentFragmentDoc = gql`
     status
     startDate
     ownerID
+    owner {
+      ...userFragment
+    }
   }
   projectValue {
     fundingSource
@@ -1017,7 +1021,8 @@ export const ProjectFragmentFragmentDoc = gql`
     }
   }
 }
-    ${ResourceFragmentFragmentDoc}`;
+    ${UserFragmentFragmentDoc}
+${ResourceFragmentFragmentDoc}`;
 export const FindActivityDocument = gql`
     query findActivity($input: PageAndFilter!) {
   findActivity(pageAndFilter: $input) {

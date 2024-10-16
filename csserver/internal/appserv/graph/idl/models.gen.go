@@ -203,6 +203,7 @@ type ProjectBasics struct {
 	Status      string     `json:"status"`
 	StartDate   *time.Time `json:"startDate,omitempty"`
 	OwnerID     *string    `json:"ownerID,omitempty"`
+	Owner       *User      `json:"owner,omitempty"`
 }
 
 type ProjectCost struct {

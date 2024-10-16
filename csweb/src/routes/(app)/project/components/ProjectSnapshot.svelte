@@ -2,15 +2,16 @@
     import { 
         SectionHeading,
         MoneyDisplay,
-        ResourceList
+        ResourceList,
+        UserCard
     } from "$lib/components";
     import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus } from ".";
-    import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover } from "flowbite-svelte";
+    import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover, Hr } from "flowbite-svelte";
     import { QuestionCircleSolid } from "flowbite-svelte-icons";
     import { 
         ProjectValueChart
     } from '../components'
-    import type { Project, Resource } from '$lib/graphql/generated/sdk'
+    import type { Project, Resource, User } from '$lib/graphql/generated/sdk'
     import { formatPercent, formatCurrency } from "$lib/utils/format";
     import { getProject } from "$lib/services/project";
     import { getDefaultProject } from "$lib/forms/project.validation";
@@ -42,7 +43,7 @@
 
 </script>
 
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-3 gap-8">
 
 
 {#await loadPage()}
@@ -119,15 +120,11 @@
 <div class="col-span-1">
     <!-- col span 1 -->
 <SectionHeading>Team</SectionHeading>
-<ul class="-m-3 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-    <li>
-        <span>Owner</span>
-        <span class="float-right flex-auto font-semibold">
-            {#if project.projectBasics?.ownerID}
-                {project.projectBasics.ownerID}
-            {/if}
-        </span>
-    </li>
+
+<div class="font-medium text-gray-900 dark:text-white">Owner</div>
+<UserCard user={project.projectBasics.owner as User} />
+<Hr />
+<ul class="-m-4 p-2 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
     {#if project.projectDaci?.driver}
         {@render teamSection("Drivers", project.projectDaci?.driver as Resource[])}
     {/if}

@@ -21,6 +21,7 @@ import (
 func CreateTestProjects(ctx context.Context) error {
 	ps := factory.GetProjectService()
 	rs := factory.GetResourceService()
+	us := factory.GetUserService()
 
 	projectList, _ := ps.FindAllProjects(ctx)
 	if len(projectList.Results) > 0 {
@@ -28,6 +29,7 @@ func CreateTestProjects(ctx context.Context) error {
 	}
 
 	allResources, _ := rs.FindAllResources(ctx)
+	allUsers, _ := us.FindAllUsers(ctx)
 
 	updateProject := project.Project{
 		ControlFields: common.ControlFields{
@@ -36,7 +38,7 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-			OwnerID:     allResources.Results[0].ID,
+			OwnerID:     allUsers.Results[0].Email,
 			Status:      ptypes.Draft,
 		},
 		ProjectCost: &project.ProjectCost{
@@ -208,8 +210,10 @@ func findPortfolioProjects() []project.Project {
 
 func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Project {
 	rs := factory.GetResourceService()
+	us := factory.GetUserService()
 	ctx := context.Background()
 	allResources, _ := rs.FindAllResources(ctx)
+	allUsers, _ := us.FindAllUsers(ctx)
 
 	startDate1 := time.Now().AddDate(0, 0, 1*rand.Intn(60))
 	endDate1 := startDate1.AddDate(0, 0, 1*rand.Intn(4))
@@ -233,7 +237,7 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
 			Description: "Here's a video to add to the portfolio",
-			OwnerID:     allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].GetID(),
+			OwnerID:     allUsers.Results[rand.Intn(*allUsers.Pagination.TotalResults-1)].Email,
 			Status:      status,
 		},
 		ProjectCost: &project.ProjectCost{

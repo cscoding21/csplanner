@@ -246,6 +246,7 @@ type ComplexityRoot struct {
 	ProjectBasics struct {
 		Description func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		OwnerID     func(childComplexity int) int
 		StartDate   func(childComplexity int) int
 		Status      func(childComplexity int) int
@@ -1516,6 +1517,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectBasics.Name(childComplexity), true
+
+	case "ProjectBasics.owner":
+		if e.complexity.ProjectBasics.Owner == nil {
+			break
+		}
+
+		return e.complexity.ProjectBasics.Owner(childComplexity), true
 
 	case "ProjectBasics.ownerID":
 		if e.complexity.ProjectBasics.OwnerID == nil {
@@ -2926,6 +2934,7 @@ type ProjectBasics {
   status: String!
   startDate: Time
   ownerID: String
+  owner: User
 }
 
 
@@ -9723,6 +9732,8 @@ func (ec *executionContext) fieldContext_Project_projectBasics(_ context.Context
 				return ec.fieldContext_ProjectBasics_startDate(ctx, field)
 			case "ownerID":
 				return ec.fieldContext_ProjectBasics_ownerID(ctx, field)
+			case "owner":
+				return ec.fieldContext_ProjectBasics_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectBasics", field.Name)
 		},
@@ -10217,6 +10228,59 @@ func (ec *executionContext) fieldContext_ProjectBasics_ownerID(_ context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectBasics_owner(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectBasics_owner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Owner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectBasics_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectBasics",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "profileImage":
+				return ec.fieldContext_User_profileImage(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -20943,6 +21007,8 @@ func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._ProjectBasics_startDate(ctx, field, obj)
 		case "ownerID":
 			out.Values[i] = ec._ProjectBasics_ownerID(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._ProjectBasics_owner(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
