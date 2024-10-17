@@ -30,7 +30,7 @@
 	{feature.name}
 
 	<span class="float-right">
-		<BadgeFeaturePriority {feature} />
+		<BadgeFeaturePriority priority={feature.priority} />
 
 		<ButtonGroup>
 		<Button

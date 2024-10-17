@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"csserver/internal/common"
+	"csserver/internal/services/project/ptypes"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/utils"
 
@@ -110,6 +111,18 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 				Order:       p.PhaseOrder,
 				Description: p.Description,
 			},
+			Tasks: []*ProjectMilestoneTask{},
+		}
+
+		for _, t := range p.Tasks {
+			task := ProjectMilestoneTask{
+				Name:             t.Name,
+				Description:      t.Description,
+				Status:           ptypes.New,
+				RequiredSkillIDs: t.RequiredSkillIDs,
+			}
+
+			milestone.Tasks = append(milestone.Tasks, &task)
 		}
 
 		project.ProjectMilestones = append(project.ProjectMilestones, &milestone)

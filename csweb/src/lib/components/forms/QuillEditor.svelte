@@ -118,6 +118,6 @@
 
 <!-- bg-gray-50 border border-gray-200 dark:bg-gray-700 dark:border-gray-600 -->
 <div
-    class="w-full rounded-lg ">
+    class="w-full rounded-lg text-gray-100">
     <div id="{editorID}"></div>
 </div>

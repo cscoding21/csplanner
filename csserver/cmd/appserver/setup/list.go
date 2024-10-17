@@ -6,30 +6,34 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/services/list"
 
-	"github.com/google/uuid"
-
 	log "github.com/sirupsen/logrus"
 )
 
 func CreateTestLists(ctx context.Context) error {
 	service := factory.GetListService()
+	//uuid.New().String()
 	skillsList := list.List{
 		Name: "Skills",
 		Values: []list.ListItem{
-			{Value: uuid.New().String(), Name: "Backend Development"},
-			{Value: uuid.New().String(), Name: "Frontend Development"},
-			{Value: uuid.New().String(), Name: "Database Development"},
-			{Value: uuid.New().String(), Name: "DevOps"},
-			{Value: uuid.New().String(), Name: "UX"},
-			{Value: uuid.New().String(), Name: "UI"},
-			{Value: uuid.New().String(), Name: "Project Management"},
-			{Value: uuid.New().String(), Name: "Requirements Gathering"},
-			{Value: uuid.New().String(), Name: "Security"},
-			{Value: uuid.New().String(), Name: "Marketing"},
-			{Value: uuid.New().String(), Name: "Content Writing"},
-			{Value: uuid.New().String(), Name: "Video Editing"},
-			{Value: uuid.New().String(), Name: "Technical Writing"},
-			{Value: uuid.New().String(), Name: "Data Analysis"},
+			{Value: "backend", Name: "Backend Development"},
+			{Value: "frontend", Name: "Frontend Development"},
+			{Value: "database", Name: "Database Development"},
+			{Value: "technical-architecture", Name: "Technical Architecture"},
+			{Value: "devops", Name: "DevOps"},
+			{Value: "ux", Name: "UX"},
+			{Value: "ui", Name: "UI"},
+			{Value: "product-design", Name: "Product Design"},
+			{Value: "business-analysis", Name: "Business Analysis"},
+			{Value: "project-management", Name: "Project Management"},
+			{Value: "product-management", Name: "Product Management"},
+			{Value: "requirements-gathering", Name: "Requirements Gathering"},
+			{Value: "security", Name: "Security"},
+			{Value: "marketing", Name: "Marketing"},
+			{Value: "content-writing", Name: "Content Writing"},
+			{Value: "video-editing", Name: "Video Editing"},
+			{Value: "technical-writing", Name: "Technical Writing"},
+			{Value: "data-analysis", Name: "Data Analysis"},
+			{Value: "data-science", Name: "Data Science"},
 		},
 	}
 

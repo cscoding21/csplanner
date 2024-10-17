@@ -2,6 +2,8 @@ package augment
 
 import (
 	"csserver/internal/appserv/graph/idl"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // AugmentResource fills in object data for a single reaource
@@ -18,6 +20,11 @@ func AugmentResource(res *idl.Resource) {
 
 	for i, s := range res.Skills {
 		li := getSkillById(*skills, s.ID)
-		res.Skills[i].Name = li.Name
+
+		if li == nil {
+			log.Warnf("skill not found: %s", s.ID)
+		} else {
+			res.Skills[i].Name = li.Name
+		}
 	}
 }
