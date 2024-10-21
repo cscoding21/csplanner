@@ -1,4 +1,4 @@
-# import requi9red module
+# import required module
 import sys
  
 # append the path of the

@@ -12,8 +12,10 @@ ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 
 RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
+RUN poetry add fastapi
+RUN poetry add uvicorn[standard]
 RUN poetry install --no-root --only main
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
-CMD ["uvicorn", "main:csapi", "--host", "0.0.0.0", "--port", "7000" ,"--app-dir", "csai/server"]
+CMD ["poetry", "run", "uvicorn", "main:csapi", "--host", "0.0.0.0", "--port", "7000" ,"--app-dir", "csai/server", "--log-level", "critical"]
