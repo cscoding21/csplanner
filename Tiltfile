@@ -1,5 +1,6 @@
 load('./tilt_lib/csserver/Tiltfile', 'setup_csserver')
 load('./tilt_lib/csweb/Tiltfile', 'setup_csweb')
+load('./tilt_lib/csai/Tiltfile', 'setup_csai')
 load('./tilt_lib/debug/Tiltfile', 'setup_debug')
 load('./tilt_lib/surrealdb/Tiltfile', 'setup_surrealdb')
 load('./tilt_lib/postgres/Tiltfile', 'setup_postgres')
@@ -22,6 +23,7 @@ setup_debug()
 #---- App
 setup_csserver() 
 setup_csweb() 
+setup_csai()
 
 
 
@@ -47,6 +49,12 @@ k8s_resource(
   port_forwards="4000:4000",
   labels=["csPlanner"],
   resource_deps=['csserver']
+)
+
+k8s_resource(
+  workload='csai',
+  port_forwards="7000:7000",
+  labels=["csPlanner"]
 )
 
 k8s_resource(

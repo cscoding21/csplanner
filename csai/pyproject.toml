@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "csai"
+version = "0.1.0"
+description = "This project will manage the different AI agents supported by the csPlanner framework."
+authors = ["cscoding21 <jeph@cscoding.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+langchain = "^0.3.3"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+pydantic = "^2.9.2"
+fastapi = "^0.115.2"
+
+
+[tool.poetry.group.dev.dependencies]
+notebook = "^7.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

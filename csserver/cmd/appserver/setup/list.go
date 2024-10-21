@@ -34,6 +34,7 @@ func CreateTestLists(ctx context.Context) error {
 			{Value: "technical-writing", Name: "Technical Writing"},
 			{Value: "data-analysis", Name: "Data Analysis"},
 			{Value: "data-science", Name: "Data Science"},
+			{Value: "communications", Name: "Communications"},
 		},
 	}
 
