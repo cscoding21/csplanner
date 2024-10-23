@@ -22,7 +22,7 @@
 		UpdateResourceModal
 	} from '../../components';
 	import { getResource, deleteResourceSkill } from '$lib/services/resource';
-	import { formatDate, formatCurrency } from '$lib/utils/format';
+	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import type { Resource } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
@@ -106,11 +106,11 @@
 						<ul class="list">
 							<li>
 								<span>Type</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.type}</span>
+								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.type)}</span>
 							</li>
 							<li>
 								<span>Status</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.status}</span>
+								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.status)}</span>
 							</li>
 							<li>
 								<span>Role</span>
@@ -118,7 +118,7 @@
 							</li>
 							<li>
 								<span>User</span>
-								{#if resourcePromise}
+								{#if resourcePromise.user}
 									<span class="float-right flex-auto font-semibold">{resourcePromise.user?.email}</span>
 								{:else}
 									<span class="float-right flex-auto font-semibold">No User Account</span>
@@ -141,6 +141,7 @@
 						</ul>
 					</div>
 
+					{#if resourcePromise.type === "human"}
 					<caption
 						class="mt-4 bg-white text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white"
 					>
@@ -182,6 +183,7 @@
 
 					<hr class="my-4" />
 					<AddSkill resourceID={id} update={updateResource} />
+					{/if}
 				</Card>
 			</div>
 

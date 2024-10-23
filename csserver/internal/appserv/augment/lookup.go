@@ -61,7 +61,11 @@ func getResourceById(resources []resource.Resource, id string) *idl.Resource {
 	for _, r := range resources {
 		if r.ID == id {
 			out := csmap.ResourceResourceToIdl(r)
-			out.User = getUserByEmail(*r.UserEmail)
+
+			if r.UserEmail != nil {
+				out.User = getUserByEmail(*r.UserEmail)
+			}
+
 			return &out
 		}
 	}

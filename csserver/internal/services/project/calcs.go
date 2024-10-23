@@ -2,6 +2,7 @@ package project
 
 import (
 	"csserver/internal/finance"
+	"csserver/internal/services/project/ptypes"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -75,4 +76,41 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 	p.ProjectCost.InitialCost = cost
 
 	return hours, cost
+}
+
+// CalculateProjectMilestoneStats iterate the milestones and calculate summary information
+func (p *Project) CalculateProjectMilestoneStats() {
+	if len(p.ProjectMilestones) == 0 {
+		return
+	}
+
+	for i, m := range p.ProjectMilestones {
+		totalHours := 0
+		completedHours := 0
+		removedHours := 0
+		hoursRemaining := 0
+		completedTasks := 0
+		isComplete := true
+
+		for _, t := range m.Tasks {
+			totalHours += t.HourEstimate
+
+			if t.Status == ptypes.Done {
+				completedHours += t.HourEstimate
+				completedTasks++
+			} else if t.Status == ptypes.Removed {
+				removedHours += t.HourEstimate
+			} else {
+				hoursRemaining += t.HourEstimate
+				isComplete = false
+			}
+		}
+
+		p.ProjectMilestones[i].TotalHours = totalHours
+		p.ProjectMilestones[i].CompletedTasks = completedTasks
+		p.ProjectMilestones[i].HoursRemaining = hoursRemaining
+		p.ProjectMilestones[i].RemovedHours = removedHours
+		p.ProjectMilestones[i].IsComplete = isComplete
+		p.ProjectMilestones[i].IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
+	}
 }

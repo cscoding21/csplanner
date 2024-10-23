@@ -27,6 +27,7 @@
     const load = async (): Promise<Project> => {
 		return await getProject(id)
 			.then((proj) => {
+                //proj.projectFeatures?.sort((a, b) => a.priority.localeCompare(b.priority))
 
 				return proj;
 			})

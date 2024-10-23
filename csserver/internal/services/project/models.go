@@ -72,6 +72,14 @@ type ProjectMilestone struct {
 	EndDate   *time.Time              `json:"end_date"`
 	Phase     *ProjectMilestonePhase  `json:"phase"`
 	Tasks     []*ProjectMilestoneTask `json:"tasks"`
+
+	TotalHours     int  `json:"total_hours"`
+	HoursRemaining int  `json:"hours_remaining"`
+	IsComplete     bool `json:"is_complete"`
+	IsInFlight     bool `json:"is_in_flight"`
+	TotalTasks     int  `json:"total_tasks"`
+	CompletedTasks int  `json:"completed_tasks"`
+	RemovedHours   int  `json:"removed_hours"`
 }
 
 type ProjectMilestonePhase struct {

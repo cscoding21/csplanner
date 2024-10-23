@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Button, Dropdown, Checkbox, Search } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
-    import { ChevronDownOutline } from 'flowbite-svelte-icons';
+    import { CheckBoxFilter } from '$lib/components';
 
     let searchInput:string = $state("")
     let status:string[] = $state([])
@@ -71,19 +71,8 @@
         <Search slot="search" size="md" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
     </div>
 
-    <Button color="light">
-        <!-- viewbox="0 0 20 20" -->
-        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-4 h-4 mr-2 text-gray-400" fill="currentColor">
-          <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
-        </svg>
-        Status<ChevronDownOutline />
-      </Button>
-    <Dropdown class="w-44 p-3 space-y-3 text-sm">
-    {#each statusOpts as st(st)}
-    <li>
-        <Checkbox bind:group={status} value={st.value} bind:checked={st.checked} on:change={statusChange}>{st.name}</Checkbox>
-    </li>
-    {/each}
-    </Dropdown>
+    <div class="mr-2">
+        <CheckBoxFilter name="Status" bind:group={status} change={statusChange} opts={statusOpts} />
+    </div>
 </div>
 

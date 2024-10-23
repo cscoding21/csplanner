@@ -233,11 +233,18 @@ type ProjectFilters struct {
 }
 
 type ProjectMilestone struct {
-	ID        string                  `json:"id"`
-	StartDate *time.Time              `json:"startDate,omitempty"`
-	EndDate   *time.Time              `json:"endDate,omitempty"`
-	Phase     *ProjectMilestonePhase  `json:"phase"`
-	Tasks     []*ProjectMilestoneTask `json:"tasks"`
+	ID             string                  `json:"id"`
+	StartDate      *time.Time              `json:"startDate,omitempty"`
+	EndDate        *time.Time              `json:"endDate,omitempty"`
+	Phase          *ProjectMilestonePhase  `json:"phase"`
+	Tasks          []*ProjectMilestoneTask `json:"tasks"`
+	TotalHours     *int                    `json:"totalHours,omitempty"`
+	HoursRemaining *int                    `json:"hoursRemaining,omitempty"`
+	IsComplete     *bool                   `json:"isComplete,omitempty"`
+	IsInFlight     *bool                   `json:"isInFlight,omitempty"`
+	TotalTasks     *int                    `json:"totalTasks,omitempty"`
+	CompletedTasks *int                    `json:"completedTasks,omitempty"`
+	RemovedHours   *int                    `json:"removedHours,omitempty"`
 }
 
 type ProjectMilestonePhase struct {

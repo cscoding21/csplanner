@@ -69,6 +69,14 @@ type ProjectMilestone {
   endDate: Time
   phase: ProjectMilestonePhase!
   tasks: [ProjectMilestoneTask!]!
+
+  totalHours: Int
+	hoursRemaining: Int
+	isComplete: Boolean
+	isInFlight: Boolean
+	totalTasks: Int
+	completedTasks: Int
+	removedHours: Int
 }
 
 type ProjectMilestonePhase {

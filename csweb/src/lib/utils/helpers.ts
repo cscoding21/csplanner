@@ -59,8 +59,25 @@ export const deleteCookie = (cookieName: string) => {
 	document.cookie = `${cookieName}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`;
 };
 
+/**
+ * calls a function if it exists
+ * @param func the function to call
+ */
 export const callIf = (func?: Function) => {
 	if (func) {
 		func();
 	}
 };
+
+/**
+ * ensure that the value is returned as a number as opposed to null or undefined
+ * @param input - ensure a safe integer is returned from a nullable value
+ * @returns an integer representing the input value
+ */
+export const safeInt = (input:any):number => {
+	if(!input) {
+		return 0
+	}
+
+	return input as number
+}

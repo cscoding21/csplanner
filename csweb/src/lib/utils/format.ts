@@ -149,3 +149,20 @@ export const truncateText = (text: string, length: number): string => {
 
 	return text;
 };
+
+
+/**
+ * Transform the input text into title case
+ * @param text - the input text
+ * @returns the text transformed into title case
+ */
+export const titleCase = (text: string):string => {
+	if (!text) {
+		return ""
+	}
+	
+	return text.replace(
+		/\w\S*/g,
+		t => t.charAt(0).toUpperCase() + t.substring(1).toLowerCase()
+	  );
+} 

@@ -54,6 +54,14 @@ fragment projectFragment on Project {
 	}
 	projectMilestones {
 		id
+		hoursRemaining
+		totalHours
+		removedHours
+		completedTasks
+		totalTasks
+		isComplete
+		isInFlight
+
 		phase {
 			name
 			description

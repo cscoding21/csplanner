@@ -417,11 +417,18 @@ export type ProjectFilters = {
 
 export type ProjectMilestone = {
   __typename?: 'ProjectMilestone';
+  completedTasks?: Maybe<Scalars['Int']['output']>;
   endDate?: Maybe<Scalars['Time']['output']>;
+  hoursRemaining?: Maybe<Scalars['Int']['output']>;
   id: Scalars['String']['output'];
+  isComplete?: Maybe<Scalars['Boolean']['output']>;
+  isInFlight?: Maybe<Scalars['Boolean']['output']>;
   phase: ProjectMilestonePhase;
+  removedHours?: Maybe<Scalars['Int']['output']>;
   startDate?: Maybe<Scalars['Time']['output']>;
   tasks: Array<ProjectMilestoneTask>;
+  totalHours?: Maybe<Scalars['Int']['output']>;
+  totalTasks?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProjectMilestonePhase = {
@@ -994,6 +1001,13 @@ export const ProjectFragmentFragmentDoc = gql`
   }
   projectMilestones {
     id
+    hoursRemaining
+    totalHours
+    removedHours
+    completedTasks
+    totalTasks
+    isComplete
+    isInFlight
     phase {
       name
       description

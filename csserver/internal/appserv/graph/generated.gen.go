@@ -279,11 +279,18 @@ type ComplexityRoot struct {
 	}
 
 	ProjectMilestone struct {
-		EndDate   func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Phase     func(childComplexity int) int
-		StartDate func(childComplexity int) int
-		Tasks     func(childComplexity int) int
+		CompletedTasks func(childComplexity int) int
+		EndDate        func(childComplexity int) int
+		HoursRemaining func(childComplexity int) int
+		ID             func(childComplexity int) int
+		IsComplete     func(childComplexity int) int
+		IsInFlight     func(childComplexity int) int
+		Phase          func(childComplexity int) int
+		RemovedHours   func(childComplexity int) int
+		StartDate      func(childComplexity int) int
+		Tasks          func(childComplexity int) int
+		TotalHours     func(childComplexity int) int
+		TotalTasks     func(childComplexity int) int
 	}
 
 	ProjectMilestonePhase struct {
@@ -1644,12 +1651,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectFilters.Status(childComplexity), true
 
+	case "ProjectMilestone.completedTasks":
+		if e.complexity.ProjectMilestone.CompletedTasks == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.CompletedTasks(childComplexity), true
+
 	case "ProjectMilestone.endDate":
 		if e.complexity.ProjectMilestone.EndDate == nil {
 			break
 		}
 
 		return e.complexity.ProjectMilestone.EndDate(childComplexity), true
+
+	case "ProjectMilestone.hoursRemaining":
+		if e.complexity.ProjectMilestone.HoursRemaining == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.HoursRemaining(childComplexity), true
 
 	case "ProjectMilestone.id":
 		if e.complexity.ProjectMilestone.ID == nil {
@@ -1658,12 +1679,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestone.ID(childComplexity), true
 
+	case "ProjectMilestone.isComplete":
+		if e.complexity.ProjectMilestone.IsComplete == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.IsComplete(childComplexity), true
+
+	case "ProjectMilestone.isInFlight":
+		if e.complexity.ProjectMilestone.IsInFlight == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.IsInFlight(childComplexity), true
+
 	case "ProjectMilestone.phase":
 		if e.complexity.ProjectMilestone.Phase == nil {
 			break
 		}
 
 		return e.complexity.ProjectMilestone.Phase(childComplexity), true
+
+	case "ProjectMilestone.removedHours":
+		if e.complexity.ProjectMilestone.RemovedHours == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.RemovedHours(childComplexity), true
 
 	case "ProjectMilestone.startDate":
 		if e.complexity.ProjectMilestone.StartDate == nil {
@@ -1678,6 +1720,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectMilestone.Tasks(childComplexity), true
+
+	case "ProjectMilestone.totalHours":
+		if e.complexity.ProjectMilestone.TotalHours == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.TotalHours(childComplexity), true
+
+	case "ProjectMilestone.totalTasks":
+		if e.complexity.ProjectMilestone.TotalTasks == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestone.TotalTasks(childComplexity), true
 
 	case "ProjectMilestonePhase.description":
 		if e.complexity.ProjectMilestonePhase.Description == nil {
@@ -2980,6 +3036,14 @@ type ProjectMilestone {
   endDate: Time
   phase: ProjectMilestonePhase!
   tasks: [ProjectMilestoneTask!]!
+
+  totalHours: Int
+	hoursRemaining: Int
+	isComplete: Boolean
+	isInFlight: Boolean
+	totalTasks: Int
+	completedTasks: Int
+	removedHours: Int
 }
 
 type ProjectMilestonePhase {
@@ -10012,6 +10076,20 @@ func (ec *executionContext) fieldContext_Project_projectMilestones(_ context.Con
 				return ec.fieldContext_ProjectMilestone_phase(ctx, field)
 			case "tasks":
 				return ec.fieldContext_ProjectMilestone_tasks(ctx, field)
+			case "totalHours":
+				return ec.fieldContext_ProjectMilestone_totalHours(ctx, field)
+			case "hoursRemaining":
+				return ec.fieldContext_ProjectMilestone_hoursRemaining(ctx, field)
+			case "isComplete":
+				return ec.fieldContext_ProjectMilestone_isComplete(ctx, field)
+			case "isInFlight":
+				return ec.fieldContext_ProjectMilestone_isInFlight(ctx, field)
+			case "totalTasks":
+				return ec.fieldContext_ProjectMilestone_totalTasks(ctx, field)
+			case "completedTasks":
+				return ec.fieldContext_ProjectMilestone_completedTasks(ctx, field)
+			case "removedHours":
+				return ec.fieldContext_ProjectMilestone_removedHours(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectMilestone", field.Name)
 		},
@@ -11225,6 +11303,293 @@ func (ec *executionContext) fieldContext_ProjectMilestone_tasks(_ context.Contex
 				return ec.fieldContext_ProjectMilestoneTask_endDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectMilestoneTask", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_totalHours(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_totalHours(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalHours, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_totalHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_hoursRemaining(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_hoursRemaining(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoursRemaining, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_hoursRemaining(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_isComplete(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_isComplete(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsComplete, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_isComplete(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_isInFlight(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_isInFlight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsInFlight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_isInFlight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_totalTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_totalTasks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalTasks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_totalTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_completedTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_completedTasks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CompletedTasks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_completedTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestone_removedHours(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_removedHours(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RemovedHours, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_removedHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -21244,6 +21609,20 @@ func (ec *executionContext) _ProjectMilestone(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "totalHours":
+			out.Values[i] = ec._ProjectMilestone_totalHours(ctx, field, obj)
+		case "hoursRemaining":
+			out.Values[i] = ec._ProjectMilestone_hoursRemaining(ctx, field, obj)
+		case "isComplete":
+			out.Values[i] = ec._ProjectMilestone_isComplete(ctx, field, obj)
+		case "isInFlight":
+			out.Values[i] = ec._ProjectMilestone_isInFlight(ctx, field, obj)
+		case "totalTasks":
+			out.Values[i] = ec._ProjectMilestone_totalTasks(ctx, field, obj)
+		case "completedTasks":
+			out.Values[i] = ec._ProjectMilestone_completedTasks(ctx, field, obj)
+		case "removedHours":
+			out.Values[i] = ec._ProjectMilestone_removedHours(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

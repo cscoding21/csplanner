@@ -1,15 +1,16 @@
 <script lang="ts">
-	import type { ProjectMilestone, Project } from '$lib/graphql/generated/sdk';
+	import type { Project } from '$lib/graphql/generated/sdk';
 	import { Hr, Tabs, TabItem } from 'flowbite-svelte';
 	import {
 		ChevronRightOutline,
 	} from 'flowbite-svelte-icons';
 	import { SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/project';
-	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector } from '.';
+	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { getDefaultProject } from '$lib/forms/project.validation';
+	import { callIf } from '$lib/utils/helpers';
 
 	interface Props {
 		id: string;
@@ -48,6 +49,8 @@
 		editTask = ""
 		console.log("editTask", editTask)
 
+		callIf(update)
+
 		refresh()
 	}
 
@@ -81,18 +84,17 @@
 						  {milestone.phase.name}
 						</div>
 						<div class="text-sm text-gray-500 dark:text-gray-400">
-							<b>{milestone.phase.name}: </b>
-							{milestone.phase.description}
+							<ProjectMilestoneStatus milestone={project.projectMilestones[index]} />
 							<Hr />
 							{#if milestone.tasks}
-								{#each milestone.tasks as task (task.id)}
+								{#each milestone.tasks as task, tindex}
 									{#if editTask === task.id} 
 									<div class="my-3">
 									<ProjectTaskForm {task} milestoneID={milestone.id} projectID={id} update={() => editTaskComplete()} />
 									</div>
 										<Hr />
 									{:else}
-									<ProjectTaskDisplay projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} {task} />
+									<ProjectTaskDisplay projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} task={project.projectMilestones[index].tasks[tindex]} />
 									{/if}
 								{/each}
 							{/if}

@@ -12,7 +12,7 @@ import (
 )
 
 func CreateTestResources(ctx context.Context) error {
-	us := factory.GetIAMAdminService()
+	//us := factory.GetIAMAdminService()
 	rs := factory.GetResourceService()
 	exitingResources, _ := rs.FindAllResources(ctx)
 
@@ -215,11 +215,29 @@ func CreateTestResources(ctx context.Context) error {
 				{ID: "database", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
+		{
+			Role:           "Sword",
+			Type:           rtypes.Equipment,
+			Name:           "Buster Sword",
+			InitialCost:    10000,
+			AnnualizedCost: 0,
+			Status:         rtypes.Proposed,
+		},
+		{
+			Role:           "Cloud Hosting",
+			Type:           rtypes.Software,
+			Name:           "Linode Cloud Hosting",
+			InitialCost:    0,
+			AnnualizedCost: 100000,
+			Status:         rtypes.Proposed,
+		},
 	}
 
 	for _, r := range newResources {
 		//---this will fail if user already exists, which is fine
-		us.GetUser(ctx, *r.UserEmail)
+		if r.UserEmail != nil {
+			//us.GetUser(ctx, *r.UserEmail)
+		}
 		_, err := rs.CreateResource(ctx, &r)
 		if err != nil {
 			log.Errorf("error creating resource: %v", err)

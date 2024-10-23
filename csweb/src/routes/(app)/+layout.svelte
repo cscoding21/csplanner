@@ -109,6 +109,7 @@
 		<NavLi href="/home" active={true}>Home</NavLi>
 		<NavLi href="/project">Projects</NavLi>
 		<NavLi href="/resource">Resources</NavLi>
+		<NavLi href="/portfolio">Portfolio</NavLi>
 		<NavLi href="/report">Reports</NavLi>
 	</NavUl>
 </Navbar>

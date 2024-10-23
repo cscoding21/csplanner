@@ -31,6 +31,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	lastProject.GetProjectInitialCost()
 	lastProject.GetProjectNPV()
 	lastProject.GetProjectIRR()
+	lastProject.CalculateProjectMilestoneStats()
 
 	return s.UpdateProject(ctx, lastProject)
 }
@@ -46,6 +47,7 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, val valida
 	pro.GetProjectInitialCost()
 	pro.GetProjectNPV()
 	pro.GetProjectIRR()
+	pro.CalculateProjectMilestoneStats()
 
 	return s.UpdateProject(ctx, &pro)
 }

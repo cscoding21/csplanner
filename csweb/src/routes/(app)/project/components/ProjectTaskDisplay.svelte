@@ -2,7 +2,7 @@
     import { P, Button, ButtonGroup, Modal } from "flowbite-svelte";
     import { EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
     import type { ProjectMilestoneTask, Skill } from "$lib/graphql/generated/sdk";
-    import { DeleteProjectTask, ProjectTaskForm } from ".";
+    import { DeleteProjectTask, ProjectTaskForm, BadgeMilestoneStatus } from ".";
     import { ResourceList } from "$lib/components";
     import { callIf } from "$lib/utils/helpers";
     import { formatToCommaSepList, pluralize } from "$lib/utils/format";
@@ -15,7 +15,7 @@
         projectID: string
     }
     let { 
-        task, 
+        task = $bindable(), 
         update,
         editClick,
         milestoneID,
@@ -36,9 +36,9 @@
 
 
 <div>
-    <span class="text-gray-100">{task.name} 
-        <small>({task.hourEstimate} {pluralize("hour", task.hourEstimate)})</small>
-    </span>
+    <span class="text-gray-100">{task.name}</span>
+    <small>({task.hourEstimate} {pluralize("hour", task.hourEstimate)})</small>
+    <BadgeMilestoneStatus status={task.status} />
     <P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-100 float-right">
         <ButtonGroup>
         <Button
@@ -65,7 +65,7 @@
 </div>
 <div>
     <div class="text-sm text-gray-400">{task.description}</div>
-    <div class="my-2 text-sm text-gray-100">
+    <div class="my-2 text-xs text-gray-100">
         Skills Required: {getRequiredSkillsDisplay(task)}
     </div>
 

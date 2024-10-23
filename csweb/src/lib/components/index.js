@@ -41,6 +41,7 @@ export { default as Toast } from './messages/Toast.svelte';
 
 //---Widgets
 export { default as AutoSave } from './widgets/AutoSave.svelte';
+export { default as CheckBoxFilter } from './widgets/CheckBoxFilter.svelte';
 export { default as MoneyDisplay } from './widgets/MoneyDisplay.svelte';
 export { default as ResourceCard } from './widgets/ResourceCard.svelte';
 export { default as UserCard } from './widgets/UserCard.svelte';
