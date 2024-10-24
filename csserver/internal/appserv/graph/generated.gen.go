@@ -133,9 +133,10 @@ type ComplexityRoot struct {
 	}
 
 	Filter struct {
-		Key       func(childComplexity int) int
-		Operation func(childComplexity int) int
-		Value     func(childComplexity int) int
+		CustomName func(childComplexity int) int
+		Key        func(childComplexity int) int
+		Operation  func(childComplexity int) int
+		Value      func(childComplexity int) int
 	}
 
 	Filters struct {
@@ -891,6 +892,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CreateUserResult.User(childComplexity), true
+
+	case "Filter.customName":
+		if e.complexity.Filter.CustomName == nil {
+			break
+		}
+
+		return e.complexity.Filter.CustomName(childComplexity), true
 
 	case "Filter.key":
 		if e.complexity.Filter.Key == nil {
@@ -2826,6 +2834,7 @@ type Filter {
   key: String!
   value: String!
   operation: String!
+  customName: String
 }
 
 type Filters {
@@ -2857,6 +2866,7 @@ input InputFilter {
   key: String!
   value: String!
   operation: String!
+  customName: String
 }
 
 input InputFilters {
@@ -6526,6 +6536,47 @@ func (ec *executionContext) fieldContext_Filter_operation(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Filter_customName(ctx context.Context, field graphql.CollectedField, obj *idl.Filter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Filter_customName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CustomName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Filter_customName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Filter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Filters_filters(ctx context.Context, field graphql.CollectedField, obj *idl.Filters) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Filters_filters(ctx, field)
 	if err != nil {
@@ -6568,6 +6619,8 @@ func (ec *executionContext) fieldContext_Filters_filters(_ context.Context, fiel
 				return ec.fieldContext_Filter_value(ctx, field)
 			case "operation":
 				return ec.fieldContext_Filter_operation(ctx, field)
+			case "customName":
+				return ec.fieldContext_Filter_customName(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Filter", field.Name)
 		},
@@ -18916,7 +18969,7 @@ func (ec *executionContext) unmarshalInputInputFilter(ctx context.Context, obj i
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"key", "value", "operation"}
+	fieldsInOrder := [...]string{"key", "value", "operation", "customName"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -18944,6 +18997,13 @@ func (ec *executionContext) unmarshalInputInputFilter(ctx context.Context, obj i
 				return it, err
 			}
 			it.Operation = data
+		case "customName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("customName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CustomName = data
 		}
 	}
 
@@ -20572,6 +20632,8 @@ func (ec *executionContext) _Filter(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "customName":
+			out.Values[i] = ec._Filter_customName(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

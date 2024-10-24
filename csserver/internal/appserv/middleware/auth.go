@@ -36,19 +36,19 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//---temporary for testing
 		if checkIsFile(r) {
-			log.Info("Auth bypass: is file")
+			log.Debug("Auth bypass: is file")
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		if swallowHealthCheck(r) || checkIsPlayground(r) {
-			log.Info("Auth bypass: playground or swallow")
+			log.Debug("Auth bypass: playground or swallow")
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		if checkWebsocketKey(r) {
-			log.Info("Auth bypass: web socket key")
+			log.Debug("Auth bypass: web socket key")
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -58,13 +58,13 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 
 		if allowAnonomousOperation(r) || bypassSecurity(r) {
 			anonEmail := config.Config.Default.BotUserEmail
-			log.Warnf("AI Bot credentials set for %s", anonEmail)
+			log.Debugf("AI Bot credentials set for %s", anonEmail)
 
 			anonID, err := us.GetUser(bctx, anonEmail)
 			if err != nil {
 				log.Error(err)
 			} else {
-				log.Warnf("resolved user %s %s", anonID.FirstName, anonID.LastName)
+				log.Debugf("resolved user %s %s", anonID.FirstName, anonID.LastName)
 			}
 
 			bctx = context.WithValue(bctx, config.UserEmailKey, anonEmail)
@@ -76,7 +76,6 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 		}
 
 		token := getTokenFromHeader(r)
-		//log.Infof("Auth token: %s", token)
 
 		authService := factory.GetAuthService(bctx)
 		result, err := authService.ValidateToken(bctx, token)
@@ -85,7 +84,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
-		log.Infof("AUTH Validation Result for token %s: %v", token, result)
+		log.Debugf("AUTH Validation Result for token %s: %v", token, result)
 		if !result.Success {
 			err := fmt.Errorf("login failed for token %s", token)
 			log.Error(err)
@@ -94,7 +93,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 		}
 
 		if result.Success {
-			log.Infof("Authentication success for user %s", result.User.Email)
+			log.Debugf("Authentication success for user %s", result.User.Email)
 
 			ctx := context.WithValue(r.Context(), config.UserEmailKey, result.User.Email)
 			ctx = context.WithValue(ctx, config.UserIDKey, result.User.DBID)
@@ -119,7 +118,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (context.Context, *transport.InitPayload, error) {
 	// Get the token from payload
-	log.Infof("INIT PAYLOAD: %v", initPayload)
+	log.Debugf("INIT PAYLOAD: %v", initPayload)
 	any := initPayload["Authorization"]
 
 	token, ok := any.(string)
@@ -180,14 +179,14 @@ func allowAnonomousOperation(r *http.Request) bool {
 
 	//---this will handle calls from the JS client
 	if slices.Contains(allowed, graphqlQuery.OperationName) {
-		log.Infof("Operation allowed via operation match %s", graphqlQuery.OperationName)
+		log.Debugf("Operation allowed via operation match %s", graphqlQuery.OperationName)
 		return true
 	}
 
 	//---TODO: need a better way to confirm requests from playground.  This could be exploited
 	for _, a := range allowed {
 		if strings.Contains(graphqlQuery.Query, a) {
-			log.Infof("Operation allowed via string search %s", a)
+			log.Debugf("Operation allowed via string search %s", a)
 			return true
 		}
 	}

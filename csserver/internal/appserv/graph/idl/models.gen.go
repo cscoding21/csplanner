@@ -90,9 +90,10 @@ type CreateUserResult struct {
 }
 
 type Filter struct {
-	Key       string `json:"key"`
-	Value     string `json:"value"`
-	Operation string `json:"operation"`
+	Key        string  `json:"key"`
+	Value      string  `json:"value"`
+	Operation  string  `json:"operation"`
+	CustomName *string `json:"customName,omitempty"`
 }
 
 type Filters struct {
@@ -100,9 +101,10 @@ type Filters struct {
 }
 
 type InputFilter struct {
-	Key       string `json:"key"`
-	Value     string `json:"value"`
-	Operation string `json:"operation"`
+	Key        string  `json:"key"`
+	Value      string  `json:"value"`
+	Operation  string  `json:"operation"`
+	CustomName *string `json:"customName,omitempty"`
 }
 
 type InputFilters struct {

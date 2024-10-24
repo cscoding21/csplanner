@@ -17,6 +17,7 @@ const (
 	FilterOperationIn             FilterOperation = "in"
 	FilterOperationNotIn          FilterOperation = "nin"
 	FilterFuzzyLike               FilterOperation = "fl"
+	FilterCustom                  FilterOperation = "custom"
 )
 
 // NewPagedResults helper method for generating a paged results object
@@ -75,9 +76,10 @@ type Filters struct {
 }
 
 type Filter struct {
-	Key       string
-	Value     interface{}
-	Operation FilterOperation
+	Key        string
+	Value      interface{}
+	Operation  FilterOperation
+	CustomName *string
 }
 
 func (filters *Filters) GetFilter(key string) *Filter {

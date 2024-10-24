@@ -27,9 +27,10 @@ func GetPageAndFilterModel(paging idl.InputPagination, filters *idl.InputFilters
 	if filters != nil {
 		for _, fil := range filters.Filters {
 			thisFilter := common.Filter{
-				Key:       fil.Key,
-				Value:     fil.Value,
-				Operation: common.FilterOperation(fil.Operation),
+				Key:        fil.Key,
+				Value:      fil.Value,
+				Operation:  common.FilterOperation(fil.Operation),
+				CustomName: fil.CustomName,
 			}
 
 			f.Filters = append(f.Filters, thisFilter)

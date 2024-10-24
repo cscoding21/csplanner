@@ -6,11 +6,15 @@
 	import { getInitialsFromName } from '$lib/utils/format';
 
 	interface Props {
-		resources: Resource[];
+		resources: any[];
 		size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined;
 		maxSize: number;
 	}
-	let { resources, size, maxSize }: Props = $props();
+	let { 
+		resources = $bindable(), 
+		size, 
+		maxSize
+	}: Props = $props();
 
 	const deDuped = resources.filter((value, index) => {
 		const _value = JSON.stringify(value);

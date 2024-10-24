@@ -36,6 +36,7 @@ type Filter {
   key: String!
   value: String!
   operation: String!
+  customName: String
 }
 
 type Filters {
@@ -67,6 +68,7 @@ input InputFilter {
   key: String!
   value: String!
   operation: String!
+  customName: String
 }
 
 input InputFilters {

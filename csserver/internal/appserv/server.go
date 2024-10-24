@@ -21,9 +21,6 @@ func Serve() error {
 	//---get a new router
 	router := getRouter()
 
-	// Add middleware
-	//router.Use(middleware.ValidationMiddleware)
-
 	//---add handlers to router
 	//	auth handlers
 	router.Handle("/login", middleware.AuthMiddleware(handlers.GetLoginHandler()))

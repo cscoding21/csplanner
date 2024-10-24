@@ -50,18 +50,26 @@ func buildWhereClauseFromFilters(filters *common.Filters) (string, map[string]in
 	builder := strings.Builder{}
 
 	for _, f := range filters.Filters {
-		stringFormat := getPhraseFromFilterOp(f.Operation)
+		stringFormat := getPhraseFromFilterOp(f)
 		ky := strings.Replace(f.Key, ".", "_", 1)
-		builder.WriteString(fmt.Sprintf(stringFormat, f.Key, ky))
+		sqlString := ""
+
+		if f.Operation == common.FilterCustom {
+			sqlString = stringFormat
+		} else {
+			sqlString = fmt.Sprintf(stringFormat, f.Key, ky)
+		}
+
+		builder.WriteString(sqlString)
 	}
 
 	return builder.String(), filters.GetFiltersAsMap()
 }
 
-func getPhraseFromFilterOp(fo common.FilterOperation) string {
+func getPhraseFromFilterOp(fo common.Filter) string {
 	out := ""
 
-	switch fo {
+	switch fo.Operation {
 	case (common.FilterOperationEqual):
 		return "AND %s = $%v \n"
 	case (common.FilterOperationNotEqual):
@@ -80,6 +88,8 @@ func getPhraseFromFilterOp(fo common.FilterOperation) string {
 		return "AND %s NOT IN ($%v) \n"
 	case (common.FilterFuzzyLike):
 		return "AND %s ~ $%v \n"
+	case (common.FilterCustom):
+		return GetCustomFilter(*fo.CustomName)
 	}
 
 	return out
@@ -94,4 +104,5 @@ FilterOperationEqual          FilterOperation = "eq"
 	FilterOperationLessOrEqual    FilterOperation = "le"
 	FilterOperationIn             FilterOperation = "in"
 	FilterOperationNotIn          FilterOperation = "nin"
+	FilterCustom          FilterOperation = "custom"
 */
