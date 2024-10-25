@@ -36,21 +36,21 @@ maps:
     - "csserver/internal/services/list"
     - "csserver/internal/common"
 
-  - name: "user_target"
-    source_path: "internal/services/iam/user/models.go"
+  - name: "organization_target"
+    source_path: "internal/services/organization/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
-    - "csserver/internal/services/iam/user"
     - "csserver/internal/common"
-  - name: "user_source"
+  - name: "organization_source"
     source_path: "internal/appserv/graph/idl/models.gen.go"
-    target_path: "internal/services/iam/user/models.go"
+    target_path: "internal/services/organization/models.go"
     imports: 
-    - "csserver/internal/services/iam/user"
     - "csserver/internal/common"
     map_overrides:
-    - source_name: "UpdateUser"
-      target_name: "User"
+    - source_name: "UpdateOrganization"
+      target_name: "Organization"
+    - source_name: "UpdateOrganizationDefaults"
+      target_name: "OrganizationDefaults"
 
 
   - name: "resource_target"
@@ -107,6 +107,7 @@ maps:
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
+
   
   - name: "comment_target"
     source_path: "internal/services/comment/models.go"
@@ -122,14 +123,30 @@ maps:
     - source_name: "UpdateComment"
       target_name: "Comment"
   
-  
-  
+
   - name: "projecttemplate_target"
     source_path: "internal/services/projecttemplate/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
     - "csserver/internal/services/projecttemplate"
+
+
+  - name: "user_target"
+    source_path: "internal/services/iam/user/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/services/iam/user"
+    - "csserver/internal/common"
+  - name: "user_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/iam/user/models.go"
+    imports: 
+    - "csserver/internal/services/iam/user"
+    - "csserver/internal/common"
+    map_overrides:
+    - source_name: "UpdateUser"
+      target_name: "User"
 
 
 

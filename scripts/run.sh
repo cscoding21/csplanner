@@ -13,12 +13,15 @@ else
     if [[ -z "${HAS_STATE}" ]]; then
         #---configure minikube
         echo "Setting minikube resources"
-        minikube config set cpus 4  
+        minikube config set cpus 8  
         minikube config set memory 16384
     fi
 
     #---start minikube
-    minikube start --driver=docker --container-runtime docker --gpus all  --mount-string="${HOME}/projects/data:/mnt/data" --mount
+    # --gpus all 
+    minikube start --kubernetes-version=v1.31.0 --driver=docker --container-runtime docker --mount-string="${HOME}/projects/data:/mnt/data" --mount
+
+    kubectl apply -f scripts/k8s/sc.yaml
 
     if [[ -z ${HAS_STATE} ]]; then
         echo "Setting ingress and linkerd"
@@ -26,8 +29,10 @@ else
         #---enable minikube addons
         minikube addons enable ingress
         minikube addons enable nvidia-device-plugin
-        minikube addons enable nvidia-gpu-device-plugin
-        minikube addons enable nvidia-driver-installer
+
+        #---below are only supported with KVM driver
+        # minikube addons enable nvidia-gpu-device-plugin
+        # minikube addons enable nvidia-driver-installer
 
         #---check for linkerd dependencies...for initial setup
         linkerd check --pre
@@ -42,6 +47,8 @@ else
         linkerd viz install | kubectl apply -f -
     fi
 fi
+
+./scripts/k8s-secrets.sh
 
 echo "Running tilt up"
 tilt up

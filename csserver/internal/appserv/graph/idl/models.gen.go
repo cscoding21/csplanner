@@ -167,6 +167,7 @@ type Organization struct {
 type OrganizationDefaults struct {
 	DiscountRate float64 `json:"discountRate"`
 	HoursPerWeek int     `json:"hoursPerWeek"`
+	FocusFactor  float64 `json:"focusFactor"`
 }
 
 type PageAndFilter struct {
@@ -412,6 +413,7 @@ type UpdateOrganization struct {
 type UpdateOrganizationDefaults struct {
 	DiscountRate float64 `json:"discountRate"`
 	HoursPerWeek int     `json:"hoursPerWeek"`
+	FocusFactor  float64 `json:"focusFactor"`
 }
 
 type UpdateProject struct {

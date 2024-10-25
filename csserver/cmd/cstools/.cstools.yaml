@@ -11,6 +11,8 @@ services:
     path: ""
   - name: Notification
     path: ""
+  - name: Organization
+    path: ""
   - name: Project
     path: ""
   - name: ProjectTemplate

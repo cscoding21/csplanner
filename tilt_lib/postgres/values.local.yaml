@@ -4,4 +4,20 @@ global:
       username: dbusername
       password: dbpassword
       database: keycloak
-  # defaultStorageClass: "standard"
+  defaultStorageClass: local-disk
+
+volumePermissions:
+  ## @param volumePermissions.enabled Enable init container that changes the owner and group of the persistent volume
+  ##
+  enabled: true
+
+image:
+  registry: docker.io
+  repository: bitnami/postgresql
+  tag: 17.0.0-debian-12-r9
+  digest: ""
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+  ##
+  pullPolicy: IfNotPresent

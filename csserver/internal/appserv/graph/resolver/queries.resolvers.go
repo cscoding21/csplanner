@@ -166,7 +166,14 @@ func (r *queryResolver) FindAllProjectTemplates(ctx context.Context) (*idl.Proje
 
 // GetOrganization is the resolver for the getOrganization field.
 func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization, error) {
-	panic(fmt.Errorf("not implemented: GetOrganization - getOrganization"))
+	service := factory.GetOrganizationService()
+	org, err := service.GetOrganizationByID(ctx, "organization:default")
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.OrganizationOrganizationToIdl(*org)
+	return &out, nil
 }
 
 // FindAllUsers is the resolver for the findAllUsers field.

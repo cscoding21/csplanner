@@ -216,6 +216,7 @@ type ComplexityRoot struct {
 
 	OrganizationDefaults struct {
 		DiscountRate func(childComplexity int) int
+		FocusFactor  func(childComplexity int) int
 		HoursPerWeek func(childComplexity int) int
 	}
 
@@ -1399,6 +1400,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationDefaults.DiscountRate(childComplexity), true
+
+	case "OrganizationDefaults.focusFactor":
+		if e.complexity.OrganizationDefaults.FocusFactor == nil {
+			break
+		}
+
+		return e.complexity.OrganizationDefaults.FocusFactor(childComplexity), true
 
 	case "OrganizationDefaults.hoursPerWeek":
 		if e.complexity.OrganizationDefaults.HoursPerWeek == nil {
@@ -2922,6 +2930,7 @@ type NotificationResults {
 type OrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
+  focusFactor: Float!
 }
 
 
@@ -2934,6 +2943,7 @@ input UpdateOrganization {
 input UpdateOrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
+  focusFactor: Float!
 }
 
 
@@ -9278,6 +9288,8 @@ func (ec *executionContext) fieldContext_Organization_defaults(_ context.Context
 				return ec.fieldContext_OrganizationDefaults_discountRate(ctx, field)
 			case "hoursPerWeek":
 				return ec.fieldContext_OrganizationDefaults_hoursPerWeek(ctx, field)
+			case "focusFactor":
+				return ec.fieldContext_OrganizationDefaults_focusFactor(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationDefaults", field.Name)
 		},
@@ -9368,6 +9380,50 @@ func (ec *executionContext) fieldContext_OrganizationDefaults_hoursPerWeek(_ con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationDefaults_focusFactor(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationDefaults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationDefaults_focusFactor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FocusFactor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationDefaults_focusFactor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationDefaults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -19262,7 +19318,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationDefaults(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"discountRate", "hoursPerWeek"}
+	fieldsInOrder := [...]string{"discountRate", "hoursPerWeek", "focusFactor"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19283,6 +19339,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationDefaults(ctx context
 				return it, err
 			}
 			it.HoursPerWeek = data
+		case "focusFactor":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("focusFactor"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FocusFactor = data
 		}
 	}
 
@@ -21229,6 +21292,11 @@ func (ec *executionContext) _OrganizationDefaults(ctx context.Context, sel ast.S
 			}
 		case "hoursPerWeek":
 			out.Values[i] = ec._OrganizationDefaults_hoursPerWeek(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "focusFactor":
+			out.Values[i] = ec._OrganizationDefaults_focusFactor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

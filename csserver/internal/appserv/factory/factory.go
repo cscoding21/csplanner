@@ -11,6 +11,7 @@ import (
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
 	"csserver/internal/services/notification"
+	"csserver/internal/services/organization"
 	"csserver/internal/services/project"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
@@ -158,6 +159,18 @@ func GetNotificationService() *notification.NotificationService {
 	}
 
 	return notification.NewNotificationService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetOrganizationService get organization service instance
+func GetOrganizationService() *organization.OrganizationService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return organization.NewOrganizationService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetProjectService return a project service instance

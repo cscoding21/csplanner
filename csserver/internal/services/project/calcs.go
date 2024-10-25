@@ -114,3 +114,11 @@ func (p *Project) CalculateProjectMilestoneStats() {
 		p.ProjectMilestones[i].IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
 	}
 }
+
+/*
+Use the following equation to calculate compound interest:
+
+Compound Interest = P [(1 + i)n – P]
+
+P stands for principal; i stands for interest; n stands for the number of compounding periods.
+*/

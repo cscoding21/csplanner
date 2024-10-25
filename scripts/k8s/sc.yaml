@@ -1,0 +1,22 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+reclaimPolicy: Retain
+metadata:
+  name: local-disk
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  storageClassName: local-disk
+  capacity:
+    storage: 16Gi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: /home/jeph/projects/data

@@ -7,6 +7,7 @@ type Organization {
 type OrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
+  focusFactor: Float!
 }
 
 
@@ -19,6 +20,7 @@ input UpdateOrganization {
 input UpdateOrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
+  focusFactor: Float!
 }
 
 
