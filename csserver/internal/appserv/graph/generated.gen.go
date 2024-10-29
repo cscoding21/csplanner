@@ -255,10 +255,14 @@ type ComplexityRoot struct {
 	}
 
 	ProjectCost struct {
-		BlendedRate  func(childComplexity int) int
+		BlendedRate func(childComplexity int) int
+		Calculated  func(childComplexity int) int
+		Ongoing     func(childComplexity int) int
+	}
+
+	ProjectCostCalculatedData struct {
 		HourEstimate func(childComplexity int) int
 		InitialCost  func(childComplexity int) int
-		Ongoing      func(childComplexity int) int
 	}
 
 	ProjectDaci struct {
@@ -281,18 +285,24 @@ type ComplexityRoot struct {
 	}
 
 	ProjectMilestone struct {
-		CompletedTasks func(childComplexity int) int
-		EndDate        func(childComplexity int) int
-		HoursRemaining func(childComplexity int) int
-		ID             func(childComplexity int) int
-		IsComplete     func(childComplexity int) int
-		IsInFlight     func(childComplexity int) int
-		Phase          func(childComplexity int) int
-		RemovedHours   func(childComplexity int) int
-		StartDate      func(childComplexity int) int
-		Tasks          func(childComplexity int) int
-		TotalHours     func(childComplexity int) int
-		TotalTasks     func(childComplexity int) int
+		Calculated func(childComplexity int) int
+		EndDate    func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Phase      func(childComplexity int) int
+		StartDate  func(childComplexity int) int
+		Tasks      func(childComplexity int) int
+	}
+
+	ProjectMilestoneCalculatedData struct {
+		CompletedTasks     func(childComplexity int) int
+		EstimatedEndDate   func(childComplexity int) int
+		EstimatedStartDate func(childComplexity int) int
+		HoursRemaining     func(childComplexity int) int
+		IsComplete         func(childComplexity int) int
+		IsInFlight         func(childComplexity int) int
+		RemovedHours       func(childComplexity int) int
+		TotalHours         func(childComplexity int) int
+		TotalTasks         func(childComplexity int) int
 	}
 
 	ProjectMilestonePhase struct {
@@ -303,6 +313,7 @@ type ComplexityRoot struct {
 	}
 
 	ProjectMilestoneTask struct {
+		Calculated       func(childComplexity int) int
 		Description      func(childComplexity int) int
 		EndDate          func(childComplexity int) int
 		HourEstimate     func(childComplexity int) int
@@ -322,16 +333,26 @@ type ComplexityRoot struct {
 		Results func(childComplexity int) int
 	}
 
+	ProjectTaskCalculatedData struct {
+		ActualizedCost            func(childComplexity int) int
+		ActualizedHoursToComplete func(childComplexity int) int
+		ResourceContention        func(childComplexity int) int
+	}
+
 	ProjectValue struct {
-		DiscountRate         func(childComplexity int) int
-		FundingSource        func(childComplexity int) int
+		Calculated     func(childComplexity int) int
+		DiscountRate   func(childComplexity int) int
+		FundingSource  func(childComplexity int) int
+		YearFiveValue  func(childComplexity int) int
+		YearFourValue  func(childComplexity int) int
+		YearOneValue   func(childComplexity int) int
+		YearThreeValue func(childComplexity int) int
+		YearTwoValue   func(childComplexity int) int
+	}
+
+	ProjectValueCalculatedData struct {
 		InternalRateOfReturn func(childComplexity int) int
 		NetPresentValue      func(childComplexity int) int
-		YearFiveValue        func(childComplexity int) int
-		YearFourValue        func(childComplexity int) int
-		YearOneValue         func(childComplexity int) int
-		YearThreeValue       func(childComplexity int) int
-		YearTwoValue         func(childComplexity int) int
 	}
 
 	Projecttemplate struct {
@@ -1576,19 +1597,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectCost.BlendedRate(childComplexity), true
 
-	case "ProjectCost.hourEstimate":
-		if e.complexity.ProjectCost.HourEstimate == nil {
+	case "ProjectCost.calculated":
+		if e.complexity.ProjectCost.Calculated == nil {
 			break
 		}
 
-		return e.complexity.ProjectCost.HourEstimate(childComplexity), true
-
-	case "ProjectCost.initialCost":
-		if e.complexity.ProjectCost.InitialCost == nil {
-			break
-		}
-
-		return e.complexity.ProjectCost.InitialCost(childComplexity), true
+		return e.complexity.ProjectCost.Calculated(childComplexity), true
 
 	case "ProjectCost.ongoing":
 		if e.complexity.ProjectCost.Ongoing == nil {
@@ -1596,6 +1610,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectCost.Ongoing(childComplexity), true
+
+	case "ProjectCostCalculatedData.hourEstimate":
+		if e.complexity.ProjectCostCalculatedData.HourEstimate == nil {
+			break
+		}
+
+		return e.complexity.ProjectCostCalculatedData.HourEstimate(childComplexity), true
+
+	case "ProjectCostCalculatedData.initialCost":
+		if e.complexity.ProjectCostCalculatedData.InitialCost == nil {
+			break
+		}
+
+		return e.complexity.ProjectCostCalculatedData.InitialCost(childComplexity), true
 
 	case "ProjectDaci.approver":
 		if e.complexity.ProjectDaci.Approver == nil {
@@ -1667,12 +1695,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectFilters.Status(childComplexity), true
 
-	case "ProjectMilestone.completedTasks":
-		if e.complexity.ProjectMilestone.CompletedTasks == nil {
+	case "ProjectMilestone.calculated":
+		if e.complexity.ProjectMilestone.Calculated == nil {
 			break
 		}
 
-		return e.complexity.ProjectMilestone.CompletedTasks(childComplexity), true
+		return e.complexity.ProjectMilestone.Calculated(childComplexity), true
 
 	case "ProjectMilestone.endDate":
 		if e.complexity.ProjectMilestone.EndDate == nil {
@@ -1681,13 +1709,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestone.EndDate(childComplexity), true
 
-	case "ProjectMilestone.hoursRemaining":
-		if e.complexity.ProjectMilestone.HoursRemaining == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestone.HoursRemaining(childComplexity), true
-
 	case "ProjectMilestone.id":
 		if e.complexity.ProjectMilestone.ID == nil {
 			break
@@ -1695,33 +1716,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestone.ID(childComplexity), true
 
-	case "ProjectMilestone.isComplete":
-		if e.complexity.ProjectMilestone.IsComplete == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestone.IsComplete(childComplexity), true
-
-	case "ProjectMilestone.isInFlight":
-		if e.complexity.ProjectMilestone.IsInFlight == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestone.IsInFlight(childComplexity), true
-
 	case "ProjectMilestone.phase":
 		if e.complexity.ProjectMilestone.Phase == nil {
 			break
 		}
 
 		return e.complexity.ProjectMilestone.Phase(childComplexity), true
-
-	case "ProjectMilestone.removedHours":
-		if e.complexity.ProjectMilestone.RemovedHours == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestone.RemovedHours(childComplexity), true
 
 	case "ProjectMilestone.startDate":
 		if e.complexity.ProjectMilestone.StartDate == nil {
@@ -1737,19 +1737,68 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestone.Tasks(childComplexity), true
 
-	case "ProjectMilestone.totalHours":
-		if e.complexity.ProjectMilestone.TotalHours == nil {
+	case "ProjectMilestoneCalculatedData.completedTasks":
+		if e.complexity.ProjectMilestoneCalculatedData.CompletedTasks == nil {
 			break
 		}
 
-		return e.complexity.ProjectMilestone.TotalHours(childComplexity), true
+		return e.complexity.ProjectMilestoneCalculatedData.CompletedTasks(childComplexity), true
 
-	case "ProjectMilestone.totalTasks":
-		if e.complexity.ProjectMilestone.TotalTasks == nil {
+	case "ProjectMilestoneCalculatedData.estimatedEndDate":
+		if e.complexity.ProjectMilestoneCalculatedData.EstimatedEndDate == nil {
 			break
 		}
 
-		return e.complexity.ProjectMilestone.TotalTasks(childComplexity), true
+		return e.complexity.ProjectMilestoneCalculatedData.EstimatedEndDate(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.estimatedStartDate":
+		if e.complexity.ProjectMilestoneCalculatedData.EstimatedStartDate == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.EstimatedStartDate(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.hoursRemaining":
+		if e.complexity.ProjectMilestoneCalculatedData.HoursRemaining == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.HoursRemaining(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.isComplete":
+		if e.complexity.ProjectMilestoneCalculatedData.IsComplete == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.IsComplete(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.isInFlight":
+		if e.complexity.ProjectMilestoneCalculatedData.IsInFlight == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.IsInFlight(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.removedHours":
+		if e.complexity.ProjectMilestoneCalculatedData.RemovedHours == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.RemovedHours(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.totalHours":
+		if e.complexity.ProjectMilestoneCalculatedData.TotalHours == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.TotalHours(childComplexity), true
+
+	case "ProjectMilestoneCalculatedData.totalTasks":
+		if e.complexity.ProjectMilestoneCalculatedData.TotalTasks == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneCalculatedData.TotalTasks(childComplexity), true
 
 	case "ProjectMilestonePhase.description":
 		if e.complexity.ProjectMilestonePhase.Description == nil {
@@ -1778,6 +1827,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectMilestonePhase.Order(childComplexity), true
+
+	case "ProjectMilestoneTask.calculated":
+		if e.complexity.ProjectMilestoneTask.Calculated == nil {
+			break
+		}
+
+		return e.complexity.ProjectMilestoneTask.Calculated(childComplexity), true
 
 	case "ProjectMilestoneTask.description":
 		if e.complexity.ProjectMilestoneTask.Description == nil {
@@ -1877,6 +1933,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectResults.Results(childComplexity), true
 
+	case "ProjectTaskCalculatedData.actualizedCost":
+		if e.complexity.ProjectTaskCalculatedData.ActualizedCost == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.ActualizedCost(childComplexity), true
+
+	case "ProjectTaskCalculatedData.actualizedHoursToComplete":
+		if e.complexity.ProjectTaskCalculatedData.ActualizedHoursToComplete == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.ActualizedHoursToComplete(childComplexity), true
+
+	case "ProjectTaskCalculatedData.resourceContention":
+		if e.complexity.ProjectTaskCalculatedData.ResourceContention == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.ResourceContention(childComplexity), true
+
+	case "ProjectValue.calculated":
+		if e.complexity.ProjectValue.Calculated == nil {
+			break
+		}
+
+		return e.complexity.ProjectValue.Calculated(childComplexity), true
+
 	case "ProjectValue.discountRate":
 		if e.complexity.ProjectValue.DiscountRate == nil {
 			break
@@ -1890,20 +1974,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectValue.FundingSource(childComplexity), true
-
-	case "ProjectValue.internalRateOfReturn":
-		if e.complexity.ProjectValue.InternalRateOfReturn == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.InternalRateOfReturn(childComplexity), true
-
-	case "ProjectValue.netPresentValue":
-		if e.complexity.ProjectValue.NetPresentValue == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.NetPresentValue(childComplexity), true
 
 	case "ProjectValue.yearFiveValue":
 		if e.complexity.ProjectValue.YearFiveValue == nil {
@@ -1939,6 +2009,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectValue.YearTwoValue(childComplexity), true
+
+	case "ProjectValueCalculatedData.internalRateOfReturn":
+		if e.complexity.ProjectValueCalculatedData.InternalRateOfReturn == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.InternalRateOfReturn(childComplexity), true
+
+	case "ProjectValueCalculatedData.netPresentValue":
+		if e.complexity.ProjectValueCalculatedData.NetPresentValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.NetPresentValue(childComplexity), true
 
 	case "Projecttemplate.id":
 		if e.complexity.Projecttemplate.ID == nil {
@@ -3022,16 +3106,14 @@ type ProjectValue {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
-  netPresentValue: Float
-  internalRateOfReturn: Float
+  calculated: ProjectValueCalculatedData
 }
 
 
 type ProjectCost {
   ongoing: Float
   blendedRate: Float
-  initialCost: Float
-  hourEstimate: Int!
+  calculated: ProjectCostCalculatedData
 }
 
 
@@ -3057,13 +3139,7 @@ type ProjectMilestone {
   phase: ProjectMilestonePhase!
   tasks: [ProjectMilestoneTask!]!
 
-  totalHours: Int
-	hoursRemaining: Int
-	isComplete: Boolean
-	isInFlight: Boolean
-	totalTasks: Int
-	completedTasks: Int
-	removedHours: Int
+  calculated: ProjectMilestoneCalculatedData
 }
 
 type ProjectMilestonePhase {
@@ -3085,6 +3161,7 @@ type ProjectMilestoneTask {
   status: String!
   startDate: Time
   endDate: Time
+  calculated: ProjectTaskCalculatedData
 }
 
 
@@ -3113,7 +3190,39 @@ type CreateProjectCommentResult {
 
 
 
+type ProjectCostCalculatedData {
+  initialCost: Float
+  hourEstimate: Int!
+}
 
+type ProjectValueCalculatedData {
+  netPresentValue: Float
+  internalRateOfReturn: Float
+}
+
+type ProjectMilestoneCalculatedData {
+  estimatedStartDate: Time
+  estimatedEndDate: Time
+
+  totalHours: Int
+	hoursRemaining: Int
+	isComplete: Boolean
+	isInFlight: Boolean
+	totalTasks: Int
+	completedTasks: Int
+	removedHours: Int
+}
+
+type ProjectTaskCalculatedData {
+  actualizedHoursToComplete: Int
+	actualizedCost: Float
+	resourceContention:  Float
+}
+
+
+
+
+#----------------------
 
 
 
@@ -9967,10 +10076,8 @@ func (ec *executionContext) fieldContext_Project_projectValue(_ context.Context,
 				return ec.fieldContext_ProjectValue_yearFourValue(ctx, field)
 			case "yearFiveValue":
 				return ec.fieldContext_ProjectValue_yearFiveValue(ctx, field)
-			case "netPresentValue":
-				return ec.fieldContext_ProjectValue_netPresentValue(ctx, field)
-			case "internalRateOfReturn":
-				return ec.fieldContext_ProjectValue_internalRateOfReturn(ctx, field)
+			case "calculated":
+				return ec.fieldContext_ProjectValue_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectValue", field.Name)
 		},
@@ -10021,10 +10128,8 @@ func (ec *executionContext) fieldContext_Project_projectCost(_ context.Context, 
 				return ec.fieldContext_ProjectCost_ongoing(ctx, field)
 			case "blendedRate":
 				return ec.fieldContext_ProjectCost_blendedRate(ctx, field)
-			case "initialCost":
-				return ec.fieldContext_ProjectCost_initialCost(ctx, field)
-			case "hourEstimate":
-				return ec.fieldContext_ProjectCost_hourEstimate(ctx, field)
+			case "calculated":
+				return ec.fieldContext_ProjectCost_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectCost", field.Name)
 		},
@@ -10185,20 +10290,8 @@ func (ec *executionContext) fieldContext_Project_projectMilestones(_ context.Con
 				return ec.fieldContext_ProjectMilestone_phase(ctx, field)
 			case "tasks":
 				return ec.fieldContext_ProjectMilestone_tasks(ctx, field)
-			case "totalHours":
-				return ec.fieldContext_ProjectMilestone_totalHours(ctx, field)
-			case "hoursRemaining":
-				return ec.fieldContext_ProjectMilestone_hoursRemaining(ctx, field)
-			case "isComplete":
-				return ec.fieldContext_ProjectMilestone_isComplete(ctx, field)
-			case "isInFlight":
-				return ec.fieldContext_ProjectMilestone_isInFlight(ctx, field)
-			case "totalTasks":
-				return ec.fieldContext_ProjectMilestone_totalTasks(ctx, field)
-			case "completedTasks":
-				return ec.fieldContext_ProjectMilestone_completedTasks(ctx, field)
-			case "removedHours":
-				return ec.fieldContext_ProjectMilestone_removedHours(ctx, field)
+			case "calculated":
+				return ec.fieldContext_ProjectMilestone_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectMilestone", field.Name)
 		},
@@ -10555,8 +10648,55 @@ func (ec *executionContext) fieldContext_ProjectCost_blendedRate(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectCost_initialCost(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCost) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectCost_initialCost(ctx, field)
+func (ec *executionContext) _ProjectCost_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCost) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCost_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectCostCalculatedData)
+	fc.Result = res
+	return ec.marshalOProjectCostCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectCostCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectCost_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectCost",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "initialCost":
+				return ec.fieldContext_ProjectCostCalculatedData_initialCost(ctx, field)
+			case "hourEstimate":
+				return ec.fieldContext_ProjectCostCalculatedData_hourEstimate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectCostCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectCostCalculatedData_initialCost(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCostCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCostCalculatedData_initialCost(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10583,9 +10723,9 @@ func (ec *executionContext) _ProjectCost_initialCost(ctx context.Context, field 
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectCost_initialCost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectCostCalculatedData_initialCost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectCost",
+		Object:     "ProjectCostCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10596,8 +10736,8 @@ func (ec *executionContext) fieldContext_ProjectCost_initialCost(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectCost_hourEstimate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCost) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectCost_hourEstimate(ctx, field)
+func (ec *executionContext) _ProjectCostCalculatedData_hourEstimate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCostCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCostCalculatedData_hourEstimate(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10627,9 +10767,9 @@ func (ec *executionContext) _ProjectCost_hourEstimate(ctx context.Context, field
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectCost_hourEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectCostCalculatedData_hourEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectCost",
+		Object:     "ProjectCostCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11410,6 +11550,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_tasks(_ context.Contex
 				return ec.fieldContext_ProjectMilestoneTask_startDate(ctx, field)
 			case "endDate":
 				return ec.fieldContext_ProjectMilestoneTask_endDate(ctx, field)
+			case "calculated":
+				return ec.fieldContext_ProjectMilestoneTask_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectMilestoneTask", field.Name)
 		},
@@ -11417,8 +11559,151 @@ func (ec *executionContext) fieldContext_ProjectMilestone_tasks(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_totalHours(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_totalHours(ctx, field)
+func (ec *executionContext) _ProjectMilestone_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestone_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectMilestoneCalculatedData)
+	fc.Result = res
+	return ec.marshalOProjectMilestoneCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectMilestoneCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestone_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestone",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "estimatedStartDate":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_estimatedStartDate(ctx, field)
+			case "estimatedEndDate":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_estimatedEndDate(ctx, field)
+			case "totalHours":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_totalHours(ctx, field)
+			case "hoursRemaining":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_hoursRemaining(ctx, field)
+			case "isComplete":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_isComplete(ctx, field)
+			case "isInFlight":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_isInFlight(ctx, field)
+			case "totalTasks":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_totalTasks(ctx, field)
+			case "completedTasks":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_completedTasks(ctx, field)
+			case "removedHours":
+				return ec.fieldContext_ProjectMilestoneCalculatedData_removedHours(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMilestoneCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestoneCalculatedData_estimatedStartDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_estimatedStartDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EstimatedStartDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_estimatedStartDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestoneCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestoneCalculatedData_estimatedEndDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_estimatedEndDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EstimatedEndDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_estimatedEndDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestoneCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMilestoneCalculatedData_totalHours(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_totalHours(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11445,9 +11730,9 @@ func (ec *executionContext) _ProjectMilestone_totalHours(ctx context.Context, fi
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_totalHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_totalHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11458,8 +11743,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_totalHours(_ context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_hoursRemaining(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_hoursRemaining(ctx, field)
+func (ec *executionContext) _ProjectMilestoneCalculatedData_hoursRemaining(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_hoursRemaining(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11486,9 +11771,9 @@ func (ec *executionContext) _ProjectMilestone_hoursRemaining(ctx context.Context
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_hoursRemaining(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_hoursRemaining(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11499,8 +11784,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_hoursRemaining(_ conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_isComplete(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_isComplete(ctx, field)
+func (ec *executionContext) _ProjectMilestoneCalculatedData_isComplete(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_isComplete(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11527,9 +11812,9 @@ func (ec *executionContext) _ProjectMilestone_isComplete(ctx context.Context, fi
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_isComplete(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_isComplete(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11540,8 +11825,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_isComplete(_ context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_isInFlight(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_isInFlight(ctx, field)
+func (ec *executionContext) _ProjectMilestoneCalculatedData_isInFlight(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_isInFlight(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11568,9 +11853,9 @@ func (ec *executionContext) _ProjectMilestone_isInFlight(ctx context.Context, fi
 	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_isInFlight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_isInFlight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11581,8 +11866,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_isInFlight(_ context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_totalTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_totalTasks(ctx, field)
+func (ec *executionContext) _ProjectMilestoneCalculatedData_totalTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_totalTasks(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11609,9 +11894,9 @@ func (ec *executionContext) _ProjectMilestone_totalTasks(ctx context.Context, fi
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_totalTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_totalTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11622,8 +11907,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_totalTasks(_ context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_completedTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_completedTasks(ctx, field)
+func (ec *executionContext) _ProjectMilestoneCalculatedData_completedTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_completedTasks(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11650,9 +11935,9 @@ func (ec *executionContext) _ProjectMilestone_completedTasks(ctx context.Context
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_completedTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_completedTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -11663,8 +11948,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_completedTasks(_ conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_removedHours(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_removedHours(ctx, field)
+func (ec *executionContext) _ProjectMilestoneCalculatedData_removedHours(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneCalculatedData_removedHours(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11691,9 +11976,9 @@ func (ec *executionContext) _ProjectMilestone_removedHours(ctx context.Context, 
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestone_removedHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneCalculatedData_removedHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
+		Object:     "ProjectMilestoneCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12377,6 +12662,55 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_endDate(_ context.
 	return fc, nil
 }
 
+func (ec *executionContext) _ProjectMilestoneTask_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneTask) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneTask_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectTaskCalculatedData)
+	fc.Result = res
+	return ec.marshalOProjectTaskCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectTaskCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMilestoneTask_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMilestoneTask",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "actualizedHoursToComplete":
+				return ec.fieldContext_ProjectTaskCalculatedData_actualizedHoursToComplete(ctx, field)
+			case "actualizedCost":
+				return ec.fieldContext_ProjectTaskCalculatedData_actualizedCost(ctx, field)
+			case "resourceContention":
+				return ec.fieldContext_ProjectTaskCalculatedData_resourceContention(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectTaskCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectResults_paging(ctx, field)
 	if err != nil {
@@ -12536,6 +12870,129 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 				return ec.fieldContext_Project_projectMilestones(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_actualizedHoursToComplete(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_actualizedHoursToComplete(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ActualizedHoursToComplete, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_actualizedHoursToComplete(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_actualizedCost(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_actualizedCost(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ActualizedCost, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_actualizedCost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_resourceContention(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_resourceContention(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceContention, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_resourceContention(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12828,8 +13285,55 @@ func (ec *executionContext) fieldContext_ProjectValue_yearFiveValue(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectValue_netPresentValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_netPresentValue(ctx, field)
+func (ec *executionContext) _ProjectValue_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValue_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectValueCalculatedData)
+	fc.Result = res
+	return ec.marshalOProjectValueCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValueCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValue_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValue",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "netPresentValue":
+				return ec.fieldContext_ProjectValueCalculatedData_netPresentValue(ctx, field)
+			case "internalRateOfReturn":
+				return ec.fieldContext_ProjectValueCalculatedData_internalRateOfReturn(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectValueCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_netPresentValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_netPresentValue(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12856,9 +13360,9 @@ func (ec *executionContext) _ProjectValue_netPresentValue(ctx context.Context, f
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectValue_netPresentValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_netPresentValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
+		Object:     "ProjectValueCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -12869,8 +13373,8 @@ func (ec *executionContext) fieldContext_ProjectValue_netPresentValue(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectValue_internalRateOfReturn(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_internalRateOfReturn(ctx, field)
+func (ec *executionContext) _ProjectValueCalculatedData_internalRateOfReturn(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_internalRateOfReturn(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12897,9 +13401,9 @@ func (ec *executionContext) _ProjectValue_internalRateOfReturn(ctx context.Conte
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectValue_internalRateOfReturn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_internalRateOfReturn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
+		Object:     "ProjectValueCalculatedData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -21542,10 +22046,46 @@ func (ec *executionContext) _ProjectCost(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._ProjectCost_ongoing(ctx, field, obj)
 		case "blendedRate":
 			out.Values[i] = ec._ProjectCost_blendedRate(ctx, field, obj)
+		case "calculated":
+			out.Values[i] = ec._ProjectCost_calculated(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectCostCalculatedDataImplementors = []string{"ProjectCostCalculatedData"}
+
+func (ec *executionContext) _ProjectCostCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectCostCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectCostCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectCostCalculatedData")
 		case "initialCost":
-			out.Values[i] = ec._ProjectCost_initialCost(ctx, field, obj)
+			out.Values[i] = ec._ProjectCostCalculatedData_initialCost(ctx, field, obj)
 		case "hourEstimate":
-			out.Values[i] = ec._ProjectCost_hourEstimate(ctx, field, obj)
+			out.Values[i] = ec._ProjectCostCalculatedData_hourEstimate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -21739,20 +22279,60 @@ func (ec *executionContext) _ProjectMilestone(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "calculated":
+			out.Values[i] = ec._ProjectMilestone_calculated(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectMilestoneCalculatedDataImplementors = []string{"ProjectMilestoneCalculatedData"}
+
+func (ec *executionContext) _ProjectMilestoneCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectMilestoneCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectMilestoneCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectMilestoneCalculatedData")
+		case "estimatedStartDate":
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_estimatedStartDate(ctx, field, obj)
+		case "estimatedEndDate":
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_estimatedEndDate(ctx, field, obj)
 		case "totalHours":
-			out.Values[i] = ec._ProjectMilestone_totalHours(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_totalHours(ctx, field, obj)
 		case "hoursRemaining":
-			out.Values[i] = ec._ProjectMilestone_hoursRemaining(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_hoursRemaining(ctx, field, obj)
 		case "isComplete":
-			out.Values[i] = ec._ProjectMilestone_isComplete(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_isComplete(ctx, field, obj)
 		case "isInFlight":
-			out.Values[i] = ec._ProjectMilestone_isInFlight(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_isInFlight(ctx, field, obj)
 		case "totalTasks":
-			out.Values[i] = ec._ProjectMilestone_totalTasks(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_totalTasks(ctx, field, obj)
 		case "completedTasks":
-			out.Values[i] = ec._ProjectMilestone_completedTasks(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_completedTasks(ctx, field, obj)
 		case "removedHours":
-			out.Values[i] = ec._ProjectMilestone_removedHours(ctx, field, obj)
+			out.Values[i] = ec._ProjectMilestoneCalculatedData_removedHours(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -21875,6 +22455,8 @@ func (ec *executionContext) _ProjectMilestoneTask(ctx context.Context, sel ast.S
 			out.Values[i] = ec._ProjectMilestoneTask_startDate(ctx, field, obj)
 		case "endDate":
 			out.Values[i] = ec._ProjectMilestoneTask_endDate(ctx, field, obj)
+		case "calculated":
+			out.Values[i] = ec._ProjectMilestoneTask_calculated(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -21941,6 +22523,46 @@ func (ec *executionContext) _ProjectResults(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var projectTaskCalculatedDataImplementors = []string{"ProjectTaskCalculatedData"}
+
+func (ec *executionContext) _ProjectTaskCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectTaskCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectTaskCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectTaskCalculatedData")
+		case "actualizedHoursToComplete":
+			out.Values[i] = ec._ProjectTaskCalculatedData_actualizedHoursToComplete(ctx, field, obj)
+		case "actualizedCost":
+			out.Values[i] = ec._ProjectTaskCalculatedData_actualizedCost(ctx, field, obj)
+		case "resourceContention":
+			out.Values[i] = ec._ProjectTaskCalculatedData_resourceContention(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var projectValueImplementors = []string{"ProjectValue"}
 
 func (ec *executionContext) _ProjectValue(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectValue) graphql.Marshaler {
@@ -21966,10 +22588,46 @@ func (ec *executionContext) _ProjectValue(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._ProjectValue_yearFourValue(ctx, field, obj)
 		case "yearFiveValue":
 			out.Values[i] = ec._ProjectValue_yearFiveValue(ctx, field, obj)
+		case "calculated":
+			out.Values[i] = ec._ProjectValue_calculated(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectValueCalculatedDataImplementors = []string{"ProjectValueCalculatedData"}
+
+func (ec *executionContext) _ProjectValueCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectValueCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectValueCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectValueCalculatedData")
 		case "netPresentValue":
-			out.Values[i] = ec._ProjectValue_netPresentValue(ctx, field, obj)
+			out.Values[i] = ec._ProjectValueCalculatedData_netPresentValue(ctx, field, obj)
 		case "internalRateOfReturn":
-			out.Values[i] = ec._ProjectValue_internalRateOfReturn(ctx, field, obj)
+			out.Values[i] = ec._ProjectValueCalculatedData_internalRateOfReturn(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25218,6 +25876,13 @@ func (ec *executionContext) marshalOProject2ᚖcsserverᚋinternalᚋappservᚋg
 	return ec._Project(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOProjectCostCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectCostCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectCostCalculatedData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectCostCalculatedData(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOProjectFeature2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectFeatureᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectFeature) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -25310,6 +25975,27 @@ func (ec *executionContext) marshalOProjectMilestone2ᚕᚖcsserverᚋinternal�
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalOProjectMilestoneCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectMilestoneCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectMilestoneCalculatedData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectMilestoneCalculatedData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectTaskCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectTaskCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectTaskCalculatedData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectTaskCalculatedData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectValueCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValueCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectValueCalculatedData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectValueCalculatedData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProjecttemplate2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Projecttemplate) graphql.Marshaler {

@@ -43,6 +43,7 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 			for _, r := range model.ProjectDaci.DriverIDs {
 				if r != nil {
 					resource := getResourceById(*resourceList, *r)
+					AugmentResource(resource)
 					proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
 				}
 			}
@@ -52,6 +53,7 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 			for _, r := range model.ProjectDaci.ApproverIDs {
 				if r != nil {
 					resource := getResourceById(*resourceList, *r)
+					AugmentResource(resource)
 					proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
 				}
 			}
@@ -61,6 +63,7 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 			for _, r := range model.ProjectDaci.ContributorIDs {
 				if r != nil {
 					resource := getResourceById(*resourceList, *r)
+					AugmentResource(resource)
 					proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
 				}
 			}
@@ -70,6 +73,7 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 			for _, r := range model.ProjectDaci.InformedIDs {
 				if r != nil {
 					resource := getResourceById(*resourceList, *r)
+					AugmentResource(resource)
 					proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
 				}
 			}

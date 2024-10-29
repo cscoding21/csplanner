@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Avatar, Heading } from 'flowbite-svelte';
 	import { formatToCommaSepList, getInitialsFromName } from '$lib/utils/format';
-
-	import type { Resource } from '$lib/graphql/generated/sdk';
+	import { ResourceSkillsList } from '$lib/components';
+	import type { Resource, Skill } from '$lib/graphql/generated/sdk';
 
 	interface Props {
 		resource: Resource;
@@ -26,7 +26,7 @@
 		</Heading>
 		<span class="text-gray-500 dark:text-gray-400">{resource.role}</span>
 		<p class="mb-3 text-xs font-light text-gray-500 dark:text-gray-400">
-			{formatToCommaSepList(resource.skills?.map((l) => l.name) as string[])}
+			<ResourceSkillsList skills={resource.skills as Skill[]} />
 		</p>
 	</div>
 </div>

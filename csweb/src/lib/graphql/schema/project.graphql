@@ -22,14 +22,18 @@ fragment projectFragment on Project {
 		yearThreeValue
 		yearFourValue
 		yearFiveValue
-		netPresentValue
-		internalRateOfReturn
+		calculated {
+			netPresentValue
+			internalRateOfReturn
+		}
 	}
 	projectCost {
 		ongoing
 		blendedRate
-		initialCost
-		hourEstimate
+		calculated {
+			initialCost
+			hourEstimate
+		}
 	}
 	projectDaci {
 		driver {
@@ -54,13 +58,19 @@ fragment projectFragment on Project {
 	}
 	projectMilestones {
 		id
-		hoursRemaining
-		totalHours
-		removedHours
-		completedTasks
-		totalTasks
-		isComplete
-		isInFlight
+
+		calculated {
+			estimatedStartDate
+			estimatedEndDate
+
+			hoursRemaining
+			totalHours
+			removedHours
+			completedTasks
+			totalTasks
+			isComplete
+			isInFlight
+		}
 
 		phase {
 			name
@@ -85,6 +95,12 @@ fragment projectFragment on Project {
 			}
 			startDate
 			endDate
+
+			calculated {
+				actualizedHoursToComplete
+				actualizedCost
+				resourceContention
+			}
 		}
 	}
 }

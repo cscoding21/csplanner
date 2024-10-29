@@ -18,9 +18,9 @@
 			{project.projectBasics?.name}
 		</a>
 		<BadgeProjectStatus status={project.projectBasics.status}  />
-		{#if project.projectValue?.netPresentValue}
+		{#if project.projectValue?.calculated?.netPresentValue}
 			<span class="float-right text-lg">
-				<MoneyDisplay amount={project.projectValue?.netPresentValue} />
+				<MoneyDisplay amount={project.projectValue?.calculated?.netPresentValue} />
 			</span>
 		{/if}
 	</Heading>

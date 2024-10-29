@@ -102,11 +102,11 @@
 			with the blended hourly rate.
 		</p>
 		<div class="mb-4 text-gray-50">
-			{formatCurrency.format(project.projectCost.initialCost as number)}
+			{formatCurrency.format(project.projectCost.calculated?.initialCost as number)}
 		</div>
 
 		<Heading tag="h6">Project Hours</Heading>
-		<div class="mb-4 text-gray-50">{project.projectCost.hourEstimate}</div>
+		<div class="mb-4 text-gray-50">{project.projectCost.calculated?.hourEstimate}</div>
 
 		<MoneyInput
 			bind:value={costForm.ongoing as number}

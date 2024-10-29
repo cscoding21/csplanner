@@ -54,15 +54,6 @@ func CreateTestUsers(ctx context.Context) error {
 		{Email: "tifa@jmk21.com", FirstName: "Tifa", LastName: "Lockhart", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/tifa.png"},
 		{Email: "cloud@jmk21.com", FirstName: "Cloud", LastName: "Strife", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/cloud.png"},
 		{Email: "aerith@jmk21.com", FirstName: "Aerith", LastName: "Gainsborough", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/aerith.png"},
-		{Email: "barrett@jmk21.com", FirstName: "Barrett", LastName: "Wallace", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/barrett.png"},
-		{Email: "jessie@jmk21.com", FirstName: "Jessie", LastName: "Raspberry", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/jessie.png"},
-		{Email: "biggs@jmk21.com", FirstName: "Biggs", LastName: "Avalanche", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/biggs.png"},
-		{Email: "wedge@jmk21.com", FirstName: "Wedge", LastName: "Avalanche", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/wedge.png"},
-		{Email: "cid@jmk21.com", FirstName: "Cid", LastName: "Highwind", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/cid.png"},
-		{Email: "vincent@jmk21.com", FirstName: "Vincent", LastName: "Valentine", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/vincent.png"},
-		{Email: "yuffie@jmk21.com", FirstName: "Yuffie", LastName: "Kisaragi", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/yuffie.png"},
-		{Email: "red13@jmk21.com", FirstName: "Red 13", LastName: "Nanaki", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/red13.png"},
-		{Email: "zack@jmk21.com", FirstName: "Zack", LastName: "Fair", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/zack.png"},
 	}
 
 	for _, u := range usrs {

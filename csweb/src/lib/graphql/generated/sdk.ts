@@ -114,6 +114,7 @@ export type CreateUserResult = {
 
 export type Filter = {
   __typename?: 'Filter';
+  customName?: Maybe<Scalars['String']['output']>;
   key: Scalars['String']['output'];
   operation: Scalars['String']['output'];
   value: Scalars['String']['output'];
@@ -125,6 +126,7 @@ export type Filters = {
 };
 
 export type InputFilter = {
+  customName?: InputMaybe<Scalars['String']['input']>;
   key: Scalars['String']['input'];
   operation: Scalars['String']['input'];
   value: Scalars['String']['input'];
@@ -339,6 +341,7 @@ export type Organization = {
 export type OrganizationDefaults = {
   __typename?: 'OrganizationDefaults';
   discountRate: Scalars['Float']['output'];
+  focusFactor: Scalars['Float']['output'];
   hoursPerWeek: Scalars['Int']['output'];
 };
 
@@ -388,9 +391,14 @@ export type ProjectBasics = {
 export type ProjectCost = {
   __typename?: 'ProjectCost';
   blendedRate?: Maybe<Scalars['Float']['output']>;
+  calculated?: Maybe<ProjectCostCalculatedData>;
+  ongoing?: Maybe<Scalars['Float']['output']>;
+};
+
+export type ProjectCostCalculatedData = {
+  __typename?: 'ProjectCostCalculatedData';
   hourEstimate: Scalars['Int']['output'];
   initialCost?: Maybe<Scalars['Float']['output']>;
-  ongoing?: Maybe<Scalars['Float']['output']>;
 };
 
 export type ProjectDaci = {
@@ -417,16 +425,23 @@ export type ProjectFilters = {
 
 export type ProjectMilestone = {
   __typename?: 'ProjectMilestone';
-  completedTasks?: Maybe<Scalars['Int']['output']>;
+  calculated?: Maybe<ProjectMilestoneCalculatedData>;
   endDate?: Maybe<Scalars['Time']['output']>;
-  hoursRemaining?: Maybe<Scalars['Int']['output']>;
   id: Scalars['String']['output'];
-  isComplete?: Maybe<Scalars['Boolean']['output']>;
-  isInFlight?: Maybe<Scalars['Boolean']['output']>;
   phase: ProjectMilestonePhase;
-  removedHours?: Maybe<Scalars['Int']['output']>;
   startDate?: Maybe<Scalars['Time']['output']>;
   tasks: Array<ProjectMilestoneTask>;
+};
+
+export type ProjectMilestoneCalculatedData = {
+  __typename?: 'ProjectMilestoneCalculatedData';
+  completedTasks?: Maybe<Scalars['Int']['output']>;
+  estimatedEndDate?: Maybe<Scalars['Time']['output']>;
+  estimatedStartDate?: Maybe<Scalars['Time']['output']>;
+  hoursRemaining?: Maybe<Scalars['Int']['output']>;
+  isComplete?: Maybe<Scalars['Boolean']['output']>;
+  isInFlight?: Maybe<Scalars['Boolean']['output']>;
+  removedHours?: Maybe<Scalars['Int']['output']>;
   totalHours?: Maybe<Scalars['Int']['output']>;
   totalTasks?: Maybe<Scalars['Int']['output']>;
 };
@@ -441,6 +456,7 @@ export type ProjectMilestonePhase = {
 
 export type ProjectMilestoneTask = {
   __typename?: 'ProjectMilestoneTask';
+  calculated?: Maybe<ProjectTaskCalculatedData>;
   description?: Maybe<Scalars['String']['output']>;
   endDate?: Maybe<Scalars['Time']['output']>;
   hourEstimate: Scalars['Int']['output'];
@@ -461,17 +477,29 @@ export type ProjectResults = {
   results?: Maybe<Array<Project>>;
 };
 
+export type ProjectTaskCalculatedData = {
+  __typename?: 'ProjectTaskCalculatedData';
+  actualizedCost?: Maybe<Scalars['Float']['output']>;
+  actualizedHoursToComplete?: Maybe<Scalars['Int']['output']>;
+  resourceContention?: Maybe<Scalars['Float']['output']>;
+};
+
 export type ProjectValue = {
   __typename?: 'ProjectValue';
+  calculated?: Maybe<ProjectValueCalculatedData>;
   discountRate?: Maybe<Scalars['Float']['output']>;
   fundingSource?: Maybe<Scalars['String']['output']>;
-  internalRateOfReturn?: Maybe<Scalars['Float']['output']>;
-  netPresentValue?: Maybe<Scalars['Float']['output']>;
   yearFiveValue?: Maybe<Scalars['Float']['output']>;
   yearFourValue?: Maybe<Scalars['Float']['output']>;
   yearOneValue?: Maybe<Scalars['Float']['output']>;
   yearThreeValue?: Maybe<Scalars['Float']['output']>;
   yearTwoValue?: Maybe<Scalars['Float']['output']>;
+};
+
+export type ProjectValueCalculatedData = {
+  __typename?: 'ProjectValueCalculatedData';
+  internalRateOfReturn?: Maybe<Scalars['Float']['output']>;
+  netPresentValue?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Projecttemplate = {
@@ -684,6 +712,7 @@ export type UpdateOrganization = {
 
 export type UpdateOrganizationDefaults = {
   discountRate: Scalars['Float']['input'];
+  focusFactor: Scalars['Float']['input'];
   hoursPerWeek: Scalars['Int']['input'];
 };
 
@@ -969,14 +998,18 @@ export const ProjectFragmentFragmentDoc = gql`
     yearThreeValue
     yearFourValue
     yearFiveValue
-    netPresentValue
-    internalRateOfReturn
+    calculated {
+      netPresentValue
+      internalRateOfReturn
+    }
   }
   projectCost {
     ongoing
     blendedRate
-    initialCost
-    hourEstimate
+    calculated {
+      initialCost
+      hourEstimate
+    }
   }
   projectDaci {
     driver {
@@ -1001,13 +1034,17 @@ export const ProjectFragmentFragmentDoc = gql`
   }
   projectMilestones {
     id
-    hoursRemaining
-    totalHours
-    removedHours
-    completedTasks
-    totalTasks
-    isComplete
-    isInFlight
+    calculated {
+      estimatedStartDate
+      estimatedEndDate
+      hoursRemaining
+      totalHours
+      removedHours
+      completedTasks
+      totalTasks
+      isComplete
+      isInFlight
+    }
     phase {
       name
       description
@@ -1031,6 +1068,11 @@ export const ProjectFragmentFragmentDoc = gql`
       }
       startDate
       endDate
+      calculated {
+        actualizedHoursToComplete
+        actualizedCost
+        resourceContention
+      }
     }
   }
 }

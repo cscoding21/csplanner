@@ -210,8 +210,12 @@ type ProjectBasics struct {
 }
 
 type ProjectCost struct {
-	Ongoing      *float64 `json:"ongoing,omitempty"`
-	BlendedRate  *float64 `json:"blendedRate,omitempty"`
+	Ongoing     *float64                   `json:"ongoing,omitempty"`
+	BlendedRate *float64                   `json:"blendedRate,omitempty"`
+	Calculated  *ProjectCostCalculatedData `json:"calculated,omitempty"`
+}
+
+type ProjectCostCalculatedData struct {
 	InitialCost  *float64 `json:"initialCost,omitempty"`
 	HourEstimate int      `json:"hourEstimate"`
 }
@@ -236,18 +240,24 @@ type ProjectFilters struct {
 }
 
 type ProjectMilestone struct {
-	ID             string                  `json:"id"`
-	StartDate      *time.Time              `json:"startDate,omitempty"`
-	EndDate        *time.Time              `json:"endDate,omitempty"`
-	Phase          *ProjectMilestonePhase  `json:"phase"`
-	Tasks          []*ProjectMilestoneTask `json:"tasks"`
-	TotalHours     *int                    `json:"totalHours,omitempty"`
-	HoursRemaining *int                    `json:"hoursRemaining,omitempty"`
-	IsComplete     *bool                   `json:"isComplete,omitempty"`
-	IsInFlight     *bool                   `json:"isInFlight,omitempty"`
-	TotalTasks     *int                    `json:"totalTasks,omitempty"`
-	CompletedTasks *int                    `json:"completedTasks,omitempty"`
-	RemovedHours   *int                    `json:"removedHours,omitempty"`
+	ID         string                          `json:"id"`
+	StartDate  *time.Time                      `json:"startDate,omitempty"`
+	EndDate    *time.Time                      `json:"endDate,omitempty"`
+	Phase      *ProjectMilestonePhase          `json:"phase"`
+	Tasks      []*ProjectMilestoneTask         `json:"tasks"`
+	Calculated *ProjectMilestoneCalculatedData `json:"calculated,omitempty"`
+}
+
+type ProjectMilestoneCalculatedData struct {
+	EstimatedStartDate *time.Time `json:"estimatedStartDate,omitempty"`
+	EstimatedEndDate   *time.Time `json:"estimatedEndDate,omitempty"`
+	TotalHours         *int       `json:"totalHours,omitempty"`
+	HoursRemaining     *int       `json:"hoursRemaining,omitempty"`
+	IsComplete         *bool      `json:"isComplete,omitempty"`
+	IsInFlight         *bool      `json:"isInFlight,omitempty"`
+	TotalTasks         *int       `json:"totalTasks,omitempty"`
+	CompletedTasks     *int       `json:"completedTasks,omitempty"`
+	RemovedHours       *int       `json:"removedHours,omitempty"`
 }
 
 type ProjectMilestonePhase struct {
@@ -258,17 +268,18 @@ type ProjectMilestonePhase struct {
 }
 
 type ProjectMilestoneTask struct {
-	ID               string      `json:"id"`
-	Name             string      `json:"name"`
-	HourEstimate     int         `json:"hourEstimate"`
-	Description      *string     `json:"description,omitempty"`
-	RequiredSkillIDs []string    `json:"requiredSkillIDs,omitempty"`
-	Skills           []*Skill    `json:"skills,omitempty"`
-	Resources        []*Resource `json:"resources,omitempty"`
-	ResourceIDs      []string    `json:"resourceIDs,omitempty"`
-	Status           string      `json:"status"`
-	StartDate        *time.Time  `json:"startDate,omitempty"`
-	EndDate          *time.Time  `json:"endDate,omitempty"`
+	ID               string                     `json:"id"`
+	Name             string                     `json:"name"`
+	HourEstimate     int                        `json:"hourEstimate"`
+	Description      *string                    `json:"description,omitempty"`
+	RequiredSkillIDs []string                   `json:"requiredSkillIDs,omitempty"`
+	Skills           []*Skill                   `json:"skills,omitempty"`
+	Resources        []*Resource                `json:"resources,omitempty"`
+	ResourceIDs      []string                   `json:"resourceIDs,omitempty"`
+	Status           string                     `json:"status"`
+	StartDate        *time.Time                 `json:"startDate,omitempty"`
+	EndDate          *time.Time                 `json:"endDate,omitempty"`
+	Calculated       *ProjectTaskCalculatedData `json:"calculated,omitempty"`
 }
 
 type ProjectResults struct {
@@ -277,14 +288,24 @@ type ProjectResults struct {
 	Results []*Project  `json:"results,omitempty"`
 }
 
+type ProjectTaskCalculatedData struct {
+	ActualizedHoursToComplete *int     `json:"actualizedHoursToComplete,omitempty"`
+	ActualizedCost            *float64 `json:"actualizedCost,omitempty"`
+	ResourceContention        *float64 `json:"resourceContention,omitempty"`
+}
+
 type ProjectValue struct {
-	FundingSource        *string  `json:"fundingSource,omitempty"`
-	DiscountRate         *float64 `json:"discountRate,omitempty"`
-	YearOneValue         *float64 `json:"yearOneValue,omitempty"`
-	YearTwoValue         *float64 `json:"yearTwoValue,omitempty"`
-	YearThreeValue       *float64 `json:"yearThreeValue,omitempty"`
-	YearFourValue        *float64 `json:"yearFourValue,omitempty"`
-	YearFiveValue        *float64 `json:"yearFiveValue,omitempty"`
+	FundingSource  *string                     `json:"fundingSource,omitempty"`
+	DiscountRate   *float64                    `json:"discountRate,omitempty"`
+	YearOneValue   *float64                    `json:"yearOneValue,omitempty"`
+	YearTwoValue   *float64                    `json:"yearTwoValue,omitempty"`
+	YearThreeValue *float64                    `json:"yearThreeValue,omitempty"`
+	YearFourValue  *float64                    `json:"yearFourValue,omitempty"`
+	YearFiveValue  *float64                    `json:"yearFiveValue,omitempty"`
+	Calculated     *ProjectValueCalculatedData `json:"calculated,omitempty"`
+}
+
+type ProjectValueCalculatedData struct {
 	NetPresentValue      *float64 `json:"netPresentValue,omitempty"`
 	InternalRateOfReturn *float64 `json:"internalRateOfReturn,omitempty"`
 }

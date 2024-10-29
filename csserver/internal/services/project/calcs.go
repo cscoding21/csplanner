@@ -11,7 +11,7 @@ import (
 func (p *Project) GetProjectNPV() float64 {
 
 	values := []float64{
-		-(p.ProjectCost.InitialCost),
+		-(p.ProjectCost.Calculated.InitialCost),
 		p.ProjectValue.YearOneValue,
 		p.ProjectValue.YearTwoValue,
 		p.ProjectValue.YearThreeValue,
@@ -25,7 +25,7 @@ func (p *Project) GetProjectNPV() float64 {
 		return 0.0
 	}
 
-	p.ProjectValue.NetPresentValue = npv
+	p.ProjectValue.Calculated.NetPresentValue = npv
 
 	return npv
 }
@@ -33,7 +33,7 @@ func (p *Project) GetProjectNPV() float64 {
 // GetProjectIRR calclate the NPV for the project based on cost and value entries
 func (p *Project) GetProjectIRR() float64 {
 	values := []float64{
-		-(p.ProjectCost.InitialCost),
+		-(p.ProjectCost.Calculated.InitialCost),
 		p.ProjectValue.YearOneValue,
 		p.ProjectValue.YearTwoValue,
 		p.ProjectValue.YearThreeValue,
@@ -47,7 +47,7 @@ func (p *Project) GetProjectIRR() float64 {
 		return 0.0
 	}
 
-	p.ProjectValue.InternalRateOfReturn = irr
+	p.ProjectValue.Calculated.InternalRateOfReturn = irr
 
 	return irr
 }
@@ -72,8 +72,8 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 		}
 	}
 
-	p.ProjectCost.HourEstimate = hours
-	p.ProjectCost.InitialCost = cost
+	p.ProjectCost.Calculated.HourEstimate = hours
+	p.ProjectCost.Calculated.InitialCost = cost
 
 	return hours, cost
 }
@@ -106,12 +106,12 @@ func (p *Project) CalculateProjectMilestoneStats() {
 			}
 		}
 
-		p.ProjectMilestones[i].TotalHours = totalHours
-		p.ProjectMilestones[i].CompletedTasks = completedTasks
-		p.ProjectMilestones[i].HoursRemaining = hoursRemaining
-		p.ProjectMilestones[i].RemovedHours = removedHours
-		p.ProjectMilestones[i].IsComplete = isComplete
-		p.ProjectMilestones[i].IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
+		p.ProjectMilestones[i].Calculated.TotalHours = totalHours
+		p.ProjectMilestones[i].Calculated.CompletedTasks = completedTasks
+		p.ProjectMilestones[i].Calculated.HoursRemaining = hoursRemaining
+		p.ProjectMilestones[i].Calculated.RemovedHours = removedHours
+		p.ProjectMilestones[i].Calculated.IsComplete = isComplete
+		p.ProjectMilestones[i].Calculated.IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
 	}
 }
 

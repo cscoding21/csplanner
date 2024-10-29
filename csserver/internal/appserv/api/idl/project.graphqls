@@ -35,16 +35,14 @@ type ProjectValue {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
-  netPresentValue: Float
-  internalRateOfReturn: Float
+  calculated: ProjectValueCalculatedData
 }
 
 
 type ProjectCost {
   ongoing: Float
   blendedRate: Float
-  initialCost: Float
-  hourEstimate: Int!
+  calculated: ProjectCostCalculatedData
 }
 
 
@@ -70,13 +68,7 @@ type ProjectMilestone {
   phase: ProjectMilestonePhase!
   tasks: [ProjectMilestoneTask!]!
 
-  totalHours: Int
-	hoursRemaining: Int
-	isComplete: Boolean
-	isInFlight: Boolean
-	totalTasks: Int
-	completedTasks: Int
-	removedHours: Int
+  calculated: ProjectMilestoneCalculatedData
 }
 
 type ProjectMilestonePhase {
@@ -98,6 +90,7 @@ type ProjectMilestoneTask {
   status: String!
   startDate: Time
   endDate: Time
+  calculated: ProjectTaskCalculatedData
 }
 
 
@@ -126,7 +119,39 @@ type CreateProjectCommentResult {
 
 
 
+type ProjectCostCalculatedData {
+  initialCost: Float
+  hourEstimate: Int!
+}
 
+type ProjectValueCalculatedData {
+  netPresentValue: Float
+  internalRateOfReturn: Float
+}
+
+type ProjectMilestoneCalculatedData {
+  estimatedStartDate: Time
+  estimatedEndDate: Time
+
+  totalHours: Int
+	hoursRemaining: Int
+	isComplete: Boolean
+	isInFlight: Boolean
+	totalTasks: Int
+	completedTasks: Int
+	removedHours: Int
+}
+
+type ProjectTaskCalculatedData {
+  actualizedHoursToComplete: Int
+	actualizedCost: Float
+	resourceContention:  Float
+}
+
+
+
+
+#----------------------
 
 
 

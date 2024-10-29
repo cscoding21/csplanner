@@ -76,14 +76,14 @@
         <li>
             <span>Net Present Value</span>
             <span class="float-right flex-auto font-semibold">
-                <MoneyDisplay amount={project.projectValue?.netPresentValue || 0} />
+                <MoneyDisplay amount={project.projectValue?.calculated?.netPresentValue || 0} />
             </span>
         </li>
 
         <li>
             <span>Internal Rate of Return</span>
             <span class="float-right flex-auto font-semibold"
-                >{formatPercent.format(project.projectValue?.internalRateOfReturn || 0)}</span
+                >{formatPercent.format(project.projectValue?.calculated?.internalRateOfReturn || 0)}</span
             >
         </li>
 
@@ -97,14 +97,14 @@
         <li>
             <span>Development Cost</span>
             <span class="float-right flex-auto font-semibold"
-                >{formatCurrency.format(project.projectCost?.initialCost || 0)}</span
+                >{formatCurrency.format(project.projectCost?.calculated?.initialCost || 0)}</span
             >
         </li>
 
         <li>
             <span>Development Hours</span>
             <span class="float-right flex-auto font-semibold"
-                >{project.projectCost?.hourEstimate}</span
+                >{project.projectCost?.calculated?.hourEstimate}</span
             >
         </li>
 

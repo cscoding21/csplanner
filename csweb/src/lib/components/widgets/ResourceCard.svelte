@@ -1,13 +1,15 @@
 <script lang="ts">
     import { Avatar } from 'flowbite-svelte';
-    import { getInitialsFromName } from '$lib/utils/format';
-    import type { Resource } from '$lib/graphql/generated/sdk';
+    import { getInitialsFromName, formatToCommaSepList } from '$lib/utils/format';
+    import type { Resource, Skill } from '$lib/graphql/generated/sdk';
+	import { ResourceSkillsList } from '..';
 
     interface Props {
         resource: Resource
     }
-
     let { resource }: Props = $props();
+
+	
 </script>
 
 {#if resource}
@@ -18,6 +20,9 @@
 	<div class="text-left">
 		<div>{resource.name}</div>
 		<div><p>{resource.role}</p></div>
+		<div class="text-xs">
+			<ResourceSkillsList skills={resource.skills as Skill[]} />
+		</div>
 		<div class="clear-both"></div>
 	</div>
 </div>
