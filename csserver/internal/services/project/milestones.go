@@ -118,10 +118,10 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 
 		for _, t := range p.Tasks {
 			task := ProjectMilestoneTask{
-				Name:             t.Name,
-				Description:      t.Description,
-				Status:           ptypes.New,
-				RequiredSkillIDs: t.RequiredSkillIDs,
+				Name:            t.Name,
+				Description:     t.Description,
+				Status:          ptypes.New,
+				RequiredSkillID: t.RequiredSkillID,
 			}
 
 			milestone.Tasks = append(milestone.Tasks, &task)

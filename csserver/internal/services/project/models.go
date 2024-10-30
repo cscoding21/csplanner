@@ -87,16 +87,16 @@ type ProjectMilestonePhase struct {
 }
 
 type ProjectMilestoneTask struct {
-	ID               *string                   `json:"id,omitempty"`
-	Name             string                    `json:"name"`
-	Description      string                    `json:"description"`
-	HourEstimate     int                       `json:"hour_estimate"`
-	ResourceIDs      []string                  `json:"resources_ids"`
-	RequiredSkillIDs []string                  `json:"required_skill_ids"`
-	Status           ptypes.MilestoneStatus    `json:"status"`
-	StartDate        *time.Time                `json:"start_date"`
-	EndDate          *time.Time                `json:"end_date"`
-	Calculated       ProjectTaskCalculatedData `json:"calculated"`
+	ID              *string                   `json:"id,omitempty"`
+	Name            string                    `json:"name"`
+	Description     string                    `json:"description"`
+	HourEstimate    int                       `json:"hour_estimate"`
+	ResourceIDs     []string                  `json:"resources_ids"`
+	RequiredSkillID string                    `json:"required_skill_id"`
+	Status          ptypes.MilestoneStatus    `json:"status"`
+	StartDate       *time.Time                `json:"start_date"`
+	EndDate         *time.Time                `json:"end_date"`
+	Calculated      ProjectTaskCalculatedData `json:"calculated"`
 }
 
 type ProjectCostCalculatedData struct {
@@ -126,4 +126,6 @@ type ProjectTaskCalculatedData struct {
 	ActualizedHoursToComplete *int     `json:"actualized_hours_to_complete"`
 	ActualizedCost            *float64 `json:"actualized_cost"`
 	ResourceContention        *float64 `json:"resource_contention"`
+
+	Exceptions []string `json:"exceptions"`
 }

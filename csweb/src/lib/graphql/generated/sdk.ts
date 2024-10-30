@@ -462,7 +462,7 @@ export type ProjectMilestoneTask = {
   hourEstimate: Scalars['Int']['output'];
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  requiredSkillIDs?: Maybe<Array<Scalars['String']['output']>>;
+  requiredSkillID: Scalars['String']['output'];
   resourceIDs?: Maybe<Array<Scalars['String']['output']>>;
   resources?: Maybe<Array<Resource>>;
   skills?: Maybe<Array<Skill>>;
@@ -777,7 +777,7 @@ export type UpdateProjectMilestoneTask = {
   milestoneID: Scalars['String']['input'];
   name: Scalars['String']['input'];
   projectID: Scalars['String']['input'];
-  requiredSkillIDs?: InputMaybe<Array<Scalars['String']['input']>>;
+  requiredSkillID: Scalars['String']['input'];
   resourceIDs?: InputMaybe<Array<Scalars['String']['input']>>;
   startDate?: InputMaybe<Scalars['Time']['input']>;
   status: Scalars['String']['input'];
@@ -1057,7 +1057,7 @@ export const ProjectFragmentFragmentDoc = gql`
       description
       status
       hourEstimate
-      requiredSkillIDs
+      requiredSkillID
       skills {
         id
         name

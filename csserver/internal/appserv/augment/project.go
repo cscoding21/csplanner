@@ -21,12 +21,10 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 		}
 
 		for j, t := range m.Tasks {
-			if len(t.RequiredSkillIDs) > 0 {
-				for _, s := range t.RequiredSkillIDs {
-					skill := getSkillById(*skillList, s)
-					idlSkill := idl.Skill{ID: skill.Value, Name: skill.Name}
-					proj.ProjectMilestones[i].Tasks[j].Skills = append(proj.ProjectMilestones[i].Tasks[j].Skills, &idlSkill)
-				}
+			if len(t.RequiredSkillID) > 0 {
+				skill := getSkillById(*skillList, t.RequiredSkillID)
+				idlSkill := idl.Skill{ID: skill.Value, Name: skill.Name}
+				proj.ProjectMilestones[i].Tasks[j].Skills = append(proj.ProjectMilestones[i].Tasks[j].Skills, &idlSkill)
 			}
 
 			if len(t.ResourceIDs) > 0 {

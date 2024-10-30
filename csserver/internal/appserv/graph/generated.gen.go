@@ -313,18 +313,18 @@ type ComplexityRoot struct {
 	}
 
 	ProjectMilestoneTask struct {
-		Calculated       func(childComplexity int) int
-		Description      func(childComplexity int) int
-		EndDate          func(childComplexity int) int
-		HourEstimate     func(childComplexity int) int
-		ID               func(childComplexity int) int
-		Name             func(childComplexity int) int
-		RequiredSkillIDs func(childComplexity int) int
-		ResourceIDs      func(childComplexity int) int
-		Resources        func(childComplexity int) int
-		Skills           func(childComplexity int) int
-		StartDate        func(childComplexity int) int
-		Status           func(childComplexity int) int
+		Calculated      func(childComplexity int) int
+		Description     func(childComplexity int) int
+		EndDate         func(childComplexity int) int
+		HourEstimate    func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		RequiredSkillID func(childComplexity int) int
+		ResourceIDs     func(childComplexity int) int
+		Resources       func(childComplexity int) int
+		Skills          func(childComplexity int) int
+		StartDate       func(childComplexity int) int
+		Status          func(childComplexity int) int
 	}
 
 	ProjectResults struct {
@@ -1870,12 +1870,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestoneTask.Name(childComplexity), true
 
-	case "ProjectMilestoneTask.requiredSkillIDs":
-		if e.complexity.ProjectMilestoneTask.RequiredSkillIDs == nil {
+	case "ProjectMilestoneTask.requiredSkillID":
+		if e.complexity.ProjectMilestoneTask.RequiredSkillID == nil {
 			break
 		}
 
-		return e.complexity.ProjectMilestoneTask.RequiredSkillIDs(childComplexity), true
+		return e.complexity.ProjectMilestoneTask.RequiredSkillID(childComplexity), true
 
 	case "ProjectMilestoneTask.resourceIDs":
 		if e.complexity.ProjectMilestoneTask.ResourceIDs == nil {
@@ -3154,7 +3154,7 @@ type ProjectMilestoneTask {
   name: String!
   hourEstimate: Int!
   description: String
-  requiredSkillIDs: [String!]
+  requiredSkillID: String!
   skills: [Skill!]
   resources: [Resource!]
   resourceIDs: [String!]
@@ -3264,7 +3264,7 @@ input UpdateProjectCost {
 
 
 input UpdateProjectDACI {
-  driverIDs : [String]
+  driverIDs: [String]
   approverIDs: [String]
   contributorIDs: [String]
   informedIDs: [String]
@@ -3302,7 +3302,7 @@ input UpdateProjectMilestoneTask {
   description: String
   hourEstimate: Int!
   resourceIDs: [String!]
-  requiredSkillIDs: [String!]
+  requiredSkillID: String!
   startDate: Time
   endDate: Time
   status: String!
@@ -11536,8 +11536,8 @@ func (ec *executionContext) fieldContext_ProjectMilestone_tasks(_ context.Contex
 				return ec.fieldContext_ProjectMilestoneTask_hourEstimate(ctx, field)
 			case "description":
 				return ec.fieldContext_ProjectMilestoneTask_description(ctx, field)
-			case "requiredSkillIDs":
-				return ec.fieldContext_ProjectMilestoneTask_requiredSkillIDs(ctx, field)
+			case "requiredSkillID":
+				return ec.fieldContext_ProjectMilestoneTask_requiredSkillID(ctx, field)
 			case "skills":
 				return ec.fieldContext_ProjectMilestoneTask_skills(ctx, field)
 			case "resources":
@@ -12338,8 +12338,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_description(_ cont
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestoneTask_requiredSkillIDs(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneTask) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestoneTask_requiredSkillIDs(ctx, field)
+func (ec *executionContext) _ProjectMilestoneTask_requiredSkillID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneTask) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMilestoneTask_requiredSkillID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12352,21 +12352,24 @@ func (ec *executionContext) _ProjectMilestoneTask_requiredSkillIDs(ctx context.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.RequiredSkillIDs, nil
+		return obj.RequiredSkillID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMilestoneTask_requiredSkillIDs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMilestoneTask_requiredSkillID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectMilestoneTask",
 		Field:      field,
@@ -20227,7 +20230,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestoneTask(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "description", "hourEstimate", "resourceIDs", "requiredSkillIDs", "startDate", "endDate", "status", "projectID", "milestoneID"}
+	fieldsInOrder := [...]string{"id", "name", "description", "hourEstimate", "resourceIDs", "requiredSkillID", "startDate", "endDate", "status", "projectID", "milestoneID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -20269,13 +20272,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestoneTask(ctx context
 				return it, err
 			}
 			it.ResourceIDs = data
-		case "requiredSkillIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requiredSkillIDs"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+		case "requiredSkillID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requiredSkillID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.RequiredSkillIDs = data
+			it.RequiredSkillID = data
 		case "startDate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -22438,8 +22441,11 @@ func (ec *executionContext) _ProjectMilestoneTask(ctx context.Context, sel ast.S
 			}
 		case "description":
 			out.Values[i] = ec._ProjectMilestoneTask_description(ctx, field, obj)
-		case "requiredSkillIDs":
-			out.Values[i] = ec._ProjectMilestoneTask_requiredSkillIDs(ctx, field, obj)
+		case "requiredSkillID":
+			out.Values[i] = ec._ProjectMilestoneTask_requiredSkillID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "skills":
 			out.Values[i] = ec._ProjectMilestoneTask_skills(ctx, field, obj)
 		case "resources":

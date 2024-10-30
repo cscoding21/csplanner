@@ -84,7 +84,7 @@ fragment projectFragment on Project {
 			description
 			status
 			hourEstimate
-			requiredSkillIDs
+			requiredSkillID
 			skills {
 				id
 				name

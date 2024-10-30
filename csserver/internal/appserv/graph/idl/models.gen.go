@@ -268,18 +268,18 @@ type ProjectMilestonePhase struct {
 }
 
 type ProjectMilestoneTask struct {
-	ID               string                     `json:"id"`
-	Name             string                     `json:"name"`
-	HourEstimate     int                        `json:"hourEstimate"`
-	Description      *string                    `json:"description,omitempty"`
-	RequiredSkillIDs []string                   `json:"requiredSkillIDs,omitempty"`
-	Skills           []*Skill                   `json:"skills,omitempty"`
-	Resources        []*Resource                `json:"resources,omitempty"`
-	ResourceIDs      []string                   `json:"resourceIDs,omitempty"`
-	Status           string                     `json:"status"`
-	StartDate        *time.Time                 `json:"startDate,omitempty"`
-	EndDate          *time.Time                 `json:"endDate,omitempty"`
-	Calculated       *ProjectTaskCalculatedData `json:"calculated,omitempty"`
+	ID              string                     `json:"id"`
+	Name            string                     `json:"name"`
+	HourEstimate    int                        `json:"hourEstimate"`
+	Description     *string                    `json:"description,omitempty"`
+	RequiredSkillID string                     `json:"requiredSkillID"`
+	Skills          []*Skill                   `json:"skills,omitempty"`
+	Resources       []*Resource                `json:"resources,omitempty"`
+	ResourceIDs     []string                   `json:"resourceIDs,omitempty"`
+	Status          string                     `json:"status"`
+	StartDate       *time.Time                 `json:"startDate,omitempty"`
+	EndDate         *time.Time                 `json:"endDate,omitempty"`
+	Calculated      *ProjectTaskCalculatedData `json:"calculated,omitempty"`
 }
 
 type ProjectResults struct {
@@ -491,17 +491,17 @@ type UpdateProjectMilestonePhase struct {
 }
 
 type UpdateProjectMilestoneTask struct {
-	ID               *string    `json:"id,omitempty"`
-	Name             string     `json:"name"`
-	Description      *string    `json:"description,omitempty"`
-	HourEstimate     int        `json:"hourEstimate"`
-	ResourceIDs      []string   `json:"resourceIDs,omitempty"`
-	RequiredSkillIDs []string   `json:"requiredSkillIDs,omitempty"`
-	StartDate        *time.Time `json:"startDate,omitempty"`
-	EndDate          *time.Time `json:"endDate,omitempty"`
-	Status           string     `json:"status"`
-	ProjectID        string     `json:"projectID"`
-	MilestoneID      string     `json:"milestoneID"`
+	ID              *string    `json:"id,omitempty"`
+	Name            string     `json:"name"`
+	Description     *string    `json:"description,omitempty"`
+	HourEstimate    int        `json:"hourEstimate"`
+	ResourceIDs     []string   `json:"resourceIDs,omitempty"`
+	RequiredSkillID string     `json:"requiredSkillID"`
+	StartDate       *time.Time `json:"startDate,omitempty"`
+	EndDate         *time.Time `json:"endDate,omitempty"`
+	Status          string     `json:"status"`
+	ProjectID       string     `json:"projectID"`
+	MilestoneID     string     `json:"milestoneID"`
 }
 
 type UpdateProjectMilestoneTemplate struct {

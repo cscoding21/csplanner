@@ -28,8 +28,8 @@ type ProjecttemplatePhase struct {
 }
 
 type ProjectTemplateTasks struct {
-	Name             string                 `json:"name"`
-	Description      string                 `json:"description"`
-	Status           ptypes.MilestoneStatus `json:"status"`
-	RequiredSkillIDs []string               `json:"required_skill_ids"`
+	Name            string                 `json:"name"`
+	Description     string                 `json:"description"`
+	Status          ptypes.MilestoneStatus `json:"status"`
+	RequiredSkillID string                 `json:"required_skill_id"`
 }

@@ -48,7 +48,7 @@
 		taskForm.hourEstimate = 0;
 		taskForm.description = '';
 		taskForm.status = 'new';
-		taskForm.requiredSkillIDs = [];
+		taskForm.requiredSkillID = '';
 		taskForm.resourceIDs = [];
 		taskForm.startDate = null;
 		taskForm.endDate = null;
@@ -71,7 +71,7 @@
 			description: '',
 			hourEstimate: 0,
 			status: '',
-			requiredSkillIDs: [],
+			requiredSkillID: '',
 			resourceIDs: [],
 			startDate: null,
 			endDate: null
@@ -114,11 +114,12 @@
 	};
 
 	$effect(() => {
-		if (taskForm.requiredSkillIDs && taskForm.requiredSkillIDs.length > 0) {
+		if (taskForm.requiredSkillID) {
 			resourceOpts = resourceRoster
 				.filter((res) => {
 					if (res.skills && res.skills.length > 0) {
-						const val = res.skills?.map((rs) => rs.id).some((so) => taskForm.requiredSkillIDs?.includes(so));
+						console.log(taskForm.requiredSkillID)
+						const val = res.skills?.map((rs) => rs.id).includes(taskForm.requiredSkillID);
 						return val;
 					} else {
 						return false;
@@ -188,8 +189,8 @@
 
 		<div class="grid grid-cols-4 gap-4">
 			<div class="col-span-2">
-				<MultiSelectInput
-					bind:value={taskForm.requiredSkillIDs as string[]}
+				<SelectInput
+					bind:value={taskForm.requiredSkillID}
 					fieldName="Required Skills"
 					bind:options={skillsOpts}
 					error={errors.requiredSkills}

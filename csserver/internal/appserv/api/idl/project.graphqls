@@ -83,7 +83,7 @@ type ProjectMilestoneTask {
   name: String!
   hourEstimate: Int!
   description: String
-  requiredSkillIDs: [String!]
+  requiredSkillID: String!
   skills: [Skill!]
   resources: [Resource!]
   resourceIDs: [String!]
@@ -193,7 +193,7 @@ input UpdateProjectCost {
 
 
 input UpdateProjectDACI {
-  driverIDs : [String]
+  driverIDs: [String]
   approverIDs: [String]
   contributorIDs: [String]
   informedIDs: [String]
@@ -231,7 +231,7 @@ input UpdateProjectMilestoneTask {
   description: String
   hourEstimate: Int!
   resourceIDs: [String!]
-  requiredSkillIDs: [String!]
+  requiredSkillID: String!
   startDate: Time
   endDate: Time
   status: String!
