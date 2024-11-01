@@ -7,7 +7,8 @@ import (
 	"math/rand"
 
 	"csserver/internal/services/resource"
-	"csserver/internal/services/resource/rtypes"
+	"csserver/internal/services/resource/rtypes/resourcestatus"
+	"csserver/internal/services/resource/rtypes/resourcetype"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -25,12 +26,12 @@ func CreateTestResources(ctx context.Context) error {
 		//---Resources
 		{
 			Role:           "CEO",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Jeph",
 			UserEmail:      utils.ValToRef("jeph@jmk21.com"),
 			InitialCost:    0.0,
 			AnnualizedCost: 200000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "devops", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "security", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -38,13 +39,13 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Bartender",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Tifa Lockhart",
 			UserEmail:      utils.ValToRef("tifa@jmk21.com"),
 			ProfileImage:   utils.ValToRef("/tifa.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 200000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "marketing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "content-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -53,13 +54,13 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Ex-SOLDIER",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Cloud Strife",
 			UserEmail:      utils.ValToRef("cloud@jmk21.com"),
 			ProfileImage:   utils.ValToRef("/cloud.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 150000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "devops", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "backend", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -69,13 +70,13 @@ func CreateTestResources(ctx context.Context) error {
 
 		{
 			Role:           "Florist",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Aerith Gainsborough",
 			UserEmail:      utils.ValToRef("aerith@jmk21.com"),
 			ProfileImage:   utils.ValToRef("/aerith.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 150000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "ui", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "ux", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -84,12 +85,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Avalache",
-			Type:           rtypes.Human,
-			Name:           "Barrett Wallace",
+			Type:           resourcetype.Human,
+			Name:           "Barret Wallace",
 			ProfileImage:   utils.ValToRef("/barrett.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 150000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "project-management", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "product-management", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -98,12 +99,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Actress",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Jessie Raspberry",
 			ProfileImage:   utils.ValToRef("/jessie.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 150000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "marketing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "content-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -112,12 +113,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Avalache",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Biggs",
 			ProfileImage:   utils.ValToRef("/biggs.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 121000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "project-management", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "requirements-gathering", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -125,12 +126,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Avalache",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Wedge",
 			ProfileImage:   utils.ValToRef("/wedge.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 121000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "marketing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "content-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -139,12 +140,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Pilot",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Cid Highwind",
 			ProfileImage:   utils.ValToRef("/cid.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 121000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "devops", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "security", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -154,12 +155,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Vampire",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Vincent Valentine",
 			ProfileImage:   utils.ValToRef("/vincent.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 121000,
-			Status:         rtypes.Inhouse,
+			Status:         resourcestatus.Inhouse,
 			Skills: []*resource.Skill{
 				{ID: "devops", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "security", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -168,12 +169,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Ninja",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Yuffie Kisaragi",
 			ProfileImage:   utils.ValToRef("/yuffie.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 200000,
-			Status:         rtypes.Proposed,
+			Status:         resourcestatus.Proposed,
 			Skills: []*resource.Skill{
 				{ID: "business-analysis", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "requirements-gathering", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -181,12 +182,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Rat Dog",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Red XIII",
 			ProfileImage:   utils.ValToRef("/red13.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 200000,
-			Status:         rtypes.Proposed,
+			Status:         resourcestatus.Proposed,
 			Skills: []*resource.Skill{
 				{ID: "business-analysis", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "requirements-gathering", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -194,12 +195,12 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "SOLDIER",
-			Type:           rtypes.Human,
+			Type:           resourcetype.Human,
 			Name:           "Zack Fair",
 			ProfileImage:   utils.ValToRef("/zack.png"),
 			InitialCost:    0.0,
 			AnnualizedCost: 200000,
-			Status:         rtypes.Proposed,
+			Status:         resourcestatus.Proposed,
 			Skills: []*resource.Skill{
 				{ID: "technical-architecture", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "devops", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
@@ -209,19 +210,19 @@ func CreateTestResources(ctx context.Context) error {
 		},
 		{
 			Role:           "Sword",
-			Type:           rtypes.Equipment,
+			Type:           resourcetype.Equipment,
 			Name:           "Buster Sword",
 			InitialCost:    10000,
 			AnnualizedCost: 0,
-			Status:         rtypes.Proposed,
+			Status:         resourcestatus.Proposed,
 		},
 		{
 			Role:           "Cloud Hosting",
-			Type:           rtypes.Software,
+			Type:           resourcetype.Software,
 			Name:           "Linode Cloud Hosting",
 			InitialCost:    0,
 			AnnualizedCost: 100000,
-			Status:         rtypes.Proposed,
+			Status:         resourcestatus.Proposed,
 		},
 	}
 

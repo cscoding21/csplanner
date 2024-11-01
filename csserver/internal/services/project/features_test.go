@@ -3,7 +3,7 @@ package project
 import (
 	"testing"
 
-	"csserver/internal/services/project/ptypes"
+	"csserver/internal/services/project/ptypes/featurepriority"
 	"csserver/internal/utils"
 )
 
@@ -39,7 +39,7 @@ func TestUpdateProjectFeature_Update(t *testing.T) {
 	updatedProject := updateProjectFeatureGraph(*proj,
 		ProjectFeature{
 			ID:          utils.ValToRef("projectfeature:1"),
-			Priority:    ptypes.Medium,
+			Priority:    featurepriority.Medium,
 			Name:        "Topic Sentence UPDATED",
 			Description: "It lays out the path UPDATED",
 			Status:      "proposed"})
@@ -65,7 +65,7 @@ func TestUpdateProjectFeature_New(t *testing.T) {
 	updatedProject := updateProjectFeatureGraph(*proj,
 		ProjectFeature{
 			ID:          utils.ValToRef("projectfeature:9999"),
-			Priority:    ptypes.Medium,
+			Priority:    featurepriority.Medium,
 			Name:        "Topic Sentence ADDED",
 			Description: "It lays out the path ADDED",
 			Status:      "proposed"})

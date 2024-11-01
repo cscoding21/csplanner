@@ -66,7 +66,7 @@
 <div>
     <div class="text-sm text-gray-400">{task.description}</div>
     <div class="my-2 text-xs text-gray-100">
-        Skills Required: {getRequiredSkillsDisplay(task)}
+        Skill Required: {getRequiredSkillsDisplay(task)}
     </div>
 
     <div class="pl-4">

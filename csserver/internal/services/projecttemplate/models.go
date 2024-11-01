@@ -7,7 +7,7 @@ package projecttemplate
 
 import (
 	"csserver/internal/common"
-	"csserver/internal/services/project/ptypes"
+	"csserver/internal/services/project/ptypes/milestonestatus"
 )
 
 type Projecttemplate struct {
@@ -28,8 +28,8 @@ type ProjecttemplatePhase struct {
 }
 
 type ProjectTemplateTasks struct {
-	Name            string                 `json:"name"`
-	Description     string                 `json:"description"`
-	Status          ptypes.MilestoneStatus `json:"status"`
-	RequiredSkillID string                 `json:"required_skill_id"`
+	Name            string                          `json:"name"`
+	Description     string                          `json:"description"`
+	Status          milestonestatus.MilestoneStatus `json:"status"`
+	RequiredSkillID string                          `json:"required_skill_id"`
 }

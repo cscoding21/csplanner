@@ -1,25 +1,6 @@
-package ptypes
+package projectstatus
 
-type FeaturePriority string
-type MilestoneStatus string
 type ProjectState string
-
-const (
-	FeaturePriorityNotSet FeaturePriority = "NotSet"
-
-	VeryHigh = "veryhigh"
-	High     = "high"
-	Medium   = "medium"
-	Low      = "low"
-)
-
-const (
-	MilestoneStatusNotSet MilestoneStatus = "notset"
-	New                   MilestoneStatus = "new"
-	Accepted              MilestoneStatus = "accepted"
-	Removed               MilestoneStatus = "removed"
-	Done                  MilestoneStatus = "done"
-)
 
 const (
 	ProjectStateNotSet ProjectState = "notset"

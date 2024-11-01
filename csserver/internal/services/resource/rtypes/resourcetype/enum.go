@@ -1,14 +1,6 @@
-package rtypes
+package resourcetype
 
-type ResourceStatus string
 type ResourceType string
-
-const (
-	ResourceStatusNotSet ResourceStatus = "notset"
-
-	Inhouse  = "inhouse"
-	Proposed = "proposed"
-)
 
 const (
 	ResourceTypeNotSet ResourceType = "notset"

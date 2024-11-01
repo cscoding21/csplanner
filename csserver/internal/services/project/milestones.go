@@ -5,7 +5,7 @@ import (
 	"slices"
 
 	"csserver/internal/common"
-	"csserver/internal/services/project/ptypes"
+	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/utils"
 
@@ -120,7 +120,7 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 			task := ProjectMilestoneTask{
 				Name:            t.Name,
 				Description:     t.Description,
-				Status:          ptypes.New,
+				Status:          milestonestatus.New,
 				RequiredSkillID: t.RequiredSkillID,
 			}
 

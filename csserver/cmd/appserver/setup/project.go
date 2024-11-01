@@ -10,7 +10,8 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/services/project"
-	"csserver/internal/services/project/ptypes"
+	"csserver/internal/services/project/ptypes/featurepriority"
+	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/utils"
 
 	"github.com/google/uuid"
@@ -39,17 +40,17 @@ func CreateTestProjects(ctx context.Context) error {
 			Name:        "YouTube Sensation",
 			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
 			OwnerID:     allUsers.Results[0].Email,
-			Status:      ptypes.Draft,
+			Status:      projectstatus.Draft,
 		},
 		ProjectCost: &project.ProjectCost{
 			Ongoing:     utils.ValToRef(100.0),
 			BlendedRate: utils.ValToRef(200.0),
 		},
 		ProjectFeatures: []*project.ProjectFeature{
-			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
-			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
-			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
-			{ID: utils.ValToRef(uuid.New().String()), Priority: ptypes.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: featurepriority.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: featurepriority.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: featurepriority.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
+			{ID: utils.ValToRef(uuid.New().String()), Priority: featurepriority.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 		},
 		ProjectValue: &project.ProjectValue{
 			FundingSource:  "internal",
@@ -319,22 +320,22 @@ func findPortfolioProjects() []project.Project {
 
 	type PT struct {
 		name   string
-		status ptypes.ProjectState
+		status projectstatus.ProjectState
 	}
 
 	names := []PT{
-		{name: "Video: Project Overview & Tech Stack", status: ptypes.Approved},
-		{name: "Video: Kuberetes is Magic", status: ptypes.Approved},
-		{name: "Video: Setting Local Dev With Tilt", status: ptypes.Approved},
-		{name: "Video: Monorepo / Microservice", status: ptypes.Rejected},
-		{name: "Video: Golang Project Setup", status: ptypes.Backlogged},
-		{name: "Video: Mapping Objects in our Project", status: ptypes.Backlogged},
-		{name: "Video: CRUD Operations Using Surreal", status: ptypes.Draft},
-		{name: "Video: Scheduled 1", status: ptypes.Scheduled},
-		{name: "Video: Scheduled 2", status: ptypes.Scheduled},
-		{name: "Video: Inflight 1", status: ptypes.InFlight},
-		{name: "Video: Inflight 2", status: ptypes.InFlight},
-		{name: "Video: Inflight 3", status: ptypes.InFlight},
+		{name: "Video: Project Overview & Tech Stack", status: projectstatus.Approved},
+		{name: "Video: Kuberetes is Magic", status: projectstatus.Approved},
+		{name: "Video: Setting Local Dev With Tilt", status: projectstatus.Approved},
+		{name: "Video: Monorepo / Microservice", status: projectstatus.Rejected},
+		{name: "Video: Golang Project Setup", status: projectstatus.Backlogged},
+		{name: "Video: Mapping Objects in our Project", status: projectstatus.Backlogged},
+		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft},
+		{name: "Video: Scheduled 1", status: projectstatus.Scheduled},
+		{name: "Video: Scheduled 2", status: projectstatus.Scheduled},
+		{name: "Video: Inflight 1", status: projectstatus.InFlight},
+		{name: "Video: Inflight 2", status: projectstatus.InFlight},
+		{name: "Video: Inflight 3", status: projectstatus.InFlight},
 	}
 
 	for _, p := range names {
@@ -353,7 +354,7 @@ func findPortfolioProjects() []project.Project {
 	return outProjects
 }
 
-func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Project {
+func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) project.Project {
 	rs := factory.GetResourceService()
 	us := factory.GetUserService()
 	ctx := context.Background()
@@ -390,10 +391,10 @@ func GetVideoProjectTemplate(name string, status ptypes.ProjectState) project.Pr
 			BlendedRate: utils.ValToRef(121.0),
 		},
 		ProjectFeatures: []*project.ProjectFeature{
-			{ID: utils.ValToRef("projectfeature:1"), Priority: ptypes.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
-			{ID: utils.ValToRef("projectfeature:2"), Priority: ptypes.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
-			{ID: utils.ValToRef("projectfeature:3"), Priority: ptypes.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
-			{ID: utils.ValToRef("projectfeature:4"), Priority: ptypes.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:1"), Priority: featurepriority.High, Name: "Topic Sentence", Description: "It lays out the path", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:2"), Priority: featurepriority.VeryHigh, Name: "Intro", Description: "It builds the brand", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:3"), Priority: featurepriority.VeryHigh, Name: "Content", Description: "The meat of the video", Status: "proposed"},
+			{ID: utils.ValToRef("projectfeature:4"), Priority: featurepriority.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 		},
 		ProjectValue: &project.ProjectValue{
 			DiscountRate:   7.0,

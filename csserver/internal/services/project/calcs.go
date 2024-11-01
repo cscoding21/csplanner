@@ -2,7 +2,12 @@ package project
 
 import (
 	"csserver/internal/finance"
-	"csserver/internal/services/project/ptypes"
+	"csserver/internal/services/organization"
+	"csserver/internal/services/project/ptypes/milestonestatus"
+	"csserver/internal/services/resource"
+
+	"math"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -95,10 +100,10 @@ func (p *Project) CalculateProjectMilestoneStats() {
 		for _, t := range m.Tasks {
 			totalHours += t.HourEstimate
 
-			if t.Status == ptypes.Done {
+			if t.Status == milestonestatus.Done {
 				completedHours += t.HourEstimate
 				completedTasks++
-			} else if t.Status == ptypes.Removed {
+			} else if t.Status == milestonestatus.Removed {
 				removedHours += t.HourEstimate
 			} else {
 				hoursRemaining += t.HourEstimate
@@ -113,6 +118,75 @@ func (p *Project) CalculateProjectMilestoneStats() {
 		p.ProjectMilestones[i].Calculated.IsComplete = isComplete
 		p.ProjectMilestones[i].Calculated.IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
 	}
+}
+
+// CalculateProjectTasksStats update the calculated fields in a project task
+func (p *Project) CalculateProjectTasksStats(orgSettings organization.Organization, resources []resource.Resource) {
+	for i, m := range p.ProjectMilestones {
+		for j := range m.Tasks {
+			calculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources)
+		}
+	}
+}
+
+func calculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources []resource.Resource) {
+	exceptions := []string{}
+	adjustedHours := task.HourEstimate
+
+	if len(task.ResourceIDs) > 0 {
+		adjustedHours = int(calculateCompoundCoeffieicnt(float64(adjustedHours), orgSettings.Defaults.FocusFactor, len(task.ResourceIDs)))
+
+		for _, r := range task.ResourceIDs {
+			res := getResource(r, resources)
+			sk := getSkill(task.RequiredSkillID, *res)
+
+			co := getProficiencyCoeffieicnt(*sk.Proficiency)
+			adjustedHours = int(calculateCompoundCoeffieicnt(float64(adjustedHours), co, len(task.ResourceIDs)))
+		}
+	}
+
+	task.Calculated.ResourceContention = float64(len(task.ResourceIDs))
+	task.Calculated.ActualizedHoursToComplete = adjustedHours
+
+	task.Calculated.Exceptions = append(task.Calculated.Exceptions, exceptions...)
+}
+
+func getProficiencyCoeffieicnt(prof float64) float64 {
+	profInt := int(prof)
+	switch profInt {
+	case (1):
+		return 1.25
+	case (2):
+		return 1.0
+	case (3):
+		return 0.75
+	default:
+		return 0.0
+	}
+}
+
+func getResource(id string, res []resource.Resource) *resource.Resource {
+	for _, r := range res {
+		if strings.EqualFold(r.ID, id) {
+			return &r
+		}
+	}
+
+	return nil
+}
+
+func getSkill(id string, res resource.Resource) *resource.Skill {
+	for _, s := range res.Skills {
+		if strings.EqualFold(s.ID, id) {
+			return s
+		}
+	}
+
+	return nil
+}
+
+func calculateCompoundCoeffieicnt(base float64, drag float64, periods int) float64 {
+	return base * math.Pow((1+drag/100), float64(periods))
 }
 
 /*

@@ -7,7 +7,9 @@ package project
 
 import (
 	"csserver/internal/common"
-	"csserver/internal/services/project/ptypes"
+	"csserver/internal/services/project/ptypes/featurepriority"
+	"csserver/internal/services/project/ptypes/milestonestatus"
+	"csserver/internal/services/project/ptypes/projectstatus"
 	"time"
 )
 
@@ -27,11 +29,11 @@ type Project struct {
 
 // ProjectBasics basic elements of a project
 type ProjectBasics struct {
-	Name        string              `json:"name"`
-	Description string              `json:"description"`
-	Status      ptypes.ProjectState `json:"status"`
-	StartDate   *time.Time          `json:"start_time"`
-	OwnerID     string              `json:"owner_id"`
+	Name        string                     `json:"name"`
+	Description string                     `json:"description"`
+	Status      projectstatus.ProjectState `json:"status"`
+	StartDate   *time.Time                 `json:"start_time"`
+	OwnerID     string                     `json:"owner_id"`
 }
 
 // ProjectValue properties used in calculating the value of a project
@@ -62,11 +64,11 @@ type ProjectDaci struct {
 }
 
 type ProjectFeature struct {
-	ID          *string                `json:"id,omitempty"`
-	Priority    ptypes.FeaturePriority `json:"priority"`
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Status      string                 `json:"status"`
+	ID          *string                         `json:"id,omitempty"`
+	Priority    featurepriority.FeaturePriority `json:"priority"`
+	Name        string                          `json:"name"`
+	Description string                          `json:"description"`
+	Status      string                          `json:"status"`
 }
 
 type ProjectMilestone struct {
@@ -87,16 +89,16 @@ type ProjectMilestonePhase struct {
 }
 
 type ProjectMilestoneTask struct {
-	ID              *string                   `json:"id,omitempty"`
-	Name            string                    `json:"name"`
-	Description     string                    `json:"description"`
-	HourEstimate    int                       `json:"hour_estimate"`
-	ResourceIDs     []string                  `json:"resources_ids"`
-	RequiredSkillID string                    `json:"required_skill_id"`
-	Status          ptypes.MilestoneStatus    `json:"status"`
-	StartDate       *time.Time                `json:"start_date"`
-	EndDate         *time.Time                `json:"end_date"`
-	Calculated      ProjectTaskCalculatedData `json:"calculated"`
+	ID              *string                         `json:"id,omitempty"`
+	Name            string                          `json:"name"`
+	Description     string                          `json:"description"`
+	HourEstimate    int                             `json:"hour_estimate"`
+	ResourceIDs     []string                        `json:"resources_ids"`
+	RequiredSkillID string                          `json:"required_skill_id"`
+	Status          milestonestatus.MilestoneStatus `json:"status"`
+	StartDate       *time.Time                      `json:"start_date"`
+	EndDate         *time.Time                      `json:"end_date"`
+	Calculated      ProjectTaskCalculatedData       `json:"calculated"`
 }
 
 type ProjectCostCalculatedData struct {
@@ -123,9 +125,13 @@ type ProjectMilestoneCalculatedData struct {
 }
 
 type ProjectTaskCalculatedData struct {
-	ActualizedHoursToComplete *int     `json:"actualized_hours_to_complete"`
-	ActualizedCost            *float64 `json:"actualized_cost"`
-	ResourceContention        *float64 `json:"resource_contention"`
+	ParallelWorkThreads        float64 `json:"parallel_resources"`
+	ActualizedHoursToComplete  int     `json:"actualized_hours_to_complete"`
+	DaysToComplete             int     `json:"days_to_complete"`
+	CommunicationOverhead      int     `json:"communication_overhead"`
+	ResourceSaturationOverhead int     `json:"resource_saturation_overhead"`
+	ActualizedCost             float64 `json:"actualized_cost"`
+	ResourceContention         float64 `json:"resource_contention"`
 
 	Exceptions []string `json:"exceptions"`
 }

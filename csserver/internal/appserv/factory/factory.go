@@ -243,3 +243,15 @@ func GetUserService() *user.UserService {
 
 	return user.NewUserService(*surrealClient, config.ContextHelper{}, pubsub)
 }
+
+// GetDefaultOrganization return the default organization for the tenant
+func GetDefaultOrganization(ctx context.Context) (*organization.Organization, error) {
+	service := GetOrganizationService()
+	org, err := service.GetOrganizationByID(ctx, "organization:default")
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return org, nil
+}
