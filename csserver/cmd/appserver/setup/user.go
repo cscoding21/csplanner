@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"csserver/internal/appserv/factory"
+	"csserver/internal/common"
 	"csserver/internal/config"
 
 	userPackage "csserver/internal/services/iam/user"
@@ -19,11 +20,14 @@ func CreateOrGetBot(ctx context.Context) *userPackage.User {
 		log.Error(err)
 	}
 
-	if user != nil && len(user.Email) > 0 {
-		return user
-	}
+	// if user != nil && len(user.Email) > 0 {
+	// 	return user
+	// }
 
 	botUser := userPackage.User{
+		ControlFields: common.ControlFields{
+			ID: "user:bot",
+		},
 		Email:           config.Config.Default.BotUserEmail,
 		FirstName:       "AI",
 		LastName:        "Bot",

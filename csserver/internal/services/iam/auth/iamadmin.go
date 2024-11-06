@@ -67,7 +67,15 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 		user.ID = dbu.ID
 	}
 
-	dbUser, err := s.UserService.UpsertUser(ctx, *user)
+	dbUser, err := s.UserService.UpsertUser(ctx, userService.User{
+		ControlFields: common.ControlFields{
+			ID: user.ID,
+		},
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		Email:        user.Email,
+		ProfileImage: user.ProfileImage,
+	})
 	if err != nil {
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}

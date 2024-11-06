@@ -12,6 +12,7 @@ import (
 	"csserver/internal/services/list"
 	"csserver/internal/services/notification"
 	"csserver/internal/services/organization"
+	"csserver/internal/services/portfolio"
 	"csserver/internal/services/project"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
@@ -183,6 +184,20 @@ func GetProjectService() *project.ProjectService {
 	}
 
 	return project.NewProjectService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetProjectService return a project service instance
+func GetPortfolioService() *portfolio.PortfolioService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	projectServce := GetProjectService()
+	resourceService := GetResourceService()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return portfolio.NewPortfolioService(*surrealClient, config.ContextHelper{}, pubsub, *projectServce, *resourceService)
 }
 
 // GetProjectTemplateService return a project template service instance

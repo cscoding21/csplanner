@@ -8,11 +8,11 @@ type User struct {
 	//---common for all DB objects
 	common.ControlFields `csval:"validate"`
 
-	FirstName       string `json:"firstName" csval:"req"`
-	LastName        string `json:"lastName" csval:"req"`
+	FirstName       string `json:"first_name" csval:"req"`
+	LastName        string `json:"last_name" csval:"req"`
 	Email           string `json:"email" csval:"req,email"`
-	Password        string `json:"password" csval:"req"`
-	ConfirmPassword string `json:"confirmPassword" csval:"req,equals(Password)"`
-	ProfileImage    string `json:"profileImage"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
+	ProfileImage    string `json:"profile_image"`
 	DBID            string `json:"dbid"`
 }

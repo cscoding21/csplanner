@@ -9,7 +9,6 @@ import (
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
-	"fmt"
 )
 
 // ---This is the name of the object in the database
@@ -42,13 +41,15 @@ func NewPortfolioService(
 }
 
 func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context) (*ResourceUtilizationTable, error) {
-	out := ResourceUtilizationTable{}
+	out := ResourceUtilizationTable{
+		Resources: []ResourceUtilizationItem{},
+	}
 
 	pf := common.NewPagedResultsForAllRecords[project.Project]()
 	pf.Filters.AddFilter(common.Filter{
 		Key:       "basics.status",
-		Value:     "",
-		Operation: "lk",
+		Value:     "draft,",
+		Operation: "in",
 	})
 
 	projects, err := service.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
@@ -57,7 +58,29 @@ func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context
 	}
 
 	for _, p := range projects.Results {
-		fmt.Println(p)
+		for _, m := range p.ProjectMilestones {
+			for _, t := range m.Tasks {
+				//---project info
+				r := ResourceUtilizationItem{
+					ProjectID:     p.ID,
+					ProjectName:   p.ProjectBasics.Name,
+					ProjectStatus: p.ProjectBasics.Status,
+				}
+
+				//---milestone info
+				r.MilestoneName = m.Phase.Name
+				r.MilestoneStartDate = m.StartDate
+				r.MilestoneEndDate = m.EndDate
+
+				//---task info
+				r.TaskName = t.Name
+				r.TaskStartDate = t.StartDate
+				r.TaskEndDate = t.EndDate
+				r.TaskHourEstimate = t.HourEstimate
+
+				out.Resources = append(out.Resources, r)
+			}
+		}
 	}
 
 	return &out, nil
