@@ -52,6 +52,7 @@ func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context
 		Operation: "in",
 	})
 
+	rm, _ := service.ResourceService.GetResourceMap(ctx, false)
 	projects, err := service.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
 	if err != nil {
 		return nil, err
@@ -60,25 +61,30 @@ func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context
 	for _, p := range projects.Results {
 		for _, m := range p.ProjectMilestones {
 			for _, t := range m.Tasks {
-				//---project info
-				r := ResourceUtilizationItem{
-					ProjectID:     p.ID,
-					ProjectName:   p.ProjectBasics.Name,
-					ProjectStatus: p.ProjectBasics.Status,
+				for _, resID := range t.ResourceIDs {
+					thisResource := rm[resID]
+					//---project info
+					r := ResourceUtilizationItem{
+						ProjectID:     p.ID,
+						ProjectName:   p.ProjectBasics.Name,
+						ProjectStatus: p.ProjectBasics.Status,
+						ResourceID:    resID,
+						ResourceName:  thisResource.Name,
+					}
+
+					//---milestone info
+					r.MilestoneName = m.Phase.Name
+					r.MilestoneStartDate = m.StartDate
+					r.MilestoneEndDate = m.EndDate
+
+					//---task info
+					r.TaskName = t.Name
+					r.TaskStartDate = t.StartDate
+					r.TaskEndDate = t.EndDate
+					r.TaskHourEstimate = t.HourEstimate
+
+					out.Resources = append(out.Resources, r)
 				}
-
-				//---milestone info
-				r.MilestoneName = m.Phase.Name
-				r.MilestoneStartDate = m.StartDate
-				r.MilestoneEndDate = m.EndDate
-
-				//---task info
-				r.TaskName = t.Name
-				r.TaskStartDate = t.StartDate
-				r.TaskEndDate = t.EndDate
-				r.TaskHourEstimate = t.HourEstimate
-
-				out.Resources = append(out.Resources, r)
 			}
 		}
 	}

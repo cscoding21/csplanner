@@ -7,6 +7,7 @@ package resource
 
 import (
 	"csserver/internal/common"
+	"strings"
 
 	"csserver/internal/services/resource/rtypes/resourcestatus"
 	"csserver/internal/services/resource/rtypes/resourcetype"
@@ -27,6 +28,17 @@ type Resource struct {
 	InitialCost    float64                       `json:"initial_cost"`
 	AnnualizedCost float64                       `json:"annualized_cost"`
 	Skills         []*Skill                      `json:"skills"`
+}
+
+// GetSkill return a skill by its name for a given resource if it exists
+func (r *Resource) GetSkill(id string) *Skill {
+	for _, s := range r.Skills {
+		if strings.EqualFold(s.ID, id) {
+			return s
+		}
+	}
+
+	return nil
 }
 
 // Skill for people resources...a skill and proficiency that they possess

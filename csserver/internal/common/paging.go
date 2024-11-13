@@ -17,6 +17,7 @@ const (
 	FilterOperationIn             FilterOperation = "in"
 	FilterOperationNotIn          FilterOperation = "nin"
 	FilterFuzzyLike               FilterOperation = "fl"
+	FilterContains                FilterOperation = "ct"
 	FilterCustom                  FilterOperation = "custom"
 )
 

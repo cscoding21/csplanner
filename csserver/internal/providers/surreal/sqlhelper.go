@@ -88,6 +88,8 @@ func getPhraseFromFilterOp(fo common.Filter) string {
 		return "AND %s NOT IN ($%v) \n"
 	case (common.FilterFuzzyLike):
 		return "AND %s ~ $%v \n"
+	case (common.FilterContains):
+		return "AND %s CONTAINS $%v \n"
 	case (common.FilterCustom):
 		return GetCustomFilter(*fo.CustomName)
 	}

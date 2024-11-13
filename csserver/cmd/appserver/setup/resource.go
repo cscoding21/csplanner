@@ -3,6 +3,7 @@ package setup
 import (
 	"context"
 	"csserver/internal/appserv/factory"
+	"csserver/internal/common"
 	"csserver/internal/utils"
 	"math/rand"
 
@@ -25,6 +26,9 @@ func CreateTestResources(ctx context.Context) error {
 	newResources := []resource.Resource{
 		//---Resources
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:jeph",
+			},
 			Role:           "CEO",
 			Type:           resourcetype.Human,
 			Name:           "Jeph",
@@ -38,6 +42,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:tifa",
+			},
 			Role:           "Bartender",
 			Type:           resourcetype.Human,
 			Name:           "Tifa Lockhart",
@@ -53,6 +60,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:cloud",
+			},
 			Role:           "Ex-SOLDIER",
 			Type:           resourcetype.Human,
 			Name:           "Cloud Strife",
@@ -69,6 +79,9 @@ func CreateTestResources(ctx context.Context) error {
 		},
 
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:aerith",
+			},
 			Role:           "Florist",
 			Type:           resourcetype.Human,
 			Name:           "Aerith Gainsborough",
@@ -84,6 +97,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:barret",
+			},
 			Role:           "Avalache",
 			Type:           resourcetype.Human,
 			Name:           "Barret Wallace",
@@ -98,6 +114,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:jessie",
+			},
 			Role:           "Actress",
 			Type:           resourcetype.Human,
 			Name:           "Jessie Raspberry",
@@ -112,6 +131,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:biggs",
+			},
 			Role:           "Avalache",
 			Type:           resourcetype.Human,
 			Name:           "Biggs",
@@ -125,6 +147,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:wedge",
+			},
 			Role:           "Avalache",
 			Type:           resourcetype.Human,
 			Name:           "Wedge",
@@ -139,6 +164,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:cid",
+			},
 			Role:           "Pilot",
 			Type:           resourcetype.Human,
 			Name:           "Cid Highwind",
@@ -154,6 +182,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:vincent",
+			},
 			Role:           "Vampire",
 			Type:           resourcetype.Human,
 			Name:           "Vincent Valentine",
@@ -168,6 +199,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:yuffie",
+			},
 			Role:           "Ninja",
 			Type:           resourcetype.Human,
 			Name:           "Yuffie Kisaragi",
@@ -181,6 +215,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:red",
+			},
 			Role:           "Rat Dog",
 			Type:           resourcetype.Human,
 			Name:           "Red XIII",
@@ -194,6 +231,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:zack",
+			},
 			Role:           "SOLDIER",
 			Type:           resourcetype.Human,
 			Name:           "Zack Fair",
@@ -209,6 +249,9 @@ func CreateTestResources(ctx context.Context) error {
 			},
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:buster",
+			},
 			Role:           "Sword",
 			Type:           resourcetype.Equipment,
 			Name:           "Buster Sword",
@@ -217,6 +260,9 @@ func CreateTestResources(ctx context.Context) error {
 			Status:         resourcestatus.Proposed,
 		},
 		{
+			ControlFields: common.ControlFields{
+				ID: "resource:linode",
+			},
 			Role:           "Cloud Hosting",
 			Type:           resourcetype.Software,
 			Name:           "Linode Cloud Hosting",
@@ -227,10 +273,6 @@ func CreateTestResources(ctx context.Context) error {
 	}
 
 	for _, r := range newResources {
-		//---this will fail if user already exists, which is fine
-		if r.UserEmail != nil {
-			//us.GetUser(ctx, *r.UserEmail)
-		}
 		_, err := rs.CreateResource(ctx, &r)
 		if err != nil {
 			log.Errorf("error creating resource: %v", err)

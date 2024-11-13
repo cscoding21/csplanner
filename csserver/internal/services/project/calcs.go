@@ -111,6 +111,7 @@ func (p *Project) CalculateProjectMilestoneStats() {
 			}
 		}
 
+		p.ProjectMilestones[i].Calculated.TotalTasks = len(m.Tasks)
 		p.ProjectMilestones[i].Calculated.TotalHours = totalHours
 		p.ProjectMilestones[i].Calculated.CompletedTasks = completedTasks
 		p.ProjectMilestones[i].Calculated.HoursRemaining = hoursRemaining

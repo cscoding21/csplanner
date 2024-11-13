@@ -1,11 +1,14 @@
 <script lang="ts">
-    import { Search } from 'flowbite-svelte';
+    import { Search, type SelectOptionType, Select } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
 	import { CheckBoxFilter } from '$lib/components';
+    import { getList } from '$lib/services/list';
+    import { findSelectOptsFromList } from '$lib/forms/helpers';
 
     let searchInput:string = $state("")
     let status:string[] = $state([])
     let type:string[] = $state([])
+    let skills:string = $state("")
 
     let clearHandle:any
 
@@ -19,6 +22,8 @@
         { value: "equipment", name: "Equipment", checked: false},
         { value: "software", name: "Software", checked: false},
     ]
+
+    let skillsOpts:SelectOptionType<string>[] = $state([])
 
     const statusChange = (e:any) => {
         if (e.target.checked) {
@@ -37,6 +42,10 @@
             type = type.filter(el => el !== e.target.value)
         }
 
+        change(getFilters())
+    }
+
+    const skillsChange = (e:any) => {
         change(getFilters())
     }
 
@@ -66,6 +75,11 @@
             filterArray = [...filterArray, tyfil]
         }
 
+        if (skills) {
+            const skfil = { key: 'skills.id', value: skills, operation: 'ct' }
+            filterArray = [...filterArray, skfil]
+        }
+
         out.filters = filterArray
         return out
     }
@@ -76,6 +90,16 @@
     let { 
         change = $bindable() 
     }:Props = $props()
+
+    const loadPage = async () => {
+		getList('Skills')
+			.then((l) => {
+				skillsOpts = findSelectOptsFromList(l);
+			})
+			.then(() => {
+				
+			});
+	};
 
 </script>
 
@@ -91,4 +115,12 @@
     <div class="mr-2">
         <CheckBoxFilter name="Type" bind:group={type} change={typeChange} opts={typeOpts} />
     </div>
+
+    {#await loadPage()}
+        ...
+    {:then}
+    <div class="mr-2">
+        <Select items={skillsOpts} bind:value={skills} on:change={skillsChange} />
+    </div>
+    {/await}
 </div>

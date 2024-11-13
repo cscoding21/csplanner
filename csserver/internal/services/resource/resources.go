@@ -10,6 +10,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	resourceMap map[string]Resource
+)
+
 // PatchResource performs a surgical update of a resource, specially handing certain fields
 func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) (common.UpdateResult[Resource], error) {
 	val := validate.NewSuccessValidationResult()
@@ -93,6 +97,27 @@ func (s *ResourceService) RemoveSkillFromResource(ctx context.Context, resourceI
 	}
 
 	return out, nil
+}
+
+// GetResourceMap return a map of all resources keyed by ID
+func (s *ResourceService) GetResourceMap(ctx context.Context, force bool) (map[string]Resource, error) {
+	if resourceMap != nil && force {
+		return resourceMap, nil
+	}
+
+	res, err := s.FindAllResources(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	m := make(map[string]Resource)
+	for _, r := range res.Results {
+		m[r.ID] = r
+	}
+
+	resourceMap = m
+
+	return resourceMap, nil
 }
 
 // skillsContain return true is a skill with the corresponging ID already exists
