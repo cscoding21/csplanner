@@ -61,7 +61,7 @@
 {:then promiseData}
 	{#if resources.results != null}
 		<div class="grid grid-cols-3 gap-3">
-			{#each resources.results as r}
+			{#each resources.results as r(r.id)}
 				<ResourceCard resource={r} />
 			{/each}
 		</div>

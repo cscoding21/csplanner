@@ -16,11 +16,11 @@
 {#if sortedSkills}
     {#each sortedSkills as s, index}
         {#if s.proficiency === 3}
-        <span class="font-semibold text-gray-800 dark:text-gray-300">{s.name}</span>
+        <span class="font-semibold text-gray-800 dark:text-gray-300" title="Expert">{s.name}</span>
         {:else if s.proficiency === 2}
-        <span class="font-medium text-gray-500 dark:text-gray-400">{s.name}</span>
+        <span class="font-medium text-gray-500 dark:text-gray-400" title="Competent">{s.name}</span>
         {:else if s.proficiency === 1}
-        <span class="font-normal text-gray-300 dark:text-gray-400">{s.name}</span>
+        <span class="font-normal text-gray-300 dark:text-gray-400" title="Junior">{s.name}</span>
         {/if}
 
         {#if index < sortedSkills.length - 1}
