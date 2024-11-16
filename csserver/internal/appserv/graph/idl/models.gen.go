@@ -123,8 +123,9 @@ type List struct {
 }
 
 type ListItem struct {
-	Value string `json:"value"`
-	Name  string `json:"name"`
+	Value     string `json:"value"`
+	Name      string `json:"name"`
+	SortOrder int    `json:"sortOrder"`
 }
 
 type ListResults struct {

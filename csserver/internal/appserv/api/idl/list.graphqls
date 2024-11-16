@@ -8,6 +8,7 @@ type List {
 type ListItem {
     value: String!
     name: String!
+    sortOrder: Int!
 }
 
 type ListResults {

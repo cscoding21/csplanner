@@ -5,6 +5,7 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/resource"
+	"fmt"
 
 	"math"
 	"strings"
@@ -84,7 +85,7 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 }
 
 // CalculateProjectMilestoneStats iterate the milestones and calculate summary information
-func (p *Project) CalculateProjectMilestoneStats() {
+func (s *ProjectService) CalculateProjectMilestoneStats(p *Project) {
 	if len(p.ProjectMilestones) == 0 {
 		return
 	}
@@ -122,7 +123,7 @@ func (p *Project) CalculateProjectMilestoneStats() {
 }
 
 // CalculateProjectTasksStats update the calculated fields in a project task
-func (p *Project) CalculateProjectTasksStats(orgSettings organization.Organization, resources []resource.Resource) {
+func (p *Project) CalculateProjectTasksStats(orgSettings organization.Organization, resources map[string]resource.Resource) {
 	for i, m := range p.ProjectMilestones {
 		for j := range m.Tasks {
 			calculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources)
@@ -130,24 +131,38 @@ func (p *Project) CalculateProjectTasksStats(orgSettings organization.Organizati
 	}
 }
 
-func calculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources []resource.Resource) {
+func calculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources map[string]resource.Resource) {
 	exceptions := []string{}
-	adjustedHours := task.HourEstimate
+	baseHoursEstimate := task.HourEstimate
+	commsAdjustedHours := 0
+	skillsAdjustedHours := 0
 
 	if len(task.ResourceIDs) > 0 {
-		adjustedHours = int(calculateCompoundCoeffieicnt(float64(adjustedHours), orgSettings.Defaults.FocusFactor, len(task.ResourceIDs)))
+		if len(task.ResourceIDs) > 1 {
+			commsAdjustedHours = int(calculateCompoundCoeffieicnt(float64(baseHoursEstimate), orgSettings.Defaults.CommsCoefficient, len(task.ResourceIDs))) - baseHoursEstimate
+		}
 
 		for _, r := range task.ResourceIDs {
-			res := getResource(r, resources)
+			res := getResource(resources, r)
 			sk := getSkill(task.RequiredSkillID, *res)
 
+			if sk == nil {
+				exceptions = append(exceptions, fmt.Sprintf("Resource %s does not have skill %s for task %s", res.Name, task.RequiredSkillID, task.Name))
+				continue
+			}
+
 			co := getProficiencyCoeffieicnt(*sk.Proficiency)
-			adjustedHours = int(calculateCompoundCoeffieicnt(float64(adjustedHours), co, len(task.ResourceIDs)))
+			thisSkillsAdjustment := -1 * (int(co*float64(baseHoursEstimate)) - baseHoursEstimate)
+			skillsAdjustedHours += thisSkillsAdjustment
 		}
+	} else {
+		exceptions = append(exceptions, "No resources allocated to task")
 	}
 
+	task.Calculated.CommsHourAdjustment = commsAdjustedHours
+	task.Calculated.SkillsHourAdjustment = skillsAdjustedHours
 	task.Calculated.ResourceContention = float64(len(task.ResourceIDs))
-	task.Calculated.ActualizedHoursToComplete = adjustedHours
+	task.Calculated.ActualizedHoursToComplete = commsAdjustedHours + skillsAdjustedHours + baseHoursEstimate
 
 	task.Calculated.Exceptions = append(task.Calculated.Exceptions, exceptions...)
 }
@@ -166,14 +181,13 @@ func getProficiencyCoeffieicnt(prof float64) float64 {
 	}
 }
 
-func getResource(id string, res []resource.Resource) *resource.Resource {
-	for _, r := range res {
-		if strings.EqualFold(r.ID, id) {
-			return &r
-		}
+func getResource(rm map[string]resource.Resource, id string) *resource.Resource {
+	res, ok := rm[id]
+	if !ok {
+		return nil
 	}
 
-	return nil
+	return &res
 }
 
 func getSkill(id string, res resource.Resource) *resource.Skill {

@@ -3,9 +3,13 @@ package project
 import (
 	"context"
 	"csserver/internal/common"
+	"csserver/internal/marshal"
+	"csserver/internal/services/resource"
 
 	"github.com/cscoding21/csval/validate"
 )
+
+var resourceMap map[string]resource.Resource
 
 // SaveProject saves a project in the system and updates all stored calculations
 func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.UpdateResult[Project], error) {
@@ -31,7 +35,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	lastProject.GetProjectInitialCost()
 	lastProject.GetProjectNPV()
 	lastProject.GetProjectIRR()
-	lastProject.CalculateProjectMilestoneStats()
+	s.CalculateProjectMilestoneStats(lastProject)
 
 	return s.UpdateProject(ctx, lastProject)
 }
@@ -47,7 +51,36 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, val valida
 	pro.GetProjectInitialCost()
 	pro.GetProjectNPV()
 	pro.GetProjectIRR()
-	pro.CalculateProjectMilestoneStats()
+	s.CalculateProjectMilestoneStats(&pro)
 
 	return s.UpdateProject(ctx, &pro)
+}
+
+// GetResourceMap return a map of all resources keyed by ID
+func (s *ProjectService) GetResourceMap(force bool) (map[string]resource.Resource, error) {
+	if resourceMap != nil && force {
+		return resourceMap, nil
+	}
+
+	p := common.NewPagedResultsForAllRecords[resource.Resource]()
+	sql := "SELECT * from resource"
+	res, resultCount, err := s.DBClient.FindPagedObjects(sql, p.Pagination, p.Filters)
+	if err != nil {
+		return nil, err
+	}
+
+	m := make(map[string]resource.Resource)
+	p.Pagination.TotalResults = &resultCount
+	unpacked, err := marshal.SurrealSmartUnmarshal[[]resource.Resource](res)
+	if err != nil {
+		return m, err
+	}
+
+	for _, r := range *unpacked {
+		m[r.ID] = r
+	}
+
+	resourceMap = m
+
+	return resourceMap, nil
 }

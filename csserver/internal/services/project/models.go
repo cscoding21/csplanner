@@ -132,6 +132,8 @@ type ProjectTaskCalculatedData struct {
 	ResourceSaturationOverhead int     `json:"resource_saturation_overhead"`
 	ActualizedCost             float64 `json:"actualized_cost"`
 	ResourceContention         float64 `json:"resource_contention"`
+	SkillsHourAdjustment       int     `json:"skills_hour_adjustment"`
+	CommsHourAdjustment        int     `json:"comms_hour_adjustment"`
 
 	Exceptions []string `json:"exceptions"`
 }

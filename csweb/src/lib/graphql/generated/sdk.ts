@@ -151,6 +151,7 @@ export type List = {
 export type ListItem = {
   __typename?: 'ListItem';
   name: Scalars['String']['output'];
+  sortOrder: Scalars['Int']['output'];
   value: Scalars['String']['output'];
 };
 
@@ -1194,6 +1195,7 @@ export const GetListDocument = gql`
     values {
       value
       name
+      sortOrder
     }
   }
 }

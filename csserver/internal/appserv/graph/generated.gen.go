@@ -150,8 +150,9 @@ type ComplexityRoot struct {
 	}
 
 	ListItem struct {
-		Name  func(childComplexity int) int
-		Value func(childComplexity int) int
+		Name      func(childComplexity int) int
+		SortOrder func(childComplexity int) int
+		Value     func(childComplexity int) int
 	}
 
 	ListResults struct {
@@ -977,6 +978,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListItem.Name(childComplexity), true
+
+	case "ListItem.sortOrder":
+		if e.complexity.ListItem.SortOrder == nil {
+			break
+		}
+
+		return e.complexity.ListItem.SortOrder(childComplexity), true
 
 	case "ListItem.value":
 		if e.complexity.ListItem.Value == nil {
@@ -2976,6 +2984,7 @@ input InputFilters {
 type ListItem {
     value: String!
     name: String!
+    sortOrder: Int!
 }
 
 type ListResults {
@@ -6878,6 +6887,8 @@ func (ec *executionContext) fieldContext_List_values(_ context.Context, field gr
 				return ec.fieldContext_ListItem_value(ctx, field)
 			case "name":
 				return ec.fieldContext_ListItem_name(ctx, field)
+			case "sortOrder":
+				return ec.fieldContext_ListItem_sortOrder(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ListItem", field.Name)
 		},
@@ -6968,6 +6979,50 @@ func (ec *executionContext) fieldContext_ListItem_name(_ context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ListItem_sortOrder(ctx context.Context, field graphql.CollectedField, obj *idl.ListItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ListItem_sortOrder(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SortOrder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ListItem_sortOrder(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ListItem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -21330,6 +21385,11 @@ func (ec *executionContext) _ListItem(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "name":
 			out.Values[i] = ec._ListItem_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "sortOrder":
+			out.Values[i] = ec._ListItem_sortOrder(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

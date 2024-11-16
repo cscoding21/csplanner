@@ -14,7 +14,7 @@ import (
 // ---This is the name of the object in the database
 const PortfolioIdentifier = "portfolio"
 
-// OrganizationService is a service for interacting with lists.
+// PortfolioService is a service for interacting with the project portfolio.
 type PortfolioService struct {
 	DBClient        surreal.DBClient
 	ContextHelper   interfaces.ContextHelpers
@@ -23,7 +23,7 @@ type PortfolioService struct {
 	ResourceService resource.ResourceService
 }
 
-// NewOrganizationService creates a new Organization service.
+// NewPortfolioService creates a new portfolio service.
 func NewPortfolioService(
 	db surreal.DBClient,
 	ch config.ContextHelper,

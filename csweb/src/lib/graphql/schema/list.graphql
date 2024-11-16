@@ -21,6 +21,7 @@ query getList($nameOrID: String!) {
 		values {
 			value
 			name
+			sortOrder
 		}
 	}
 }

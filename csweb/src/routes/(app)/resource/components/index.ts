@@ -1,4 +1,5 @@
 export { default as AddSkill } from './AddSkill.svelte';
+export { default as BadgeResourceStatus } from './BadgeResourceStatus.svelte';
 export { default as DeleteResource } from './DeleteResource.svelte';
 export { default as ResourceActionBar } from './ResourceActionBar.svelte';
 //export { default as ResourceAllocation } from './ResourceAllocation.svelte';

@@ -19,9 +19,10 @@ func CreateDefaultOrganization(ctx context.Context) error {
 		},
 		Name: "Default",
 		Defaults: organization.OrganizationDefaults{
-			FocusFactor:  0.05,
-			HoursPerWeek: 40,
-			DiscountRate: 0.07,
+			FocusFactor:      5.0,
+			HoursPerWeek:     40,
+			DiscountRate:     7.0,
+			CommsCoefficient: 5.0,
 		},
 	}
 
