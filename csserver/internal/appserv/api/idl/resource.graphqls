@@ -11,6 +11,7 @@ type Resource {
   annualizedCost: Float
   skills: [Skill!]
   createdAt: Time
+  availableHoursPerWeek: Int
 }
 
 
@@ -32,6 +33,7 @@ input UpdateResource {
   initialCost: Float
   annualizedCost: Float
   profileImage: String
+  availableHoursPerWeek: Int
   skills: [UpdateSkill!]
 }
 

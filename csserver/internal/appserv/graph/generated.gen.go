@@ -402,18 +402,19 @@ type ComplexityRoot struct {
 	}
 
 	Resource struct {
-		AnnualizedCost func(childComplexity int) int
-		CreatedAt      func(childComplexity int) int
-		ID             func(childComplexity int) int
-		InitialCost    func(childComplexity int) int
-		Name           func(childComplexity int) int
-		ProfileImage   func(childComplexity int) int
-		Role           func(childComplexity int) int
-		Skills         func(childComplexity int) int
-		Status         func(childComplexity int) int
-		Type           func(childComplexity int) int
-		User           func(childComplexity int) int
-		UserEmail      func(childComplexity int) int
+		AnnualizedCost        func(childComplexity int) int
+		AvailableHoursPerWeek func(childComplexity int) int
+		CreatedAt             func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		InitialCost           func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		ProfileImage          func(childComplexity int) int
+		Role                  func(childComplexity int) int
+		Skills                func(childComplexity int) int
+		Status                func(childComplexity int) int
+		Type                  func(childComplexity int) int
+		User                  func(childComplexity int) int
+		UserEmail             func(childComplexity int) int
 	}
 
 	ResourceResults struct {
@@ -2299,6 +2300,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.AnnualizedCost(childComplexity), true
 
+	case "Resource.availableHoursPerWeek":
+		if e.complexity.Resource.AvailableHoursPerWeek == nil {
+			break
+		}
+
+		return e.complexity.Resource.AvailableHoursPerWeek(childComplexity), true
+
 	case "Resource.createdAt":
 		if e.complexity.Resource.CreatedAt == nil {
 			break
@@ -3331,6 +3339,7 @@ input UpdateProjectMilestoneTask {
   annualizedCost: Float
   skills: [Skill!]
   createdAt: Time
+  availableHoursPerWeek: Int
 }
 
 
@@ -3352,6 +3361,7 @@ input UpdateResource {
   initialCost: Float
   annualizedCost: Float
   profileImage: String
+  availableHoursPerWeek: Int
   skills: [UpdateSkill!]
 }
 
@@ -4404,6 +4414,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -6423,6 +6435,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -10895,6 +10909,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -10962,6 +10978,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -11029,6 +11047,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -11096,6 +11116,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -12546,6 +12568,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -14904,6 +14928,8 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -15775,6 +15801,47 @@ func (ec *executionContext) fieldContext_Resource_createdAt(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Resource_availableHoursPerWeek(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AvailableHoursPerWeek, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_availableHoursPerWeek(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ResourceResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.ResourceResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ResourceResults_paging(ctx, field)
 	if err != nil {
@@ -15934,6 +16001,8 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_skills(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Resource_createdAt(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -20485,7 +20554,7 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "type", "status", "name", "role", "userID", "email", "initialCost", "annualizedCost", "profileImage", "skills"}
+	fieldsInOrder := [...]string{"id", "type", "status", "name", "role", "userID", "email", "initialCost", "annualizedCost", "profileImage", "availableHoursPerWeek", "skills"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -20562,6 +20631,13 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 				return it, err
 			}
 			it.ProfileImage = data
+		case "availableHoursPerWeek":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("availableHoursPerWeek"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvailableHoursPerWeek = data
 		case "skills":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("skills"))
 			data, err := ec.unmarshalOUpdateSkill2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateSkillᚄ(ctx, v)
@@ -23394,6 +23470,8 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Resource_skills(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Resource_createdAt(ctx, field, obj)
+		case "availableHoursPerWeek":
+			out.Values[i] = ec._Resource_availableHoursPerWeek(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
