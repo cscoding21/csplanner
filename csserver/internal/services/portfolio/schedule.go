@@ -20,71 +20,88 @@ func ScheduleProject(p *project.Project, startDate time.Time, rm map[string]reso
 		return schedule, nil
 	}
 
-	endOfWindow := startDate.Add(1 * time.Hour * 24 * 30 * 36)
-	dateMap := calendar.GetWeeks(startDate, endOfWindow)
-
 	p.ProjectBasics.StartDate = &startDate
 
 	batches := getScheduleItems(p)
+	startWeek := calendar.GetWeek(startDate)
 	weeks := []ProjectActivityWeek{}
 
-	itemsToSchedule := batches[0].ScheduleItems
-	hoursToCompleteBatch := batches[0].HoursToComplete
-	for _, week := range dateMap {
-		if len(itemsToSchedule) == 0 {
-			break
-		}
+	resourceHoursForWeek := getResourceHoursForWeek(rm)
+	exceptionsCreated := make(map[string]string)
 
-		resourceHoursForWeek := getResourceHoursForWeek(rm)
+	paw := ProjectActivityWeek{Week: startWeek}
+	activities := []ProjectActivity{}
 
-		paw := ProjectActivityWeek{Week: week}
-		activities := []ProjectActivity{}
+	for bi, batch := range batches {
+		hoursToCompleteBatch := batch.HoursToComplete
+		//itemsToSchedule := batch.ScheduleItems
 
-		for i, thisItem := range itemsToSchedule {
-			if len(thisItem.ResourceIDs) == 0 {
-				schedule.Exceptions = append(schedule.Exceptions, fmt.Sprintf("No resources assigned for task '%s'", thisItem.TaskName))
-				break
-			}
-			for _, taskResource := range thisItem.ResourceIDs {
-				resHours := resourceHoursForWeek[taskResource]
+		for hoursToCompleteBatch > 0 {
+			for ti, task := range batch.ScheduleItems {
+				if len(task.ResourceIDs) == 0 {
+					_, ok := exceptionsCreated[task.TaskID]
+					if ok {
+						continue
+					}
 
-				if resHours > thisItem.HoursToSchedule {
-					resHours = thisItem.HoursToSchedule
+					msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", task.TaskName)
+
+					//---this task cannot be scheduled.  remove from hours to schedule and
+					//	 log and exception
+					hoursToCompleteBatch -= task.HoursToSchedule
+					schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
+						Scope:   task.TaskID,
+						Message: msg,
+					})
+
+					exceptionsCreated[task.TaskID] = msg
 				}
+				for _, resourceID := range task.ResourceIDs {
+					if batches[bi].ScheduleItems[ti].HoursToSchedule == batches[bi].ScheduleItems[ti].HoursScheduled {
+						//---task is complete...continue
+						continue
+					}
 
-				if thisItem.HoursToSchedule > 0 {
-					itemsToSchedule[i].HoursToSchedule -= resHours
-					itemsToSchedule[i].HoursScheduled += resHours
-					hoursToCompleteBatch -= resHours
+					hoursToAllocate := resourceHoursForWeek[resourceID]
+
+					if hoursToAllocate > batch.ScheduleItems[ti].HoursToSchedule {
+						hoursToAllocate = batch.ScheduleItems[ti].HoursToSchedule
+					}
+
+					if hoursToAllocate <= 0 {
+						continue
+					}
+
+					batches[bi].ScheduleItems[ti].HoursToSchedule -= hoursToAllocate
+					batches[bi].ScheduleItems[ti].HoursScheduled += hoursToAllocate
+					resourceHoursForWeek[resourceID] -= hoursToAllocate
 
 					activity := ProjectActivity{
 						ProjectID:     p.ID,
 						ProjectName:   p.ProjectBasics.Name,
-						ResourceID:    taskResource,
-						ResourceName:  rm[taskResource].Name,
-						TaskID:        thisItem.TaskID,
-						TaskName:      thisItem.TaskName,
-						MilestoneID:   thisItem.MilestoneID,
-						MilestoneName: thisItem.MilestoneName,
-						HoursSpent:    resHours,
+						ResourceID:    resourceID,
+						ResourceName:  rm[resourceID].Name,
+						TaskID:        task.TaskID,
+						TaskName:      task.TaskName,
+						MilestoneID:   task.MilestoneID,
+						MilestoneName: task.MilestoneName,
+						HoursSpent:    hoursToAllocate,
 					}
 
 					activities = append(activities, activity)
-
-					if hoursToCompleteBatch == 0 {
-						batches = batches[1:]
-
-						if len(batches) > 0 {
-							itemsToSchedule = batches[0].ScheduleItems
-						}
-					}
+					hoursToCompleteBatch -= hoursToAllocate
 				}
 			}
-		}
 
-		if len(activities) > 0 {
+			//---log activities for week
 			paw.Activities = activities
 			weeks = append(weeks, paw)
+
+			//---start next week
+			nextWeek := calendar.GetNextWeek(paw.Week)
+			paw = ProjectActivityWeek{Week: nextWeek}
+			activities = []ProjectActivity{}
+			resourceHoursForWeek = getResourceHoursForWeek(rm)
 		}
 	}
 

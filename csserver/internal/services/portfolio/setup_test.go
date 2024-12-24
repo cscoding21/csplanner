@@ -79,7 +79,7 @@ var testProject = project.Project{
 				},
 				{
 					ID:              utils.ValToRef("task:3"),
-					Name:            "gather-requirements",
+					Name:            "Gather Requirements",
 					HourEstimate:    40,
 					Status:          "new",
 					RequiredSkillID: "requirements-gathering",

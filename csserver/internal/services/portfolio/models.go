@@ -32,7 +32,7 @@ type ProjectSchedule struct {
 	ProjectID            string
 	ProjectName          string
 	ProjectActivityWeeks *[]ProjectActivityWeek
-	Exceptions           []string
+	Exceptions           []ScheduleException
 }
 
 type ProjectActivityWeek struct {
@@ -67,4 +67,9 @@ type ScheduleWorkspace struct {
 	ResourceIDs     []string
 	HoursToSchedule int
 	HoursScheduled  int
+}
+
+type ScheduleException struct {
+	Scope   string
+	Message string
 }

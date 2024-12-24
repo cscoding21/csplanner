@@ -4,11 +4,21 @@ import (
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 )
 
 func TestScheduleProject(t *testing.T) {
+	EXPECTED_WEEKS := 6
+
+	testCases := []struct {
+		taskID string
+	}{
+		/* high skilled resource with no comms cost and 120 hour base */
+		{taskID: ""},
+	}
+
 	proj := getTestProjectWithCalcsDone()
 	rm := getResourceMap()
 
@@ -16,7 +26,7 @@ func TestScheduleProject(t *testing.T) {
 		fmt.Printf("Milestone: %s\n", m.Phase.Name)
 
 		for _, t := range m.Tasks {
-			fmt.Printf(" * %s | %v\n", t.Name, t.Calculated.ActualizedHoursToComplete)
+			fmt.Printf(" * %s | %v | %v | %v\n", t.Name, t.Calculated.ActualizedHoursToComplete, t.ResourceIDs, t.RequiredSkillID)
 		}
 	}
 
@@ -45,7 +55,18 @@ func TestScheduleProject(t *testing.T) {
 		fmt.Printf(" - %s\n", e)
 	}
 
-	fmt.Println(proj.ProjectBasics.Name)
+	if len(*result.ProjectActivityWeeks) != EXPECTED_WEEKS {
+		t.Errorf("Unexpected number of weeks calculated.  Expected %v - got %v", EXPECTED_WEEKS, len(*result.ProjectActivityWeeks))
+	}
+
+	for _, tc := range testCases {
+		taskProj := getTaskHoursFromProject(proj, tc.taskID)
+		taskSched := getTaskHoursFromSchedule(result, tc.taskID)
+
+		if taskProj != taskSched {
+			t.Errorf("Project task hours (%v) not equal to scheduled task hours (%v) for task '%v'", taskProj, taskSched, tc.taskID)
+		}
+	}
 }
 
 func TestGetScheduleItems(t *testing.T) {
@@ -83,4 +104,32 @@ func getTestProjectWithCalcsDone() project.Project {
 func getResourceMap() map[string]resource.Resource {
 	resources := GetTestResources()
 	return ConvertResourceSliceToMap(resources)
+}
+
+func getTaskHoursFromProject(proj project.Project, taskID string) int {
+	hours := 0
+
+	for _, m := range proj.ProjectMilestones {
+		for _, t := range m.Tasks {
+			if strings.EqualFold(*t.ID, taskID) {
+				hours += t.Calculated.ActualizedHoursToComplete
+			}
+		}
+	}
+
+	return hours
+}
+
+func getTaskHoursFromSchedule(schedule ProjectSchedule, taskID string) int {
+	hours := 0
+
+	for _, w := range *schedule.ProjectActivityWeeks {
+		for _, a := range w.Activities {
+			if strings.EqualFold(a.TaskID, taskID) {
+				hours += a.HoursSpent
+			}
+		}
+	}
+
+	return hours
 }
