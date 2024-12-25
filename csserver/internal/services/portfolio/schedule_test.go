@@ -11,12 +11,18 @@ import (
 
 func TestScheduleProject(t *testing.T) {
 	EXPECTED_WEEKS := 6
+	EXPECTED_EXCEPTIONS := 1
 
 	testCases := []struct {
 		taskID string
 	}{
 		/* high skilled resource with no comms cost and 120 hour base */
-		{taskID: ""},
+		{taskID: "task:1"},
+		{taskID: "task:2"},
+		{taskID: "task:3"},
+		{taskID: "task:4"},
+		{taskID: "task:5"},
+		// {taskID: "task:6"}, //---this task can't be scheduled due to no resource assignment
 	}
 
 	proj := getTestProjectWithCalcsDone()
@@ -57,6 +63,10 @@ func TestScheduleProject(t *testing.T) {
 
 	if len(*result.ProjectActivityWeeks) != EXPECTED_WEEKS {
 		t.Errorf("Unexpected number of weeks calculated.  Expected %v - got %v", EXPECTED_WEEKS, len(*result.ProjectActivityWeeks))
+	}
+
+	if len(result.Exceptions) != EXPECTED_EXCEPTIONS {
+		t.Errorf("Unexpected number of exceptions.  Expected %v - got %v", EXPECTED_EXCEPTIONS, len(result.Exceptions))
 	}
 
 	for _, tc := range testCases {
