@@ -63,8 +63,6 @@ type ProjectFeature {
 
 type ProjectMilestone {
   id: String!
-  startDate: Time
-  endDate: Time
   phase: ProjectMilestonePhase!
   tasks: [ProjectMilestoneTask!]!
 
@@ -88,8 +86,6 @@ type ProjectMilestoneTask {
   resources: [Resource!]
   resourceIDs: [String!]
   status: String!
-  startDate: Time
-  endDate: Time
   calculated: ProjectTaskCalculatedData
 }
 
@@ -211,7 +207,6 @@ input UpdateProjectFeature {
 
 input UpdateProjectMilestone {
   id: String!
-  startDate: Time
   phase: UpdateProjectMilestonePhase!
   tasks: [UpdateProjectMilestoneTask!]
 }
@@ -232,8 +227,6 @@ input UpdateProjectMilestoneTask {
   hourEstimate: Int!
   resourceIDs: [String!]
   requiredSkillID: String!
-  startDate: Time
-  endDate: Time
   status: String!
   projectID: String!
   milestoneID: String!

@@ -13,6 +13,7 @@ import (
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
 	"fmt"
+	"time"
 )
 
 // CurrentUser is the resolver for the currentUser field.
@@ -90,6 +91,31 @@ func (r *queryResolver) PortfolioSnapshot(ctx context.Context) (*idl.PortfolioSn
 // ResourceSnapshot is the resolver for the resourceSnapshot field.
 func (r *queryResolver) ResourceSnapshot(ctx context.Context) (*idl.ResourceSnapshot, error) {
 	panic(fmt.Errorf("not implemented: ResourceSnapshot - resourceSnapshot"))
+}
+
+// CalculateProjectSchedule is the resolver for the calculateProjectSchedule field.
+func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID string, startDate time.Time) (*idl.ProjectScheduleResult, error) {
+	// panic(fmt.Errorf("not implemented: CalculateProjectSchedule - calculateProjectSchedule"))
+
+	projService := factory.GetProjectService()
+	proj, err := projService.GetProjectByID(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+
+	portService := factory.GetPortfolioService()
+	schedule, err := portService.ScheduleProject(ctx, proj, startDate)
+	if err != nil {
+		return nil, err
+	}
+
+	schIdl := csmap.ProjectSchedulePortfolioToIdl(schedule)
+
+	out := idl.ProjectScheduleResult{
+		Schedule: &schIdl,
+	}
+
+	return &out, nil
 }
 
 // FindProjectComments is the resolver for the findProjectComments field.

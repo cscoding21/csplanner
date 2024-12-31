@@ -44,6 +44,14 @@ export type Artifact = {
   url: Scalars['String']['output'];
 };
 
+export type CsWeek = {
+  __typename?: 'CSWeek';
+  begin: Scalars['Time']['output'];
+  end: Scalars['Time']['output'];
+  weekNumber: Scalars['Int']['output'];
+  year: Scalars['Int']['output'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   acknowledges?: Maybe<Array<Scalars['String']['output']>>;
@@ -379,6 +387,26 @@ export type Project = {
   updatedBy?: Maybe<Scalars['String']['output']>;
 };
 
+export type ProjectActivity = {
+  __typename?: 'ProjectActivity';
+  hoursSpent?: Maybe<Scalars['Int']['output']>;
+  milestoneID?: Maybe<Scalars['String']['output']>;
+  milestoneName?: Maybe<Scalars['String']['output']>;
+  resourceID?: Maybe<Scalars['String']['output']>;
+  resourceName?: Maybe<Scalars['String']['output']>;
+  taskID?: Maybe<Scalars['String']['output']>;
+  taskName?: Maybe<Scalars['String']['output']>;
+};
+
+export type ProjectActivityWeek = {
+  __typename?: 'ProjectActivityWeek';
+  activities?: Maybe<Array<ProjectActivity>>;
+  begin: Scalars['Time']['output'];
+  end: Scalars['Time']['output'];
+  weekNumber: Scalars['Int']['output'];
+  year: Scalars['Int']['output'];
+};
+
 export type ProjectBasics = {
   __typename?: 'ProjectBasics';
   description: Scalars['String']['output'];
@@ -427,10 +455,8 @@ export type ProjectFilters = {
 export type ProjectMilestone = {
   __typename?: 'ProjectMilestone';
   calculated?: Maybe<ProjectMilestoneCalculatedData>;
-  endDate?: Maybe<Scalars['Time']['output']>;
   id: Scalars['String']['output'];
   phase: ProjectMilestonePhase;
-  startDate?: Maybe<Scalars['Time']['output']>;
   tasks: Array<ProjectMilestoneTask>;
 };
 
@@ -459,7 +485,6 @@ export type ProjectMilestoneTask = {
   __typename?: 'ProjectMilestoneTask';
   calculated?: Maybe<ProjectTaskCalculatedData>;
   description?: Maybe<Scalars['String']['output']>;
-  endDate?: Maybe<Scalars['Time']['output']>;
   hourEstimate: Scalars['Int']['output'];
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -467,7 +492,6 @@ export type ProjectMilestoneTask = {
   resourceIDs?: Maybe<Array<Scalars['String']['output']>>;
   resources?: Maybe<Array<Resource>>;
   skills?: Maybe<Array<Skill>>;
-  startDate?: Maybe<Scalars['Time']['output']>;
   status: Scalars['String']['output'];
 };
 
@@ -476,6 +500,21 @@ export type ProjectResults = {
   filters: Filters;
   paging?: Maybe<Pagination>;
   results?: Maybe<Array<Project>>;
+};
+
+export type ProjectSchedule = {
+  __typename?: 'ProjectSchedule';
+  begin: Scalars['Time']['output'];
+  end: Scalars['Time']['output'];
+  exceptions?: Maybe<Array<ScheduleException>>;
+  projectActivityWeeks: Array<ProjectActivityWeek>;
+  projectID: Scalars['String']['output'];
+  projectName: Scalars['String']['output'];
+};
+
+export type ProjectScheduleResult = {
+  __typename?: 'ProjectScheduleResult';
+  schedule: ProjectSchedule;
 };
 
 export type ProjectTaskCalculatedData = {
@@ -527,6 +566,7 @@ export type ProjecttemplateResults = {
 
 export type Query = {
   __typename?: 'Query';
+  calculateProjectSchedule: ProjectScheduleResult;
   currentUser?: Maybe<User>;
   findActivity: ActivityResults;
   findAllLists: ListResults;
@@ -545,6 +585,12 @@ export type Query = {
   getUser: User;
   portfolioSnapshot: PortfolioSnapshot;
   resourceSnapshot: ResourceSnapshot;
+};
+
+
+export type QueryCalculateProjectScheduleArgs = {
+  projectID: Scalars['String']['input'];
+  startDate: Scalars['Time']['input'];
 };
 
 
@@ -606,6 +652,7 @@ export type RelateArtifact = {
 export type Resource = {
   __typename?: 'Resource';
   annualizedCost?: Maybe<Scalars['Float']['output']>;
+  availableHoursPerWeek?: Maybe<Scalars['Int']['output']>;
   createdAt?: Maybe<Scalars['Time']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   initialCost?: Maybe<Scalars['Float']['output']>;
@@ -629,6 +676,12 @@ export type ResourceResults = {
 export type ResourceSnapshot = {
   __typename?: 'ResourceSnapshot';
   scheduledResources: Array<ScheduledResource>;
+};
+
+export type ScheduleException = {
+  __typename?: 'ScheduleException';
+  message: Scalars['String']['output'];
+  scope: Scalars['String']['output'];
 };
 
 export type ScheduledResource = {
@@ -759,7 +812,6 @@ export type UpdateProjectFeature = {
 export type UpdateProjectMilestone = {
   id: Scalars['String']['input'];
   phase: UpdateProjectMilestonePhase;
-  startDate?: InputMaybe<Scalars['Time']['input']>;
   tasks?: InputMaybe<Array<UpdateProjectMilestoneTask>>;
 };
 
@@ -772,7 +824,6 @@ export type UpdateProjectMilestonePhase = {
 
 export type UpdateProjectMilestoneTask = {
   description?: InputMaybe<Scalars['String']['input']>;
-  endDate?: InputMaybe<Scalars['Time']['input']>;
   hourEstimate: Scalars['Int']['input'];
   id?: InputMaybe<Scalars['String']['input']>;
   milestoneID: Scalars['String']['input'];
@@ -780,7 +831,6 @@ export type UpdateProjectMilestoneTask = {
   projectID: Scalars['String']['input'];
   requiredSkillID: Scalars['String']['input'];
   resourceIDs?: InputMaybe<Array<Scalars['String']['input']>>;
-  startDate?: InputMaybe<Scalars['Time']['input']>;
   status: Scalars['String']['input'];
 };
 
@@ -801,6 +851,7 @@ export type UpdateProjectValue = {
 
 export type UpdateResource = {
   annualizedCost?: InputMaybe<Scalars['Float']['input']>;
+  availableHoursPerWeek?: InputMaybe<Scalars['Int']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   initialCost?: InputMaybe<Scalars['Float']['input']>;
@@ -1036,8 +1087,6 @@ export const ProjectFragmentFragmentDoc = gql`
   projectMilestones {
     id
     calculated {
-      estimatedStartDate
-      estimatedEndDate
       hoursRemaining
       totalHours
       removedHours
@@ -1067,8 +1116,6 @@ export const ProjectFragmentFragmentDoc = gql`
       resources {
         ...resourceFragment
       }
-      startDate
-      endDate
       calculated {
         actualizedHoursToComplete
         actualizedCost
@@ -1079,6 +1126,29 @@ export const ProjectFragmentFragmentDoc = gql`
 }
     ${UserFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
+export const ScheduleFragmentFragmentDoc = gql`
+    fragment scheduleFragment on ProjectScheduleResult {
+  schedule {
+    projectID
+    projectName
+    begin
+    end
+    exceptions {
+      message
+      scope
+    }
+    projectActivityWeeks {
+      end
+      activities {
+        taskName
+        resourceID
+        resourceName
+        hoursSpent
+      }
+    }
+  }
+}
+    `;
 export const FindActivityDocument = gql`
     query findActivity($input: PageAndFilter!) {
   findActivity(pageAndFilter: $input) {
@@ -1493,6 +1563,13 @@ export const FindResourcesDocument = gql`
 }
     ${PagingFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
+export const CalculateProjectScheduleDocument = gql`
+    query calculateProjectSchedule($projectID: String!, $startDate: Time!) {
+  calculateProjectSchedule(projectID: $projectID, startDate: $startDate) {
+    ...scheduleFragment
+  }
+}
+    ${ScheduleFragmentFragmentDoc}`;
 export const FindAllUsersDocument = gql`
     query findAllUsers {
   findAllUsers {
@@ -1617,6 +1694,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     findResources(variables: FindResourcesQueryVariables, options?: C): Promise<FindResourcesQuery> {
       return requester<FindResourcesQuery, FindResourcesQueryVariables>(FindResourcesDocument, variables, options) as Promise<FindResourcesQuery>;
+    },
+    calculateProjectSchedule(variables: CalculateProjectScheduleQueryVariables, options?: C): Promise<CalculateProjectScheduleQuery> {
+      return requester<CalculateProjectScheduleQuery, CalculateProjectScheduleQueryVariables>(CalculateProjectScheduleDocument, variables, options) as Promise<CalculateProjectScheduleQuery>;
     },
     findAllUsers(variables?: FindAllUsersQueryVariables, options?: C): Promise<FindAllUsersQuery> {
       return requester<FindAllUsersQuery, FindAllUsersQueryVariables>(FindAllUsersDocument, variables, options) as Promise<FindAllUsersQuery>;

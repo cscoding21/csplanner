@@ -40,6 +40,12 @@ func NewPortfolioService(
 	}
 }
 
+// GetResourceMap wrapper for the same method in the resource service
+func (service *PortfolioService) GetResourceMap(ctx context.Context) (map[string]resource.Resource, error) {
+	return service.ResourceService.GetResourceMap(ctx, false)
+}
+
+// GetResourceUtilizationTable get an enhanced resource table that includes project allocations
 func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context) (*ResourceUtilizationTable, error) {
 	out := ResourceUtilizationTable{
 		Resources: []ResourceUtilizationItem{},
@@ -74,13 +80,9 @@ func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context
 
 					//---milestone info
 					r.MilestoneName = m.Phase.Name
-					r.MilestoneStartDate = m.StartDate
-					r.MilestoneEndDate = m.EndDate
 
 					//---task info
 					r.TaskName = t.Name
-					r.TaskStartDate = t.StartDate
-					r.TaskEndDate = t.EndDate
 					r.TaskHourEstimate = t.HourEstimate
 
 					out.Resources = append(out.Resources, r)

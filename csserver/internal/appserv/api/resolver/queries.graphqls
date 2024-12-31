@@ -6,6 +6,7 @@ type Query {
     getProject(id: String!): Project!
     portfolioSnapshot: PortfolioSnapshot!
     resourceSnapshot: ResourceSnapshot!
+    calculateProjectSchedule(projectID: String!, startDate: Time!): ProjectScheduleResult!
 
     findProjectComments(projectID: String!) :CommentResults!  
     getCommentThread(id: String!): Comment!

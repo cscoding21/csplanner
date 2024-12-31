@@ -60,9 +60,6 @@ fragment projectFragment on Project {
 		id
 
 		calculated {
-			estimatedStartDate
-			estimatedEndDate
-
 			hoursRemaining
 			totalHours
 			removedHours
@@ -93,8 +90,6 @@ fragment projectFragment on Project {
 			resources {
 				...resourceFragment
 			}
-			startDate
-			endDate
 
 			calculated {
 				actualizedHoursToComplete

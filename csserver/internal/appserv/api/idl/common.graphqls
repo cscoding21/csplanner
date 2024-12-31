@@ -53,6 +53,13 @@ type ValidationMessage {
   field: String!
 }
 
+type CSWeek {
+  begin: Time!
+	end: Time!
+	year: Int!
+	weekNumber: Int!
+}
+
 
 input PageAndFilter {
   paging: InputPagination

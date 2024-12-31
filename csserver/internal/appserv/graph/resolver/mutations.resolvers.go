@@ -60,10 +60,11 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdatePr
 // UpdateProject is the resolver for the updateProject field.
 func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error) {
 	service := factory.GetProjectService()
+	org, _ := factory.GetDefaultOrganization(ctx)
 
 	proj := csmap.UpdateProjectIdlToProject(input)
 
-	result, err := service.SaveProject(ctx, proj)
+	result, err := service.SaveProject(ctx, proj, *org)
 	if err != nil {
 		return nil, err
 	}

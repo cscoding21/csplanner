@@ -73,19 +73,16 @@ type ProjectFeature struct {
 
 type ProjectMilestone struct {
 	ID         *string                 `json:"id,omitempty"`
-	StartDate  *time.Time              `json:"start_date"`
-	EndDate    *time.Time              `json:"end_date"`
 	Phase      *ProjectMilestonePhase  `json:"phase"`
 	Tasks      []*ProjectMilestoneTask `json:"tasks"`
 	Calculated ProjectMilestoneCalculatedData
 }
 
 type ProjectMilestonePhase struct {
-	ID          string                         `json:"id,omitempty"`
-	Order       byte                           `json:"order"`
-	Name        string                         `json:"name"`
-	Description string                         `json:"description"`
-	Calculated  ProjectMilestoneCalculatedData `json:"calculated"`
+	ID          string `json:"id,omitempty"`
+	Order       byte   `json:"order"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type ProjectMilestoneTask struct {
@@ -96,8 +93,6 @@ type ProjectMilestoneTask struct {
 	ResourceIDs     []string                        `json:"resources_ids"`
 	RequiredSkillID string                          `json:"required_skill_id"`
 	Status          milestonestatus.MilestoneStatus `json:"status"`
-	StartDate       *time.Time                      `json:"start_date"`
-	EndDate         *time.Time                      `json:"end_date"`
 	Calculated      ProjectTaskCalculatedData       `json:"calculated"`
 }
 
@@ -112,9 +107,6 @@ type ProjectValueCalculatedData struct {
 }
 
 type ProjectMilestoneCalculatedData struct {
-	EstimatedStartDate time.Time
-	EstimatedEndDate   time.Time
-
 	TotalHours     int  `json:"total_hours"`
 	HoursRemaining int  `json:"hours_remaining"`
 	IsComplete     bool `json:"is_complete"`

@@ -72,6 +72,13 @@ type ComplexityRoot struct {
 		URL      func(childComplexity int) int
 	}
 
+	CSWeek struct {
+		Begin      func(childComplexity int) int
+		End        func(childComplexity int) int
+		WeekNumber func(childComplexity int) int
+		Year       func(childComplexity int) int
+	}
+
 	Comment struct {
 		Acknowledges func(childComplexity int) int
 		CreatedAt    func(childComplexity int) int
@@ -246,6 +253,24 @@ type ComplexityRoot struct {
 		UpdatedBy         func(childComplexity int) int
 	}
 
+	ProjectActivity struct {
+		HoursSpent    func(childComplexity int) int
+		MilestoneID   func(childComplexity int) int
+		MilestoneName func(childComplexity int) int
+		ResourceID    func(childComplexity int) int
+		ResourceName  func(childComplexity int) int
+		TaskID        func(childComplexity int) int
+		TaskName      func(childComplexity int) int
+	}
+
+	ProjectActivityWeek struct {
+		Activities func(childComplexity int) int
+		Begin      func(childComplexity int) int
+		End        func(childComplexity int) int
+		WeekNumber func(childComplexity int) int
+		Year       func(childComplexity int) int
+	}
+
 	ProjectBasics struct {
 		Description func(childComplexity int) int
 		Name        func(childComplexity int) int
@@ -287,10 +312,8 @@ type ComplexityRoot struct {
 
 	ProjectMilestone struct {
 		Calculated func(childComplexity int) int
-		EndDate    func(childComplexity int) int
 		ID         func(childComplexity int) int
 		Phase      func(childComplexity int) int
-		StartDate  func(childComplexity int) int
 		Tasks      func(childComplexity int) int
 	}
 
@@ -316,7 +339,6 @@ type ComplexityRoot struct {
 	ProjectMilestoneTask struct {
 		Calculated      func(childComplexity int) int
 		Description     func(childComplexity int) int
-		EndDate         func(childComplexity int) int
 		HourEstimate    func(childComplexity int) int
 		ID              func(childComplexity int) int
 		Name            func(childComplexity int) int
@@ -324,7 +346,6 @@ type ComplexityRoot struct {
 		ResourceIDs     func(childComplexity int) int
 		Resources       func(childComplexity int) int
 		Skills          func(childComplexity int) int
-		StartDate       func(childComplexity int) int
 		Status          func(childComplexity int) int
 	}
 
@@ -332,6 +353,19 @@ type ComplexityRoot struct {
 		Filters func(childComplexity int) int
 		Paging  func(childComplexity int) int
 		Results func(childComplexity int) int
+	}
+
+	ProjectSchedule struct {
+		Begin                func(childComplexity int) int
+		End                  func(childComplexity int) int
+		Exceptions           func(childComplexity int) int
+		ProjectActivityWeeks func(childComplexity int) int
+		ProjectID            func(childComplexity int) int
+		ProjectName          func(childComplexity int) int
+	}
+
+	ProjectScheduleResult struct {
+		Schedule func(childComplexity int) int
 	}
 
 	ProjectTaskCalculatedData struct {
@@ -376,24 +410,25 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		CurrentUser             func(childComplexity int) int
-		FindActivity            func(childComplexity int, pageAndFilter idl.PageAndFilter) int
-		FindAllLists            func(childComplexity int) int
-		FindAllProjectTemplates func(childComplexity int) int
-		FindAllResources        func(childComplexity int) int
-		FindAllUsers            func(childComplexity int) int
-		FindProjectComments     func(childComplexity int, projectID string) int
-		FindProjects            func(childComplexity int, pageAndFilter idl.PageAndFilter) int
-		FindResources           func(childComplexity int, pageAndFilter *idl.PageAndFilter) int
-		FindUserNotifications   func(childComplexity int, pageAndFilter *idl.PageAndFilter) int
-		GetCommentThread        func(childComplexity int, id string) int
-		GetList                 func(childComplexity int, nameOrID string) int
-		GetOrganization         func(childComplexity int) int
-		GetProject              func(childComplexity int, id string) int
-		GetResource             func(childComplexity int, id string) int
-		GetUser                 func(childComplexity int, id string) int
-		PortfolioSnapshot       func(childComplexity int) int
-		ResourceSnapshot        func(childComplexity int) int
+		CalculateProjectSchedule func(childComplexity int, projectID string, startDate time.Time) int
+		CurrentUser              func(childComplexity int) int
+		FindActivity             func(childComplexity int, pageAndFilter idl.PageAndFilter) int
+		FindAllLists             func(childComplexity int) int
+		FindAllProjectTemplates  func(childComplexity int) int
+		FindAllResources         func(childComplexity int) int
+		FindAllUsers             func(childComplexity int) int
+		FindProjectComments      func(childComplexity int, projectID string) int
+		FindProjects             func(childComplexity int, pageAndFilter idl.PageAndFilter) int
+		FindResources            func(childComplexity int, pageAndFilter *idl.PageAndFilter) int
+		FindUserNotifications    func(childComplexity int, pageAndFilter *idl.PageAndFilter) int
+		GetCommentThread         func(childComplexity int, id string) int
+		GetList                  func(childComplexity int, nameOrID string) int
+		GetOrganization          func(childComplexity int) int
+		GetProject               func(childComplexity int, id string) int
+		GetResource              func(childComplexity int, id string) int
+		GetUser                  func(childComplexity int, id string) int
+		PortfolioSnapshot        func(childComplexity int) int
+		ResourceSnapshot         func(childComplexity int) int
 	}
 
 	RelateArtifact struct {
@@ -425,6 +460,11 @@ type ComplexityRoot struct {
 
 	ResourceSnapshot struct {
 		ScheduledResources func(childComplexity int) int
+	}
+
+	ScheduleException struct {
+		Message func(childComplexity int) int
+		Scope   func(childComplexity int) int
 	}
 
 	ScheduledResource struct {
@@ -530,6 +570,7 @@ type QueryResolver interface {
 	GetProject(ctx context.Context, id string) (*idl.Project, error)
 	PortfolioSnapshot(ctx context.Context) (*idl.PortfolioSnapshot, error)
 	ResourceSnapshot(ctx context.Context) (*idl.ResourceSnapshot, error)
+	CalculateProjectSchedule(ctx context.Context, projectID string, startDate time.Time) (*idl.ProjectScheduleResult, error)
 	FindProjectComments(ctx context.Context, projectID string) (*idl.CommentResults, error)
 	GetCommentThread(ctx context.Context, id string) (*idl.Comment, error)
 	FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error)
@@ -664,6 +705,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Artifact.URL(childComplexity), true
+
+	case "CSWeek.begin":
+		if e.complexity.CSWeek.Begin == nil {
+			break
+		}
+
+		return e.complexity.CSWeek.Begin(childComplexity), true
+
+	case "CSWeek.end":
+		if e.complexity.CSWeek.End == nil {
+			break
+		}
+
+		return e.complexity.CSWeek.End(childComplexity), true
+
+	case "CSWeek.weekNumber":
+		if e.complexity.CSWeek.WeekNumber == nil {
+			break
+		}
+
+		return e.complexity.CSWeek.WeekNumber(childComplexity), true
+
+	case "CSWeek.year":
+		if e.complexity.CSWeek.Year == nil {
+			break
+		}
+
+		return e.complexity.CSWeek.Year(childComplexity), true
 
 	case "Comment.acknowledges":
 		if e.complexity.Comment.Acknowledges == nil {
@@ -1557,6 +1626,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.UpdatedBy(childComplexity), true
 
+	case "ProjectActivity.hoursSpent":
+		if e.complexity.ProjectActivity.HoursSpent == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.HoursSpent(childComplexity), true
+
+	case "ProjectActivity.milestoneID":
+		if e.complexity.ProjectActivity.MilestoneID == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.MilestoneID(childComplexity), true
+
+	case "ProjectActivity.milestoneName":
+		if e.complexity.ProjectActivity.MilestoneName == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.MilestoneName(childComplexity), true
+
+	case "ProjectActivity.resourceID":
+		if e.complexity.ProjectActivity.ResourceID == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.ResourceID(childComplexity), true
+
+	case "ProjectActivity.resourceName":
+		if e.complexity.ProjectActivity.ResourceName == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.ResourceName(childComplexity), true
+
+	case "ProjectActivity.taskID":
+		if e.complexity.ProjectActivity.TaskID == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.TaskID(childComplexity), true
+
+	case "ProjectActivity.taskName":
+		if e.complexity.ProjectActivity.TaskName == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.TaskName(childComplexity), true
+
+	case "ProjectActivityWeek.activities":
+		if e.complexity.ProjectActivityWeek.Activities == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivityWeek.Activities(childComplexity), true
+
+	case "ProjectActivityWeek.begin":
+		if e.complexity.ProjectActivityWeek.Begin == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivityWeek.Begin(childComplexity), true
+
+	case "ProjectActivityWeek.end":
+		if e.complexity.ProjectActivityWeek.End == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivityWeek.End(childComplexity), true
+
+	case "ProjectActivityWeek.weekNumber":
+		if e.complexity.ProjectActivityWeek.WeekNumber == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivityWeek.WeekNumber(childComplexity), true
+
+	case "ProjectActivityWeek.year":
+		if e.complexity.ProjectActivityWeek.Year == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivityWeek.Year(childComplexity), true
+
 	case "ProjectBasics.description":
 		if e.complexity.ProjectBasics.Description == nil {
 			break
@@ -1711,13 +1864,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestone.Calculated(childComplexity), true
 
-	case "ProjectMilestone.endDate":
-		if e.complexity.ProjectMilestone.EndDate == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestone.EndDate(childComplexity), true
-
 	case "ProjectMilestone.id":
 		if e.complexity.ProjectMilestone.ID == nil {
 			break
@@ -1731,13 +1877,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectMilestone.Phase(childComplexity), true
-
-	case "ProjectMilestone.startDate":
-		if e.complexity.ProjectMilestone.StartDate == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestone.StartDate(childComplexity), true
 
 	case "ProjectMilestone.tasks":
 		if e.complexity.ProjectMilestone.Tasks == nil {
@@ -1851,13 +1990,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestoneTask.Description(childComplexity), true
 
-	case "ProjectMilestoneTask.endDate":
-		if e.complexity.ProjectMilestoneTask.EndDate == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestoneTask.EndDate(childComplexity), true
-
 	case "ProjectMilestoneTask.hourEstimate":
 		if e.complexity.ProjectMilestoneTask.HourEstimate == nil {
 			break
@@ -1907,13 +2039,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectMilestoneTask.Skills(childComplexity), true
 
-	case "ProjectMilestoneTask.startDate":
-		if e.complexity.ProjectMilestoneTask.StartDate == nil {
-			break
-		}
-
-		return e.complexity.ProjectMilestoneTask.StartDate(childComplexity), true
-
 	case "ProjectMilestoneTask.status":
 		if e.complexity.ProjectMilestoneTask.Status == nil {
 			break
@@ -1941,6 +2066,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectResults.Results(childComplexity), true
+
+	case "ProjectSchedule.begin":
+		if e.complexity.ProjectSchedule.Begin == nil {
+			break
+		}
+
+		return e.complexity.ProjectSchedule.Begin(childComplexity), true
+
+	case "ProjectSchedule.end":
+		if e.complexity.ProjectSchedule.End == nil {
+			break
+		}
+
+		return e.complexity.ProjectSchedule.End(childComplexity), true
+
+	case "ProjectSchedule.exceptions":
+		if e.complexity.ProjectSchedule.Exceptions == nil {
+			break
+		}
+
+		return e.complexity.ProjectSchedule.Exceptions(childComplexity), true
+
+	case "ProjectSchedule.projectActivityWeeks":
+		if e.complexity.ProjectSchedule.ProjectActivityWeeks == nil {
+			break
+		}
+
+		return e.complexity.ProjectSchedule.ProjectActivityWeeks(childComplexity), true
+
+	case "ProjectSchedule.projectID":
+		if e.complexity.ProjectSchedule.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.ProjectSchedule.ProjectID(childComplexity), true
+
+	case "ProjectSchedule.projectName":
+		if e.complexity.ProjectSchedule.ProjectName == nil {
+			break
+		}
+
+		return e.complexity.ProjectSchedule.ProjectName(childComplexity), true
+
+	case "ProjectScheduleResult.schedule":
+		if e.complexity.ProjectScheduleResult.Schedule == nil {
+			break
+		}
+
+		return e.complexity.ProjectScheduleResult.Schedule(childComplexity), true
 
 	case "ProjectTaskCalculatedData.actualizedCost":
 		if e.complexity.ProjectTaskCalculatedData.ActualizedCost == nil {
@@ -2102,6 +2276,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjecttemplateResults.Results(childComplexity), true
+
+	case "Query.calculateProjectSchedule":
+		if e.complexity.Query.CalculateProjectSchedule == nil {
+			break
+		}
+
+		args, err := ec.field_Query_calculateProjectSchedule_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CalculateProjectSchedule(childComplexity, args["projectID"].(string), args["startDate"].(time.Time)), true
 
 	case "Query.currentUser":
 		if e.complexity.Query.CurrentUser == nil {
@@ -2411,6 +2597,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceSnapshot.ScheduledResources(childComplexity), true
+
+	case "ScheduleException.message":
+		if e.complexity.ScheduleException.Message == nil {
+			break
+		}
+
+		return e.complexity.ScheduleException.Message(childComplexity), true
+
+	case "ScheduleException.scope":
+		if e.complexity.ScheduleException.Scope == nil {
+			break
+		}
+
+		return e.complexity.ScheduleException.Scope(childComplexity), true
 
 	case "ScheduledResource.milestoneEndDate":
 		if e.complexity.ScheduledResource.MilestoneEndDate == nil {
@@ -2959,6 +3159,13 @@ type ValidationMessage {
   field: String!
 }
 
+type CSWeek {
+  begin: Time!
+	end: Time!
+	year: Int!
+	weekNumber: Int!
+}
+
 
 input PageAndFilter {
   paging: InputPagination
@@ -3151,8 +3358,6 @@ type ProjectFeature {
 
 type ProjectMilestone {
   id: String!
-  startDate: Time
-  endDate: Time
   phase: ProjectMilestonePhase!
   tasks: [ProjectMilestoneTask!]!
 
@@ -3176,8 +3381,6 @@ type ProjectMilestoneTask {
   resources: [Resource!]
   resourceIDs: [String!]
   status: String!
-  startDate: Time
-  endDate: Time
   calculated: ProjectTaskCalculatedData
 }
 
@@ -3299,7 +3502,6 @@ input UpdateProjectFeature {
 
 input UpdateProjectMilestone {
   id: String!
-  startDate: Time
   phase: UpdateProjectMilestonePhase!
   tasks: [UpdateProjectMilestoneTask!]
 }
@@ -3320,8 +3522,6 @@ input UpdateProjectMilestoneTask {
   hourEstimate: Int!
   resourceIDs: [String!]
   requiredSkillID: String!
-  startDate: Time
-  endDate: Time
   status: String!
   projectID: String!
   milestoneID: String!
@@ -3381,6 +3581,43 @@ type ResourceResults {
   paging: Pagination
   filters: Filters!
   results: [Resource!]
+}`, BuiltIn: false},
+	{Name: "../api/idl/schedule.graphqls", Input: `
+type ProjectSchedule {
+    projectName: String!
+    projectID: String!
+    begin: Time!
+    end: Time!
+    projectActivityWeeks: [ProjectActivityWeek!]!
+    exceptions: [ScheduleException!]
+}
+
+type ProjectActivityWeek {
+    weekNumber: Int!
+    year: Int!
+    begin: Time!
+    end: Time!
+    activities: [ProjectActivity!]
+}
+
+type ProjectActivity {
+	milestoneID: String
+	milestoneName: String
+	taskID: String
+	taskName: String
+	resourceID: String
+	resourceName: String
+	hoursSpent: Int
+}
+
+type ScheduleException {
+    scope: String!
+    message: String!
+}
+
+
+type ProjectScheduleResult {
+    schedule: ProjectSchedule!
 }`, BuiltIn: false},
 	{Name: "../api/idl/template.graphqls", Input: `type Projecttemplate {
   id: String!
@@ -3474,6 +3711,7 @@ input UpdateUser {
     getProject(id: String!): Project!
     portfolioSnapshot: PortfolioSnapshot!
     resourceSnapshot: ResourceSnapshot!
+    calculateProjectSchedule(projectID: String!, startDate: Time!): ProjectScheduleResult!
 
     findProjectComments(projectID: String!) :CommentResults!  
     getCommentThread(id: String!): Comment!
@@ -3905,6 +4143,30 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_calculateProjectSchedule_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 time.Time
+	if tmp, ok := rawArgs["startDate"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+		arg1, err = ec.unmarshalNTime2timeᚐTime(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["startDate"] = arg1
 	return args, nil
 }
 
@@ -4753,6 +5015,182 @@ func (ec *executionContext) fieldContext_Artifact_url(_ context.Context, field g
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CSWeek_begin(ctx context.Context, field graphql.CollectedField, obj *idl.CSWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CSWeek_begin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Begin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CSWeek_begin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CSWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CSWeek_end(ctx context.Context, field graphql.CollectedField, obj *idl.CSWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CSWeek_end(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.End, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CSWeek_end(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CSWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CSWeek_year(ctx context.Context, field graphql.CollectedField, obj *idl.CSWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CSWeek_year(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Year, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CSWeek_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CSWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CSWeek_weekNumber(ctx context.Context, field graphql.CollectedField, obj *idl.CSWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CSWeek_weekNumber(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeekNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CSWeek_weekNumber(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CSWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -10351,10 +10789,6 @@ func (ec *executionContext) fieldContext_Project_projectMilestones(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_ProjectMilestone_id(ctx, field)
-			case "startDate":
-				return ec.fieldContext_ProjectMilestone_startDate(ctx, field)
-			case "endDate":
-				return ec.fieldContext_ProjectMilestone_endDate(ctx, field)
 			case "phase":
 				return ec.fieldContext_ProjectMilestone_phase(ctx, field)
 			case "tasks":
@@ -10363,6 +10797,526 @@ func (ec *executionContext) fieldContext_Project_projectMilestones(_ context.Con
 				return ec.fieldContext_ProjectMilestone_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectMilestone", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_milestoneID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_milestoneID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MilestoneID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_milestoneID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_milestoneName(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_milestoneName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MilestoneName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_milestoneName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_taskID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_taskID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaskID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_taskID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_taskName(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_taskName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaskName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_taskName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_resourceID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_resourceID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_resourceID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_resourceName(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_resourceName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResourceName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_resourceName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_hoursSpent(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_hoursSpent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoursSpent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_hoursSpent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivityWeek_weekNumber(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivityWeek_weekNumber(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeekNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivityWeek_weekNumber(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivityWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivityWeek_year(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivityWeek_year(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Year, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivityWeek_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivityWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivityWeek_begin(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivityWeek_begin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Begin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivityWeek_begin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivityWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivityWeek_end(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivityWeek_end(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.End, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivityWeek_end(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivityWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivityWeek_activities(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivityWeek_activities(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Activities, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.ProjectActivity)
+	fc.Result = res
+	return ec.marshalOProjectActivity2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivityᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivityWeek_activities(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivityWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "milestoneID":
+				return ec.fieldContext_ProjectActivity_milestoneID(ctx, field)
+			case "milestoneName":
+				return ec.fieldContext_ProjectActivity_milestoneName(ctx, field)
+			case "taskID":
+				return ec.fieldContext_ProjectActivity_taskID(ctx, field)
+			case "taskName":
+				return ec.fieldContext_ProjectActivity_taskName(ctx, field)
+			case "resourceID":
+				return ec.fieldContext_ProjectActivity_resourceID(ctx, field)
+			case "resourceName":
+				return ec.fieldContext_ProjectActivity_resourceName(ctx, field)
+			case "hoursSpent":
+				return ec.fieldContext_ProjectActivity_hoursSpent(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectActivity", field.Name)
 		},
 	}
 	return fc, nil
@@ -11430,88 +12384,6 @@ func (ec *executionContext) fieldContext_ProjectMilestone_id(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestone_startDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_startDate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectMilestone_startDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectMilestone_endDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestone_endDate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EndDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectMilestone_endDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestone",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ProjectMilestone_phase(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestone) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectMilestone_phase(ctx, field)
 	if err != nil {
@@ -11623,10 +12495,6 @@ func (ec *executionContext) fieldContext_ProjectMilestone_tasks(_ context.Contex
 				return ec.fieldContext_ProjectMilestoneTask_resourceIDs(ctx, field)
 			case "status":
 				return ec.fieldContext_ProjectMilestoneTask_status(ctx, field)
-			case "startDate":
-				return ec.fieldContext_ProjectMilestoneTask_startDate(ctx, field)
-			case "endDate":
-				return ec.fieldContext_ProjectMilestoneTask_endDate(ctx, field)
 			case "calculated":
 				return ec.fieldContext_ProjectMilestoneTask_calculated(ctx, field)
 			}
@@ -12662,88 +13530,6 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_status(_ context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMilestoneTask_startDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneTask) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestoneTask_startDate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectMilestoneTask_startDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestoneTask",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectMilestoneTask_endDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneTask) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMilestoneTask_endDate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EndDate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectMilestoneTask_endDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectMilestoneTask",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ProjectMilestoneTask_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectMilestoneTask) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectMilestoneTask_calculated(ctx, field)
 	if err != nil {
@@ -12952,6 +13738,343 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 				return ec.fieldContext_Project_projectMilestones(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectSchedule_projectName(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectSchedule_projectName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectSchedule_projectName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectSchedule_projectID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectSchedule_projectID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectSchedule_projectID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectSchedule_begin(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectSchedule_begin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Begin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectSchedule_begin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectSchedule_end(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectSchedule_end(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.End, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectSchedule_end(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectSchedule_projectActivityWeeks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectSchedule_projectActivityWeeks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectActivityWeeks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.ProjectActivityWeek)
+	fc.Result = res
+	return ec.marshalNProjectActivityWeek2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivityWeekᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectSchedule_projectActivityWeeks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "weekNumber":
+				return ec.fieldContext_ProjectActivityWeek_weekNumber(ctx, field)
+			case "year":
+				return ec.fieldContext_ProjectActivityWeek_year(ctx, field)
+			case "begin":
+				return ec.fieldContext_ProjectActivityWeek_begin(ctx, field)
+			case "end":
+				return ec.fieldContext_ProjectActivityWeek_end(ctx, field)
+			case "activities":
+				return ec.fieldContext_ProjectActivityWeek_activities(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectActivityWeek", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectSchedule_exceptions(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectSchedule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectSchedule_exceptions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Exceptions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.ScheduleException)
+	fc.Result = res
+	return ec.marshalOScheduleException2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduleExceptionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectSchedule_exceptions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectSchedule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scope":
+				return ec.fieldContext_ScheduleException_scope(ctx, field)
+			case "message":
+				return ec.fieldContext_ScheduleException_message(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ScheduleException", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectScheduleResult_schedule(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectScheduleResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectScheduleResult_schedule(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Schedule, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectSchedule)
+	fc.Result = res
+	return ec.marshalNProjectSchedule2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectSchedule(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectScheduleResult_schedule(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectScheduleResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "projectName":
+				return ec.fieldContext_ProjectSchedule_projectName(ctx, field)
+			case "projectID":
+				return ec.fieldContext_ProjectSchedule_projectID(ctx, field)
+			case "begin":
+				return ec.fieldContext_ProjectSchedule_begin(ctx, field)
+			case "end":
+				return ec.fieldContext_ProjectSchedule_end(ctx, field)
+			case "projectActivityWeeks":
+				return ec.fieldContext_ProjectSchedule_projectActivityWeeks(ctx, field)
+			case "exceptions":
+				return ec.fieldContext_ProjectSchedule_exceptions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectSchedule", field.Name)
 		},
 	}
 	return fc, nil
@@ -14316,6 +15439,65 @@ func (ec *executionContext) fieldContext_Query_resourceSnapshot(_ context.Contex
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ResourceSnapshot", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_calculateProjectSchedule(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_calculateProjectSchedule(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CalculateProjectSchedule(rctx, fc.Args["projectID"].(string), fc.Args["startDate"].(time.Time))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectScheduleResult)
+	fc.Result = res
+	return ec.marshalNProjectScheduleResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectScheduleResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_calculateProjectSchedule(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "schedule":
+				return ec.fieldContext_ProjectScheduleResult_schedule(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectScheduleResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_calculateProjectSchedule_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -16075,6 +17257,94 @@ func (ec *executionContext) fieldContext_ResourceSnapshot_scheduledResources(_ c
 				return ec.fieldContext_ScheduledResource_resourceName(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ScheduledResource", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ScheduleException_scope(ctx context.Context, field graphql.CollectedField, obj *idl.ScheduleException) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ScheduleException_scope(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scope, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ScheduleException_scope(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ScheduleException",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ScheduleException_message(ctx context.Context, field graphql.CollectedField, obj *idl.ScheduleException) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ScheduleException_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ScheduleException_message(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ScheduleException",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -20258,7 +21528,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestone(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "startDate", "phase", "tasks"}
+	fieldsInOrder := [...]string{"id", "phase", "tasks"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -20272,13 +21542,6 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestone(ctx context.Con
 				return it, err
 			}
 			it.ID = data
-		case "startDate":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.StartDate = data
 		case "phase":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phase"))
 			data, err := ec.unmarshalNUpdateProjectMilestonePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectMilestonePhase(ctx, v)
@@ -20354,7 +21617,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestoneTask(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "description", "hourEstimate", "resourceIDs", "requiredSkillID", "startDate", "endDate", "status", "projectID", "milestoneID"}
+	fieldsInOrder := [...]string{"id", "name", "description", "hourEstimate", "resourceIDs", "requiredSkillID", "status", "projectID", "milestoneID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -20403,20 +21666,6 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestoneTask(ctx context
 				return it, err
 			}
 			it.RequiredSkillID = data
-		case "startDate":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.StartDate = data
-		case "endDate":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EndDate = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -20889,6 +22138,60 @@ func (ec *executionContext) _Artifact(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "url":
 			out.Values[i] = ec._Artifact_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var cSWeekImplementors = []string{"CSWeek"}
+
+func (ec *executionContext) _CSWeek(ctx context.Context, sel ast.SelectionSet, obj *idl.CSWeek) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cSWeekImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CSWeek")
+		case "begin":
+			out.Values[i] = ec._CSWeek_begin(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "end":
+			out.Values[i] = ec._CSWeek_end(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "year":
+			out.Values[i] = ec._CSWeek_year(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "weekNumber":
+			out.Values[i] = ec._CSWeek_weekNumber(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -22115,6 +23418,110 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var projectActivityImplementors = []string{"ProjectActivity"}
+
+func (ec *executionContext) _ProjectActivity(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectActivity) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectActivityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectActivity")
+		case "milestoneID":
+			out.Values[i] = ec._ProjectActivity_milestoneID(ctx, field, obj)
+		case "milestoneName":
+			out.Values[i] = ec._ProjectActivity_milestoneName(ctx, field, obj)
+		case "taskID":
+			out.Values[i] = ec._ProjectActivity_taskID(ctx, field, obj)
+		case "taskName":
+			out.Values[i] = ec._ProjectActivity_taskName(ctx, field, obj)
+		case "resourceID":
+			out.Values[i] = ec._ProjectActivity_resourceID(ctx, field, obj)
+		case "resourceName":
+			out.Values[i] = ec._ProjectActivity_resourceName(ctx, field, obj)
+		case "hoursSpent":
+			out.Values[i] = ec._ProjectActivity_hoursSpent(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectActivityWeekImplementors = []string{"ProjectActivityWeek"}
+
+func (ec *executionContext) _ProjectActivityWeek(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectActivityWeek) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectActivityWeekImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectActivityWeek")
+		case "weekNumber":
+			out.Values[i] = ec._ProjectActivityWeek_weekNumber(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "year":
+			out.Values[i] = ec._ProjectActivityWeek_year(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "begin":
+			out.Values[i] = ec._ProjectActivityWeek_begin(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "end":
+			out.Values[i] = ec._ProjectActivityWeek_end(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "activities":
+			out.Values[i] = ec._ProjectActivityWeek_activities(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var projectBasicsImplementors = []string{"ProjectBasics"}
 
 func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectBasics) graphql.Marshaler {
@@ -22404,10 +23811,6 @@ func (ec *executionContext) _ProjectMilestone(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "startDate":
-			out.Values[i] = ec._ProjectMilestone_startDate(ctx, field, obj)
-		case "endDate":
-			out.Values[i] = ec._ProjectMilestone_endDate(ctx, field, obj)
 		case "phase":
 			out.Values[i] = ec._ProjectMilestone_phase(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -22593,10 +23996,6 @@ func (ec *executionContext) _ProjectMilestoneTask(ctx context.Context, sel ast.S
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "startDate":
-			out.Values[i] = ec._ProjectMilestoneTask_startDate(ctx, field, obj)
-		case "endDate":
-			out.Values[i] = ec._ProjectMilestoneTask_endDate(ctx, field, obj)
 		case "calculated":
 			out.Values[i] = ec._ProjectMilestoneTask_calculated(ctx, field, obj)
 		default:
@@ -22642,6 +24041,106 @@ func (ec *executionContext) _ProjectResults(ctx context.Context, sel ast.Selecti
 			}
 		case "results":
 			out.Values[i] = ec._ProjectResults_results(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectScheduleImplementors = []string{"ProjectSchedule"}
+
+func (ec *executionContext) _ProjectSchedule(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectSchedule) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectScheduleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectSchedule")
+		case "projectName":
+			out.Values[i] = ec._ProjectSchedule_projectName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "projectID":
+			out.Values[i] = ec._ProjectSchedule_projectID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "begin":
+			out.Values[i] = ec._ProjectSchedule_begin(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "end":
+			out.Values[i] = ec._ProjectSchedule_end(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "projectActivityWeeks":
+			out.Values[i] = ec._ProjectSchedule_projectActivityWeeks(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "exceptions":
+			out.Values[i] = ec._ProjectSchedule_exceptions(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectScheduleResultImplementors = []string{"ProjectScheduleResult"}
+
+func (ec *executionContext) _ProjectScheduleResult(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectScheduleResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectScheduleResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectScheduleResult")
+		case "schedule":
+			out.Values[i] = ec._ProjectScheduleResult_schedule(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23075,6 +24574,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_resourceSnapshot(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "calculateProjectSchedule":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_calculateProjectSchedule(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -23551,6 +25072,50 @@ func (ec *executionContext) _ResourceSnapshot(ctx context.Context, sel ast.Selec
 			out.Values[i] = graphql.MarshalString("ResourceSnapshot")
 		case "scheduledResources":
 			out.Values[i] = ec._ResourceSnapshot_scheduledResources(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var scheduleExceptionImplementors = []string{"ScheduleException"}
+
+func (ec *executionContext) _ScheduleException(ctx context.Context, sel ast.SelectionSet, obj *idl.ScheduleException) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, scheduleExceptionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ScheduleException")
+		case "scope":
+			out.Values[i] = ec._ScheduleException_scope(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "message":
+			out.Values[i] = ec._ScheduleException_message(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -24780,6 +26345,70 @@ func (ec *executionContext) marshalNProject2ᚖcsserverᚋinternalᚋappservᚋg
 	return ec._Project(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectActivity2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivity(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectActivity) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectActivity(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjectActivityWeek2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivityWeekᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectActivityWeek) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjectActivityWeek2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivityWeek(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNProjectActivityWeek2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivityWeek(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectActivityWeek) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectActivityWeek(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProjectBasics2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectBasics(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectBasics) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -24906,6 +26535,30 @@ func (ec *executionContext) marshalNProjectResults2ᚖcsserverᚋinternalᚋapps
 		return graphql.Null
 	}
 	return ec._ProjectResults(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjectSchedule2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectSchedule(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectSchedule) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectSchedule(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjectScheduleResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectScheduleResult(ctx context.Context, sel ast.SelectionSet, v idl.ProjectScheduleResult) graphql.Marshaler {
+	return ec._ProjectScheduleResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProjectScheduleResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectScheduleResult(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectScheduleResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectScheduleResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNProjectValue2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValue(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectValue) graphql.Marshaler {
@@ -25036,6 +26689,16 @@ func (ec *executionContext) marshalNResourceSnapshot2ᚖcsserverᚋinternalᚋap
 		return graphql.Null
 	}
 	return ec._ResourceSnapshot(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNScheduleException2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduleException(ctx context.Context, sel ast.SelectionSet, v *idl.ScheduleException) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ScheduleException(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNScheduledResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduledResourceᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ScheduledResource) graphql.Marshaler {
@@ -26020,6 +27683,53 @@ func (ec *executionContext) marshalOProject2ᚖcsserverᚋinternalᚋappservᚋg
 	return ec._Project(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOProjectActivity2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivityᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectActivity) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjectActivity2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectActivity(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalOProjectCostCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectCostCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectCostCalculatedData) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -26282,6 +27992,53 @@ func (ec *executionContext) marshalOResource2ᚖcsserverᚋinternalᚋappservᚋ
 		return graphql.Null
 	}
 	return ec._Resource(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOScheduleException2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduleExceptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ScheduleException) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNScheduleException2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduleException(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOSkill2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐSkillᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Skill) graphql.Marshaler {

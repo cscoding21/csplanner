@@ -1,6 +1,7 @@
 package portfolio
 
 import (
+	"context"
 	"csserver/internal/calendar"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
@@ -10,8 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
-// ScheduleProject calculate the dates of a project with its milestones and tasks
-func ScheduleProject(p *project.Project, startDate time.Time, rm map[string]resource.Resource) (ProjectSchedule, error) {
+// ScheduleProject create a schedule for a single project "in a vacuum"
+func (service *PortfolioService) ScheduleProject(ctx context.Context, p *project.Project, startDate time.Time) (ProjectSchedule, error) {
+	rm, err := service.GetResourceMap(ctx)
+	if err != nil {
+		return ProjectSchedule{}, err
+	}
+
+	return scheduleProject(p, startDate, rm)
+}
+
+func scheduleProject(p *project.Project, startDate time.Time, rm map[string]resource.Resource) (ProjectSchedule, error) {
 	schedule := ProjectSchedule{
 		ProjectID:   p.ID,
 		ProjectName: p.ProjectBasics.Name,
@@ -23,20 +33,34 @@ func ScheduleProject(p *project.Project, startDate time.Time, rm map[string]reso
 	p.ProjectBasics.StartDate = &startDate
 
 	batches := getScheduleItems(p)
-	startWeek := calendar.GetWeek(startDate)
-	weeks := []ProjectActivityWeek{}
+	currentWeek := calendar.GetWeek(startDate)
+	schedule.Begin = currentWeek.Begin
+	weeks := []*ProjectActivityWeek{}
 
-	resourceHoursForWeek := getResourceHoursForWeek(rm)
+	resourceHoursForWeek := getResourceHoursForWeek(rm, currentWeek)
 	exceptionsCreated := make(map[string]string)
+	thingCount := 0
 
-	paw := ProjectActivityWeek{Week: startWeek}
 	activities := []ProjectActivity{}
 
 	for bi, batch := range batches {
 		hoursToCompleteBatch := batch.HoursToComplete
-		//itemsToSchedule := batch.ScheduleItems
 
 		for hoursToCompleteBatch > 0 {
+			//---safety check
+			if thingCount > 100 {
+				msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", "schedule:overflow")
+
+				schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
+					Scope:   "schedule:overflow",
+					Message: "for loop did not terminate",
+				})
+
+				exceptionsCreated["schedule:overflow"] = msg
+
+				break
+			}
+
 			for ti, task := range batch.ScheduleItems {
 				if len(task.ResourceIDs) == 0 {
 					_, ok := exceptionsCreated[task.TaskID]
@@ -94,18 +118,25 @@ func ScheduleProject(p *project.Project, startDate time.Time, rm map[string]reso
 			}
 
 			//---log activities for week
-			paw.Activities = activities
-			weeks = append(weeks, paw)
+			weeks = append(weeks, &ProjectActivityWeek{
+				WeekNumber: currentWeek.WeekNumber,
+				Year:       currentWeek.Year,
+				Begin:      currentWeek.Begin,
+				End:        currentWeek.End,
+				Activities: activities,
+			})
 
 			//---start next week
-			nextWeek := calendar.GetNextWeek(paw.Week)
-			paw = ProjectActivityWeek{Week: nextWeek}
+			currentWeek = calendar.GetNextWeek(currentWeek)
 			activities = []ProjectActivity{}
-			resourceHoursForWeek = getResourceHoursForWeek(rm)
+			resourceHoursForWeek = getResourceHoursForWeek(rm, currentWeek)
+
+			thingCount++
 		}
 	}
 
-	schedule.ProjectActivityWeeks = &weeks
+	schedule.End = weeks[len(weeks)-1].End
+	schedule.ProjectActivityWeeks = weeks
 
 	return schedule, nil
 }
@@ -148,7 +179,7 @@ func getScheduleItems(p *project.Project) []ScheduleBatch {
 	return sb
 }
 
-func getResourceHoursForWeek(rm map[string]resource.Resource) map[string]int {
+func getResourceHoursForWeek(rm map[string]resource.Resource, week calendar.CSWeek) map[string]int {
 	outMap := make(map[string]int)
 
 	for k, v := range rm {

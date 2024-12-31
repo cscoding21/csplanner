@@ -10,12 +10,12 @@ func SetupTestData(ctx context.Context) error {
 	ctx = GetBotContext(ctx)
 
 	err := errors.Join(nil, CreateTestUsers(ctx))
+	err = errors.Join(err, CreateDefaultOrganization(ctx))
 	err = errors.Join(err, CreateTestLists(ctx))
 	err = errors.Join(err, CreateTestTemplates(ctx))
 	err = errors.Join(err, CreateTestResources(ctx))
 	err = errors.Join(err, CreateTestProjects(ctx))
 	err = errors.Join(err, CreateTestComments(ctx))
-	err = errors.Join(err, CreateDefaultOrganization(ctx))
 
 	return err
 }

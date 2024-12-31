@@ -38,6 +38,16 @@ func GetWeek(date time.Time) CSWeek {
 	return w
 }
 
+// GetWeekFromDateString parse a string into a date and return the result of GetWeek
+func GetWeekFromDateString(date string) CSWeek {
+	d, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		//---figure out what to do here
+	}
+
+	return GetWeek(d)
+}
+
 // GetNextWeek return the sequentially next week based on the passed in week
 func GetNextWeek(w CSWeek) CSWeek {
 	weeks := GetWeeks(w.End, w.End.Add(1*time.Hour*168))

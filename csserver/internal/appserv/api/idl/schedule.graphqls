@@ -1,0 +1,37 @@
+
+type ProjectSchedule {
+    projectName: String!
+    projectID: String!
+    begin: Time!
+    end: Time!
+    projectActivityWeeks: [ProjectActivityWeek!]!
+    exceptions: [ScheduleException!]
+}
+
+type ProjectActivityWeek {
+    weekNumber: Int!
+    year: Int!
+    begin: Time!
+    end: Time!
+    activities: [ProjectActivity!]
+}
+
+type ProjectActivity {
+	milestoneID: String
+	milestoneName: String
+	taskID: String
+	taskName: String
+	resourceID: String
+	resourceName: String
+	hoursSpent: Int
+}
+
+type ScheduleException {
+    scope: String!
+    message: String!
+}
+
+
+type ProjectScheduleResult {
+    schedule: ProjectSchedule!
+}

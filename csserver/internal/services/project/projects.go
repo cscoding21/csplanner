@@ -4,6 +4,7 @@ import (
 	"context"
 	"csserver/internal/common"
 	"csserver/internal/marshal"
+	"csserver/internal/services/organization"
 	"csserver/internal/services/resource"
 
 	"github.com/cscoding21/csval/validate"
@@ -12,19 +13,19 @@ import (
 var resourceMap map[string]resource.Resource
 
 // SaveProject saves a project in the system and updates all stored calculations
-func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.UpdateResult[Project], error) {
+func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organization.Organization) (common.UpdateResult[Project], error) {
 	//---TODO: update to proper validation
 	//val := pro.Validate()
 	val := validate.NewSuccessValidationResult()
 
 	if len(pro.ID) == 0 {
-		return s.newProject(ctx, pro, val)
+		return s.newProject(ctx, pro, org, val)
 	}
 
 	lastProject, err := s.GetProjectByID(ctx, pro.ID)
 	if err != nil {
 		//---existing project does not exist...create
-		return s.newProject(ctx, pro, val)
+		return s.newProject(ctx, pro, org, val)
 	}
 
 	lastProject.ProjectBasics = pro.ProjectBasics
@@ -37,10 +38,14 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project) (common.U
 	lastProject.GetProjectIRR()
 	s.CalculateProjectMilestoneStats(lastProject)
 
+	rm, _ := s.GetResourceMap(false)
+
+	lastProject.CalculateProjectTasksStats(org, rm)
+
 	return s.UpdateProject(ctx, lastProject)
 }
 
-func (s *ProjectService) newProject(ctx context.Context, pro Project, val validate.ValidationResult) (common.UpdateResult[Project], error) {
+func (s *ProjectService) newProject(ctx context.Context, pro Project, org organization.Organization, val validate.ValidationResult) (common.UpdateResult[Project], error) {
 	proj, err := s.CreateProject(ctx, &pro)
 	if err != nil {
 		return common.NewUpdateResult(&val, &pro), err
@@ -52,6 +57,10 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, val valida
 	pro.GetProjectNPV()
 	pro.GetProjectIRR()
 	s.CalculateProjectMilestoneStats(&pro)
+
+	rm, _ := s.GetResourceMap(false)
+
+	pro.CalculateProjectTasksStats(org, rm)
 
 	return s.UpdateProject(ctx, &pro)
 }

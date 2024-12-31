@@ -61,8 +61,6 @@ var testProject = Project{
 					Status:          "new",
 					RequiredSkillID: "backend",
 					ResourceIDs:     []string{"resource:3"},
-					StartDate:       nil,
-					EndDate:         nil,
 					Calculated:      ProjectTaskCalculatedData{},
 				},
 				{
@@ -72,8 +70,6 @@ var testProject = Project{
 					Status:          "new",
 					RequiredSkillID: "security",
 					ResourceIDs:     []string{"resource:1"},
-					StartDate:       nil,
-					EndDate:         nil,
 					Calculated:      ProjectTaskCalculatedData{},
 				},
 				{
@@ -83,8 +79,6 @@ var testProject = Project{
 					Status:          "new",
 					RequiredSkillID: "requirements-gathering",
 					ResourceIDs:     []string{"resource:5"},
-					StartDate:       nil,
-					EndDate:         nil,
 					Calculated:      ProjectTaskCalculatedData{},
 				},
 			},
@@ -106,8 +100,6 @@ var testProject = Project{
 					Status:          "new",
 					RequiredSkillID: "devops",
 					ResourceIDs:     []string{"resource:1", "resource:3"},
-					StartDate:       nil,
-					EndDate:         nil,
 					Calculated:      ProjectTaskCalculatedData{},
 				},
 				{
@@ -117,8 +109,6 @@ var testProject = Project{
 					Status:          "new",
 					RequiredSkillID: "project-management",
 					ResourceIDs:     []string{"resource:1"},
-					StartDate:       nil,
-					EndDate:         nil,
 					Calculated:      ProjectTaskCalculatedData{},
 				},
 				{
@@ -128,8 +118,6 @@ var testProject = Project{
 					Status:          "new",
 					RequiredSkillID: "",
 					ResourceIDs:     []string{},
-					StartDate:       nil,
-					EndDate:         nil,
 					Calculated:      ProjectTaskCalculatedData{},
 				},
 			},

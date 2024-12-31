@@ -15,6 +15,9 @@ common_structs:
   - package_name: common
     struct_name: Filters
     path: internal/common/paging.go
+  - package_name: calendar
+    struct_name: CSWeek
+    path: internal/calendar/datehelper.go
 
 # source and destination pathes are relative to project root
 maps:
@@ -25,6 +28,11 @@ maps:
     - "csserver/internal/common"
   - name: "paging_target"
     source_path: "internal/common/paging.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+  - name: "csweek_target"
+    source_path: "internal/calendar/datehelper.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
@@ -104,6 +112,13 @@ maps:
 
   - name: "notification_target"
     source_path: "internal/services/notification/models.go"
+    target_path: "internal/appserv/graph/idl/models.gen.go"
+    imports: 
+    - "csserver/internal/common"
+
+  
+  - name: "schedule_target"
+    source_path: "internal/services/portfolio/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"

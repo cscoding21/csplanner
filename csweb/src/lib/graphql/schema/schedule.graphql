@@ -1,0 +1,28 @@
+fragment scheduleFragment on ProjectScheduleResult {
+    schedule {
+    projectID
+    projectName
+    begin
+    end
+    exceptions {
+      message
+      scope
+    }
+    projectActivityWeeks {
+      end
+      activities {
+        taskName
+        resourceID
+        resourceName
+        hoursSpent
+      }
+    }
+  }
+}
+
+
+query calculateProjectSchedule($projectID: String!, $startDate: Time!) {
+	calculateProjectSchedule(projectID: $projectID, startDate: $startDate) {
+		...scheduleFragment
+	}
+}

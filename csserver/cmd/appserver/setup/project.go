@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"time"
 
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
@@ -23,6 +22,7 @@ func CreateTestProjects(ctx context.Context) error {
 	ps := factory.GetProjectService()
 	rs := factory.GetResourceService()
 	us := factory.GetUserService()
+	org, _ := factory.GetDefaultOrganization(ctx)
 
 	projectList, _ := ps.FindAllProjects(ctx)
 	if len(projectList.Results) > 0 {
@@ -85,8 +85,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "project-management",
 						ResourceIDs:     []string{"resource:barret"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -96,8 +94,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "project-management",
 						ResourceIDs:     []string{"resource:barret"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 				},
 			},
@@ -118,8 +114,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "requirements-gathering",
 						ResourceIDs:     []string{"resource:yuffie"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -129,8 +123,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "project-management",
 						ResourceIDs:     []string{"resource:biggs"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -140,8 +132,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "ux",
 						ResourceIDs:     []string{"resource:aerith"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -151,8 +141,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "technical-architecture",
 						ResourceIDs:     []string{"resource:cid", "resource:zack"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 				},
 			},
@@ -174,8 +162,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "database",
 						ResourceIDs:     []string{"resource:zack"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -185,8 +171,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "backend",
 						ResourceIDs:     []string{"resource:cloud"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -196,8 +180,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "frontend",
 						ResourceIDs:     []string{"resource:wedge"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -207,8 +189,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "ui",
 						ResourceIDs:     []string{"resource:barret"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 				},
 			},
@@ -230,8 +210,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "project-management",
 						ResourceIDs:     []string{"resource:barret"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -241,8 +219,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "technical-writing",
 						ResourceIDs:     []string{"resource:wedge"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 				},
 			},
@@ -264,8 +240,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "project-management",
 						ResourceIDs:     []string{"resource:barret"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -275,8 +249,6 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "project-management",
 						ResourceIDs:     []string{"resource:barret"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 					{
 						ID:              utils.ValToRef(uuid.New().String()),
@@ -286,15 +258,13 @@ func CreateTestProjects(ctx context.Context) error {
 						Status:          "new",
 						RequiredSkillID: "marketing",
 						ResourceIDs:     []string{"resource:tifa"},
-						StartDate:       nil,
-						EndDate:         nil,
 					},
 				},
 			},
 		},
 	}
 
-	pr, err := ps.SaveProject(ctx, updateProject)
+	pr, err := ps.SaveProject(ctx, updateProject, *org)
 	if err != nil {
 		log.Errorf("Save Project Error (YTS): %s", err)
 	} else {
@@ -304,7 +274,7 @@ func CreateTestProjects(ctx context.Context) error {
 	otherProjects := findPortfolioProjects()
 
 	for _, project := range otherProjects {
-		pr, err = ps.SaveProject(ctx, project)
+		pr, err = ps.SaveProject(ctx, project, *org)
 		if err != nil {
 			log.Errorf("Save Project Error (OTHER): %s", err)
 		} else {
@@ -361,24 +331,6 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 	allResources, _ := rs.FindAllResources(ctx)
 	allUsers, _ := us.FindAllUsers(ctx)
 
-	startDate1 := time.Now().AddDate(0, 0, 1*rand.Intn(60))
-	endDate1 := startDate1.AddDate(0, 0, 1*rand.Intn(4))
-
-	startDate2 := endDate1.AddDate(0, 0, 1*rand.Intn(6))
-	endDate2 := startDate2.AddDate(0, 0, 1*rand.Intn(4))
-
-	startDate3 := endDate2.AddDate(0, 0, 1*rand.Intn(6))
-	endDate3 := startDate3.AddDate(0, 0, 1*rand.Intn(4))
-
-	startDate4 := endDate3.AddDate(0, 0, 1*rand.Intn(6))
-	endDate4 := startDate4.AddDate(0, 0, 1*rand.Intn(4))
-
-	startDate5 := endDate4.AddDate(0, 0, 1*rand.Intn(6))
-	endDate5 := startDate5.AddDate(0, 0, 1*rand.Intn(4))
-
-	startDate6 := endDate5.AddDate(0, 0, 1*rand.Intn(6))
-	endDate6 := startDate6.AddDate(0, 0, 1*rand.Intn(4))
-
 	proj := project.Project{
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
@@ -412,9 +364,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 		},
 		ProjectMilestones: []*project.ProjectMilestone{
 			{
-				ID:        utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
-				StartDate: &startDate1,
-				EndDate:   &endDate6,
+				ID: utils.ValToRef(fmt.Sprintf("milestone:%s", uuid.New().String())),
 				Phase: &project.ProjectMilestonePhase{
 					ID:          uuid.New().String(),
 					Name:        "Execution",
@@ -428,9 +378,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 						HourEstimate:    rand.Intn(10),
 						Status:          "new",
 						RequiredSkillID: "business-analysis",
-						ResourceIDs:     []string{allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-						StartDate:       &startDate1,
-						EndDate:         &endDate1,
+						ResourceIDs:     []string{"resource:yuffie"},
 					},
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
@@ -438,9 +386,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 						HourEstimate:    rand.Intn(11),
 						Status:          "new",
 						RequiredSkillID: "content-writing",
-						ResourceIDs:     []string{allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-						StartDate:       &startDate2,
-						EndDate:         &endDate2,
+						ResourceIDs:     []string{"resource:tifa"},
 					},
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
@@ -448,9 +394,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 						HourEstimate:    rand.Intn(14),
 						Status:          "new",
 						RequiredSkillID: "communications",
-						ResourceIDs:     []string{allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-						StartDate:       &startDate3,
-						EndDate:         &endDate3,
+						ResourceIDs:     []string{"resource:barret"},
 					},
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
@@ -458,9 +402,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 						HourEstimate:    rand.Intn(6),
 						Status:          "new",
 						RequiredSkillID: "video-editing",
-						ResourceIDs:     []string{allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-						StartDate:       &startDate4,
-						EndDate:         &endDate4,
+						ResourceIDs:     []string{"resource:jessie"},
 					},
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
@@ -468,9 +410,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 						HourEstimate:    rand.Intn(3),
 						Status:          "new",
 						RequiredSkillID: "frontend",
-						ResourceIDs:     []string{allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-						StartDate:       &startDate5,
-						EndDate:         &endDate5,
+						ResourceIDs:     []string{"resource:wedge"},
 					},
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
@@ -478,9 +418,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 						HourEstimate:    rand.Intn(3),
 						Status:          "new",
 						RequiredSkillID: "marketing",
-						ResourceIDs:     []string{allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},
-						StartDate:       &startDate6,
-						EndDate:         &endDate6,
+						ResourceIDs:     []string{"resource:wedge"},
 					},
 				},
 			},

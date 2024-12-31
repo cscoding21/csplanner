@@ -1,6 +1,7 @@
 package portfolio
 
 import (
+	"csserver/internal/calendar"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"fmt"
@@ -36,7 +37,7 @@ func TestScheduleProject(t *testing.T) {
 		}
 	}
 
-	result, err := ScheduleProject(&proj, time.Now(), rm)
+	result, err := scheduleProject(&proj, time.Now(), rm)
 	if err != nil {
 		t.Error(err)
 	}
@@ -48,8 +49,8 @@ func TestScheduleProject(t *testing.T) {
 
 	fmt.Println("***************************************")
 
-	for _, r := range *result.ProjectActivityWeeks {
-		fmt.Printf("Week Ending: %v\n", r.Week)
+	for _, r := range result.ProjectActivityWeeks {
+		fmt.Printf("Week Ending: %v\n", r.End)
 
 		for _, a := range r.Activities {
 			fmt.Printf("  -- Task: %s | Resource: %s | Hours: %v\n", a.TaskName, a.ResourceName, a.HoursSpent)
@@ -61,8 +62,8 @@ func TestScheduleProject(t *testing.T) {
 		fmt.Printf(" - %s\n", e)
 	}
 
-	if len(*result.ProjectActivityWeeks) != EXPECTED_WEEKS {
-		t.Errorf("Unexpected number of weeks calculated.  Expected %v - got %v", EXPECTED_WEEKS, len(*result.ProjectActivityWeeks))
+	if len(result.ProjectActivityWeeks) != EXPECTED_WEEKS {
+		t.Errorf("Unexpected number of weeks calculated.  Expected %v - got %v", EXPECTED_WEEKS, len(result.ProjectActivityWeeks))
 	}
 
 	if len(result.Exceptions) != EXPECTED_EXCEPTIONS {
@@ -93,8 +94,9 @@ func TestGetScheduleItems(t *testing.T) {
 func TestGetResourceHoursForWeek(t *testing.T) {
 	rm := getResourceMap()
 	expectedLength := 5
+	testWeek := calendar.GetWeekFromDateString("2025-11-21")
 
-	hoursMap := getResourceHoursForWeek(rm)
+	hoursMap := getResourceHoursForWeek(rm, testWeek)
 
 	if len(hoursMap) != expectedLength {
 		t.Errorf("no items extracted.  expected %v, got %v", expectedLength, len(hoursMap))
@@ -102,7 +104,7 @@ func TestGetResourceHoursForWeek(t *testing.T) {
 }
 
 func getTestProjectWithCalcsDone() project.Project {
-	proj := GetTestProject()
+	proj := GetTestProject2()
 	rm := getResourceMap()
 	org := GetTestOrganization()
 
@@ -133,7 +135,7 @@ func getTaskHoursFromProject(proj project.Project, taskID string) int {
 func getTaskHoursFromSchedule(schedule ProjectSchedule, taskID string) int {
 	hours := 0
 
-	for _, w := range *schedule.ProjectActivityWeeks {
+	for _, w := range schedule.ProjectActivityWeeks {
 		for _, a := range w.Activities {
 			if strings.EqualFold(a.TaskID, taskID) {
 				hours += a.HoursSpent
