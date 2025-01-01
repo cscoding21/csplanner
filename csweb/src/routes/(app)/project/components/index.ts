@@ -16,6 +16,8 @@ export { default as ProjectFeatureForm } from './ProjectFeatureForm.svelte';
 export { default as ProjectFeatures } from './ProjectFeatures.svelte';
 export { default as ProjectMilestones } from './ProjectMilestones.svelte';
 export { default as ProjectMilestoneStatus } from './ProjectMilestoneStatus.svelte';
+export { default as ProjectSchedule } from './ProjectSchedule.svelte';
+export { default as ProjectScheduleCell } from './ProjectScheduleCell.svelte';
 export { default as ProjectSearchFilters } from './ProjectSearchFilters.svelte';
 export { default as ProjectSnapshot } from './ProjectSnapshot.svelte';
 export { default as ProjectTaskDisplay } from './ProjectTaskDisplay.svelte';

@@ -13,7 +13,8 @@ import type {
 	UpdateProjectDaci,
 	UpdateProjectBasics,
 	CreateProjectResult,
-	ProjecttemplateResults
+	ProjecttemplateResults,
+	ProjectScheduleResult
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import {
@@ -27,7 +28,8 @@ import {
 	UpdateProjectDocument,
 	UpdateProjectTaskDocument,
 	CreateProjectDocument,
-	GetProjectDocument
+	GetProjectDocument,
+	CalculateProjectScheduleDocument
 } from '$lib/graphql/generated/sdk';
 import { coalesceToType } from '$lib/forms/helpers';
 import { safeArray } from '$lib/utils/helpers';
@@ -340,6 +342,26 @@ export const deleteProjectTask = async (
 		.then((pro) => {
 			if (pro) {
 				return pro.data.deleteProjectTask;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+
+/**
+ * returns a list of all available project milestone templates
+ * @returns a list of all project templates
+ */
+export const calculateProjectSchedule = async (projectID: string, startDate :Date): Promise<ProjectScheduleResult> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: CalculateProjectScheduleDocument, variables: { projectID, startDate }})
+		.then((pro) => {
+			if (pro) {
+				return pro.data.calculateProjectSchedule;
 			}
 		})
 		.catch((err) => {

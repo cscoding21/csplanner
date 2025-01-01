@@ -11,7 +11,8 @@
 		ProjectDACI,
 		ProjectMilestones,
 		ProjectValue,
-		ProjectCost
+		ProjectCost,
+		ProjectSchedule
 	} from '../../components';
 	import { CommentList, CSSection } from "$lib/components";
 	import { TrashBinOutline, MessagesOutline } from 'flowbite-svelte-icons';
@@ -93,6 +94,10 @@
 		{:else if hash == '#costs'}
 			<CSSection>
 				<ProjectCost {id} update={() => console.log("update")} />
+			</CSSection>
+		{:else if hash == '#schedule'}
+			<CSSection>
+				<ProjectSchedule {id} startDate={new Date()} update={() => console.log("update")} />
 			</CSSection>
 		{/if}
 	</div>

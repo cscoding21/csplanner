@@ -18,6 +18,7 @@
 		LifeSaverSolid,
 		ChartPieOutline,
         CalendarMonthOutline,
+		CalendarWeekOutline,
         ScaleBalancedOutline,
         RectangleListOutline,
         DollarOutline,
@@ -56,6 +57,7 @@
         { name: 'Value Prop', icon: DollarOutline, href: '#value' },
         { name: 'Costs', icon: CashOutline, href: '#costs' },
 		{ name: 'Milestones', icon: CalendarMonthOutline, href: '#milestones' },
+		{ name: 'Schedule', icon: CalendarWeekOutline, href: '#schedule' },
 		{
 			name: 'Layouts',
 			icon: TableColumnSolid,

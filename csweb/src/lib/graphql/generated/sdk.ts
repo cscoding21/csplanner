@@ -1139,6 +1139,7 @@ export const ScheduleFragmentFragmentDoc = gql`
     }
     projectActivityWeeks {
       end
+      begin
       activities {
         taskName
         resourceID

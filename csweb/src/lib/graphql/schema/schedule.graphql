@@ -10,6 +10,7 @@ fragment scheduleFragment on ProjectScheduleResult {
     }
     projectActivityWeeks {
       end
+      begin
       activities {
         taskName
         resourceID
