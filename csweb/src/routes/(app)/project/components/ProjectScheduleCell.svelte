@@ -1,14 +1,16 @@
+<script context="module" lang="ts">
+    export type Week = {
+        resourceName: string
+        weekEnding: string
+        activities: ProjectActivity[]
+    }
+  </script>
+
 <script lang="ts">
 	import type { ProjectActivity } from "$lib/graphql/generated/sdk";
     import { Popover, Button } from "flowbite-svelte";
     import { normalizeGUID } from "$lib/utils/id";
 	import { pluralize } from "$lib/utils/format";
-
-    interface Week {
-        resourceName: string
-        weekEnding: string
-        activities: ProjectActivity[]
-    }
 
     interface Props {
         week: Week

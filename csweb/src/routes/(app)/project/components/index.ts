@@ -25,3 +25,5 @@ export { default as ProjectTaskForm } from './ProjectTaskForm.svelte';
 export { default as ProjectTemplateSelector } from './ProjectTemplateSelector.svelte';
 export { default as ProjectValue } from './ProjectValue.svelte';
 export { default as ProjectValueChart } from './ProjectValueChart.svelte';
+
+export type { Week } from './ProjectScheduleCell.svelte';
