@@ -12,6 +12,7 @@ fragment resourceFragment on Resource {
 	type
 	status
 	createdAt
+	availableHoursPerWeek
 	skills {
 		id
 		name

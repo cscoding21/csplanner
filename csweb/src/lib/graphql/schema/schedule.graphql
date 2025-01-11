@@ -14,7 +14,9 @@ fragment scheduleFragment on ProjectScheduleResult {
       activities {
         taskName
         resourceID
-        resourceName
+        resource {
+          ...resourceFragment
+        }
         hoursSpent
       }
     }

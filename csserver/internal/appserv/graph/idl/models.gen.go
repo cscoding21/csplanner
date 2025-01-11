@@ -209,13 +209,13 @@ type Project struct {
 }
 
 type ProjectActivity struct {
-	MilestoneID   *string `json:"milestoneID,omitempty"`
-	MilestoneName *string `json:"milestoneName,omitempty"`
-	TaskID        *string `json:"taskID,omitempty"`
-	TaskName      *string `json:"taskName,omitempty"`
-	ResourceID    *string `json:"resourceID,omitempty"`
-	ResourceName  *string `json:"resourceName,omitempty"`
-	HoursSpent    *int    `json:"hoursSpent,omitempty"`
+	MilestoneID   *string   `json:"milestoneID,omitempty"`
+	MilestoneName *string   `json:"milestoneName,omitempty"`
+	TaskID        *string   `json:"taskID,omitempty"`
+	TaskName      *string   `json:"taskName,omitempty"`
+	ResourceID    *string   `json:"resourceID,omitempty"`
+	Resource      *Resource `json:"resource,omitempty"`
+	HoursSpent    *int      `json:"hoursSpent,omitempty"`
 }
 
 type ProjectActivityWeek struct {
@@ -313,9 +313,9 @@ type ProjectResults struct {
 type ProjectSchedule struct {
 	ProjectName          string                 `json:"projectName"`
 	ProjectID            string                 `json:"projectID"`
-	Begin                time.Time              `json:"begin"`
-	End                  time.Time              `json:"end"`
-	ProjectActivityWeeks []*ProjectActivityWeek `json:"projectActivityWeeks"`
+	Begin                *time.Time             `json:"begin,omitempty"`
+	End                  *time.Time             `json:"end,omitempty"`
+	ProjectActivityWeeks []*ProjectActivityWeek `json:"projectActivityWeeks,omitempty"`
 	Exceptions           []*ScheduleException   `json:"exceptions,omitempty"`
 }
 

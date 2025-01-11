@@ -2,9 +2,9 @@
 type ProjectSchedule {
     projectName: String!
     projectID: String!
-    begin: Time!
-    end: Time!
-    projectActivityWeeks: [ProjectActivityWeek!]!
+    begin: Time
+    end: Time
+    projectActivityWeeks: [ProjectActivityWeek!]
     exceptions: [ScheduleException!]
 }
 
@@ -22,7 +22,7 @@ type ProjectActivity {
 	taskID: String
 	taskName: String
 	resourceID: String
-	resourceName: String
+    resource: Resource
 	hoursSpent: Int
 }
 

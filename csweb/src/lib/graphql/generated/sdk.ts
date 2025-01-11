@@ -392,8 +392,8 @@ export type ProjectActivity = {
   hoursSpent?: Maybe<Scalars['Int']['output']>;
   milestoneID?: Maybe<Scalars['String']['output']>;
   milestoneName?: Maybe<Scalars['String']['output']>;
+  resource?: Maybe<Resource>;
   resourceID?: Maybe<Scalars['String']['output']>;
-  resourceName?: Maybe<Scalars['String']['output']>;
   taskID?: Maybe<Scalars['String']['output']>;
   taskName?: Maybe<Scalars['String']['output']>;
 };
@@ -504,10 +504,10 @@ export type ProjectResults = {
 
 export type ProjectSchedule = {
   __typename?: 'ProjectSchedule';
-  begin: Scalars['Time']['output'];
-  end: Scalars['Time']['output'];
+  begin?: Maybe<Scalars['Time']['output']>;
+  end?: Maybe<Scalars['Time']['output']>;
   exceptions?: Maybe<Array<ScheduleException>>;
-  projectActivityWeeks: Array<ProjectActivityWeek>;
+  projectActivityWeeks?: Maybe<Array<ProjectActivityWeek>>;
   projectID: Scalars['String']['output'];
   projectName: Scalars['String']['output'];
 };
@@ -1018,6 +1018,7 @@ export const ResourceFragmentFragmentDoc = gql`
   type
   status
   createdAt
+  availableHoursPerWeek
   skills {
     id
     name
@@ -1143,13 +1144,15 @@ export const ScheduleFragmentFragmentDoc = gql`
       activities {
         taskName
         resourceID
-        resourceName
+        resource {
+          ...resourceFragment
+        }
         hoursSpent
       }
     }
   }
 }
-    `;
+    ${ResourceFragmentFragmentDoc}`;
 export const FindActivityDocument = gql`
     query findActivity($input: PageAndFilter!) {
   findActivity(pageAndFilter: $input) {

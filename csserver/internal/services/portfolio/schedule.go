@@ -4,6 +4,7 @@ import (
 	"context"
 	"csserver/internal/calendar"
 	"csserver/internal/services/project"
+	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/resource"
 	"fmt"
 	"time"
@@ -13,9 +14,21 @@ import (
 
 // ScheduleProject create a schedule for a single project "in a vacuum"
 func (service *PortfolioService) ScheduleProject(ctx context.Context, p *project.Project, startDate time.Time) (ProjectSchedule, error) {
+	ps := ProjectSchedule{
+		ProjectID:   p.ID,
+		ProjectName: p.ProjectBasics.Name,
+	}
+
 	rm, err := service.GetResourceMap(ctx)
 	if err != nil {
-		return ProjectSchedule{}, err
+		ps.Exceptions = append(ps.Exceptions, newScheduleException("global:resources", err.Error()))
+		return ps, err
+	}
+
+	exceptions := validateProjectForScheduling(*p, rm)
+	if len(exceptions) > 0 {
+		ps.Exceptions = append(ps.Exceptions, exceptions...)
+		return ps, nil
 	}
 
 	return scheduleProject(p, startDate, rm)
@@ -187,4 +200,43 @@ func getResourceHoursForWeek(rm map[string]resource.Resource, week calendar.CSWe
 	}
 
 	return outMap
+}
+
+func newScheduleException(scope, msg string) ScheduleException {
+	return ScheduleException{
+		Scope:   scope,
+		Message: msg,
+	}
+}
+
+func validateProjectForScheduling(p project.Project, rm map[string]resource.Resource) []ScheduleException {
+	out := []ScheduleException{}
+
+	for _, m := range p.ProjectMilestones {
+		for _, t := range m.Tasks {
+			//---no need to validate removed tasks
+			if t.Status == milestonestatus.Removed {
+				continue
+			}
+
+			//---tasks require a skill and resources to be assigned
+			if len(t.RequiredSkillID) == 0 {
+				out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' does not have a skill assigned", t.Name)))
+			}
+			if len(t.ResourceIDs) == 0 {
+				out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' has no assigned resources", t.Name)))
+			}
+
+			for _, rss := range t.ResourceIDs {
+				resource := rm[rss]
+				skill := resource.GetSkill(t.RequiredSkillID)
+
+				if skill == nil {
+					out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' resoure, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID)))
+				}
+			}
+		}
+	}
+
+	return out
 }

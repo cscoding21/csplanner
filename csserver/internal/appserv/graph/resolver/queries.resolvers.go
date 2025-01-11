@@ -110,6 +110,7 @@ func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID 
 	}
 
 	schIdl := csmap.ProjectSchedulePortfolioToIdl(schedule)
+	augment.AugmentSchedule(&schIdl)
 
 	out := idl.ProjectScheduleResult{
 		Schedule: &schIdl,
