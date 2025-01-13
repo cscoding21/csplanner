@@ -493,8 +493,10 @@ var testOrganization = organization.Organization{
 }
 
 // GetTestProject return a deep copy of a project graph for testing
-func GetTestProject() project.Project {
+func GetTestProject(name string) project.Project {
 	proj, err := utils.DeepCopy[project.Project](testProject)
+	proj.ProjectBasics.Name = name
+	proj.ID = name
 	if err != nil {
 		panic(err)
 	}
@@ -503,8 +505,10 @@ func GetTestProject() project.Project {
 }
 
 // GetTestProject return a deep copy of a project graph for testing
-func GetTestProject2() project.Project {
+func GetTestProject2(name string) project.Project {
 	proj, err := utils.DeepCopy[project.Project](updateProject)
+	proj.ProjectBasics.Name = name
+	proj.ID = name
 	if err != nil {
 		panic(err)
 	}

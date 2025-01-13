@@ -9,6 +9,18 @@ type CSWeek struct {
 	WeekNumber int
 }
 
+func (c *CSWeek) Before(week CSWeek) bool {
+	return week.Begin.Before(c.Begin)
+}
+
+func (c *CSWeek) After(week CSWeek) bool {
+	return week.Begin.After(c.Begin)
+}
+
+func (c *CSWeek) Equal(week CSWeek) bool {
+	return week.Begin.Equal(c.Begin)
+}
+
 // GetWeeks return a slice of weeks based on the passed in date range
 func GetWeeks(start, end time.Time) []CSWeek {
 	var weeks []CSWeek

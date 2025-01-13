@@ -148,8 +148,11 @@ func scheduleProject(p *project.Project, startDate time.Time, rm map[string]reso
 		}
 	}
 
-	schedule.End = weeks[len(weeks)-1].End
 	schedule.ProjectActivityWeeks = weeks
+
+	if len(weeks) > 0 {
+		schedule.End = weeks[len(weeks)-1].End
+	}
 
 	return schedule, nil
 }

@@ -11,11 +11,19 @@ type Portfolio struct {
 	Schedule []ProjectSchedule
 }
 
-func (p *Portfolio) GetDateRange() (time.Time, time.Time) {
+func (p *Portfolio) GetDateRange() (*time.Time, *time.Time) {
 	start := time.Now().AddDate(10, 0, 0)
 	end := start.AddDate(-10, 0, 0)
 
+	if len(p.Schedule) == 0 {
+		return nil, nil
+	}
+
 	for _, s := range p.Schedule {
+		if len(s.ProjectActivityWeeks) == 0 {
+			continue
+		}
+
 		if s.ProjectActivityWeeks[0].Begin.Before(start) {
 			start = s.ProjectActivityWeeks[0].Begin
 		}
@@ -25,7 +33,7 @@ func (p *Portfolio) GetDateRange() (time.Time, time.Time) {
 		}
 	}
 
-	return start, end
+	return &start, &end
 }
 
 type ResourceUtilizationTable struct {

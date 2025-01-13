@@ -26,7 +26,7 @@ func TestScheduleProject(t *testing.T) {
 		// {taskID: "task:6"}, //---this task can't be scheduled due to no resource assignment
 	}
 
-	proj := getTestProjectWithCalcsDone()
+	proj := getTestProjectWithCalcsDone("project:1")
 	rm := getResourceMap()
 
 	for _, m := range proj.ProjectMilestones {
@@ -81,7 +81,7 @@ func TestScheduleProject(t *testing.T) {
 }
 
 func TestGetScheduleItems(t *testing.T) {
-	proj := getTestProjectWithCalcsDone()
+	proj := getTestProjectWithCalcsDone("project:1")
 	expectedLength := 2
 
 	items := getScheduleItems(&proj)
@@ -103,8 +103,18 @@ func TestGetResourceHoursForWeek(t *testing.T) {
 	}
 }
 
-func getTestProjectWithCalcsDone() project.Project {
-	proj := GetTestProject2()
+func getTestProjectWithCalcsDone(name string) project.Project {
+	proj := GetTestProject2(name)
+	rm := getResourceMap()
+	org := GetTestOrganization()
+
+	proj.CalculateProjectTasksStats(org, rm)
+
+	return proj
+}
+
+func getTestProjectWithCalcsDone2(name string) project.Project {
+	proj := GetTestProject(name)
 	rm := getResourceMap()
 	org := GetTestOrganization()
 
