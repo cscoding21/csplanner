@@ -113,16 +113,6 @@ func getTestProjectWithCalcsDone(name string) project.Project {
 	return proj
 }
 
-func getTestProjectWithCalcsDone2(name string) project.Project {
-	proj := GetTestProject(name)
-	rm := getResourceMap()
-	org := GetTestOrganization()
-
-	proj.CalculateProjectTasksStats(org, rm)
-
-	return proj
-}
-
 func getResourceMap() map[string]resource.Resource {
 	resources := GetTestResources()
 	return ConvertResourceSliceToMap(resources)

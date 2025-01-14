@@ -63,6 +63,7 @@ type ProjectSchedule struct {
 	End                  time.Time
 	ProjectActivityWeeks []*ProjectActivityWeek
 	Exceptions           []ScheduleException
+	Hash                 uint64 `hash:"ignore"`
 }
 
 type ProjectActivityWeek struct {

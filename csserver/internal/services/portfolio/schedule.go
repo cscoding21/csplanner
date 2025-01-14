@@ -3,6 +3,7 @@ package portfolio
 import (
 	"context"
 	"csserver/internal/calendar"
+	"csserver/internal/hashstructure"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/resource"
@@ -153,6 +154,13 @@ func scheduleProject(p *project.Project, startDate time.Time, rm map[string]reso
 	if len(weeks) > 0 {
 		schedule.End = weeks[len(weeks)-1].End
 	}
+
+	hash, err := hashstructure.Hash(schedule, hashstructure.FormatV2, nil)
+	if err != nil {
+		//---TODO: figure this out
+	}
+
+	schedule.Hash = hash
 
 	return schedule, nil
 }
