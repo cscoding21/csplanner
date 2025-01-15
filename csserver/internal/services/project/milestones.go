@@ -53,7 +53,7 @@ func (s *ProjectService) UpdateProjectTask(ctx context.Context, projectID string
 	}
 
 	//---DO THE UPDATE
-	updatedProject := updateTaskFromProjectGraph(*project, milestoneID, task)
+	updatedProject := UpdateTaskFromProjectGraph(*project, milestoneID, task)
 	s.CalculateProjectMilestoneStats(&updatedProject)
 
 	pro, err := s.UpdateProject(ctx, &updatedProject)
@@ -61,7 +61,7 @@ func (s *ProjectService) UpdateProjectTask(ctx context.Context, projectID string
 }
 
 // updateTaskFromProjectGraph if the milestone exists in the project object graph...update the specified task.  Otherwise, add the task
-func updateTaskFromProjectGraph(project Project, milestoneID string, task ProjectMilestoneTask) Project {
+func UpdateTaskFromProjectGraph(project Project, milestoneID string, task ProjectMilestoneTask) Project {
 	//---DO THE UPDATE
 	for i, m := range project.ProjectMilestones {
 		log.Infof("Looping project milestone %s", *m.ID)

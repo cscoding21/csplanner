@@ -1,18 +1,17 @@
-package project
+package project_test
 
 import (
 	"testing"
 
+	"csserver/internal/services/project"
+	"csserver/internal/testobjects"
 	"csserver/internal/utils"
 
 	log "github.com/sirupsen/logrus"
 )
 
 func TestUpdateProjectTask(t *testing.T) {
-	proj, err := utils.DeepCopy[Project](testProject)
-	if err != nil {
-		t.Error(err)
-	}
+	proj := testobjects.GetTestProject("project:1")
 
 	for i := range proj.ProjectMilestones {
 		log.Infof("%v - %s", *proj.ProjectMilestones[i].ID, proj.ProjectMilestones[i].Phase.Name)
@@ -21,7 +20,7 @@ func TestUpdateProjectTask(t *testing.T) {
 		}
 	}
 
-	updatedProject := updateTaskFromProjectGraph(*proj, "milestone:1", ProjectMilestoneTask{
+	updatedProject := project.UpdateTaskFromProjectGraph(proj, "milestone:1", project.ProjectMilestoneTask{
 		ID:           utils.ValToRef("task:1"),
 		HourEstimate: 30,
 		Name:         "Updated Project Task",
@@ -41,10 +40,7 @@ func TestUpdateProjectTask(t *testing.T) {
 }
 
 func TestAddProjectTask(t *testing.T) {
-	proj, err := utils.DeepCopy[Project](testProject)
-	if err != nil {
-		t.Error(err)
-	}
+	proj := testobjects.GetTestProject("project:1")
 
 	expectedCount := len(proj.ProjectMilestones[0].Tasks) + 1
 
@@ -55,7 +51,7 @@ func TestAddProjectTask(t *testing.T) {
 		}
 	}
 
-	updatedProject := updateTaskFromProjectGraph(*proj, "milestone:1", ProjectMilestoneTask{
+	updatedProject := project.UpdateTaskFromProjectGraph(proj, "milestone:1", project.ProjectMilestoneTask{
 		HourEstimate: 30,
 		Name:         "Added Project Task",
 		Status:       "accepted",

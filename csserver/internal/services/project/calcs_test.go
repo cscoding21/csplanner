@@ -1,7 +1,8 @@
-package project
+package project_test
 
 import (
-	"csserver/internal/services/resource"
+	"csserver/internal/services/project"
+	"csserver/internal/testobjects"
 	"testing"
 )
 
@@ -27,15 +28,14 @@ func TestCalculateStatsForTask(t *testing.T) {
 		{milestoneIndex: 1, taskIndex: 1, expectedSkillsHours: 0, expectedCommsHours: 0, expectedActualHours: 40, expectedExceptions: 1},
 	}
 
-	proj := GetTestProject()
-	resources := GetTestResources()
-	org := GetTestOrganization()
-	rm := ConvertResourceSliceToMap(resources)
+	proj := testobjects.GetTestProject("project:1")
+	rm := testobjects.GetResourceMap()
+	org := testobjects.GetTestOrganization()
 
 	for _, tc := range testCases {
 		task := proj.ProjectMilestones[tc.milestoneIndex].Tasks[tc.taskIndex]
 
-		calculateStatsForTask(task, org, rm)
+		project.CalculateStatsForTask(task, org, rm)
 
 		if task.Calculated.SkillsHourAdjustment != tc.expectedSkillsHours {
 			t.Errorf("expected skills hours value not correct.  want %v - got %v", tc.expectedSkillsHours, task.Calculated.SkillsHourAdjustment)
@@ -57,13 +57,4 @@ func TestCalculateStatsForTask(t *testing.T) {
 			t.Errorf("actualized hours do not equal sum of estimate + skills adjustment + comms adjustment")
 		}
 	}
-}
-
-func ConvertResourceSliceToMap(resources []resource.Resource) map[string]resource.Resource {
-	m := make(map[string]resource.Resource)
-	for _, r := range resources {
-		m[r.ID] = r
-	}
-
-	return m
 }

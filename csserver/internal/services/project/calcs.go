@@ -126,12 +126,12 @@ func (s *ProjectService) CalculateProjectMilestoneStats(p *Project) {
 func (p *Project) CalculateProjectTasksStats(orgSettings organization.Organization, resources map[string]resource.Resource) {
 	for i, m := range p.ProjectMilestones {
 		for j := range m.Tasks {
-			calculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources)
+			CalculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources)
 		}
 	}
 }
 
-func calculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources map[string]resource.Resource) {
+func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources map[string]resource.Resource) {
 	exceptions := []string{}
 	baseHoursEstimate := task.HourEstimate
 	commsAdjustedHours := 0
