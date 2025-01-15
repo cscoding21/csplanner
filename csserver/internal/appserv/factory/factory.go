@@ -16,6 +16,7 @@ import (
 	"csserver/internal/services/project"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
+	"csserver/internal/services/schedule"
 	"fmt"
 	"sync"
 
@@ -222,6 +223,18 @@ func GetResourceService() *resource.ResourceService {
 	}
 
 	return resource.NewResourceService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetScheduleService return a schedule service instance
+func GetScheduleService() *schedule.ScheduleService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return schedule.NewScheduleService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
 // GetIAMAdminService get user service instance

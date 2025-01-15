@@ -2,7 +2,7 @@ package augment
 
 import "csserver/internal/appserv/graph/idl"
 
-func AugmentSchedule(schedule *idl.ProjectSchedule) {
+func AugmentSchedule(schedule *idl.Schedule) {
 	resourceList := findResources()
 
 	for i, week := range schedule.ProjectActivityWeeks {

@@ -1,253 +1,240 @@
 package portfolio
 
-import (
-	"context"
-	"csserver/internal/calendar"
-	"csserver/internal/hashstructure"
-	"csserver/internal/services/project"
-	"csserver/internal/services/project/ptypes/milestonestatus"
-	"csserver/internal/services/resource"
-	"fmt"
-	"time"
+// // ScheduleProject create a schedule for a single project "in a vacuum"
+// func (service *PortfolioService) ScheduleProject(ctx context.Context, p *project.Project, startDate time.Time) (Schedule, error) {
+// 	ps := Schedule{
+// 		ProjectID:   p.ID,
+// 		ProjectName: p.ProjectBasics.Name,
+// 	}
 
-	"github.com/google/uuid"
-)
+// 	rm, err := service.GetResourceMap(ctx)
+// 	if err != nil {
+// 		ps.Exceptions = append(ps.Exceptions, newScheduleException("global:resources", err.Error()))
+// 		return ps, err
+// 	}
 
-// ScheduleProject create a schedule for a single project "in a vacuum"
-func (service *PortfolioService) ScheduleProject(ctx context.Context, p *project.Project, startDate time.Time) (ProjectSchedule, error) {
-	ps := ProjectSchedule{
-		ProjectID:   p.ID,
-		ProjectName: p.ProjectBasics.Name,
-	}
+// 	exceptions := validateProjectForScheduling(*p, rm)
+// 	if len(exceptions) > 0 {
+// 		ps.Exceptions = append(ps.Exceptions, exceptions...)
+// 		return ps, nil
+// 	}
 
-	rm, err := service.GetResourceMap(ctx)
-	if err != nil {
-		ps.Exceptions = append(ps.Exceptions, newScheduleException("global:resources", err.Error()))
-		return ps, err
-	}
+// 	return scheduleProject(p, startDate, rm)
+// }
 
-	exceptions := validateProjectForScheduling(*p, rm)
-	if len(exceptions) > 0 {
-		ps.Exceptions = append(ps.Exceptions, exceptions...)
-		return ps, nil
-	}
+// func scheduleProject(p *project.Project, startDate time.Time, rm map[string]resource.Resource) (Schedule, error) {
+// 	schedule := Schedule{
+// 		ProjectID:   p.ID,
+// 		ProjectName: p.ProjectBasics.Name,
+// 	}
+// 	if len(p.ProjectMilestones) == 0 {
+// 		return schedule, nil
+// 	}
 
-	return scheduleProject(p, startDate, rm)
-}
+// 	p.ProjectBasics.StartDate = &startDate
 
-func scheduleProject(p *project.Project, startDate time.Time, rm map[string]resource.Resource) (ProjectSchedule, error) {
-	schedule := ProjectSchedule{
-		ProjectID:   p.ID,
-		ProjectName: p.ProjectBasics.Name,
-	}
-	if len(p.ProjectMilestones) == 0 {
-		return schedule, nil
-	}
+// 	batches := getScheduleItems(p)
+// 	currentWeek := calendar.GetWeek(startDate)
+// 	schedule.Begin = currentWeek.Begin
+// 	weeks := []*ProjectActivityWeek{}
 
-	p.ProjectBasics.StartDate = &startDate
+// 	resourceHoursForWeek := getResourceHoursForWeek(rm, currentWeek)
+// 	exceptionsCreated := make(map[string]string)
+// 	thingCount := 0
 
-	batches := getScheduleItems(p)
-	currentWeek := calendar.GetWeek(startDate)
-	schedule.Begin = currentWeek.Begin
-	weeks := []*ProjectActivityWeek{}
+// 	activities := []ProjectActivity{}
 
-	resourceHoursForWeek := getResourceHoursForWeek(rm, currentWeek)
-	exceptionsCreated := make(map[string]string)
-	thingCount := 0
+// 	for bi, batch := range batches {
+// 		hoursToCompleteBatch := batch.HoursToComplete
 
-	activities := []ProjectActivity{}
+// 		for hoursToCompleteBatch > 0 {
+// 			//---safety check
+// 			if thingCount > 100 {
+// 				msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", "schedule:overflow")
 
-	for bi, batch := range batches {
-		hoursToCompleteBatch := batch.HoursToComplete
+// 				schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
+// 					Scope:   "schedule:overflow",
+// 					Message: "for loop did not terminate",
+// 				})
 
-		for hoursToCompleteBatch > 0 {
-			//---safety check
-			if thingCount > 100 {
-				msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", "schedule:overflow")
+// 				exceptionsCreated["schedule:overflow"] = msg
 
-				schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
-					Scope:   "schedule:overflow",
-					Message: "for loop did not terminate",
-				})
+// 				break
+// 			}
 
-				exceptionsCreated["schedule:overflow"] = msg
+// 			for ti, task := range batch.ScheduleItems {
+// 				if len(task.ResourceIDs) == 0 {
+// 					_, ok := exceptionsCreated[task.TaskID]
+// 					if ok {
+// 						continue
+// 					}
 
-				break
-			}
+// 					msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", task.TaskName)
 
-			for ti, task := range batch.ScheduleItems {
-				if len(task.ResourceIDs) == 0 {
-					_, ok := exceptionsCreated[task.TaskID]
-					if ok {
-						continue
-					}
+// 					//---this task cannot be scheduled.  remove from hours to schedule and
+// 					//	 log and exception
+// 					hoursToCompleteBatch -= task.HoursToSchedule
+// 					schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
+// 						Scope:   task.TaskID,
+// 						Message: msg,
+// 					})
 
-					msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", task.TaskName)
+// 					exceptionsCreated[task.TaskID] = msg
+// 				}
+// 				for _, resourceID := range task.ResourceIDs {
+// 					if batches[bi].ScheduleItems[ti].HoursToSchedule == batches[bi].ScheduleItems[ti].HoursScheduled {
+// 						//---task is complete...continue
+// 						continue
+// 					}
 
-					//---this task cannot be scheduled.  remove from hours to schedule and
-					//	 log and exception
-					hoursToCompleteBatch -= task.HoursToSchedule
-					schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
-						Scope:   task.TaskID,
-						Message: msg,
-					})
+// 					hoursToAllocate := resourceHoursForWeek[resourceID]
 
-					exceptionsCreated[task.TaskID] = msg
-				}
-				for _, resourceID := range task.ResourceIDs {
-					if batches[bi].ScheduleItems[ti].HoursToSchedule == batches[bi].ScheduleItems[ti].HoursScheduled {
-						//---task is complete...continue
-						continue
-					}
+// 					if hoursToAllocate > batch.ScheduleItems[ti].HoursToSchedule {
+// 						hoursToAllocate = batch.ScheduleItems[ti].HoursToSchedule
+// 					}
 
-					hoursToAllocate := resourceHoursForWeek[resourceID]
+// 					if hoursToAllocate <= 0 {
+// 						continue
+// 					}
 
-					if hoursToAllocate > batch.ScheduleItems[ti].HoursToSchedule {
-						hoursToAllocate = batch.ScheduleItems[ti].HoursToSchedule
-					}
+// 					batches[bi].ScheduleItems[ti].HoursToSchedule -= hoursToAllocate
+// 					batches[bi].ScheduleItems[ti].HoursScheduled += hoursToAllocate
+// 					resourceHoursForWeek[resourceID] -= hoursToAllocate
 
-					if hoursToAllocate <= 0 {
-						continue
-					}
+// 					activity := ProjectActivity{
+// 						ProjectID:     p.ID,
+// 						ProjectName:   p.ProjectBasics.Name,
+// 						ResourceID:    resourceID,
+// 						ResourceName:  rm[resourceID].Name,
+// 						TaskID:        task.TaskID,
+// 						TaskName:      task.TaskName,
+// 						MilestoneID:   task.MilestoneID,
+// 						MilestoneName: task.MilestoneName,
+// 						HoursSpent:    hoursToAllocate,
+// 					}
 
-					batches[bi].ScheduleItems[ti].HoursToSchedule -= hoursToAllocate
-					batches[bi].ScheduleItems[ti].HoursScheduled += hoursToAllocate
-					resourceHoursForWeek[resourceID] -= hoursToAllocate
+// 					activities = append(activities, activity)
+// 					hoursToCompleteBatch -= hoursToAllocate
+// 				}
+// 			}
 
-					activity := ProjectActivity{
-						ProjectID:     p.ID,
-						ProjectName:   p.ProjectBasics.Name,
-						ResourceID:    resourceID,
-						ResourceName:  rm[resourceID].Name,
-						TaskID:        task.TaskID,
-						TaskName:      task.TaskName,
-						MilestoneID:   task.MilestoneID,
-						MilestoneName: task.MilestoneName,
-						HoursSpent:    hoursToAllocate,
-					}
+// 			//---log activities for week
+// 			weeks = append(weeks, &ProjectActivityWeek{
+// 				WeekNumber: currentWeek.WeekNumber,
+// 				Year:       currentWeek.Year,
+// 				Begin:      currentWeek.Begin,
+// 				End:        currentWeek.End,
+// 				Activities: activities,
+// 			})
 
-					activities = append(activities, activity)
-					hoursToCompleteBatch -= hoursToAllocate
-				}
-			}
+// 			//---start next week
+// 			currentWeek = calendar.GetNextWeek(currentWeek)
+// 			activities = []ProjectActivity{}
+// 			resourceHoursForWeek = getResourceHoursForWeek(rm, currentWeek)
 
-			//---log activities for week
-			weeks = append(weeks, &ProjectActivityWeek{
-				WeekNumber: currentWeek.WeekNumber,
-				Year:       currentWeek.Year,
-				Begin:      currentWeek.Begin,
-				End:        currentWeek.End,
-				Activities: activities,
-			})
+// 			thingCount++
+// 		}
+// 	}
 
-			//---start next week
-			currentWeek = calendar.GetNextWeek(currentWeek)
-			activities = []ProjectActivity{}
-			resourceHoursForWeek = getResourceHoursForWeek(rm, currentWeek)
+// 	schedule.ProjectActivityWeeks = weeks
 
-			thingCount++
-		}
-	}
+// 	if len(weeks) > 0 {
+// 		schedule.End = weeks[len(weeks)-1].End
+// 	}
 
-	schedule.ProjectActivityWeeks = weeks
+// 	hash, err := hashstructure.Hash(schedule, hashstructure.FormatV2, nil)
+// 	if err != nil {
+// 		//---TODO: figure this out
+// 	}
 
-	if len(weeks) > 0 {
-		schedule.End = weeks[len(weeks)-1].End
-	}
+// 	schedule.Hash = hash
 
-	hash, err := hashstructure.Hash(schedule, hashstructure.FormatV2, nil)
-	if err != nil {
-		//---TODO: figure this out
-	}
+// 	return schedule, nil
+// }
 
-	schedule.Hash = hash
+// func getScheduleItems(p *project.Project) []ScheduleBatch {
+// 	sb := []ScheduleBatch{}
+// 	order := 0
 
-	return schedule, nil
-}
+// 	for _, m := range p.ProjectMilestones {
+// 		order++
+// 		batch := ScheduleBatch{
+// 			Order:         order,
+// 			BatchID:       uuid.New(),
+// 			ScheduleItems: []ScheduleWorkspace{},
+// 		}
 
-func getScheduleItems(p *project.Project) []ScheduleBatch {
-	sb := []ScheduleBatch{}
-	order := 0
+// 		hoursToComplete := 0
 
-	for _, m := range p.ProjectMilestones {
-		order++
-		batch := ScheduleBatch{
-			Order:         order,
-			BatchID:       uuid.New(),
-			ScheduleItems: []ScheduleWorkspace{},
-		}
+// 		for _, t := range m.Tasks {
+// 			workspace := ScheduleWorkspace{
+// 				MilestoneID:     *m.ID,
+// 				MilestoneName:   m.Phase.Name,
+// 				TaskID:          *t.ID,
+// 				TaskName:        t.Name,
+// 				ResourceIDs:     t.ResourceIDs,
+// 				HoursToSchedule: t.Calculated.ActualizedHoursToComplete,
+// 				HoursScheduled:  0,
+// 			}
 
-		hoursToComplete := 0
+// 			hoursToComplete += t.Calculated.ActualizedHoursToComplete
 
-		for _, t := range m.Tasks {
-			workspace := ScheduleWorkspace{
-				MilestoneID:     *m.ID,
-				MilestoneName:   m.Phase.Name,
-				TaskID:          *t.ID,
-				TaskName:        t.Name,
-				ResourceIDs:     t.ResourceIDs,
-				HoursToSchedule: t.Calculated.ActualizedHoursToComplete,
-				HoursScheduled:  0,
-			}
+// 			batch.ScheduleItems = append(batch.ScheduleItems, workspace)
+// 		}
 
-			hoursToComplete += t.Calculated.ActualizedHoursToComplete
+// 		batch.HoursToComplete = hoursToComplete
 
-			batch.ScheduleItems = append(batch.ScheduleItems, workspace)
-		}
+// 		sb = append(sb, batch)
+// 	}
 
-		batch.HoursToComplete = hoursToComplete
+// 	return sb
+// }
 
-		sb = append(sb, batch)
-	}
+// func getResourceHoursForWeek(rm map[string]resource.Resource, week calendar.CSWeek) map[string]int {
+// 	outMap := make(map[string]int)
 
-	return sb
-}
+// 	for k, v := range rm {
+// 		outMap[k] = v.AvailableHoursPerWeek
+// 	}
 
-func getResourceHoursForWeek(rm map[string]resource.Resource, week calendar.CSWeek) map[string]int {
-	outMap := make(map[string]int)
+// 	return outMap
+// }
 
-	for k, v := range rm {
-		outMap[k] = v.AvailableHoursPerWeek
-	}
+// func newScheduleException(scope, msg string) ScheduleException {
+// 	return ScheduleException{
+// 		Scope:   scope,
+// 		Message: msg,
+// 	}
+// }
 
-	return outMap
-}
+// func validateProjectForScheduling(p project.Project, rm map[string]resource.Resource) []ScheduleException {
+// 	out := []ScheduleException{}
 
-func newScheduleException(scope, msg string) ScheduleException {
-	return ScheduleException{
-		Scope:   scope,
-		Message: msg,
-	}
-}
+// 	for _, m := range p.ProjectMilestones {
+// 		for _, t := range m.Tasks {
+// 			//---no need to validate removed tasks
+// 			if t.Status == milestonestatus.Removed {
+// 				continue
+// 			}
 
-func validateProjectForScheduling(p project.Project, rm map[string]resource.Resource) []ScheduleException {
-	out := []ScheduleException{}
+// 			//---tasks require a skill and resources to be assigned
+// 			if len(t.RequiredSkillID) == 0 {
+// 				out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' does not have a skill assigned", t.Name)))
+// 			}
+// 			if len(t.ResourceIDs) == 0 {
+// 				out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' has no assigned resources", t.Name)))
+// 			}
 
-	for _, m := range p.ProjectMilestones {
-		for _, t := range m.Tasks {
-			//---no need to validate removed tasks
-			if t.Status == milestonestatus.Removed {
-				continue
-			}
+// 			for _, rss := range t.ResourceIDs {
+// 				resource := rm[rss]
+// 				skill := resource.GetSkill(t.RequiredSkillID)
 
-			//---tasks require a skill and resources to be assigned
-			if len(t.RequiredSkillID) == 0 {
-				out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' does not have a skill assigned", t.Name)))
-			}
-			if len(t.ResourceIDs) == 0 {
-				out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' has no assigned resources", t.Name)))
-			}
+// 				if skill == nil {
+// 					out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' resoure, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID)))
+// 				}
+// 			}
+// 		}
+// 	}
 
-			for _, rss := range t.ResourceIDs {
-				resource := rm[rss]
-				skill := resource.GetSkill(t.RequiredSkillID)
-
-				if skill == nil {
-					out = append(out, newScheduleException(*t.ID, fmt.Sprintf("Task '%s' resoure, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID)))
-				}
-			}
-		}
-	}
-
-	return out
-}
+// 	return out
+// }

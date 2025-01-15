@@ -3,7 +3,7 @@ package tests
 import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
-	"csserver/internal/services/portfolio"
+	"csserver/internal/services/schedule"
 	"fmt"
 	"testing"
 	"time"
@@ -13,32 +13,26 @@ func init() {
 	config.InitConfig()
 }
 
-func TestPortfolioGetResourceUtilizationTable(t *testing.T) {
-	service := factory.GetPortfolioService()
-	ctx := getTestContext()
-
-	table, err := service.GetResourceUtilizationTable(ctx)
-	if err != nil {
-		t.Error(err)
-	}
-
-	t.Log(table)
-}
-
 func TestGetSchedule(t *testing.T) {
-	portfolioService := factory.GetPortfolioService()
+	scheduleService := factory.GetScheduleService()
 	projectService := factory.GetProjectService()
+	resourceService := factory.GetResourceService()
 
 	ctx := getTestContext()
 	pid := "project:1"
 	startDate := time.Now()
+
+	rm, err := resourceService.GetResourceMap(ctx, true)
+	if err != nil {
+		t.Error(err)
+	}
 
 	proj, err := projectService.GetProjectByID(ctx, pid)
 	if err != nil {
 		t.Error(err)
 	}
 
-	result, err := portfolioService.ScheduleProject(ctx, proj, startDate)
+	result, err := scheduleService.ScheduleProject(ctx, proj, startDate, rm)
 	if err != nil {
 		t.Error(err)
 	}
@@ -46,7 +40,7 @@ func TestGetSchedule(t *testing.T) {
 	drawResult(result)
 }
 
-func drawResult(result portfolio.ProjectSchedule) {
+func drawResult(result schedule.Schedule) {
 	fmt.Printf("%s (%s)\n", result.ProjectName, result.ProjectID)
 	fmt.Printf("%v - %v\n", result.Begin.Format("2006-01-02"), result.End.Format("2006-01-02"))
 

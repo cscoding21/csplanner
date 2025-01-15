@@ -1,6 +1,7 @@
 package portfolio
 
 import (
+	"context"
 	"csserver/internal/calendar"
 	"csserver/internal/services/resource"
 	"fmt"
@@ -51,29 +52,34 @@ func (ram *ResourceAllocationMap) GetDistinctWeeksInFlatmap() []calendar.CSWeek 
 	return out
 }
 
-// GetResourceAllocationMap return a resource allocation map
-func GetResourceAllocationMap(
-	rm map[string]resource.Resource,
-	portfolio Portfolio) (ResourceAllocationMap, error) {
-
-	ram := ResourceAllocationMap{
-		Portfolio: portfolio,
-	}
-
-	flattened, err := flattenPortfolio(portfolio, rm)
-	if err != nil {
-		return ram, err
-	}
-
-	ram.WeekActivities = flattened
-
-	return ram, nil
+// GetResourceMap wrapper for the same method in the resource service
+func (service *PortfolioService) GetResourceMap(ctx context.Context) (map[string]resource.Resource, error) {
+	return service.ResourceService.GetResourceMap(ctx, false)
 }
 
-func flattenPortfolio(p Portfolio, rm map[string]resource.Resource) ([]ResourceProjectHourAllocation, error) {
+// GetResourceAllocationMap return a resource allocation map
+// func GetResourceAllocationMap(
+// 	rm map[string]resource.Resource,
+// 	portfolio Portfolio) (ResourceAllocationMap, error) {
+
+// 	ram := ResourceAllocationMap{
+// 		Portfolio: portfolio,
+// 	}
+
+// 	flattened, err := flattenPortfolio(portfolio, rm)
+// 	if err != nil {
+// 		return ram, err
+// 	}
+
+// 	ram.WeekActivities = flattened
+
+// 	return ram, nil
+// }
+
+func FlattenPortfolio(portfolio Portfolio, rm map[string]resource.Resource) ([]ResourceProjectHourAllocation, error) {
 	out := []ResourceProjectHourAllocation{}
 
-	for _, proj := range p.Schedule {
+	for _, proj := range portfolio.Schedule {
 		for _, week := range proj.ProjectActivityWeeks {
 			for _, act := range week.Activities {
 				resource, ok := rm[act.ResourceID]

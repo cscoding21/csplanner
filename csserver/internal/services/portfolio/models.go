@@ -1,14 +1,14 @@
 package portfolio
 
 import (
-	"csserver/internal/services/project/ptypes/projectstatus"
+	"csserver/internal/services/schedule"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type Portfolio struct {
-	Schedule []ProjectSchedule
+	Schedule []schedule.Schedule
 }
 
 func (p *Portfolio) GetDateRange() (*time.Time, *time.Time) {
@@ -36,27 +36,27 @@ func (p *Portfolio) GetDateRange() (*time.Time, *time.Time) {
 	return &start, &end
 }
 
-type ResourceUtilizationTable struct {
-	Resources []ResourceUtilizationItem `json:"resource_snapshot"`
-}
+// type ResourceUtilizationTable struct {
+// 	Resources []ResourceUtilizationItem `json:"resource_snapshot"`
+// }
 
-type ResourceUtilizationItem struct {
-	ProjectID          string                     `json:"project_id"`
-	ProjectName        string                     `json:"project_name"`
-	ProjectStatus      projectstatus.ProjectState `json:"project_status"`
-	MilestoneName      string                     `json:"milestone_name"`
-	MilestoneStartDate *time.Time                 `json:"milestone_start_date"`
-	MilestoneEndDate   *time.Time                 `json:"milestone_end_date"`
-	TaskName           string                     `json:"task_name"`
-	TaskStartDate      *time.Time                 `json:"task_start_date"`
-	TaskEndDate        *time.Time                 `json:"task_end_date"`
-	TaskHourEstimate   int                        `json:"task_hour_estimate"`
-	ResourceID         string                     `json:"resource_id"`
-	ResourceName       string                     `json:"resource_name"`
-	AllocationPercent  float64                    `json:"allocation_percent"`
-}
+// type ResourceUtilizationItem struct {
+// 	ProjectID          string                     `json:"project_id"`
+// 	ProjectName        string                     `json:"project_name"`
+// 	ProjectStatus      projectstatus.ProjectState `json:"project_status"`
+// 	MilestoneName      string                     `json:"milestone_name"`
+// 	MilestoneStartDate *time.Time                 `json:"milestone_start_date"`
+// 	MilestoneEndDate   *time.Time                 `json:"milestone_end_date"`
+// 	TaskName           string                     `json:"task_name"`
+// 	TaskStartDate      *time.Time                 `json:"task_start_date"`
+// 	TaskEndDate        *time.Time                 `json:"task_end_date"`
+// 	TaskHourEstimate   int                        `json:"task_hour_estimate"`
+// 	ResourceID         string                     `json:"resource_id"`
+// 	ResourceName       string                     `json:"resource_name"`
+// 	AllocationPercent  float64                    `json:"allocation_percent"`
+// }
 
-type ProjectSchedule struct {
+type Schedule struct {
 	ProjectID            string
 	ProjectName          string
 	Begin                time.Time

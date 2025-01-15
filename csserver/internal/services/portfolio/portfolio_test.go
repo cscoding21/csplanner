@@ -1,7 +1,9 @@
-package portfolio
+package portfolio_test
 
 import (
 	"csserver/internal/calendar"
+	"csserver/internal/services/portfolio"
+	"csserver/internal/services/schedule"
 	"fmt"
 	"testing"
 	"time"
@@ -20,17 +22,17 @@ func TestGetDateRange(t *testing.T) {
 	fmt.Println(end)
 }
 
-func getTestPortfolio() Portfolio {
-	p := Portfolio{}
+func getTestPortfolio() portfolio.Portfolio {
+	p := portfolio.Portfolio{}
 
-	sc := ProjectSchedule{ProjectID: "project:test", ProjectName: "test"}
+	sc := schedule.Schedule{ProjectID: "project:test", ProjectName: "test"}
 
 	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(2025, 3, 31, 0, 0, 0, 0, time.UTC)
 	weeks := calendar.GetWeeks(start, end)
 
 	for _, w := range weeks {
-		sc.ProjectActivityWeeks = append(sc.ProjectActivityWeeks, &ProjectActivityWeek{
+		sc.ProjectActivityWeeks = append(sc.ProjectActivityWeeks, &schedule.ProjectActivityWeek{
 			WeekNumber: w.WeekNumber,
 			Year:       w.Year,
 			Begin:      w.Begin,
@@ -45,7 +47,7 @@ func getTestPortfolio() Portfolio {
 	weeks = calendar.GetWeeks(start, end)
 
 	for _, w := range weeks {
-		sc.ProjectActivityWeeks = append(sc.ProjectActivityWeeks, &ProjectActivityWeek{
+		sc.ProjectActivityWeeks = append(sc.ProjectActivityWeeks, &schedule.ProjectActivityWeek{
 			WeekNumber: w.WeekNumber,
 			Year:       w.Year,
 			Begin:      w.Begin,

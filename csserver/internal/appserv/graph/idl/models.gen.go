@@ -310,17 +310,8 @@ type ProjectResults struct {
 	Results []*Project  `json:"results,omitempty"`
 }
 
-type ProjectSchedule struct {
-	ProjectName          string                 `json:"projectName"`
-	ProjectID            string                 `json:"projectID"`
-	Begin                *time.Time             `json:"begin,omitempty"`
-	End                  *time.Time             `json:"end,omitempty"`
-	ProjectActivityWeeks []*ProjectActivityWeek `json:"projectActivityWeeks,omitempty"`
-	Exceptions           []*ScheduleException   `json:"exceptions,omitempty"`
-}
-
 type ProjectScheduleResult struct {
-	Schedule *ProjectSchedule `json:"schedule"`
+	Schedule *Schedule `json:"schedule"`
 }
 
 type ProjectTaskCalculatedData struct {
@@ -396,6 +387,15 @@ type ResourceResults struct {
 
 type ResourceSnapshot struct {
 	ScheduledResources []*ScheduledResource `json:"scheduledResources"`
+}
+
+type Schedule struct {
+	ProjectName          string                 `json:"projectName"`
+	ProjectID            string                 `json:"projectID"`
+	Begin                *time.Time             `json:"begin,omitempty"`
+	End                  *time.Time             `json:"end,omitempty"`
+	ProjectActivityWeeks []*ProjectActivityWeek `json:"projectActivityWeeks,omitempty"`
+	Exceptions           []*ScheduleException   `json:"exceptions,omitempty"`
 }
 
 type ScheduleException struct {

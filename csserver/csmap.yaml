@@ -118,7 +118,7 @@ maps:
 
   
   - name: "schedule_target"
-    source_path: "internal/services/portfolio/models.go"
+    source_path: "internal/services/schedule/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
     - "csserver/internal/common"
