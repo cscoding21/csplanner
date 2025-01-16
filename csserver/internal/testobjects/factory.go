@@ -22,6 +22,16 @@ func GetTestProject(name string) project.Project {
 	return *proj
 }
 
+func GetTestProjectWithCalcsDone(name string) project.Project {
+	proj := GetTestProject(name)
+	rm := GetResourceMap()
+	org := GetTestOrganization()
+
+	proj.CalculateProjectTasksStats(org, rm)
+
+	return proj
+}
+
 // GetTestProject return a deep copy of a project graph for testing
 func GetTestUpdateProject(name string) project.Project {
 	proj, err := utils.DeepCopy[project.Project](updateProject)
@@ -34,7 +44,7 @@ func GetTestUpdateProject(name string) project.Project {
 	return *proj
 }
 
-func GetTestProjectWithCalcsDone(name string) project.Project {
+func GetTestUpdateProjectWithCalcsDone(name string) project.Project {
 	proj := GetTestUpdateProject(name)
 	rm := GetResourceMap()
 	org := GetTestOrganization()
@@ -83,11 +93,12 @@ func GetResourceMap() map[string]resource.Resource {
 // GetTestPortfolio return a portfolio of project schedule based on test projects
 func GetTestPortfolio() portfolio.Portfolio {
 	rm := GetResourceMap()
+	ram := schedule.NewResourceAllocationMapFromResourceMap(rm)
 	portfolio := portfolio.Portfolio{Schedule: []schedule.Schedule{}}
 
 	testProject := GetTestProjectWithCalcsDone("project:1")
 	startDate := time.Date(2025, time.January, 21, 0, 0, 0, 0, time.UTC)
-	sch, err := schedule.ScheduleProjectAlgo(&testProject, startDate, rm)
+	sch, err := schedule.ScheduleProjectAlgo(&testProject, startDate, ram)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +107,7 @@ func GetTestPortfolio() portfolio.Portfolio {
 
 	testProject2 := GetTestProjectWithCalcsDone("project:2")
 	startDate = time.Date(2025, time.March, 21, 0, 0, 0, 0, time.UTC)
-	sch, err = schedule.ScheduleProjectAlgo(&testProject2, startDate, rm)
+	sch, err = schedule.ScheduleProjectAlgo(&testProject2, startDate, ram)
 	if err != nil {
 		panic(err)
 	}

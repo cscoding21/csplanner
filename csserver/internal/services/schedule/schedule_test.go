@@ -1,7 +1,6 @@
 package schedule_test
 
 import (
-	"csserver/internal/calendar"
 	"csserver/internal/services/project"
 	"csserver/internal/services/schedule"
 	"csserver/internal/testobjects"
@@ -12,7 +11,7 @@ import (
 )
 
 func TestScheduleProject(t *testing.T) {
-	EXPECTED_WEEKS := 6
+	EXPECTED_WEEKS := 5
 	EXPECTED_EXCEPTIONS := 1
 
 	testCases := []struct {
@@ -29,6 +28,7 @@ func TestScheduleProject(t *testing.T) {
 
 	proj := testobjects.GetTestProjectWithCalcsDone("project:1")
 	rm := testobjects.GetResourceMap()
+	ram := schedule.NewResourceAllocationMapFromResourceMap(rm)
 
 	for _, m := range proj.ProjectMilestones {
 		fmt.Printf("Milestone: %s\n", m.Phase.Name)
@@ -38,7 +38,7 @@ func TestScheduleProject(t *testing.T) {
 		}
 	}
 
-	result, err := schedule.ScheduleProjectAlgo(&proj, time.Now(), rm)
+	result, err := schedule.ScheduleProjectAlgo(&proj, time.Now(), ram)
 	if err != nil {
 		t.Error(err)
 	}
@@ -60,7 +60,7 @@ func TestScheduleProject(t *testing.T) {
 
 	fmt.Println("---------- Exceptions -------------")
 	for _, e := range result.Exceptions {
-		fmt.Printf(" - %s\n", e)
+		fmt.Printf(" - %v\n", e)
 	}
 
 	if len(result.ProjectActivityWeeks) != EXPECTED_WEEKS {
@@ -77,6 +77,8 @@ func TestScheduleProject(t *testing.T) {
 
 		if taskProj != taskSched {
 			t.Errorf("Project task hours (%v) not equal to scheduled task hours (%v) for task '%v'", taskProj, taskSched, tc.taskID)
+		} else {
+			fmt.Printf("- Task %s hours (%v) equal scheduled hours (%v)\n", tc.taskID, taskProj, taskSched)
 		}
 	}
 }
@@ -89,18 +91,6 @@ func TestGetScheduleItems(t *testing.T) {
 
 	if len(items) != expectedLength {
 		t.Errorf("no items extracted.  expected %v, got %v", expectedLength, len(items))
-	}
-}
-
-func TestGetResourceHoursForWeek(t *testing.T) {
-	rm := testobjects.GetResourceMap()
-	expectedLength := 5
-	testWeek := calendar.GetWeekFromDateString("2025-11-21")
-
-	hoursMap := schedule.GetResourceHoursForWeek(rm, testWeek)
-
-	if len(hoursMap) != expectedLength {
-		t.Errorf("no items extracted.  expected %v, got %v", expectedLength, len(hoursMap))
 	}
 }
 

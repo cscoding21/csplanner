@@ -23,7 +23,8 @@ type Schedule struct {
 	End                  time.Time
 	ProjectActivityWeeks []*ProjectActivityWeek
 	Exceptions           []ScheduleException
-	Hash                 uint64 `hash:"ignore"`
+	Hash                 uint64                 `hash:"ignore"`
+	Calculated           CalculatedScheduleInfo `hash:"ignore"`
 }
 
 type ProjectActivityWeek struct {
@@ -64,6 +65,12 @@ type ScheduleWorkspace struct {
 }
 
 type ScheduleException struct {
+	Type    ScheduleExceptionType
+	Level   int
 	Scope   string
 	Message string
+}
+
+type CalculatedScheduleInfo struct {
+	IsComplete bool
 }

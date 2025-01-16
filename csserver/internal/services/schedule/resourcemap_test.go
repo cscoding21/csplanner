@@ -1,7 +1,7 @@
-package portfolio_test
+package schedule_test
 
 import (
-	"csserver/internal/services/portfolio"
+	"csserver/internal/services/schedule"
 	"csserver/internal/testobjects"
 	"fmt"
 	"testing"
@@ -11,7 +11,7 @@ func TestFlattenPortfolio(t *testing.T) {
 	rm := testobjects.GetResourceMap()
 	port := testobjects.GetTestPortfolio()
 
-	allocationMap, err := portfolio.FlattenPortfolio(port, rm)
+	allocationMap, err := schedule.FlattenPortfolio(port.Schedule, rm)
 	if err != nil {
 		t.Error(err)
 	}

@@ -193,12 +193,19 @@ func GetPortfolioService() *portfolio.PortfolioService {
 	pubsub, err := GetPubSubClient()
 	projectServce := GetProjectService()
 	resourceService := GetResourceService()
+	schedService := GetScheduleService()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return portfolio.NewPortfolioService(*surrealClient, config.ContextHelper{}, pubsub, *projectServce, *resourceService)
+	return portfolio.NewPortfolioService(
+		*surrealClient,
+		config.ContextHelper{},
+		pubsub,
+		*projectServce,
+		*resourceService,
+		*schedService)
 }
 
 // GetProjectTemplateService return a project template service instance

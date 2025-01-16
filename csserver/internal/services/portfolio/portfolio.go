@@ -1,12 +1,16 @@
 package portfolio
 
 import (
+	"context"
+	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/interfaces"
 	"csserver/internal/providers/nats"
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
+	"csserver/internal/services/schedule"
+	"time"
 )
 
 // ---This is the name of the object in the database
@@ -19,6 +23,7 @@ type PortfolioService struct {
 	PubSub          nats.PubSubProvider
 	ProjectService  project.ProjectService
 	ResourceService resource.ResourceService
+	ScheduleService schedule.ScheduleService
 }
 
 // NewPortfolioService creates a new portfolio service.
@@ -27,7 +32,8 @@ func NewPortfolioService(
 	ch config.ContextHelper,
 	ps nats.PubSubProvider,
 	projService project.ProjectService,
-	resService resource.ResourceService) *PortfolioService {
+	resService resource.ResourceService,
+	schedService schedule.ScheduleService) *PortfolioService {
 
 	return &PortfolioService{
 		DBClient:        db,
@@ -35,54 +41,45 @@ func NewPortfolioService(
 		PubSub:          ps,
 		ProjectService:  projService,
 		ResourceService: resService,
+		ScheduleService: schedService,
 	}
 }
 
-// GetResourceUtilizationTable get an enhanced resource table that includes project allocations
-// func (service *PortfolioService) GetResourceUtilizationTable(ctx context.Context) (*ResourceUtilizationTable, error) {
-// 	out := ResourceUtilizationTable{
-// 		Resources: []ResourceUtilizationItem{},
-// 	}
+// ScheduleProject add a project to the current portfolio
+func (ps *PortfolioService) ScheduleProject(ctx context.Context, projectID string, startDate time.Time) (Portfolio, error) {
+	panic("not implemented")
+}
 
-// 	pf := common.NewPagedResultsForAllRecords[project.Project]()
-// 	pf.Filters.AddFilter(common.Filter{
-// 		Key:       "basics.status",
-// 		Value:     "draft,",
-// 		Operation: "in",
-// 	})
+// GetCurrentPortfolio retrieves the currently scheduled projects
+func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context) (Portfolio, error) {
+	port := Portfolio{}
 
-// 	rm, _ := service.ResourceService.GetResourceMap(ctx, false)
-// 	projects, err := service.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	pf := common.NewPagedResultsForAllRecords[project.Project]()
+	pf.Filters.AddFilter(common.Filter{Key: "basics.status", Value: "scheduled,inflight", Operation: common.FilterOperationIn})
 
-// 	for _, p := range projects.Results {
-// 		for _, m := range p.ProjectMilestones {
-// 			for _, t := range m.Tasks {
-// 				for _, resID := range t.ResourceIDs {
-// 					thisResource := rm[resID]
-// 					//---project info
-// 					r := ResourceUtilizationItem{
-// 						ProjectID:     p.ID,
-// 						ProjectName:   p.ProjectBasics.Name,
-// 						ProjectStatus: p.ProjectBasics.Status,
-// 						ResourceID:    resID,
-// 						ResourceName:  thisResource.Name,
-// 					}
+	response, err := ps.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
+	if err != nil {
+		return port, err
+	}
 
-// 					//---milestone info
-// 					r.MilestoneName = m.Phase.Name
+	rm, err := ps.ResourceService.GetResourceMap(ctx, true)
+	if err != nil {
+		return port, err
+	}
 
-// 					//---task info
-// 					r.TaskName = t.Name
-// 					r.TaskHourEstimate = t.HourEstimate
+	for _, proj := range response.Results {
+		startDate := time.Now()
+		if proj.ProjectBasics.StartDate != nil {
+			startDate = *proj.ProjectBasics.StartDate
+		}
 
-// 					out.Resources = append(out.Resources, r)
-// 				}
-// 			}
-// 		}
-// 	}
+		sch, err := ps.ScheduleService.CalculateProjectSchedule(ctx, &proj, startDate, rm)
+		if err != nil {
+			return port, err
+		}
 
-// 	return &out, nil
-// }
+		port.Schedule = append(port.Schedule, sch)
+	}
+
+	return port, nil
+}

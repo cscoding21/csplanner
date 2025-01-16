@@ -32,7 +32,7 @@ func TestGetSchedule(t *testing.T) {
 		t.Error(err)
 	}
 
-	result, err := scheduleService.ScheduleProject(ctx, proj, startDate, rm)
+	result, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, rm)
 	if err != nil {
 		t.Error(err)
 	}
@@ -40,9 +40,28 @@ func TestGetSchedule(t *testing.T) {
 	drawResult(result)
 }
 
+func TestGetPortfolio(t *testing.T) {
+	portfolioService := factory.GetPortfolioService()
+	ctx := getTestContext()
+
+	result, err := portfolioService.GetCurrentPortfolio(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+
+	for _, s := range result.Schedule {
+		fmt.Println("###########################################################")
+		fmt.Println("-----------")
+		drawResult(s)
+		fmt.Println("-----------")
+		fmt.Println("###########################################################")
+	}
+}
+
 func drawResult(result schedule.Schedule) {
 	fmt.Printf("%s (%s)\n", result.ProjectName, result.ProjectID)
 	fmt.Printf("%v - %v\n", result.Begin.Format("2006-01-02"), result.End.Format("2006-01-02"))
+	fmt.Printf("Hash - %v\n", result.Hash)
 
 	if len(result.Exceptions) > 0 {
 		fmt.Println("************** Exceptions **************")

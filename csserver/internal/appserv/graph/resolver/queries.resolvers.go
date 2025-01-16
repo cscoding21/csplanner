@@ -110,7 +110,7 @@ func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID 
 	}
 
 	scheduleService := factory.GetScheduleService()
-	schedule, err := scheduleService.ScheduleProject(ctx, proj, startDate, rm)
+	schedule, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, rm)
 	if err != nil {
 		return nil, err
 	}

@@ -32,3 +32,17 @@ type ScheduledResource {
 	resourceId: String!
 	resourceName: String!
 }
+
+
+
+
+
+# type ResourceProjectHourAllocation {
+# 	Week:                     ProjectActivityWeek
+# 	ProjectID:                String
+# 	ProjectName:              String
+# 	Resource:               Resource
+# 	TotalResourceHours:       Int
+# 	HoursAvailableForProject: Int
+# 	Contention:               Int
+# }

@@ -27,6 +27,7 @@ type ProjectActivity {
 }
 
 type ScheduleException {
+    level: Int!
     scope: String!
     message: String!
 }
