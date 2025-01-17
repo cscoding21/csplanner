@@ -6,31 +6,33 @@ import (
 	"csserver/internal/hashstructure"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/milestonestatus"
-	"csserver/internal/services/resource"
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
 
+const (
+	MAX_ITERATIONS_ALLOWED = 256
+)
+
 // ScheduleProject create a schedule for a single project "in a vacuum"
-func (service *ScheduleService) CalculateProjectSchedule(ctx context.Context, p *project.Project, startDate time.Time, rm map[string]resource.Resource) (Schedule, error) {
+func (service *ScheduleService) CalculateProjectSchedule(ctx context.Context, p *project.Project, startDate time.Time, ram ResourceAllocationMap) (Schedule, error) {
 	ps := Schedule{
 		ProjectID:   p.ID,
 		ProjectName: p.ProjectBasics.Name,
 	}
 
-	exceptions := validateProjectForScheduling(*p, rm)
+	exceptions := validateProjectForScheduling(*p, ram)
 	if len(exceptions) > 0 {
 		ps.Exceptions = append(ps.Exceptions, exceptions...)
 		return ps, nil
 	}
 
-	ram := NewResourceAllocationMapFromResourceMap(rm)
-
 	return ScheduleProjectAlgo(p, startDate, ram)
 }
 
+// ScheduleProjectAlgo the scheduling algorithm separated from the service implementation
 func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAllocationMap) (Schedule, error) {
 	projectID := p.ID
 	schedule := Schedule{
@@ -48,9 +50,8 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 	schedule.Begin = currentWeek.Begin
 	weeks := []*ProjectActivityWeek{}
 
-	//resourceHoursForWeek := GetResourceHoursForWeek(rm, currentWeek)
 	exceptionsCreated := make(map[string]string)
-	thingCount := 0
+	iterationCount := 0
 
 	activities := []ProjectActivity{}
 
@@ -59,13 +60,10 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 
 		for hoursToCompleteBatch > 0 {
 			//---safety check
-			if thingCount > 100 {
+			if iterationCount > MAX_ITERATIONS_ALLOWED {
 				msg := fmt.Sprintf("Task exception: '%v' has no scheduled resources", "schedule:overflow")
 
-				schedule.Exceptions = append(schedule.Exceptions, ScheduleException{
-					Scope:   "schedule:overflow",
-					Message: "for loop did not terminate",
-				})
+				schedule.Exceptions = append(schedule.Exceptions, newScheduleException(projectID, "for loop did not terminate", ScheduleCannotComplete, ScheduleError))
 
 				exceptionsCreated["schedule:overflow"] = msg
 
@@ -97,7 +95,6 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 						continue
 					}
 
-					// hoursToAllocate := resourceHoursForWeek[resourceID]
 					resourceToAllocate := ram.GetResource(currentWeek, projectID, resourceID)
 					if resourceToAllocate == nil {
 						//---TODO: handle this
@@ -115,7 +112,7 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 
 					batches[bi].ScheduleItems[ti].HoursToSchedule -= hoursToAllocate
 					batches[bi].ScheduleItems[ti].HoursScheduled += hoursToAllocate
-					//resourceHoursForWeek[resourceID] -= hoursToAllocate
+
 					ram.ReduceResourceProjectHours(currentWeek, projectID, resourceID, hoursToAllocate)
 
 					activity := ProjectActivity{
@@ -147,9 +144,8 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 			//---start next week
 			currentWeek = calendar.GetNextWeek(currentWeek)
 			activities = []ProjectActivity{}
-			//resourceHoursForWeek = GetResourceHoursForWeek(rm, currentWeek)
 
-			thingCount++
+			iterationCount++
 		}
 	}
 
@@ -207,7 +203,7 @@ func GetScheduleItems(p *project.Project) []ScheduleBatch {
 	return sb
 }
 
-func newScheduleException(scope, msg string, t ScheduleExceptionType, level int) ScheduleException {
+func newScheduleException(scope, msg string, t ScheduleExceptionType, level ScheduleExceptionLevel) ScheduleException {
 	return ScheduleException{
 		Type:    t,
 		Level:   level,
@@ -216,7 +212,7 @@ func newScheduleException(scope, msg string, t ScheduleExceptionType, level int)
 	}
 }
 
-func validateProjectForScheduling(p project.Project, rm map[string]resource.Resource) []ScheduleException {
+func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) []ScheduleException {
 	out := []ScheduleException{}
 
 	for _, m := range p.ProjectMilestones {
@@ -232,7 +228,7 @@ func validateProjectForScheduling(p project.Project, rm map[string]resource.Reso
 					*t.ID,
 					fmt.Sprintf("Task '%s' does not have a skill assigned", t.Name),
 					TaskAssignedResourceMissingSkill,
-					1,
+					ScheduleError,
 				))
 			}
 			if len(t.ResourceIDs) == 0 {
@@ -240,11 +236,11 @@ func validateProjectForScheduling(p project.Project, rm map[string]resource.Reso
 					*t.ID,
 					fmt.Sprintf("Task '%s' has no assigned resources", t.Name),
 					TaskLacksAssignedResource,
-					1))
+					ScheduleError))
 			}
 
 			for _, rss := range t.ResourceIDs {
-				resource := rm[rss]
+				resource := ram.ResourceMap[rss]
 				skill := resource.GetSkill(t.RequiredSkillID)
 
 				if skill == nil {
@@ -252,7 +248,7 @@ func validateProjectForScheduling(p project.Project, rm map[string]resource.Reso
 						*t.ID,
 						fmt.Sprintf("Task '%s' resoure, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID),
 						TaskAssignedResourceMissingSkill,
-						1))
+						ScheduleError))
 				}
 			}
 		}

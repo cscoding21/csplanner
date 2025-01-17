@@ -9,12 +9,20 @@ import (
 )
 
 type ResourceAllocationMap struct {
-	// Portfolio      Portfolio
+	ResourceMap    map[string]resource.Resource
 	WeekActivities []ResourceProjectHourAllocation
 }
 
+func (s *ScheduleService) GetInitialResourceAllocationMap(rm map[string]resource.Resource) (ResourceAllocationMap, error) {
+	return NewResourceAllocationMapFromResourceMap(rm), nil
+}
+
+func (s *ScheduleService) GetResourceAllocationMap(schedule []Schedule, rm map[string]resource.Resource) (ResourceAllocationMap, error) {
+	return FlattenPortfolio(schedule, rm)
+}
+
 func NewResourceAllocationMapFromResourceMap(rm map[string]resource.Resource) ResourceAllocationMap {
-	ram := ResourceAllocationMap{WeekActivities: []ResourceProjectHourAllocation{}}
+	ram := ResourceAllocationMap{WeekActivities: []ResourceProjectHourAllocation{}, ResourceMap: rm}
 
 	start := time.Now()
 	end := start.Add(1 * time.Hour * 24 * 7 * 52 * 3)
@@ -66,6 +74,7 @@ func (ram *ResourceAllocationMap) GetResource(week calendar.CSWeek, projectID st
 	return nil
 }
 
+// ReduceResourceProjectHours subtract the available hours from the specified cell
 func (ram *ResourceAllocationMap) ReduceResourceProjectHours(week calendar.CSWeek, projectID string, resourceID string, hoursToSubtract int) {
 	for i, act := range ram.WeekActivities {
 		if act.Week.Equal(week) && strings.EqualFold(act.ResourceID, resourceID) && (strings.EqualFold(act.ProjectID, projectID) || len(projectID) == 0) {
@@ -94,8 +103,8 @@ func (ram *ResourceAllocationMap) GetDistinctWeeksInFlatmap() []calendar.CSWeek 
 }
 
 // FlattenPortfolio takes the elements of ths scheduled portfolio and flattens them into a tabular format
-func FlattenPortfolio(scheduleList []Schedule, rm map[string]resource.Resource) ([]ResourceProjectHourAllocation, error) {
-	out := []ResourceProjectHourAllocation{}
+func FlattenPortfolio(scheduleList []Schedule, rm map[string]resource.Resource) (ResourceAllocationMap, error) {
+	out := ResourceAllocationMap{ResourceMap: rm, WeekActivities: []ResourceProjectHourAllocation{}}
 
 	for _, proj := range scheduleList {
 		for _, week := range proj.ProjectActivityWeeks {
@@ -105,7 +114,7 @@ func FlattenPortfolio(scheduleList []Schedule, rm map[string]resource.Resource) 
 					return out, fmt.Errorf("resource %s not found in pool", act.ResourceID)
 				}
 
-				ram := ResourceProjectHourAllocation{
+				allocation := ResourceProjectHourAllocation{
 					ProjectID:          proj.ProjectID,
 					ProjectName:        proj.ProjectName,
 					ResourceID:         act.ResourceID,
@@ -119,12 +128,12 @@ func FlattenPortfolio(scheduleList []Schedule, rm map[string]resource.Resource) 
 					},
 				}
 
-				out = append(out, ram)
+				out.WeekActivities = append(out.WeekActivities, allocation)
 			}
 		}
 	}
 
-	calculateProjectWeekHours(&out)
+	calculateProjectWeekHours(&out.WeekActivities)
 
 	return out, nil
 }

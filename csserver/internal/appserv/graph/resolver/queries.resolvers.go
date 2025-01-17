@@ -95,8 +95,6 @@ func (r *queryResolver) ResourceSnapshot(ctx context.Context) (*idl.ResourceSnap
 
 // CalculateProjectSchedule is the resolver for the calculateProjectSchedule field.
 func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID string, startDate time.Time) (*idl.ProjectScheduleResult, error) {
-	//panic(fmt.Errorf("not implemented: CalculateProjectSchedule - calculateProjectSchedule"))
-
 	projService := factory.GetProjectService()
 	proj, err := projService.GetProjectByID(ctx, projectID)
 	if err != nil {
@@ -110,7 +108,12 @@ func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID 
 	}
 
 	scheduleService := factory.GetScheduleService()
-	schedule, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, rm)
+	ram, err := scheduleService.GetInitialResourceAllocationMap(rm)
+	if err != nil {
+		return nil, err
+	}
+
+	schedule, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, ram)
 	if err != nil {
 		return nil, err
 	}

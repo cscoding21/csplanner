@@ -11,12 +11,12 @@ func TestFlattenPortfolio(t *testing.T) {
 	rm := testobjects.GetResourceMap()
 	port := testobjects.GetTestPortfolio()
 
-	allocationMap, err := schedule.FlattenPortfolio(port.Schedule, rm)
+	ram, err := schedule.FlattenPortfolio(port.Schedule, rm)
 	if err != nil {
 		t.Error(err)
 	}
 
-	for _, m := range allocationMap {
+	for _, m := range ram.WeekActivities {
 		fmt.Println(m)
 	}
 }

@@ -27,12 +27,17 @@ func TestGetSchedule(t *testing.T) {
 		t.Error(err)
 	}
 
+	ram, err := scheduleService.GetInitialResourceAllocationMap(rm)
+	if err != nil {
+		t.Error(err)
+	}
+
 	proj, err := projectService.GetProjectByID(ctx, pid)
 	if err != nil {
 		t.Error(err)
 	}
 
-	result, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, rm)
+	result, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, ram)
 	if err != nil {
 		t.Error(err)
 	}
@@ -41,10 +46,22 @@ func TestGetSchedule(t *testing.T) {
 }
 
 func TestGetPortfolio(t *testing.T) {
-	portfolioService := factory.GetPortfolioService()
 	ctx := getTestContext()
 
-	result, err := portfolioService.GetCurrentPortfolio(ctx)
+	portfolioService := factory.GetPortfolioService()
+	resourceService := factory.GetResourceService()
+	scheduleService := factory.GetScheduleService()
+	rm, err := resourceService.GetResourceMap(ctx, false)
+	if err != nil {
+		t.Error(err)
+	}
+
+	ram, err := scheduleService.GetInitialResourceAllocationMap(rm)
+	if err != nil {
+		t.Error(err)
+	}
+
+	result, err := portfolioService.GetCurrentPortfolio(ctx, ram)
 	if err != nil {
 		t.Error(err)
 	}

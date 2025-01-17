@@ -10,6 +10,7 @@ import (
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
+	"fmt"
 	"time"
 )
 
@@ -51,18 +52,14 @@ func (ps *PortfolioService) ScheduleProject(ctx context.Context, projectID strin
 }
 
 // GetCurrentPortfolio retrieves the currently scheduled projects
-func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context) (Portfolio, error) {
+func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context, ram schedule.ResourceAllocationMap) (Portfolio, error) {
 	port := Portfolio{}
+	compareMap := PortfolioComparer{}
 
 	pf := common.NewPagedResultsForAllRecords[project.Project]()
 	pf.Filters.AddFilter(common.Filter{Key: "basics.status", Value: "scheduled,inflight", Operation: common.FilterOperationIn})
 
 	response, err := ps.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
-	if err != nil {
-		return port, err
-	}
-
-	rm, err := ps.ResourceService.GetResourceMap(ctx, true)
 	if err != nil {
 		return port, err
 	}
@@ -73,7 +70,7 @@ func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context) (Portfolio,
 			startDate = *proj.ProjectBasics.StartDate
 		}
 
-		sch, err := ps.ScheduleService.CalculateProjectSchedule(ctx, &proj, startDate, rm)
+		sch, err := ps.ScheduleService.CalculateProjectSchedule(ctx, &proj, startDate, ram)
 		if err != nil {
 			return port, err
 		}
@@ -81,5 +78,10 @@ func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context) (Portfolio,
 		port.Schedule = append(port.Schedule, sch)
 	}
 
+	fmt.Println(compareMap)
 	return port, nil
+}
+
+func iteratePortfolio(scheduleList []schedule.Schedule) {
+
 }

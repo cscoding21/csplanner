@@ -249,6 +249,7 @@ var testResources = []resource.Resource{
 			{ID: "marketing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 			{ID: "content-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 			{ID: "frontend", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
+			{ID: "technical-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 		},
 	},
 	{

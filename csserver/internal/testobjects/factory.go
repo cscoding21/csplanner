@@ -22,6 +22,7 @@ func GetTestProject(name string) project.Project {
 	return *proj
 }
 
+// GetTestProjectWithCalcsDone return a test project with calculations done
 func GetTestProjectWithCalcsDone(name string) project.Project {
 	proj := GetTestProject(name)
 	rm := GetResourceMap()
@@ -44,6 +45,7 @@ func GetTestUpdateProject(name string) project.Project {
 	return *proj
 }
 
+// GetTestUpdateProjectWithCalcsDone
 func GetTestUpdateProjectWithCalcsDone(name string) project.Project {
 	proj := GetTestUpdateProject(name)
 	rm := GetResourceMap()

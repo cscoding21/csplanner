@@ -66,7 +66,7 @@ type ScheduleWorkspace struct {
 
 type ScheduleException struct {
 	Type    ScheduleExceptionType
-	Level   int
+	Level   ScheduleExceptionLevel
 	Scope   string
 	Message string
 }
