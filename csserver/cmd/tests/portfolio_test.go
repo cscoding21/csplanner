@@ -2,7 +2,9 @@ package tests
 
 import (
 	"csserver/internal/appserv/factory"
+	"csserver/internal/calendar"
 	"csserver/internal/config"
+	"csserver/internal/services/portfolio"
 	"csserver/internal/services/schedule"
 	"fmt"
 	"testing"
@@ -49,19 +51,8 @@ func TestGetPortfolio(t *testing.T) {
 	ctx := getTestContext()
 
 	portfolioService := factory.GetPortfolioService()
-	resourceService := factory.GetResourceService()
-	scheduleService := factory.GetScheduleService()
-	rm, err := resourceService.GetResourceMap(ctx, false)
-	if err != nil {
-		t.Error(err)
-	}
 
-	ram, err := scheduleService.GetInitialResourceAllocationMap(rm)
-	if err != nil {
-		t.Error(err)
-	}
-
-	result, err := portfolioService.GetCurrentPortfolio(ctx, ram)
+	result, err := portfolioService.GetUnbalancedPortfolio(ctx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -72,6 +63,40 @@ func TestGetPortfolio(t *testing.T) {
 		drawResult(s)
 		fmt.Println("-----------")
 		fmt.Println("###########################################################")
+	}
+}
+
+func TestBalancePortfolio(t *testing.T) {
+	ctx := getTestContext()
+	ps := factory.GetPortfolioService()
+
+	port, err := ps.GetUnbalancedPortfolio(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = ps.BalancePortfolio(ctx, port)
+	if err != nil {
+		t.Error(err)
+	}
+
+	drawPortfolio(*port)
+
+	drawResourceSummary(port.Schedule)
+}
+
+func drawPortfolio(port portfolio.Portfolio) {
+
+	fmt.Printf("------ Portfolio info ------\n")
+	fmt.Printf("Project count: %v\n", len(port.ProjectMap))
+	fmt.Printf("Resource count: %v\n", len(port.ResourceMap))
+	if port.Validator != nil {
+		fmt.Printf("Iterations: %v\n", port.Validator.Iterations)
+	}
+	for _, s := range port.Schedule {
+		drawResult(s)
+
+		fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++")
 	}
 }
 
@@ -95,4 +120,43 @@ func drawResult(result schedule.Schedule) {
 		}
 	}
 
+}
+
+func drawResourceSummary(scheduleList []schedule.Schedule) {
+	type rss struct {
+		week      calendar.CSWeek
+		hours     int
+		taskCount int
+		projectID string
+	}
+	resMap := make(map[string][]rss)
+
+	for _, r := range scheduleList {
+		for _, w := range r.ProjectActivityWeeks {
+			for _, a := range w.Activities {
+				_, ok := resMap[a.ResourceID]
+				if ok {
+					resMap[a.ResourceID] = append(resMap[a.ResourceID], rss{week: calendar.GetWeek(w.Begin), hours: a.HoursSpent, taskCount: 1, projectID: a.ProjectID})
+				} else {
+					resMap[a.ResourceID] = []rss{{week: calendar.GetWeek(w.Begin), hours: a.HoursSpent, taskCount: 1, projectID: a.ProjectID}}
+				}
+			}
+		}
+	}
+
+	for k, v := range resMap {
+		fmt.Println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+		totalHours := 0
+		totalTasks := 0
+
+		fmt.Printf("Resource: %s\n", k)
+		for _, a := range v {
+			totalHours += a.hours
+			totalTasks++
+			fmt.Printf(" - %s | WE: %v | hours: %v\n", a.projectID, a.week.End, a.hours)
+		}
+
+		fmt.Println("--------")
+		fmt.Printf("Total tasks %v | Total hours: %v\n", totalTasks, totalHours)
+	}
 }

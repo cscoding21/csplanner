@@ -15,10 +15,13 @@ func TestGetDateRange(t *testing.T) {
 
 	start, end := p.GetDateRange()
 
-	fmt.Println(start)
-	fmt.Println(end)
+	fmt.Printf("%v - %v\n", start, end)
+	fmt.Printf("Project count - %v\n", len(p.ProjectMap))
+	fmt.Printf("Schedule count - %v\n", len(p.Schedule))
 }
 
-func TestGetCurrentPortfolio(t *testing.T) {
+func TestBalancePortfolio(t *testing.T) {
+	// p := testobjects.GetTestPortfolio()
+	// ctx := context.Background()
 
 }

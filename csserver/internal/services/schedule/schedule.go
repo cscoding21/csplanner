@@ -98,6 +98,19 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 					resourceToAllocate := ram.GetResource(currentWeek, projectID, resourceID)
 					if resourceToAllocate == nil {
 						//---TODO: handle this
+						//err := fmt.Errorf("resource not found for %v, %s, %s", currentWeek, projectID, resourceID)
+						// return schedule, err
+
+						res := ram.ResourceMap[resourceID]
+						resourceToAllocate = &ResourceProjectHourAllocation{
+							ResourceID:               resourceID,
+							ResourceName:             res.Name,
+							Week:                     currentWeek,
+							TotalResourceHours:       res.AvailableHoursPerWeek,
+							HoursAvailableForProject: res.AvailableHoursPerWeek,
+							ProjectID:                projectID,
+							Contention:               1,
+						}
 					}
 
 					hoursToAllocate := resourceToAllocate.HoursAvailableForProject

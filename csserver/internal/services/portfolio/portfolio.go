@@ -51,18 +51,27 @@ func (ps *PortfolioService) ScheduleProject(ctx context.Context, projectID strin
 	panic("not implemented")
 }
 
-// GetCurrentPortfolio retrieves the currently scheduled projects
-func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context, ram schedule.ResourceAllocationMap) (Portfolio, error) {
-	port := Portfolio{}
-	compareMap := PortfolioComparer{}
-
+// GetUnbalancedPortfolio retrieves the currently scheduled projects
+func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfolio, error) {
 	pf := common.NewPagedResultsForAllRecords[project.Project]()
 	pf.Filters.AddFilter(common.Filter{Key: "basics.status", Value: "scheduled,inflight", Operation: common.FilterOperationIn})
 
+	rm, err := ps.ResourceService.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	ram, err := ps.ScheduleService.GetInitialResourceAllocationMap(rm)
+	if err != nil {
+		return nil, err
+	}
+
 	response, err := ps.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
 	if err != nil {
-		return port, err
+		return nil, err
 	}
+
+	port := NewPortfolio(response.Results, rm)
 
 	for _, proj := range response.Results {
 		startDate := time.Now()
@@ -72,16 +81,41 @@ func (ps *PortfolioService) GetCurrentPortfolio(ctx context.Context, ram schedul
 
 		sch, err := ps.ScheduleService.CalculateProjectSchedule(ctx, &proj, startDate, ram)
 		if err != nil {
-			return port, err
+			return &port, err
 		}
 
 		port.Schedule = append(port.Schedule, sch)
 	}
 
-	fmt.Println(compareMap)
-	return port, nil
+	return &port, nil
 }
 
-func iteratePortfolio(scheduleList []schedule.Schedule) {
+// BalancePortfolio iterate over the portfolio until it is balanced with proper resource utilization
+func (ps *PortfolioService) BalancePortfolio(ctx context.Context, port *Portfolio) error {
+	comparer := NewPortfolioComparer()
+	maxIterationCount := 256
+	iterationCount := 0
 
+	for !comparer.Validate(&port.Schedule) {
+		if iterationCount > maxIterationCount {
+			return fmt.Errorf("portfolio balance process exceeded max iteration count")
+		}
+
+		ram, err := ps.ScheduleService.GetResourceAllocationMap(port.Schedule, port.ResourceMap)
+		if err != nil {
+			return err
+		}
+
+		for i, s := range port.Schedule {
+			proj := port.ProjectMap[s.ProjectID]
+			port.Schedule[i], err = ps.ScheduleService.CalculateProjectSchedule(ctx, &proj, *proj.ProjectBasics.StartDate, ram)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	port.Validator = &comparer
+
+	return nil
 }

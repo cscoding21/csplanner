@@ -96,25 +96,31 @@ func GetResourceMap() map[string]resource.Resource {
 func GetTestPortfolio() portfolio.Portfolio {
 	rm := GetResourceMap()
 	ram := schedule.NewResourceAllocationMapFromResourceMap(rm)
-	portfolio := portfolio.Portfolio{Schedule: []schedule.Schedule{}}
+	scheduleList := []schedule.Schedule{}
+	projectList := []project.Project{}
 
 	testProject := GetTestProjectWithCalcsDone("project:1")
+	projectList = append(projectList, testProject)
 	startDate := time.Date(2025, time.January, 21, 0, 0, 0, 0, time.UTC)
 	sch, err := schedule.ScheduleProjectAlgo(&testProject, startDate, ram)
 	if err != nil {
 		panic(err)
 	}
 
-	portfolio.Schedule = append(portfolio.Schedule, sch)
+	scheduleList = append(scheduleList, sch)
 
 	testProject2 := GetTestProjectWithCalcsDone("project:2")
+	projectList = append(projectList, testProject2)
 	startDate = time.Date(2025, time.March, 21, 0, 0, 0, 0, time.UTC)
 	sch, err = schedule.ScheduleProjectAlgo(&testProject2, startDate, ram)
 	if err != nil {
 		panic(err)
 	}
 
-	portfolio.Schedule = append(portfolio.Schedule, sch)
+	scheduleList = append(scheduleList, sch)
 
-	return portfolio
+	port := portfolio.NewPortfolio(projectList, rm)
+	port.Schedule = scheduleList
+
+	return port
 }

@@ -1,11 +1,20 @@
 package portfolio
 
 import (
+	"csserver/internal/services/project"
+	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
 	"time"
 )
 
+func NewPortfolioComparer() PortfolioComparer {
+	pc := PortfolioComparer{CompareMap: make(map[string]HashResult)}
+
+	return pc
+}
+
 type PortfolioComparer struct {
+	Iterations int
 	CompareMap map[string]HashResult
 }
 
@@ -15,9 +24,10 @@ type HashResult struct {
 	IterationCount int
 }
 
-func (pc *PortfolioComparer) Validate(scheduleList []schedule.Schedule) bool {
+func (pc *PortfolioComparer) Validate(scheduleList *[]schedule.Schedule) bool {
+	pc.Iterations++
 	out := true
-	for _, s := range scheduleList {
+	for _, s := range *scheduleList {
 		item, ok := pc.CompareMap[s.ProjectID]
 		if !ok {
 			out = false
@@ -31,6 +41,12 @@ func (pc *PortfolioComparer) Validate(scheduleList []schedule.Schedule) bool {
 		} else {
 			if s.Hash == item.CurrentHash {
 				//---this one is OK
+				pc.CompareMap[s.ProjectID] = HashResult{
+					LastHash:       item.CurrentHash,
+					CurrentHash:    s.Hash,
+					IterationCount: item.IterationCount,
+				}
+
 				continue
 			} else {
 				out = false
@@ -49,8 +65,21 @@ func (pc *PortfolioComparer) Validate(scheduleList []schedule.Schedule) bool {
 	return out
 }
 
+func NewPortfolio(projectList []project.Project, rm map[string]resource.Resource) Portfolio {
+	port := Portfolio{ProjectMap: make(map[string]project.Project), ResourceMap: rm}
+
+	for _, p := range projectList {
+		port.ProjectMap[p.ID] = p
+	}
+
+	return port
+}
+
 type Portfolio struct {
-	Schedule []schedule.Schedule
+	ProjectMap  map[string]project.Project
+	ResourceMap map[string]resource.Resource
+	Schedule    []schedule.Schedule
+	Validator   *PortfolioComparer
 }
 
 func (p *Portfolio) GetDateRange() (*time.Time, *time.Time) {
