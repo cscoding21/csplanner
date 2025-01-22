@@ -44,7 +44,7 @@ func TestGetSchedule(t *testing.T) {
 		t.Error(err)
 	}
 
-	drawResult(result)
+	drawScheduleResult(result)
 }
 
 func TestGetPortfolio(t *testing.T) {
@@ -60,7 +60,7 @@ func TestGetPortfolio(t *testing.T) {
 	for _, s := range result.Schedule {
 		fmt.Println("###########################################################")
 		fmt.Println("-----------")
-		drawResult(s)
+		drawScheduleResult(s)
 		fmt.Println("-----------")
 		fmt.Println("###########################################################")
 	}
@@ -94,13 +94,13 @@ func drawPortfolio(port portfolio.Portfolio) {
 		fmt.Printf("Iterations: %v\n", port.Validator.Iterations)
 	}
 	for _, s := range port.Schedule {
-		drawResult(s)
+		drawScheduleResult(s)
 
 		fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++")
 	}
 }
 
-func drawResult(result schedule.Schedule) {
+func drawScheduleResult(result schedule.Schedule) {
 	fmt.Printf("%s (%s)\n", result.ProjectName, result.ProjectID)
 	fmt.Printf("%v - %v\n", result.Begin.Format("2006-01-02"), result.End.Format("2006-01-02"))
 	fmt.Printf("Hash - %v\n", result.Hash)

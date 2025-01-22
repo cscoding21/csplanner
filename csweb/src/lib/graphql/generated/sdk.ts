@@ -367,9 +367,9 @@ export type Pagination = {
   totalResults?: Maybe<Scalars['Int']['output']>;
 };
 
-export type PortfolioSnapshot = {
-  __typename?: 'PortfolioSnapshot';
-  projects: Array<SnapshotProject>;
+export type Portfolio = {
+  __typename?: 'Portfolio';
+  schedule: Array<Schedule>;
 };
 
 export type Project = {
@@ -393,7 +393,7 @@ export type ProjectActivity = {
   milestoneID?: Maybe<Scalars['String']['output']>;
   milestoneName?: Maybe<Scalars['String']['output']>;
   resource?: Maybe<Resource>;
-  resourceID?: Maybe<Scalars['String']['output']>;
+  resourceID: Scalars['String']['output'];
   taskID?: Maybe<Scalars['String']['output']>;
   taskName?: Maybe<Scalars['String']['output']>;
 };
@@ -502,19 +502,9 @@ export type ProjectResults = {
   results?: Maybe<Array<Project>>;
 };
 
-export type ProjectSchedule = {
-  __typename?: 'ProjectSchedule';
-  begin?: Maybe<Scalars['Time']['output']>;
-  end?: Maybe<Scalars['Time']['output']>;
-  exceptions?: Maybe<Array<ScheduleException>>;
-  projectActivityWeeks?: Maybe<Array<ProjectActivityWeek>>;
-  projectID: Scalars['String']['output'];
-  projectName: Scalars['String']['output'];
-};
-
 export type ProjectScheduleResult = {
   __typename?: 'ProjectScheduleResult';
-  schedule: ProjectSchedule;
+  schedule: Schedule;
 };
 
 export type ProjectTaskCalculatedData = {
@@ -580,11 +570,10 @@ export type Query = {
   getCommentThread: Comment;
   getList?: Maybe<List>;
   getOrganization: Organization;
+  getPortfolio: Portfolio;
   getProject: Project;
   getResource: Resource;
   getUser: User;
-  portfolioSnapshot: PortfolioSnapshot;
-  resourceSnapshot: ResourceSnapshot;
 };
 
 
@@ -666,6 +655,26 @@ export type Resource = {
   userEmail?: Maybe<Scalars['String']['output']>;
 };
 
+export type ResourceAllocationMap = {
+  __typename?: 'ResourceAllocationMap';
+  WeekActivities?: Maybe<Array<Maybe<ResourceProjectHourAllocation>>>;
+};
+
+export type ResourceProjectHourAllocation = {
+  __typename?: 'ResourceProjectHourAllocation';
+  Contention: Scalars['Int']['output'];
+  HoursAvailableForProject: Scalars['Int']['output'];
+  Project: Project;
+  Resource: Resource;
+  TotalResourceHours: Scalars['Int']['output'];
+  begin: Scalars['Time']['output'];
+  end: Scalars['Time']['output'];
+  projectID: Scalars['String']['output'];
+  resourceID: Scalars['String']['output'];
+  weekNumber: Scalars['Int']['output'];
+  year: Scalars['Int']['output'];
+};
+
 export type ResourceResults = {
   __typename?: 'ResourceResults';
   filters: Filters;
@@ -673,31 +682,23 @@ export type ResourceResults = {
   results?: Maybe<Array<Resource>>;
 };
 
-export type ResourceSnapshot = {
-  __typename?: 'ResourceSnapshot';
-  scheduledResources: Array<ScheduledResource>;
+export type Schedule = {
+  __typename?: 'Schedule';
+  begin?: Maybe<Scalars['Time']['output']>;
+  end?: Maybe<Scalars['Time']['output']>;
+  exceptions?: Maybe<Array<ScheduleException>>;
+  project: Project;
+  projectActivityWeeks?: Maybe<Array<ProjectActivityWeek>>;
+  projectID: Scalars['String']['output'];
+  projectName: Scalars['String']['output'];
 };
 
 export type ScheduleException = {
   __typename?: 'ScheduleException';
+  level: Scalars['Int']['output'];
   message: Scalars['String']['output'];
   scope: Scalars['String']['output'];
-};
-
-export type ScheduledResource = {
-  __typename?: 'ScheduledResource';
-  milestoneEndDate?: Maybe<Scalars['Time']['output']>;
-  milestoneName: Scalars['String']['output'];
-  milestoneStartDate?: Maybe<Scalars['Time']['output']>;
-  projectId: Scalars['String']['output'];
-  projectName: Scalars['String']['output'];
-  projectStatus: Scalars['String']['output'];
-  resourceId: Scalars['String']['output'];
-  resourceName: Scalars['String']['output'];
-  taskEndDate?: Maybe<Scalars['Time']['output']>;
-  taskHourEstimate: Scalars['Int']['output'];
-  taskName: Scalars['String']['output'];
-  taskStartDate?: Maybe<Scalars['Time']['output']>;
+  type: Scalars['String']['output'];
 };
 
 export type Skill = {
@@ -705,16 +706,6 @@ export type Skill = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   proficiency?: Maybe<Scalars['Float']['output']>;
-};
-
-export type SnapshotProject = {
-  __typename?: 'SnapshotProject';
-  endDate?: Maybe<Scalars['Time']['output']>;
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  npv: Scalars['Float']['output'];
-  startDate?: Maybe<Scalars['Time']['output']>;
-  status: Scalars['String']['output'];
 };
 
 export type Status = {
@@ -1128,31 +1119,43 @@ export const ProjectFragmentFragmentDoc = gql`
     ${UserFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
 export const ScheduleFragmentFragmentDoc = gql`
-    fragment scheduleFragment on ProjectScheduleResult {
-  schedule {
-    projectID
-    projectName
-    begin
+    fragment scheduleFragment on Schedule {
+  projectID
+  project {
+    ...projectFragment
+  }
+  begin
+  end
+  exceptions {
+    level
+    type
+    message
+    scope
+  }
+  projectActivityWeeks {
     end
-    exceptions {
-      message
-      scope
-    }
-    projectActivityWeeks {
-      end
-      begin
-      activities {
-        taskName
-        resourceID
-        resource {
-          ...resourceFragment
-        }
-        hoursSpent
+    begin
+    year
+    weekNumber
+    activities {
+      taskName
+      resourceID
+      resource {
+        ...resourceFragment
       }
+      hoursSpent
     }
   }
 }
-    ${ResourceFragmentFragmentDoc}`;
+    ${ProjectFragmentFragmentDoc}
+${ResourceFragmentFragmentDoc}`;
+export const ScheduleResultFragmentFragmentDoc = gql`
+    fragment scheduleResultFragment on ProjectScheduleResult {
+  schedule {
+    ...scheduleFragment
+  }
+}
+    ${ScheduleFragmentFragmentDoc}`;
 export const FindActivityDocument = gql`
     query findActivity($input: PageAndFilter!) {
   findActivity(pageAndFilter: $input) {
@@ -1295,40 +1298,15 @@ export const SetNotificationsReadDocument = gql`
   }
 }
     `;
-export const PortfolioSnapshotDocument = gql`
-    query portfolioSnapshot {
-  portfolioSnapshot {
-    projects {
-      id
-      name
-      npv
-      status
-      startDate
-      endDate
+export const GetPortfolioDocument = gql`
+    query getPortfolio {
+  getPortfolio {
+    schedule {
+      ...scheduleFragment
     }
   }
 }
-    `;
-export const ResourceSnapshotDocument = gql`
-    query resourceSnapshot {
-  resourceSnapshot {
-    scheduledResources {
-      projectId
-      projectName
-      projectStatus
-      milestoneName
-      milestoneStartDate
-      milestoneEndDate
-      taskName
-      taskStartDate
-      taskEndDate
-      taskHourEstimate
-      resourceId
-      resourceName
-    }
-  }
-}
-    `;
+    ${ScheduleFragmentFragmentDoc}`;
 export const FindProjectsDocument = gql`
     query findProjects($input: PageAndFilter!) {
   findProjects(pageAndFilter: $input) {
@@ -1570,10 +1548,10 @@ ${ResourceFragmentFragmentDoc}`;
 export const CalculateProjectScheduleDocument = gql`
     query calculateProjectSchedule($projectID: String!, $startDate: Time!) {
   calculateProjectSchedule(projectID: $projectID, startDate: $startDate) {
-    ...scheduleFragment
+    ...scheduleResultFragment
   }
 }
-    ${ScheduleFragmentFragmentDoc}`;
+    ${ScheduleResultFragmentFragmentDoc}`;
 export const FindAllUsersDocument = gql`
     query findAllUsers {
   findAllUsers {
@@ -1630,11 +1608,8 @@ export function getSdk<C>(requester: Requester<C>) {
     setNotificationsRead(variables: SetNotificationsReadMutationVariables, options?: C): Promise<SetNotificationsReadMutation> {
       return requester<SetNotificationsReadMutation, SetNotificationsReadMutationVariables>(SetNotificationsReadDocument, variables, options) as Promise<SetNotificationsReadMutation>;
     },
-    portfolioSnapshot(variables?: PortfolioSnapshotQueryVariables, options?: C): Promise<PortfolioSnapshotQuery> {
-      return requester<PortfolioSnapshotQuery, PortfolioSnapshotQueryVariables>(PortfolioSnapshotDocument, variables, options) as Promise<PortfolioSnapshotQuery>;
-    },
-    resourceSnapshot(variables?: ResourceSnapshotQueryVariables, options?: C): Promise<ResourceSnapshotQuery> {
-      return requester<ResourceSnapshotQuery, ResourceSnapshotQueryVariables>(ResourceSnapshotDocument, variables, options) as Promise<ResourceSnapshotQuery>;
+    getPortfolio(variables?: GetPortfolioQueryVariables, options?: C): Promise<GetPortfolioQuery> {
+      return requester<GetPortfolioQuery, GetPortfolioQueryVariables>(GetPortfolioDocument, variables, options) as Promise<GetPortfolioQuery>;
     },
     findProjects(variables: FindProjectsQueryVariables, options?: C): Promise<FindProjectsQuery> {
       return requester<FindProjectsQuery, FindProjectsQueryVariables>(FindProjectsDocument, variables, options) as Promise<FindProjectsQuery>;

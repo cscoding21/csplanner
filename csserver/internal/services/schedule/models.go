@@ -12,6 +12,9 @@ import (
 	"github.com/google/uuid"
 )
 
+type ScheduleExceptionType string
+type ScheduleExceptionLevel byte
+
 type Schedule struct {
 	//---common for all DB objects
 	common.ControlFields `csval:"validate"`

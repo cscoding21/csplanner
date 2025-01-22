@@ -4,8 +4,6 @@ type Query {
 
     findProjects(pageAndFilter: PageAndFilter!): ProjectResults!
     getProject(id: String!): Project!
-    portfolioSnapshot: PortfolioSnapshot!
-    resourceSnapshot: ResourceSnapshot!
     calculateProjectSchedule(projectID: String!, startDate: Time!): ProjectScheduleResult!
 
     findProjectComments(projectID: String!) :CommentResults!  
@@ -15,6 +13,8 @@ type Query {
     findAllProjectTemplates: ProjecttemplateResults!
 
     getOrganization: Organization!
+
+    getPortfolio: Portfolio!
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!

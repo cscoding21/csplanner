@@ -190,8 +190,8 @@ type Pagination struct {
 	After          *string `json:"after,omitempty"`
 }
 
-type PortfolioSnapshot struct {
-	Projects []*SnapshotProject `json:"projects"`
+type Portfolio struct {
+	Schedule []*Schedule `json:"schedule"`
 }
 
 type Project struct {
@@ -213,7 +213,7 @@ type ProjectActivity struct {
 	MilestoneName *string   `json:"milestoneName,omitempty"`
 	TaskID        *string   `json:"taskID,omitempty"`
 	TaskName      *string   `json:"taskName,omitempty"`
-	ResourceID    *string   `json:"resourceID,omitempty"`
+	ResourceID    string    `json:"resourceID"`
 	Resource      *Resource `json:"resource,omitempty"`
 	HoursSpent    *int      `json:"hoursSpent,omitempty"`
 }
@@ -379,19 +379,34 @@ type Resource struct {
 	AvailableHoursPerWeek *int       `json:"availableHoursPerWeek,omitempty"`
 }
 
+type ResourceAllocationMap struct {
+	WeekActivities []*ResourceProjectHourAllocation `json:"WeekActivities,omitempty"`
+}
+
+type ResourceProjectHourAllocation struct {
+	WeekNumber               int       `json:"weekNumber"`
+	Year                     int       `json:"year"`
+	Begin                    time.Time `json:"begin"`
+	End                      time.Time `json:"end"`
+	ProjectID                string    `json:"projectID"`
+	Project                  *Project  `json:"Project"`
+	ResourceID               string    `json:"resourceID"`
+	Resource                 *Resource `json:"Resource"`
+	TotalResourceHours       int       `json:"TotalResourceHours"`
+	HoursAvailableForProject int       `json:"HoursAvailableForProject"`
+	Contention               int       `json:"Contention"`
+}
+
 type ResourceResults struct {
 	Paging  *Pagination `json:"paging,omitempty"`
 	Filters *Filters    `json:"filters"`
 	Results []*Resource `json:"results,omitempty"`
 }
 
-type ResourceSnapshot struct {
-	ScheduledResources []*ScheduledResource `json:"scheduledResources"`
-}
-
 type Schedule struct {
 	ProjectName          string                 `json:"projectName"`
 	ProjectID            string                 `json:"projectID"`
+	Project              *Project               `json:"project"`
 	Begin                *time.Time             `json:"begin,omitempty"`
 	End                  *time.Time             `json:"end,omitempty"`
 	ProjectActivityWeeks []*ProjectActivityWeek `json:"projectActivityWeeks,omitempty"`
@@ -399,38 +414,16 @@ type Schedule struct {
 }
 
 type ScheduleException struct {
+	Level   int    `json:"level"`
+	Type    string `json:"type"`
 	Scope   string `json:"scope"`
 	Message string `json:"message"`
-}
-
-type ScheduledResource struct {
-	ProjectID          string     `json:"projectId"`
-	ProjectName        string     `json:"projectName"`
-	ProjectStatus      string     `json:"projectStatus"`
-	MilestoneName      string     `json:"milestoneName"`
-	MilestoneStartDate *time.Time `json:"milestoneStartDate,omitempty"`
-	MilestoneEndDate   *time.Time `json:"milestoneEndDate,omitempty"`
-	TaskName           string     `json:"taskName"`
-	TaskStartDate      *time.Time `json:"taskStartDate,omitempty"`
-	TaskEndDate        *time.Time `json:"taskEndDate,omitempty"`
-	TaskHourEstimate   int        `json:"taskHourEstimate"`
-	ResourceID         string     `json:"resourceId"`
-	ResourceName       string     `json:"resourceName"`
 }
 
 type Skill struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
 	Proficiency *float64 `json:"proficiency,omitempty"`
-}
-
-type SnapshotProject struct {
-	ID        string     `json:"id"`
-	Name      string     `json:"name"`
-	Npv       float64    `json:"npv"`
-	Status    string     `json:"status"`
-	StartDate *time.Time `json:"startDate,omitempty"`
-	EndDate   *time.Time `json:"endDate,omitempty"`
 }
 
 type Status struct {

@@ -7,6 +7,7 @@ import (
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
+	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"strings"
 	"sync"
@@ -19,10 +20,12 @@ var (
 	_skillCache    *[]list.ListItem
 	_resourceCache *[]resource.Resource
 	_userCache     *[]user.User
+	_projectCache  *[]project.Project
 
 	_skillCacheLock    sync.Mutex
 	_resourceCacheLock sync.Mutex
 	_userCacheLock     sync.Mutex
+	_projectCacheLock  sync.Mutex
 )
 
 func getSkills() *[]list.ListItem {
@@ -71,6 +74,42 @@ func getResourceById(resources []resource.Resource, id string) *idl.Resource {
 	}
 
 	return nil
+}
+
+func getProjectById(projects []project.Project, id string) *idl.Project {
+	for _, p := range projects {
+		if p.ID == id {
+			out := csmap.ProjectProjectToIdl(p)
+
+			AugmentProject(&p, &out)
+
+			return &out
+		}
+	}
+
+	return nil
+}
+
+func findProjects() *[]project.Project {
+	if _projectCache != nil {
+		return _projectCache
+	}
+
+	_projectCacheLock.Lock()
+	defer _projectCacheLock.Unlock()
+
+	ctx := context.Background()
+	rs := factory.GetProjectService()
+
+	projects, err := rs.FindAllProjects(ctx)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	_projectCache = &projects.Results
+
+	return _projectCache
 }
 
 func findResources() *[]resource.Resource {

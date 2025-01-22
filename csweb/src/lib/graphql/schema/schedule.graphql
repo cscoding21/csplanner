@@ -1,16 +1,21 @@
-fragment scheduleFragment on ProjectScheduleResult {
-    schedule {
+fragment scheduleFragment on Schedule {
     projectID
-    projectName
+    project {
+      ...projectFragment
+    }
     begin
     end
     exceptions {
+      level
+      type
       message
       scope
     }
     projectActivityWeeks {
       end
       begin
+      year
+      weekNumber
       activities {
         taskName
         resourceID
@@ -20,12 +25,16 @@ fragment scheduleFragment on ProjectScheduleResult {
         hoursSpent
       }
     }
+}
+
+fragment scheduleResultFragment on ProjectScheduleResult {
+  schedule {
+  ...scheduleFragment
   }
 }
 
-
 query calculateProjectSchedule($projectID: String!, $startDate: Time!) {
 	calculateProjectSchedule(projectID: $projectID, startDate: $startDate) {
-		...scheduleFragment
+		  ...scheduleResultFragment
 	}
 }

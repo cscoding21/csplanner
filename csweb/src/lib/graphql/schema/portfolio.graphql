@@ -1,31 +1,26 @@
-query portfolioSnapshot {
-	portfolioSnapshot {
-		projects {
-			id
-			name
-			npv
-			status
-			startDate
-			endDate
-		}
-	}
+query getPortfolio {
+	getPortfolio {
+		schedule {
+      ...scheduleFragment
+    }
+  }
 }
 
-query resourceSnapshot {
-	resourceSnapshot {
-		scheduledResources {
-			projectId
-			projectName
-			projectStatus
-			milestoneName
-			milestoneStartDate
-			milestoneEndDate
-			taskName
-			taskStartDate
-			taskEndDate
-			taskHourEstimate
-			resourceId
-			resourceName
-		}
-	}
-}
+# query resourceSnapshot {
+# 	resourceSnapshot {
+# 		scheduledResources {
+# 			projectId
+# 			projectName
+# 			projectStatus
+# 			milestoneName
+# 			milestoneStartDate
+# 			milestoneEndDate
+# 			taskName
+# 			taskStartDate
+# 			taskEndDate
+# 			taskHourEstimate
+# 			resourceId
+# 			resourceName
+# 		}
+# 	}
+# }

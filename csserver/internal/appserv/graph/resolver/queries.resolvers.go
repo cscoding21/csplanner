@@ -12,7 +12,6 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
-	"fmt"
 	"time"
 )
 
@@ -81,16 +80,6 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 	augment.AugmentProject(obj, &out)
 
 	return &out, nil
-}
-
-// PortfolioSnapshot is the resolver for the portfolioSnapshot field.
-func (r *queryResolver) PortfolioSnapshot(ctx context.Context) (*idl.PortfolioSnapshot, error) {
-	panic(fmt.Errorf("not implemented: PortfolioSnapshot - portfolioSnapshot"))
-}
-
-// ResourceSnapshot is the resolver for the resourceSnapshot field.
-func (r *queryResolver) ResourceSnapshot(ctx context.Context) (*idl.ResourceSnapshot, error) {
-	panic(fmt.Errorf("not implemented: ResourceSnapshot - resourceSnapshot"))
 }
 
 // CalculateProjectSchedule is the resolver for the calculateProjectSchedule field.
@@ -209,6 +198,28 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 	}
 
 	out := csmap.OrganizationOrganizationToIdl(*org)
+	return &out, nil
+}
+
+// GetPortfolio is the resolver for the getPortfolio field.
+func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error) {
+	portfolioService := factory.GetPortfolioService()
+
+	port, err := portfolioService.GetUnbalancedPortfolio(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	portfolioService.BalancePortfolio(ctx, port)
+
+	out := idl.Portfolio{
+		Schedule: csmap.ScheduleScheduleToIdlSlice(common.ValToRefSlice(port.Schedule)),
+	}
+
+	for i := range out.Schedule {
+		augment.AugmentSchedule(out.Schedule[i])
+	}
+
 	return &out, nil
 }
 

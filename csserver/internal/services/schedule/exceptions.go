@@ -1,7 +1,7 @@
 package schedule
 
-type ScheduleExceptionType string
-type ScheduleExceptionLevel byte
+// type ScheduleExceptionType string
+// type ScheduleExceptionLevel byte
 
 const (
 	ScheduleCannotComplete           = ScheduleExceptionType("ScheduleCannotComplete")

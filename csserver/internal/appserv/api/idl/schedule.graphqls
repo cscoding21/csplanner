@@ -2,6 +2,7 @@
 type Schedule {
     projectName: String!
     projectID: String!
+    project: Project!
     begin: Time
     end: Time
     projectActivityWeeks: [ProjectActivityWeek!]
@@ -21,13 +22,14 @@ type ProjectActivity {
 	milestoneName: String
 	taskID: String
 	taskName: String
-	resourceID: String
+    resourceID: String!
     resource: Resource
 	hoursSpent: Int
 }
 
 type ScheduleException {
     level: Int!
+    type: String!
     scope: String!
     message: String!
 }
@@ -35,4 +37,23 @@ type ScheduleException {
 
 type ProjectScheduleResult {
     schedule: Schedule!
+}
+
+
+type ResourceAllocationMap {
+    WeekActivities: [ResourceProjectHourAllocation]
+}
+
+type ResourceProjectHourAllocation {
+    weekNumber: Int!
+    year: Int!
+    begin: Time!
+    end: Time!   
+    projectID: String!                 
+	Project: Project!
+    resourceID: String!
+	Resource: Resource!
+	TotalResourceHours: Int!
+	HoursAvailableForProject: Int!
+	Contention: Int!
 }

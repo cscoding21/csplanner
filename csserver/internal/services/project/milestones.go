@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"csserver/internal/common"
+	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/utils"
@@ -46,7 +47,13 @@ func deleteTaskFromProjectGraph(project Project, milestoneID string, taskID stri
 }
 
 // UpdateProjectTask update a project task if it exists or create it if it doesn't
-func (s *ProjectService) UpdateProjectTask(ctx context.Context, projectID string, milestoneID string, task ProjectMilestoneTask) (*common.UpdateResult[Project], error) {
+func (s *ProjectService) UpdateProjectTask(
+	ctx context.Context,
+	projectID string,
+	milestoneID string,
+	task ProjectMilestoneTask,
+	org organization.Organization) (*common.UpdateResult[Project], error) {
+
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
@@ -55,6 +62,9 @@ func (s *ProjectService) UpdateProjectTask(ctx context.Context, projectID string
 	//---DO THE UPDATE
 	updatedProject := UpdateTaskFromProjectGraph(*project, milestoneID, task)
 	s.CalculateProjectMilestoneStats(&updatedProject)
+
+	rm, _ := s.GetResourceMap(false)
+	project.CalculateProjectTasksStats(org, rm)
 
 	pro, err := s.UpdateProject(ctx, &updatedProject)
 	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)

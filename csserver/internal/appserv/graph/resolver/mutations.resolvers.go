@@ -91,10 +91,11 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*idl.S
 // UpdateProjectTask is the resolver for the updateProjectTask field.
 func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.UpdateProjectMilestoneTask) (*idl.CreateProjectResult, error) {
 	service := factory.GetProjectService()
+	org, _ := factory.GetDefaultOrganization(ctx)
 
 	task := csmap.UpdateProjectMilestoneTaskIdlToProject(input)
 
-	result, err := service.UpdateProjectTask(ctx, input.ProjectID, input.MilestoneID, task)
+	result, err := service.UpdateProjectTask(ctx, input.ProjectID, input.MilestoneID, task, *org)
 	if err != nil {
 		return nil, err
 	}

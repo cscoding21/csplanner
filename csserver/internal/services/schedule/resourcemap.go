@@ -77,8 +77,12 @@ func (ram *ResourceAllocationMap) GetResource(week calendar.CSWeek, projectID st
 // ReduceResourceProjectHours subtract the available hours from the specified cell
 func (ram *ResourceAllocationMap) ReduceResourceProjectHours(week calendar.CSWeek, projectID string, resourceID string, hoursToSubtract int) {
 	for i, act := range ram.WeekActivities {
-		if act.Week.Equal(week) && strings.EqualFold(act.ResourceID, resourceID) && (strings.EqualFold(act.ProjectID, projectID) || len(projectID) == 0) {
-			ram.WeekActivities[i].HoursAvailableForProject -= hoursToSubtract
+		if act.Week.Equal(week) {
+			if strings.EqualFold(act.ResourceID, resourceID) {
+				if strings.EqualFold(act.ProjectID, projectID) || len(act.ProjectID) == 0 || len(projectID) == 0 {
+					ram.WeekActivities[i].HoursAvailableForProject -= hoursToSubtract
+				}
+			}
 		}
 	}
 }
