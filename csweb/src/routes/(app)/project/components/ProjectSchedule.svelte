@@ -183,7 +183,7 @@
 	
 {#if result && result.schedule}
 
-<SectionHeading>Basics: {result.schedule.projectName}</SectionHeading>
+<SectionHeading>Schedule: {result.schedule.project.projectBasics.name}</SectionHeading>
 
 {#if result.schedule.exceptions}
     <ul class="">

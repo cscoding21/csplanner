@@ -8,7 +8,7 @@
 </script>
 
 <!-- overflow-y-auto  -->
-<div class="p-4 w-full rounded-lg bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 divide-gray-200 dark:divide-gray-700">
+<div class="p-4 w-full h-screen rounded-lg bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 divide-gray-200 dark:divide-gray-700">
     <div class="">
         {@render children()}
     </div>

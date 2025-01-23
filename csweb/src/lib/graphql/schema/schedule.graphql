@@ -16,6 +16,7 @@ fragment scheduleFragment on Schedule {
       begin
       year
       weekNumber
+      orgCapacity
       activities {
         taskName
         resourceID

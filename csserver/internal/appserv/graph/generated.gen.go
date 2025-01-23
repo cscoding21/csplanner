@@ -268,11 +268,12 @@ type ComplexityRoot struct {
 	}
 
 	ProjectActivityWeek struct {
-		Activities func(childComplexity int) int
-		Begin      func(childComplexity int) int
-		End        func(childComplexity int) int
-		WeekNumber func(childComplexity int) int
-		Year       func(childComplexity int) int
+		Activities  func(childComplexity int) int
+		Begin       func(childComplexity int) int
+		End         func(childComplexity int) int
+		OrgCapacity func(childComplexity int) int
+		WeekNumber  func(childComplexity int) int
+		Year        func(childComplexity int) int
 	}
 
 	ProjectBasics struct {
@@ -1704,6 +1705,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectActivityWeek.End(childComplexity), true
+
+	case "ProjectActivityWeek.orgCapacity":
+		if e.complexity.ProjectActivityWeek.OrgCapacity == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivityWeek.OrgCapacity(childComplexity), true
 
 	case "ProjectActivityWeek.weekNumber":
 		if e.complexity.ProjectActivityWeek.WeekNumber == nil {
@@ -3470,6 +3478,7 @@ type ProjectActivityWeek {
     year: Int!
     begin: Time!
     end: Time!
+    orgCapacity: Int!
     activities: [ProjectActivity!]
 }
 
@@ -11385,6 +11394,50 @@ func (ec *executionContext) fieldContext_ProjectActivityWeek_end(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _ProjectActivityWeek_orgCapacity(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivityWeek_orgCapacity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrgCapacity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivityWeek_orgCapacity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivityWeek",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectActivityWeek_activities(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectActivityWeek_activities(ctx, field)
 	if err != nil {
@@ -17338,6 +17391,8 @@ func (ec *executionContext) fieldContext_Schedule_projectActivityWeeks(_ context
 				return ec.fieldContext_ProjectActivityWeek_begin(ctx, field)
 			case "end":
 				return ec.fieldContext_ProjectActivityWeek_end(ctx, field)
+			case "orgCapacity":
+				return ec.fieldContext_ProjectActivityWeek_orgCapacity(ctx, field)
 			case "activities":
 				return ec.fieldContext_ProjectActivityWeek_activities(ctx, field)
 			}
@@ -22970,6 +23025,11 @@ func (ec *executionContext) _ProjectActivityWeek(ctx context.Context, sel ast.Se
 			}
 		case "end":
 			out.Values[i] = ec._ProjectActivityWeek_end(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "orgCapacity":
+			out.Values[i] = ec._ProjectActivityWeek_orgCapacity(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

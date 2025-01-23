@@ -29,3 +29,20 @@ export const is = (input: any): boolean => {
 export const isFunction = (functionToCheck: any): boolean => {
 	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 };
+
+/**
+ * check to see if 2 dates are equal
+ * @param d1 first date to compare
+ * @param d2 second date to compare
+ * @returns true if dates are equal
+ */
+export const dateCompare = (d1:Date, d2:Date):boolean => {
+	if(	d1.getDate() == d2.getDate() 
+		&& d1.getFullYear() == d2.getFullYear() 
+		&& d1.getMonth() === d2.getMonth()) {
+
+		return true
+	}
+
+	return false
+}

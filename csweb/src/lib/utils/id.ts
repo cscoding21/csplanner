@@ -8,7 +8,7 @@ export const normalizeID = (id: string) => {
 	if (!id) {
 		return '';
 	}
-	return id.replace(':', '_').replace('@', '_').replace('.', '_');
+	return id.replaceAll(':', '_').replaceAll('@', '_').replaceAll('.', '_').replaceAll('/', '_').replaceAll('=', '');
 };
 
 /**
@@ -34,3 +34,15 @@ export const denormalizeID = (id: string) => {
 	}
 	return id.replace('_', ':').replace('|', '@').replace('-', '.');
 };
+
+
+/**
+ * take an unknown amout if inputs and generate a unique hash from them
+ * @param args a list of things to create a hash ID for
+ * @returns a hash ID
+ */
+export const getID = (...args:any):string => {
+	let str = args.join('').toString()
+
+	return normalizeID(btoa(str))
+}

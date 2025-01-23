@@ -223,11 +223,12 @@ type ProjectActivity struct {
 }
 
 type ProjectActivityWeek struct {
-	WeekNumber int                `json:"weekNumber"`
-	Year       int                `json:"year"`
-	Begin      time.Time          `json:"begin"`
-	End        time.Time          `json:"end"`
-	Activities []*ProjectActivity `json:"activities,omitempty"`
+	WeekNumber  int                `json:"weekNumber"`
+	Year        int                `json:"year"`
+	Begin       time.Time          `json:"begin"`
+	End         time.Time          `json:"end"`
+	OrgCapacity int                `json:"orgCapacity"`
+	Activities  []*ProjectActivity `json:"activities,omitempty"`
 }
 
 type ProjectBasics struct {

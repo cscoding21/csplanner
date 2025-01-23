@@ -407,6 +407,7 @@ export type ProjectActivityWeek = {
   activities?: Maybe<Array<ProjectActivity>>;
   begin: Scalars['Time']['output'];
   end: Scalars['Time']['output'];
+  orgCapacity: Scalars['Int']['output'];
   weekNumber: Scalars['Int']['output'];
   year: Scalars['Int']['output'];
 };
@@ -1126,6 +1127,7 @@ export const ScheduleFragmentFragmentDoc = gql`
     begin
     year
     weekNumber
+    orgCapacity
     activities {
       taskName
       resourceID
