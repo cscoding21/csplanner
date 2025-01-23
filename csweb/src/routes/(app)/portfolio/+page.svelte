@@ -1,18 +1,21 @@
 <script lang="ts">
     import { type Portfolio } from "$lib/graphql/generated/sdk";
 	import { getPortfolio } from "$lib/services/portfolio";
-    import { NoResults } from "$lib/components";
+    import { NoResults, CSSection } from "$lib/components";
     import { formatDate } from "$lib/utils/format";
+	import { getCSWeeks } from "$lib/utils/cscal";
 
+	let weeks:Date[] = $state([])
 
-
-const refresh = async (): Promise<Portfolio> => {
+	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
+
+		weeks = getCSWeeks(new Date(res.begin), new Date(res.end))
 
 		return res;
 	};
 
-let portfolio = $state({} as Portfolio);
+	let portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
 		refresh().then((r) => {
 			portfolio = r as Portfolio;
@@ -20,13 +23,22 @@ let portfolio = $state({} as Portfolio);
 	};
 </script>
 
-
 <div class="p-4">
-
+<CSSection>
 
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
+	<h1>{formatDate(portfolio.begin)} - {formatDate(portfolio.end)}</h1>
+	<hr />
+	<div class="p-4">
+	<ul>
+		{#each weeks as week}
+			<li>{formatDate(week)} - {week.toLocaleDateString('en-US', { weekday: 'long' })}</li>
+		{/each}
+	</ul>
+</div>
+	<hr />
 	{#if portfolio.schedule != null}
 		<div class="">
 			{#each portfolio.schedule as s(s.projectID)}
@@ -40,4 +52,5 @@ let portfolio = $state({} as Portfolio);
 	{/if}
 {/await}
 
+</CSSection>
 </div>

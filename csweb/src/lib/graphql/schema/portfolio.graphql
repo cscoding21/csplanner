@@ -1,5 +1,7 @@
 query getPortfolio {
 	getPortfolio {
+    begin
+    end
 		schedule {
       ...scheduleFragment
     }

@@ -81,3 +81,4 @@ export const safeInt = (input:any):number => {
 
 	return input as number
 }
+

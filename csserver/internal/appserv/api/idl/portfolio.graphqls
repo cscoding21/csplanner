@@ -1,5 +1,8 @@
 
 type Portfolio {
+  begin: Time
+  end: Time
   schedule: [Schedule!]!
 }
+
 

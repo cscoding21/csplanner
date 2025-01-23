@@ -18,10 +18,12 @@ type ProjectActivityWeek {
 }
 
 type ProjectActivity {
-	milestoneID: String
-	milestoneName: String
-	taskID: String
-	taskName: String
+    projectID: String!
+    project: Project
+	milestoneID: String!
+	milestoneName: String!
+	taskID: String!
+	taskName: String!
     resourceID: String!
     resource: Resource
 	hoursSpent: Int
@@ -40,20 +42,6 @@ type ProjectScheduleResult {
 }
 
 
-type ResourceAllocationMap {
-    WeekActivities: [ResourceProjectHourAllocation]
-}
-
-type ResourceProjectHourAllocation {
-    weekNumber: Int!
-    year: Int!
-    begin: Time!
-    end: Time!   
-    projectID: String!                 
-	Project: Project!
-    resourceID: String!
-	Resource: Resource!
-	TotalResourceHours: Int!
-	HoursAvailableForProject: Int!
-	Contention: Int!
+type ResourceAllocationGrid {
+  weekActivities: [ProjectActivity]
 }

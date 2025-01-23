@@ -191,6 +191,8 @@ type Pagination struct {
 }
 
 type Portfolio struct {
+	Begin    *time.Time  `json:"begin,omitempty"`
+	End      *time.Time  `json:"end,omitempty"`
 	Schedule []*Schedule `json:"schedule"`
 }
 
@@ -209,10 +211,12 @@ type Project struct {
 }
 
 type ProjectActivity struct {
-	MilestoneID   *string   `json:"milestoneID,omitempty"`
-	MilestoneName *string   `json:"milestoneName,omitempty"`
-	TaskID        *string   `json:"taskID,omitempty"`
-	TaskName      *string   `json:"taskName,omitempty"`
+	ProjectID     string    `json:"projectID"`
+	Project       *Project  `json:"project,omitempty"`
+	MilestoneID   string    `json:"milestoneID"`
+	MilestoneName string    `json:"milestoneName"`
+	TaskID        string    `json:"taskID"`
+	TaskName      string    `json:"taskName"`
 	ResourceID    string    `json:"resourceID"`
 	Resource      *Resource `json:"resource,omitempty"`
 	HoursSpent    *int      `json:"hoursSpent,omitempty"`
@@ -379,22 +383,8 @@ type Resource struct {
 	AvailableHoursPerWeek *int       `json:"availableHoursPerWeek,omitempty"`
 }
 
-type ResourceAllocationMap struct {
-	WeekActivities []*ResourceProjectHourAllocation `json:"WeekActivities,omitempty"`
-}
-
-type ResourceProjectHourAllocation struct {
-	WeekNumber               int       `json:"weekNumber"`
-	Year                     int       `json:"year"`
-	Begin                    time.Time `json:"begin"`
-	End                      time.Time `json:"end"`
-	ProjectID                string    `json:"projectID"`
-	Project                  *Project  `json:"Project"`
-	ResourceID               string    `json:"resourceID"`
-	Resource                 *Resource `json:"Resource"`
-	TotalResourceHours       int       `json:"TotalResourceHours"`
-	HoursAvailableForProject int       `json:"HoursAvailableForProject"`
-	Contention               int       `json:"Contention"`
+type ResourceAllocationGrid struct {
+	WeekActivities []*ProjectActivity `json:"weekActivities,omitempty"`
 }
 
 type ResourceResults struct {

@@ -6,6 +6,7 @@
 package schedule
 
 import (
+	"csserver/internal/calendar"
 	"csserver/internal/common"
 	"time"
 
@@ -76,4 +77,15 @@ type ScheduleException struct {
 
 type CalculatedScheduleInfo struct {
 	IsComplete bool
+}
+
+type ResourceProjectHourAllocation struct {
+	Week                     calendar.CSWeek
+	ProjectID                string
+	ProjectName              string
+	ResourceID               string
+	ResourceName             string
+	TotalResourceHours       int
+	HoursAvailableForProject int
+	Contention               int
 }

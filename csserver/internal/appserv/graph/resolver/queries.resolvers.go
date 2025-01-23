@@ -205,14 +205,16 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error) {
 	portfolioService := factory.GetPortfolioService()
 
-	port, err := portfolioService.GetUnbalancedPortfolio(ctx)
+	port, err := portfolioService.GetBalancedPortfolio(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	portfolioService.BalancePortfolio(ctx, port)
+	start, end := port.GetDateRange()
 
 	out := idl.Portfolio{
+		Begin:    start,
+		End:      end,
 		Schedule: csmap.ScheduleScheduleToIdlSlice(common.ValToRefSlice(port.Schedule)),
 	}
 

@@ -11,6 +11,7 @@ import (
 	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -87,7 +88,31 @@ func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfo
 		port.Schedule = append(port.Schedule, sch)
 	}
 
+	sort.Slice(port.Schedule, func(p, q int) bool {
+		return port.Schedule[p].End.Before(port.Schedule[q].End)
+	})
+
 	return &port, nil
+}
+
+// GetBalancedPortfolio returns a portfolio that has been run through the balancing process
+func (ps *PortfolioService) GetBalancedPortfolio(ctx context.Context) (*Portfolio, error) {
+	ubp, err := ps.GetUnbalancedPortfolio(ctx)
+	if err != nil {
+		return nil, nil
+	}
+
+	err = ps.BalancePortfolio(ctx, ubp)
+	if err != nil {
+		return nil, nil
+	}
+
+	sort.Slice(ubp.Schedule, func(p, q int) bool {
+		return ubp.Schedule[p].End.Before(ubp.Schedule[q].End)
+	})
+
+	return ubp, nil
+
 }
 
 // BalancePortfolio iterate over the portfolio until it is balanced with proper resource utilization

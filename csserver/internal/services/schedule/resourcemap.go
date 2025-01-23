@@ -48,17 +48,6 @@ func NewResourceAllocationMapFromResourceMap(rm map[string]resource.Resource) Re
 	return ram
 }
 
-type ResourceProjectHourAllocation struct {
-	Week                     calendar.CSWeek
-	ProjectID                string
-	ProjectName              string
-	ResourceID               string
-	ResourceName             string
-	TotalResourceHours       int
-	HoursAvailableForProject int
-	Contention               int
-}
-
 // GetResource return resource details given a week, resourceID< and project
 func (ram *ResourceAllocationMap) GetResource(week calendar.CSWeek, projectID string, resourceID string) *ResourceProjectHourAllocation {
 	for _, act := range ram.WeekActivities {

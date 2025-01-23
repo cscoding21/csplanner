@@ -369,6 +369,8 @@ export type Pagination = {
 
 export type Portfolio = {
   __typename?: 'Portfolio';
+  begin?: Maybe<Scalars['Time']['output']>;
+  end?: Maybe<Scalars['Time']['output']>;
   schedule: Array<Schedule>;
 };
 
@@ -390,12 +392,14 @@ export type Project = {
 export type ProjectActivity = {
   __typename?: 'ProjectActivity';
   hoursSpent?: Maybe<Scalars['Int']['output']>;
-  milestoneID?: Maybe<Scalars['String']['output']>;
-  milestoneName?: Maybe<Scalars['String']['output']>;
+  milestoneID: Scalars['String']['output'];
+  milestoneName: Scalars['String']['output'];
+  project?: Maybe<Project>;
+  projectID: Scalars['String']['output'];
   resource?: Maybe<Resource>;
   resourceID: Scalars['String']['output'];
-  taskID?: Maybe<Scalars['String']['output']>;
-  taskName?: Maybe<Scalars['String']['output']>;
+  taskID: Scalars['String']['output'];
+  taskName: Scalars['String']['output'];
 };
 
 export type ProjectActivityWeek = {
@@ -655,24 +659,9 @@ export type Resource = {
   userEmail?: Maybe<Scalars['String']['output']>;
 };
 
-export type ResourceAllocationMap = {
-  __typename?: 'ResourceAllocationMap';
-  WeekActivities?: Maybe<Array<Maybe<ResourceProjectHourAllocation>>>;
-};
-
-export type ResourceProjectHourAllocation = {
-  __typename?: 'ResourceProjectHourAllocation';
-  Contention: Scalars['Int']['output'];
-  HoursAvailableForProject: Scalars['Int']['output'];
-  Project: Project;
-  Resource: Resource;
-  TotalResourceHours: Scalars['Int']['output'];
-  begin: Scalars['Time']['output'];
-  end: Scalars['Time']['output'];
-  projectID: Scalars['String']['output'];
-  resourceID: Scalars['String']['output'];
-  weekNumber: Scalars['Int']['output'];
-  year: Scalars['Int']['output'];
+export type ResourceAllocationGrid = {
+  __typename?: 'ResourceAllocationGrid';
+  weekActivities?: Maybe<Array<Maybe<ProjectActivity>>>;
 };
 
 export type ResourceResults = {
@@ -1301,6 +1290,8 @@ export const SetNotificationsReadDocument = gql`
 export const GetPortfolioDocument = gql`
     query getPortfolio {
   getPortfolio {
+    begin
+    end
     schedule {
       ...scheduleFragment
     }

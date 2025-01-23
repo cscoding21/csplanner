@@ -15,6 +15,7 @@ type Query {
     getOrganization: Organization!
 
     getPortfolio: Portfolio!
+    # getResourceAllocationGrid: ResourceAllocationGrid!
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
