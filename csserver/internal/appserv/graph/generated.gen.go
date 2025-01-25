@@ -236,9 +236,19 @@ type ComplexityRoot struct {
 	}
 
 	Portfolio struct {
-		Begin    func(childComplexity int) int
-		End      func(childComplexity int) int
-		Schedule func(childComplexity int) int
+		Begin       func(childComplexity int) int
+		End         func(childComplexity int) int
+		Schedule    func(childComplexity int) int
+		WeekSummary func(childComplexity int) int
+	}
+
+	PortfolioWeekSummary struct {
+		AllocatedHours func(childComplexity int) int
+		Begin          func(childComplexity int) int
+		End            func(childComplexity int) int
+		OrgCapacity    func(childComplexity int) int
+		WeekNumber     func(childComplexity int) int
+		Year           func(childComplexity int) int
 	}
 
 	Project struct {
@@ -1544,6 +1554,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Portfolio.Schedule(childComplexity), true
+
+	case "Portfolio.weekSummary":
+		if e.complexity.Portfolio.WeekSummary == nil {
+			break
+		}
+
+		return e.complexity.Portfolio.WeekSummary(childComplexity), true
+
+	case "PortfolioWeekSummary.allocatedHours":
+		if e.complexity.PortfolioWeekSummary.AllocatedHours == nil {
+			break
+		}
+
+		return e.complexity.PortfolioWeekSummary.AllocatedHours(childComplexity), true
+
+	case "PortfolioWeekSummary.begin":
+		if e.complexity.PortfolioWeekSummary.Begin == nil {
+			break
+		}
+
+		return e.complexity.PortfolioWeekSummary.Begin(childComplexity), true
+
+	case "PortfolioWeekSummary.end":
+		if e.complexity.PortfolioWeekSummary.End == nil {
+			break
+		}
+
+		return e.complexity.PortfolioWeekSummary.End(childComplexity), true
+
+	case "PortfolioWeekSummary.orgCapacity":
+		if e.complexity.PortfolioWeekSummary.OrgCapacity == nil {
+			break
+		}
+
+		return e.complexity.PortfolioWeekSummary.OrgCapacity(childComplexity), true
+
+	case "PortfolioWeekSummary.weekNumber":
+		if e.complexity.PortfolioWeekSummary.WeekNumber == nil {
+			break
+		}
+
+		return e.complexity.PortfolioWeekSummary.WeekNumber(childComplexity), true
+
+	case "PortfolioWeekSummary.year":
+		if e.complexity.PortfolioWeekSummary.Year == nil {
+			break
+		}
+
+		return e.complexity.PortfolioWeekSummary.Year(childComplexity), true
 
 	case "Project.createdAt":
 		if e.complexity.Project.CreatedAt == nil {
@@ -3168,9 +3227,19 @@ type CreateOrganizationResult {
 type Portfolio {
   begin: Time
   end: Time
+  weekSummary: [PortfolioWeekSummary]!
   schedule: [Schedule!]!
 }
 
+
+type PortfolioWeekSummary {
+  weekNumber: Int!
+  year: Int!
+  begin: Time!
+  end: Time!
+  orgCapacity: Int!
+  allocatedHours: Int!
+}
 
 `, BuiltIn: false},
 	{Name: "../api/idl/project.graphqls", Input: `# GraphQL schema example
@@ -3500,7 +3569,6 @@ type ScheduleException {
     scope: String!
     message: String!
 }
-
 
 type ProjectScheduleResult {
     schedule: Schedule!
@@ -10184,6 +10252,64 @@ func (ec *executionContext) fieldContext_Portfolio_end(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Portfolio_weekSummary(ctx context.Context, field graphql.CollectedField, obj *idl.Portfolio) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Portfolio_weekSummary(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeekSummary, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.PortfolioWeekSummary)
+	fc.Result = res
+	return ec.marshalNPortfolioWeekSummary2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioWeekSummary(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Portfolio_weekSummary(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Portfolio",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "weekNumber":
+				return ec.fieldContext_PortfolioWeekSummary_weekNumber(ctx, field)
+			case "year":
+				return ec.fieldContext_PortfolioWeekSummary_year(ctx, field)
+			case "begin":
+				return ec.fieldContext_PortfolioWeekSummary_begin(ctx, field)
+			case "end":
+				return ec.fieldContext_PortfolioWeekSummary_end(ctx, field)
+			case "orgCapacity":
+				return ec.fieldContext_PortfolioWeekSummary_orgCapacity(ctx, field)
+			case "allocatedHours":
+				return ec.fieldContext_PortfolioWeekSummary_allocatedHours(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PortfolioWeekSummary", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Portfolio_schedule(ctx context.Context, field graphql.CollectedField, obj *idl.Portfolio) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Portfolio_schedule(ctx, field)
 	if err != nil {
@@ -10239,6 +10365,270 @@ func (ec *executionContext) fieldContext_Portfolio_schedule(_ context.Context, f
 				return ec.fieldContext_Schedule_exceptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Schedule", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioWeekSummary_weekNumber(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioWeekSummary_weekNumber(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeekNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioWeekSummary_weekNumber(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioWeekSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioWeekSummary_year(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioWeekSummary_year(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Year, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioWeekSummary_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioWeekSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioWeekSummary_begin(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioWeekSummary_begin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Begin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioWeekSummary_begin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioWeekSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioWeekSummary_end(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioWeekSummary_end(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.End, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioWeekSummary_end(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioWeekSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioWeekSummary_orgCapacity(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioWeekSummary_orgCapacity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrgCapacity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioWeekSummary_orgCapacity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioWeekSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioWeekSummary_allocatedHours(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioWeekSummary_allocatedHours(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AllocatedHours, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioWeekSummary_allocatedHours(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioWeekSummary",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -15664,6 +16054,8 @@ func (ec *executionContext) fieldContext_Query_getPortfolio(_ context.Context, f
 				return ec.fieldContext_Portfolio_begin(ctx, field)
 			case "end":
 				return ec.fieldContext_Portfolio_end(ctx, field)
+			case "weekSummary":
+				return ec.fieldContext_Portfolio_weekSummary(ctx, field)
 			case "schedule":
 				return ec.fieldContext_Portfolio_schedule(ctx, field)
 			}
@@ -22831,8 +23223,77 @@ func (ec *executionContext) _Portfolio(ctx context.Context, sel ast.SelectionSet
 			out.Values[i] = ec._Portfolio_begin(ctx, field, obj)
 		case "end":
 			out.Values[i] = ec._Portfolio_end(ctx, field, obj)
+		case "weekSummary":
+			out.Values[i] = ec._Portfolio_weekSummary(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "schedule":
 			out.Values[i] = ec._Portfolio_schedule(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var portfolioWeekSummaryImplementors = []string{"PortfolioWeekSummary"}
+
+func (ec *executionContext) _PortfolioWeekSummary(ctx context.Context, sel ast.SelectionSet, obj *idl.PortfolioWeekSummary) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, portfolioWeekSummaryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PortfolioWeekSummary")
+		case "weekNumber":
+			out.Values[i] = ec._PortfolioWeekSummary_weekNumber(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "year":
+			out.Values[i] = ec._PortfolioWeekSummary_year(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "begin":
+			out.Values[i] = ec._PortfolioWeekSummary_begin(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "end":
+			out.Values[i] = ec._PortfolioWeekSummary_end(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "orgCapacity":
+			out.Values[i] = ec._PortfolioWeekSummary_orgCapacity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "allocatedHours":
+			out.Values[i] = ec._PortfolioWeekSummary_allocatedHours(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -25708,6 +26169,44 @@ func (ec *executionContext) marshalNPortfolio2ᚖcsserverᚋinternalᚋappserv�
 	return ec._Portfolio(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNPortfolioWeekSummary2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioWeekSummary(ctx context.Context, sel ast.SelectionSet, v []*idl.PortfolioWeekSummary) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPortfolioWeekSummary2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioWeekSummary(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
 func (ec *executionContext) marshalNProject2csserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx context.Context, sel ast.SelectionSet, v idl.Project) graphql.Marshaler {
 	return ec._Project(ctx, sel, &v)
 }
@@ -26882,6 +27381,13 @@ func (ec *executionContext) marshalOPagination2ᚖcsserverᚋinternalᚋappserv�
 		return graphql.Null
 	}
 	return ec._Pagination(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPortfolioWeekSummary2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioWeekSummary(ctx context.Context, sel ast.SelectionSet, v *idl.PortfolioWeekSummary) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PortfolioWeekSummary(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProject2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Project) graphql.Marshaler {

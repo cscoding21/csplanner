@@ -37,7 +37,6 @@ type ScheduleException {
     message: String!
 }
 
-
 type ProjectScheduleResult {
     schedule: Schedule!
 }

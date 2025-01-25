@@ -2,7 +2,17 @@
 type Portfolio {
   begin: Time
   end: Time
+  weekSummary: [PortfolioWeekSummary]!
   schedule: [Schedule!]!
 }
 
+
+type PortfolioWeekSummary {
+  weekNumber: Int!
+  year: Int!
+  begin: Time!
+  end: Time!
+  orgCapacity: Int!
+  allocatedHours: Int!
+}
 

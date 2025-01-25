@@ -2,6 +2,14 @@ query getPortfolio {
 	getPortfolio {
     begin
     end
+    weekSummary {
+      weekNumber
+      year
+      begin
+      end
+      orgCapacity
+      allocatedHours
+    }
 		schedule {
       ...scheduleFragment
     }

@@ -372,6 +372,17 @@ export type Portfolio = {
   begin?: Maybe<Scalars['Time']['output']>;
   end?: Maybe<Scalars['Time']['output']>;
   schedule: Array<Schedule>;
+  weekSummary: Array<Maybe<PortfolioWeekSummary>>;
+};
+
+export type PortfolioWeekSummary = {
+  __typename?: 'PortfolioWeekSummary';
+  allocatedHours: Scalars['Int']['output'];
+  begin: Scalars['Time']['output'];
+  end: Scalars['Time']['output'];
+  orgCapacity: Scalars['Int']['output'];
+  weekNumber: Scalars['Int']['output'];
+  year: Scalars['Int']['output'];
 };
 
 export type Project = {
@@ -1294,6 +1305,14 @@ export const GetPortfolioDocument = gql`
   getPortfolio {
     begin
     end
+    weekSummary {
+      weekNumber
+      year
+      begin
+      end
+      orgCapacity
+      allocatedHours
+    }
     schedule {
       ...scheduleFragment
     }

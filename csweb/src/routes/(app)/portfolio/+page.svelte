@@ -2,13 +2,11 @@
     import type { ProjectActivity, ProjectActivityWeek, Portfolio, Project } from "$lib/graphql/generated/sdk";
 	import { getPortfolio } from "$lib/services/portfolio";
     import { NoResults, CSSection, SectionHeading, ResourceList } from "$lib/components";
-    import { formatDate, pluralize } from "$lib/utils/format";
-	import { getCSWeeks } from "$lib/utils/cscal";
+    import { formatDate, formatDateNoYear, pluralize, formatPercent } from "$lib/utils/format";
 	import { dateCompare } from "$lib/utils/check";
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
 
-	let weeks:Date[] = $state([])
 	let portfolioTable = $state({header: [] as string[], body:[] as ProjectRow[] })
 
 	interface ProjectRow {
@@ -23,7 +21,7 @@
 		activities: ProjectActivity[]
 	}
 
-	let orgCapacity = 0
+	let orgCapacity = $state(0)
 
 	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
@@ -34,8 +32,8 @@
 	};
 
 	const buildPortfolioTable = (res:Portfolio):any => {
-		weeks = getCSWeeks(new Date(res.begin), new Date(res.end))
-		portfolioTable.header = ["Project", ...weeks.map(w => formatDate(w))]
+		//weeks = getCSWeeks(new Date(res.begin), new Date(res.end))
+		portfolioTable.header = ["Project", ...res.weekSummary.map(w => formatDateNoYear(w?.end))]
 
 		for(let i = 0; i < res.schedule.length; i++) {
 			let schedule = res.schedule[i]
@@ -44,11 +42,11 @@
 			row.label = schedule.project.projectBasics.name
 			row.project = schedule.project
 
-			for (let j = 0; j < weeks.length; j++) {
-				const thisWeek = weeks[j] 
-				let cell = {active:false, activities:[], end: thisWeek, orgCapacity: 0} as ProjectRowCell
+			for (let j = 0; j < res.weekSummary.length; j++) {
+				const thisWeek = res.weekSummary[j] 
+				let cell = {active:false, activities:[], end: thisWeek?.end, orgCapacity: thisWeek?.orgCapacity } as ProjectRowCell
 
-				const paw = getWeekActivities(schedule.projectActivityWeeks as ProjectActivityWeek[], thisWeek)
+				const paw = getWeekActivities(schedule.projectActivityWeeks as ProjectActivityWeek[], new Date(thisWeek?.end))
 				cell.orgCapacity = paw.orgCapacity
 				orgCapacity = paw.orgCapacity
 
@@ -99,8 +97,12 @@
 	{#if portfolio.schedule != null}
 		<Table divClass="h-full">
 			<TableHead>
-				{#each portfolioTable.header as head}
-				<TableHeadCell>{head}</TableHeadCell>
+				{#each portfolioTable.header as head, index}
+				{#if index === 0}
+					<TableHeadCell>{head}</TableHeadCell>
+				{:else}
+					<TableHeadCell class="text-center">{head}</TableHeadCell>
+				{/if}
 				{/each}
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
@@ -142,8 +144,12 @@
 			<tfoot>
 				<tr class="font-semibold text-gray-900 dark:text-white">
 				  <th scope="row" class="py-3 px-6 text-base">Capacity</th>
-				  {#each weeks as week}
-				  <td class="py-3 px-6">{orgCapacity}</td>
+				  {#each portfolio.weekSummary as week}
+				  {#if week}
+				  <td class="py-3 px-6">{formatPercent.format(week.allocatedHours / week.orgCapacity)} <br />
+					<small class="whitespace-nowrap">{week.allocatedHours} / {week.orgCapacity}</small>
+				  </td>
+				  {/if}
 				  {/each} 
 				</tr>
 			  </tfoot>

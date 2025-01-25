@@ -191,9 +191,19 @@ type Pagination struct {
 }
 
 type Portfolio struct {
-	Begin    *time.Time  `json:"begin,omitempty"`
-	End      *time.Time  `json:"end,omitempty"`
-	Schedule []*Schedule `json:"schedule"`
+	Begin       *time.Time              `json:"begin,omitempty"`
+	End         *time.Time              `json:"end,omitempty"`
+	WeekSummary []*PortfolioWeekSummary `json:"weekSummary"`
+	Schedule    []*Schedule             `json:"schedule"`
+}
+
+type PortfolioWeekSummary struct {
+	WeekNumber     int       `json:"weekNumber"`
+	Year           int       `json:"year"`
+	Begin          time.Time `json:"begin"`
+	End            time.Time `json:"end"`
+	OrgCapacity    int       `json:"orgCapacity"`
+	AllocatedHours int       `json:"allocatedHours"`
 }
 
 type Project struct {

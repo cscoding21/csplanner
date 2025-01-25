@@ -1,12 +1,14 @@
 <script lang="ts">
-	import type { ProjectActivity, ProjectScheduleResult, Resource } from "$lib/graphql/generated/sdk";
-    import { ProjectScheduleCell, type Week } from ".";
+	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
+    import { ProjectBasics, ProjectScheduleCell, type Week } from ".";
 	import { calculateProjectSchedule } from "$lib/services/project";
+    import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
-	import { formatDate, pluralize } from "$lib/utils/format";
+	import { formatDate, formatDateNoYear, pluralize } from "$lib/utils/format";
     import { SectionHeading } from "$lib/components";
-    import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button } from "flowbite-svelte";
+    import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
+    import { InfoCircleSolid } from "flowbite-svelte-icons";
 
     interface ScheduleRow {
         label: string
@@ -21,24 +23,24 @@
 	}
     let { id, startDate, update }: Props = $props();
 
-    let result:ProjectScheduleResult = $state({} as ProjectScheduleResult)
+    let result:Schedule = $state({} as Schedule)
     let scheduleTable = $state({header: [] as string[], body:[] as ScheduleRow[]})
 
 
-    const getScheduleTableByResource = (r: ProjectScheduleResult) => {
+    const getScheduleTableByResource = (r: Schedule) => {
         let table = {header: [] as string[], body: [] as ScheduleRow[]}
         let head = []
         let resourceSet = new Set<Resource>()
 
         head.push("Resources")
 
-        if (!r.schedule.projectActivityWeeks) {
+        if (!r.projectActivityWeeks) {
             return {}
         }
 
-        for (let i = 0; i < r.schedule.projectActivityWeeks.length; i++) {
-            const week = r.schedule.projectActivityWeeks[i]
-            head.push(formatDate(week.end))
+        for (let i = 0; i < r.projectActivityWeeks.length; i++) {
+            const week = r.projectActivityWeeks[i]
+            head.push(formatDateNoYear(week.end))
 
             if (week.activities) {
                 for (let j = 0; j < week.activities?.length; j++) {
@@ -56,8 +58,8 @@
             const thisResource = resourceArray[x] as Resource
             let row:ScheduleRow = {label: thisResource.name, resource: thisResource, weeks: [] as Week[]}
 
-            for (let i = 0; i < r.schedule.projectActivityWeeks.length; i++) {
-                const week = r.schedule.projectActivityWeeks[i]
+            for (let i = 0; i < r.projectActivityWeeks.length; i++) {
+                const week = r.projectActivityWeeks[i]
                 let weeksActivities = { 
                     showTasks: true,
                     weekEnding: formatDate(week.end),
@@ -85,19 +87,19 @@
     }
 
 
-    const getScheduleTableByTask = (r: ProjectScheduleResult) => {
+    const getScheduleTableByTask = (r: Schedule) => {
         let table = {header: [] as string[], body: [] as ScheduleRow[]}
         let taskSet = new Set<string>()
 
         table.header.push("Task")
 
-        if (!r.schedule.projectActivityWeeks) {
+        if (!r.projectActivityWeeks) {
             return {}
         }
 
-        for (let i = 0; i < r.schedule.projectActivityWeeks.length; i++) {
-            const week = r.schedule.projectActivityWeeks[i]
-            table.header.push(formatDate(week.end))
+        for (let i = 0; i < r.projectActivityWeeks.length; i++) {
+            const week = r.projectActivityWeeks[i]
+            table.header.push(formatDateNoYear(week.end))
 
             if (week.activities) {
                 for (let j = 0; j < week.activities?.length; j++) {
@@ -113,8 +115,8 @@
             const thisTask = taskArray[x] as string
             let row:ScheduleRow = {label: thisTask, resource: undefined, weeks: [] as Week[]}
 
-            for (let i = 0; i < r.schedule.projectActivityWeeks.length; i++) {
-                const week = r.schedule.projectActivityWeeks[i]
+            for (let i = 0; i < r.projectActivityWeeks.length; i++) {
+                const week = r.projectActivityWeeks[i]
                 let weeksActivities = { 
                     showTasks: false,
                     weekEnding: formatDate(week.end), 
@@ -142,21 +144,34 @@
     }
 
 
-    const load = async ():Promise<ProjectScheduleResult> => {
-		return await calculateProjectSchedule(id, startDate)
-			.then((s) => {
-				return s
-			})
-			.catch((err) => {
-				addToast({
-					message: 'Error loading project schedule (ProjectSchedule): ' + err,
-					dismissible: true,
-					type: 'error'
-				});
+    const load = async ():Promise<Schedule> => {
+        return await getScheduledProjectFromPortfolio(id).then(s => {
+            console.log("found schedule from portfolio")
 
-				return err
-			});
-	};
+            if (s.project) {
+                return s
+            }
+
+            return calculateProjectSchedule(id, startDate)
+                .then((s) => {
+                    console.log("found schedule from calculate")
+                    return s.schedule
+                })
+                .catch((err) => {
+                    addToast({
+                        message: 'Error loading project schedule (ProjectSchedule): ' + err,
+                        dismissible: true,
+                        type: 'error'
+                    });
+
+                    return err
+                });
+
+        })
+        .catch(err => {
+            console.log("ERROR", err)
+	    });
+    }
 
     const setView = (view:string) => {
         if (view === "resource") {
@@ -181,21 +196,44 @@
 	loading...
 {:then promiseData} 
 	
-{#if result && result.schedule}
+{#if result}
 
-<SectionHeading>Schedule: {result.schedule.project.projectBasics.name}</SectionHeading>
 
-{#if result.schedule.exceptions}
+{#if result.project}
+<SectionHeading>Schedule: {result.project.projectBasics.name}</SectionHeading>
+{/if}
+
+
+{#if result.project.projectBasics.status === "scheduled"}
+<Alert border color="blue" class="mt-2 mb-6">
+    <InfoCircleSolid slot="icon" class="w-5 h-5" />
+    <span class="font-medium">Project scheduled!</span>
+    This project has been scheduled and is set to begin on <b>{formatDate(result.project.projectBasics.startDate)}</b>
+</Alert>
+{:else if result.project.projectBasics.status === "inflight"}
+<Alert border color="green" class="mt-2 mb-6">
+    <InfoCircleSolid slot="icon" class="w-5 h-5" />
+    <span class="font-medium">Project in-flight!</span>
+    This project is currently in-flight with a scheduled completion date of <b>{formatDate(result.end)}</b>
+</Alert>
+{/if}
+
+
+{#if result.exceptions}
     <ul class="">
-    {#each result.schedule.exceptions as ex}
+    {#each result.exceptions as ex}
         <li class="list-disc text-left ml-4">{ex.message}</li>
     {/each}
     </ul>
 {/if}
-{#if result.schedule.projectActivityWeeks && result.schedule.projectActivityWeeks.length > 0}
-    {#if result.schedule.end}
-    <h1>{formatDate(result.schedule.begin)} - {formatDate(result.schedule.end)}</h1>
-    <h2>Unadjusted length: {result.schedule.projectActivityWeeks.length + " " + pluralize("week", result.schedule.projectActivityWeeks.length)}</h2>
+{#if result.projectActivityWeeks && result.projectActivityWeeks.length > 0}
+    {#if result.end}
+    <h1>{formatDate(result.begin)} - {formatDate(result.end)}</h1>
+    {#if result.project.projectBasics.startDate}
+    <h2>Scheduled length: {result.projectActivityWeeks.length + " " + pluralize("week", result.projectActivityWeeks.length)}</h2>
+    {:else}
+    <h2>Unadjusted length: {result.projectActivityWeeks.length + " " + pluralize("week", result.projectActivityWeeks.length)}</h2>
+    {/if}
     {/if}
     
     <ButtonGroup class="*:!ring-primary-700 mt-2">
@@ -206,8 +244,12 @@
     
     <Table>
         <TableHead>
-            {#each scheduleTable.header as head}
-            <TableHeadCell>{head}</TableHeadCell>
+            {#each scheduleTable.header as head, index}
+            {#if index === 0}
+                <TableHeadCell>{head}</TableHeadCell>
+            {:else}
+                <TableHeadCell class="text-center">{head}</TableHeadCell>
+            {/if}
             {/each}
         </TableHead>
         <TableBody tableBodyClass="divide-y">

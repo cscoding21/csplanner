@@ -222,6 +222,8 @@ func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error
 		augment.AugmentSchedule(out.Schedule[i])
 	}
 
+	augment.AugmentPortfolio(&out)
+
 	return &out, nil
 }
 

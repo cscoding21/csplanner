@@ -17,6 +17,24 @@ export const formatDate = (input: any): string => {
 };
 
 /**
+ * return a date in DD/MM format
+ * @param input the date to format
+ * @returns a string in the format DD/MM
+ */
+export const formatDateNoYear = (input: any): string => {
+	if (!input) {
+		return '';
+	}
+
+	if (input instanceof Date) {
+		return (input.getMonth() + 1) + "/" + (input.getDate());
+	}
+
+	const o = new Date(Date.parse(input.toString()));
+	return (o.getMonth() + 1) + "/" + (o.getDate());
+};
+
+/**
  * Applies consistent formatting rules to date and time values
  * @param input A date time value to be formatted
  * @returns the formatted date/time
