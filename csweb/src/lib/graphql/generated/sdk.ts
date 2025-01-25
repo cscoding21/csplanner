@@ -1141,6 +1141,7 @@ export const ScheduleFragmentFragmentDoc = gql`
     orgCapacity
     activities {
       taskName
+      taskID
       resourceID
       resource {
         ...resourceFragment

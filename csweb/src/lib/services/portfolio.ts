@@ -1,6 +1,7 @@
 import { GetPortfolioDocument} from "$lib/graphql/generated/sdk";
-import type { Portfolio, PortfolioWeekSummary, Schedule } from "$lib/graphql/generated/sdk";
+import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, ProjectActivity } from "$lib/graphql/generated/sdk";
 import { getApolloClient } from "$lib/graphql/gqlclient";
+import { deepCopy } from "$lib/utils/helpers";
 
 
 /**
@@ -54,12 +55,34 @@ export const findScheduledWorkForResource = async(resourceID:string): Promise<Po
             let portfolio:Portfolio = { weekSummary: [] as PortfolioWeekSummary[], schedule: [] as Schedule[] }
 
             for (let i = 0; i < res.schedule.length; i++) {
-                // let has = false
+                const sch = res.schedule[i]
+                let tasks = [] as ProjectActivity[]
+                let weeks = [] as ProjectActivityWeek[]
+                if(!sch.projectActivityWeeks)
+                    continue
 
+                for (let j = 0; j < sch.projectActivityWeeks?.length; j++) {
+                    const paw = sch.projectActivityWeeks[j] as ProjectActivityWeek
 
-                // if(has) {
-                //     portfolio.
-                // }
+                    if (!paw.activities) 
+                        continue
+
+                    let newWeek = deepCopy(paw)
+                    tasks = paw.activities.filter(t => t.resourceID === resourceID)
+
+                    if (tasks.length > 0) {
+                        newWeek.activities = tasks
+
+                        weeks.push(newWeek)
+                    }
+                }
+
+                if(weeks.length > 0) {
+                    let newSched = deepCopy(sch)
+                    newSched.projectActivityWeeks = weeks
+
+                    portfolio.schedule.push(newSched)
+                }
             }
 
             return portfolio

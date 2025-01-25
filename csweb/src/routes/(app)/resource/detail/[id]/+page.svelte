@@ -22,10 +22,11 @@
 		UpdateResourceModal
 	} from '../../components';
 	import { getResource, deleteResourceSkill } from '$lib/services/resource';
-	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
+	import { formatDate, formatCurrency, titleCase, pluralize } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import type { Resource } from '$lib/graphql/generated/sdk';
+	import type { Resource, Portfolio } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
+	import { findScheduledWorkForResource } from '$lib/services/portfolio';
 
 	const id = $page.params.id;
 
@@ -34,6 +35,14 @@
 
 		return res;
 	};
+
+	const refreshWork = async ():Promise<Portfolio> => {
+		return findScheduledWorkForResource(id).then(p => {
+			portfolio = p
+
+			return p
+		})
+	}
 
 	const deleteSkill = async (skillID: string) => {
 		deleteResourceSkill(id, skillID).then((res) => {
@@ -58,11 +67,16 @@
 	const updateResource = () => {
 		refresh().then((r) => {
 			resourcePromise = r as Resource;
+		}).then(p => {
+			 refreshWork().then(p => {
+				portfolio = p
+			 })
 		});
 	}
 
 
 	let resourcePromise:Resource = $state({} as Resource);
+	let portfolio:Portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
 		updateResource()
 	}
@@ -189,8 +203,26 @@
 
 			<div>
 				<Card size="lg">
-					<!-- <TimelineChart  height="350"/> -->
-					<!-- <ResourceAllocation resourceId={id} /> -->
+					{#if portfolio && portfolio.schedule}
+					<ul>
+					{#each portfolio.schedule as schedule}
+						<li>{schedule.project.projectBasics.name}
+							{#if schedule.projectActivityWeeks}
+							{#each schedule.projectActivityWeeks as week} 
+								<div class="text-sm text-red-500">{formatDate(week.end)}</div>
+								{#if week.activities}
+									<ul>
+										{#each week.activities as activity}
+											<li class="text-yellow-200">{activity.taskName} ({activity.hoursSpent} {pluralize("hour", activity.hoursSpent || 0)})</li>
+										{/each}
+									</ul>
+								{/if}
+							{/each}
+							{/if}
+						</li>
+					{/each}
+				</ul>
+					{/if}
 				</Card>
 			</div>
 		</div>
