@@ -4,6 +4,8 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"fmt"
+
+	"github.com/cscoding21/csval/validate"
 )
 
 /*
@@ -27,7 +29,7 @@ type ProjectStatus struct {
 	State       projectstatus.ProjectState
 	Description string
 
-	Can func(p *Project) ([]StatusCondition, error)
+	Can func(p *Project) validate.ValidationResult
 }
 
 type StatusCondition struct {
@@ -40,33 +42,35 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.NewProject,
 		Description: "the state when project first created",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.NewProject
 
-			thisCond, err := checkStateTransition(currentStatus, thisState, projectstatus.NewProject)
+			result.Append(checkStateTransition(currentStatus, thisState, projectstatus.NewProject))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 	projectstatus.Draft: {
 		State:       projectstatus.Draft,
 		Description: "the state when project details are being actively formulated",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Draft
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
+			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.NewProject,
 				projectstatus.Proposed,
 				projectstatus.Approved,
 				projectstatus.Rejected,
 				projectstatus.Backlogged,
 				projectstatus.Deferred,
-				projectstatus.Abandoned)
+				projectstatus.Abandoned))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -74,14 +78,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Proposed,
 		Description: "project details are complete and is ready for review",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Proposed
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.Draft)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Draft))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -89,14 +94,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Approved,
 		Description: "project has been reviewed and approved",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Approved
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.Proposed)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Proposed))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -104,16 +110,17 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Rejected,
 		Description: "project has been reviewed and rejected",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Rejected
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
+			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Proposed,
 				projectstatus.Approved,
-				projectstatus.Backlogged)
+				projectstatus.Backlogged))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -121,15 +128,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Backlogged,
 		Description: "project is approved and awaiting resource availability",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Backlogged
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.Approved,
-				projectstatus.Rejected)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Approved))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -137,14 +144,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Scheduled,
 		Description: "project has been staffed and a start date has been set",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Scheduled
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.Approved)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Approved))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -152,14 +160,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.InFlight,
 		Description: "project has been started",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.InFlight
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.Scheduled)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Scheduled))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -167,14 +176,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Complete,
 		Description: "project has been completed",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Complete
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.InFlight)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.InFlight))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -182,14 +192,15 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Deferred,
 		Description: "project was in flight, but work has been postponed",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Deferred
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
-				projectstatus.InFlight)
+			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.InFlight))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 
@@ -197,30 +208,26 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Abandoned,
 		Description: "project made it past scheduled, but has been cancelled",
 
-		Can: func(p *Project) ([]StatusCondition, error) {
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
 			currentStatus := p.ProjectBasics.Status
 			thisState := projectstatus.Abandoned
 
-			thisCond, err := checkStateTransition(currentStatus, thisState,
+			result.Append(checkStateTransition(currentStatus, thisState,
 				thisState,
-				projectstatus.Scheduled)
+				projectstatus.Scheduled))
 
-			return []StatusCondition{thisCond}, err
+			return result
 		},
 	},
 }
 
-func checkStateTransition(currentState projectstatus.ProjectState, proposedState projectstatus.ProjectState, approvedStates ...projectstatus.ProjectState) (StatusCondition, error) {
-	thisCond := StatusCondition{
-		Description: "Current project status transition to new state must be supported",
-	}
-	var err error
-
-	if common.IsOneOf(currentState, approvedStates...) || currentState == proposedState {
-		thisCond.Met = true
-	} else {
-		err = fmt.Errorf("Project cannot move from state '%v' to '%v'", currentState, proposedState)
+func checkStateTransition(currentState projectstatus.ProjectState, proposedState projectstatus.ProjectState, approvedStates ...projectstatus.ProjectState) validate.ValidationResult {
+	if currentState == proposedState || common.IsOneOf(currentState, approvedStates...) {
+		return validate.NewSuccessValidationResult()
 	}
 
-	return thisCond, err
+	msg := validate.NewValidationMessage("status", fmt.Sprintf("Project cannot move from state '%v' to '%v'", currentState, proposedState))
+
+	return validate.NewFailingValidationResult(msg)
 }

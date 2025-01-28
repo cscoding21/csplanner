@@ -13,6 +13,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/services/comment"
 	"csserver/internal/services/project"
+	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
 	"fmt"
 )
@@ -183,7 +184,25 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 
 // SetProjectStatus is the resolver for the setProjectStatus field.
 func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error) {
-	panic(fmt.Errorf("not implemented: SetProjectStatus - setProjectStatus"))
+	service := factory.GetProjectService()
+
+	result, err := service.SetProjectStatus(ctx, projectID, projectstatus.ProjectState(newStatus))
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
+
 }
 
 // CreateProjectComment is the resolver for the createProjectComment field.

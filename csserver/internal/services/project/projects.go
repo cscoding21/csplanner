@@ -7,7 +7,6 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
-	"fmt"
 
 	"github.com/cscoding21/csval/validate"
 )
@@ -75,34 +74,37 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, org organi
 }
 
 // SetProjectStatus update the status of a project by adhering to the rules of the state machine
-func (s *ProjectService) SetProjectStatus(ctx context.Context, projectID string, status projectstatus.ProjectState) ([]StatusCondition, error) {
+func (s *ProjectService) SetProjectStatus(ctx context.Context, projectID string, status projectstatus.ProjectState) (common.UpdateResult[Project], error) {
 	p, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return []StatusCondition{}, err
+		ev := validate.NewFailingValidationResult(validate.NewValidationMessage("", err.Error()))
+		return common.NewUpdateResult(&ev, p), err
 	}
 
 	newState := stateMachineMap[status]
 
-	conditions, err := newState.Can(p)
-	if err != nil {
-		return conditions, err
-	}
+	val := newState.Can(p)
 
-	can := true
-	for _, c := range conditions {
-		if !c.Met {
-			can = false
-		}
-	}
-
-	if !can {
-		return conditions, fmt.Errorf("cannot update project state...conditions not met")
+	if !val.Pass {
+		return common.NewUpdateResult(&val, p), err
 	}
 
 	p.ProjectBasics.Status = newState.State
-	_, err = s.UpdateProject(ctx, p)
 
-	return conditions, err
+	return s.UpdateProject(ctx, p)
+}
+
+// CheckProjectStatusChange performa dry run of a status change to see if it would go through successfully
+func (s *ProjectService) CheckProjectStatusChange(ctx context.Context, projectID string, status projectstatus.ProjectState) (validate.ValidationResult, error) {
+	p, err := s.GetProjectByID(ctx, projectID)
+	if err != nil {
+		ev := validate.NewFailingValidationResult(validate.NewValidationMessage("", err.Error()))
+		return ev, err
+	}
+
+	newState := stateMachineMap[status]
+
+	return newState.Can(p), nil
 }
 
 // GetResourceMap return a map of all resources keyed by ID

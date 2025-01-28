@@ -12,6 +12,7 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
+	"csserver/internal/services/project/ptypes/projectstatus"
 	"time"
 )
 
@@ -115,6 +116,21 @@ func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID 
 	}
 
 	return &out, nil
+}
+
+// CheckProjectStatus is the resolver for the checkProjectStatus field.
+func (r *queryResolver) CheckProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.ValidationResult, error) {
+	service := factory.GetProjectService()
+
+	result, err := service.CheckProjectStatusChange(ctx, projectID, projectstatus.ProjectState(newStatus))
+	if err != nil {
+		return nil, err
+	}
+
+	out := csmap.GetValidationResultIdl(result)
+
+	return &out, nil
+
 }
 
 // FindProjectComments is the resolver for the findProjectComments field.

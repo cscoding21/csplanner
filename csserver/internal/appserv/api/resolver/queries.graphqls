@@ -5,6 +5,7 @@ type Query {
     findProjects(pageAndFilter: PageAndFilter!): ProjectResults!
     getProject(id: String!): Project!
     calculateProjectSchedule(projectID: String!, startDate: Time!): ProjectScheduleResult!
+    checkProjectStatus(projectID: String!, newStatus: String!): ValidationResult!
 
     findProjectComments(projectID: String!) :CommentResults!  
     getCommentThread(id: String!): Comment!
@@ -15,7 +16,6 @@ type Query {
     getOrganization: Organization!
 
     getPortfolio: Portfolio!
-    # getResourceAllocationGrid: ResourceAllocationGrid!
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!

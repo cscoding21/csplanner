@@ -100,7 +100,7 @@ func TestSetProjectState(t *testing.T) {
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.Scheduled}}, ToState: projectstatus.InFlight, Expected: true},
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.Scheduled}}, ToState: projectstatus.Complete, Expected: false},
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.Scheduled}}, ToState: projectstatus.Deferred, Expected: false},
-		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.Scheduled}}, ToState: projectstatus.Abandoned, Expected: false},
+		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.Scheduled}}, ToState: projectstatus.Abandoned, Expected: true},
 
 		//---From InFlight
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.NewProject, Expected: false},
@@ -112,7 +112,7 @@ func TestSetProjectState(t *testing.T) {
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.Scheduled, Expected: false},
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.InFlight, Expected: true},
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.Complete, Expected: true},
-		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.Deferred, Expected: false},
+		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.Deferred, Expected: true},
 		{P: Project{ProjectBasics: &ProjectBasics{Status: projectstatus.InFlight}}, ToState: projectstatus.Abandoned, Expected: false},
 
 		//---From Complete
@@ -158,9 +158,9 @@ func TestSetProjectState(t *testing.T) {
 	for _, td := range testData {
 		newState := stateMachineMap[td.ToState]
 
-		_, err := newState.Can(&td.P)
-		if td.Expected && err != nil {
-			t.Error(err)
+		result := newState.Can(&td.P)
+		if td.Expected != result.Pass {
+			t.Error(result.Messages)
 		}
 	}
 }
