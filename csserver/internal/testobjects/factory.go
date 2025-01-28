@@ -28,7 +28,7 @@ func GetTestProjectWithCalcsDone(name string) project.Project {
 	rm := GetResourceMap()
 	org := GetTestOrganization()
 
-	proj.CalculateProjectTasksStats(org, rm)
+	proj.CalculateProjectTaskStats(org, rm)
 
 	return proj
 }
@@ -51,7 +51,7 @@ func GetTestUpdateProjectWithCalcsDone(name string) project.Project {
 	rm := GetResourceMap()
 	org := GetTestOrganization()
 
-	proj.CalculateProjectTasksStats(org, rm)
+	proj.CalculateProjectTaskStats(org, rm)
 
 	return proj
 }

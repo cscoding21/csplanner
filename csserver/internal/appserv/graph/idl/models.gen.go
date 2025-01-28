@@ -485,7 +485,6 @@ type UpdateProject struct {
 type UpdateProjectBasics struct {
 	Name        string     `json:"name"`
 	Description *string    `json:"description,omitempty"`
-	Status      *string    `json:"status,omitempty"`
 	StartDate   *time.Time `json:"startDate,omitempty"`
 	OwnerID     *string    `json:"ownerID,omitempty"`
 }

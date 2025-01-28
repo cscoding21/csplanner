@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Hr } from 'flowbite-svelte';
 	import { NoResults, SectionHeading } from '$lib/components';
-	import { ProjectFeatureDisplay, ProjectFeatureForm } from '.';
+	import { BadgeProjectStatus, ProjectFeatureDisplay, ProjectFeatureForm } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import type { Project } from '$lib/graphql/generated/sdk';
@@ -54,7 +54,10 @@
 {:then promiseData} 
 	
 {#if project}
-<SectionHeading>Features: {project.projectBasics.name}</SectionHeading>
+<SectionHeading>
+	Features: {project.projectBasics.name}
+	<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+</SectionHeading>
 
 <div class="mb-8">
 	{#if project.projectFeatures && project.projectFeatures.length > 0}

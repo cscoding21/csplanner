@@ -8,6 +8,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { coalesceToType } from '$lib/forms/helpers';
 	import type { UpdateProjectCost, Project } from '$lib/graphql/generated/sdk';
+	import { BadgeProjectStatus } from '.';
 
 	interface Props {
 		id: string;
@@ -93,7 +94,10 @@
 	Loading...
 {:then promiseData}
 	{#if project} 
-		<SectionHeading>Estimated Implementation Cost: {project.projectBasics.name}</SectionHeading>
+		<SectionHeading>
+			Estimated Implementation Cost: {project.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+		</SectionHeading>
 	{/if}
 	{#if costForm}
 		<Heading tag="h6">Project Implementation Cost</Heading>

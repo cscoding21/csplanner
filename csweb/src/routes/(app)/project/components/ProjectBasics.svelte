@@ -9,6 +9,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
 	import { findAllUsers } from '$lib/services/user';
+	import { BadgeProjectStatus } from '.';
 
 	interface Props {
 		id: string;
@@ -102,7 +103,10 @@
 	Loading...
 {:then promiseData}
 	{#if project}
-		<SectionHeading>Basics: {project.projectBasics.name}</SectionHeading>
+		<SectionHeading>
+			Basics: {project.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+		</SectionHeading>
 	{/if}
 
 	{#if basicsForm}	

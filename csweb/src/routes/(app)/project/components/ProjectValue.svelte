@@ -13,6 +13,7 @@
 	import { callIf } from '$lib/utils/helpers';
 	import type { UpdateProjectValue, Project } from '$lib/graphql/generated/sdk';
 	import { getList } from '$lib/services/list';
+	import { BadgeProjectStatus } from '.';
 
 	let errors: any = $state({});
 
@@ -106,7 +107,10 @@
 	Loading...
 {:then promiseData}
 	{#if project}
-	<SectionHeading>Value Proposition: {project.projectBasics.name}</SectionHeading>
+	<SectionHeading>
+		Value Proposition: {project.projectBasics.name}
+		<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+	</SectionHeading>
 	{/if}
 
 	{#if valueForm}

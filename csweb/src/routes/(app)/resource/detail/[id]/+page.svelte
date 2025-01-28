@@ -206,14 +206,15 @@
 					{#if portfolio && portfolio.schedule}
 					<ul>
 					{#each portfolio.schedule as schedule}
-						<li>{schedule.project.projectBasics.name}
+						<li>
+							<div class="text-lg">{schedule.project.projectBasics.name}</div>
 							{#if schedule.projectActivityWeeks}
 							{#each schedule.projectActivityWeeks as week} 
 								<div class="text-sm text-red-500">{formatDate(week.end)}</div>
 								{#if week.activities}
-									<ul>
+									<ul class="list-disc">
 										{#each week.activities as activity}
-											<li class="text-yellow-200">{activity.taskName} ({activity.hoursSpent} {pluralize("hour", activity.hoursSpent || 0)})</li>
+											<li class="text-yellow-200 ml-3 text-xs">{activity.taskName} ({activity.hoursSpent} {pluralize("hour", activity.hoursSpent || 0)})</li>
 										{/each}
 									</ul>
 								{/if}

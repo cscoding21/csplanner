@@ -5,7 +5,9 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/marshal"
 	"csserver/internal/services/organization"
+	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
+	"fmt"
 
 	"github.com/cscoding21/csval/validate"
 )
@@ -28,6 +30,9 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 		return s.newProject(ctx, pro, org, val)
 	}
 
+	//---ensure that the project status is not set through a back-channel
+	pro.ProjectBasics.Status = lastProject.ProjectBasics.Status
+
 	lastProject.ProjectBasics = pro.ProjectBasics
 	lastProject.ProjectValue = pro.ProjectValue
 	lastProject.ProjectCost = pro.ProjectCost
@@ -38,14 +43,18 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 	lastProject.GetProjectIRR()
 	s.CalculateProjectMilestoneStats(lastProject)
 
-	rm, _ := s.GetResourceMap(false)
+	rm, err := s.GetResourceMap(false)
+	if err != nil {
+		return common.UpdateResult[Project]{Object: lastProject}, err
+	}
 
-	lastProject.CalculateProjectTasksStats(org, rm)
+	lastProject.CalculateProjectTaskStats(org, rm)
 
 	return s.UpdateProject(ctx, lastProject)
 }
 
 func (s *ProjectService) newProject(ctx context.Context, pro Project, org organization.Organization, val validate.ValidationResult) (common.UpdateResult[Project], error) {
+	pro.ProjectBasics.Status = projectstatus.NewProject
 	proj, err := s.CreateProject(ctx, &pro)
 	if err != nil {
 		return common.NewUpdateResult(&val, &pro), err
@@ -60,9 +69,40 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, org organi
 
 	rm, _ := s.GetResourceMap(false)
 
-	pro.CalculateProjectTasksStats(org, rm)
+	pro.CalculateProjectTaskStats(org, rm)
 
 	return s.UpdateProject(ctx, &pro)
+}
+
+// SetProjectStatus update the status of a project by adhering to the rules of the state machine
+func (s *ProjectService) SetProjectStatus(ctx context.Context, projectID string, status projectstatus.ProjectState) ([]StatusCondition, error) {
+	p, err := s.GetProjectByID(ctx, projectID)
+	if err != nil {
+		return []StatusCondition{}, err
+	}
+
+	newState := stateMachineMap[status]
+
+	conditions, err := newState.Can(p)
+	if err != nil {
+		return conditions, err
+	}
+
+	can := true
+	for _, c := range conditions {
+		if !c.Met {
+			can = false
+		}
+	}
+
+	if !can {
+		return conditions, fmt.Errorf("cannot update project state...conditions not met")
+	}
+
+	p.ProjectBasics.Status = newState.State
+	_, err = s.UpdateProject(ctx, p)
+
+	return conditions, err
 }
 
 // GetResourceMap return a map of all resources keyed by ID

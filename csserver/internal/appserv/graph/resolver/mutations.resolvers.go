@@ -181,6 +181,11 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 	return &out, nil
 }
 
+// SetProjectStatus is the resolver for the setProjectStatus field.
+func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error) {
+	panic(fmt.Errorf("not implemented: SetProjectStatus - setProjectStatus"))
+}
+
 // CreateProjectComment is the resolver for the createProjectComment field.
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
 	service := factory.GetCommentService()

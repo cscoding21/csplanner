@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
-    import { ProjectBasics, ProjectScheduleCell, type Week } from ".";
+    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatus, type Week } from ".";
 	import { calculateProjectSchedule } from "$lib/services/project";
     import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
@@ -200,24 +200,13 @@
 
 
 {#if result.project}
-<SectionHeading>Schedule: {result.project.projectBasics.name}</SectionHeading>
+<SectionHeading>
+    Schedule: {result.project.projectBasics.name}
+    <span class="float-right"><BadgeProjectStatus status={result.project.projectBasics.status} /></span>
+</SectionHeading>
 {/if}
 
-
-{#if result.project.projectBasics.status === "scheduled"}
-<Alert border color="blue" class="mt-2 mb-6">
-    <InfoCircleSolid slot="icon" class="w-5 h-5" />
-    <span class="font-medium">Project scheduled!</span>
-    This project has been scheduled and is set to begin on <b>{formatDate(result.project.projectBasics.startDate)}</b>
-</Alert>
-{:else if result.project.projectBasics.status === "inflight"}
-<Alert border color="green" class="mt-2 mb-6">
-    <InfoCircleSolid slot="icon" class="w-5 h-5" />
-    <span class="font-medium">Project in-flight!</span>
-    This project is currently in-flight with a scheduled completion date of <b>{formatDate(result.end)}</b>
-</Alert>
-{/if}
-
+<ProjectStatus project={result.project} schedule={result} update={() => console.log("update")} />
 
 {#if result.exceptions}
     <ul class="">

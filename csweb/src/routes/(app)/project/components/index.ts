@@ -20,6 +20,7 @@ export { default as ProjectSchedule } from './ProjectSchedule.svelte';
 export { default as ProjectScheduleCell } from './ProjectScheduleCell.svelte';
 export { default as ProjectSearchFilters } from './ProjectSearchFilters.svelte';
 export { default as ProjectSnapshot } from './ProjectSnapshot.svelte';
+export { default as ProjectStatus } from './ProjectStatus.svelte';
 export { default as ProjectTaskDisplay } from './ProjectTaskDisplay.svelte';
 export { default as ProjectTaskForm } from './ProjectTaskForm.svelte';
 export { default as ProjectTemplateSelector } from './ProjectTemplateSelector.svelte';

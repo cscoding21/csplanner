@@ -47,11 +47,6 @@ func NewPortfolioService(
 	}
 }
 
-// ScheduleProject add a project to the current portfolio
-func (ps *PortfolioService) ScheduleProject(ctx context.Context, projectID string, startDate time.Time) (Portfolio, error) {
-	panic("not implemented")
-}
-
 // GetUnbalancedPortfolio retrieves the currently scheduled projects
 func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfolio, error) {
 	pf := common.NewPagedResultsForAllRecords[project.Project]()

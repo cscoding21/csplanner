@@ -64,7 +64,7 @@ func (s *ProjectService) UpdateProjectTask(
 	s.CalculateProjectMilestoneStats(&updatedProject)
 
 	rm, _ := s.GetResourceMap(false)
-	project.CalculateProjectTasksStats(org, rm)
+	project.CalculateProjectTaskStats(org, rm)
 
 	pro, err := s.UpdateProject(ctx, &updatedProject)
 	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)

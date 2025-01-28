@@ -123,7 +123,7 @@ func (s *ProjectService) CalculateProjectMilestoneStats(p *Project) {
 }
 
 // CalculateProjectTasksStats update the calculated fields in a project task
-func (p *Project) CalculateProjectTasksStats(orgSettings organization.Organization, resources map[string]resource.Resource) {
+func (p *Project) CalculateProjectTaskStats(orgSettings organization.Organization, resources map[string]resource.Resource) {
 	for i, m := range p.ProjectMilestones {
 		for j := range m.Tasks {
 			CalculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources)

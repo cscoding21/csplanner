@@ -6,7 +6,7 @@
 	} from 'flowbite-svelte-icons';
 	import { SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/project';
-	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus } from '.';
+	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus, BadgeProjectStatus } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { getDefaultProject } from '$lib/forms/project.validation';
@@ -70,7 +70,10 @@
 	Loading...
 {:then promiseData}
 	{#if project}
-		<SectionHeading>Implementation Plan & Milestones: {project.projectBasics.name}</SectionHeading>
+		<SectionHeading>
+			Implementation Plan & Milestones: {project.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+		</SectionHeading>
 	{/if}
 
 	{#if project.projectMilestones && project.projectMilestones.length > 0}

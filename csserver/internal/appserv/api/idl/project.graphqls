@@ -165,7 +165,6 @@ input UpdateProject {
 input UpdateProjectBasics {
   name: String!
   description: String
-  status: String
   startDate: Time
   ownerID: String
 }

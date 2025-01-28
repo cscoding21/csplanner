@@ -9,6 +9,7 @@ type Mutation {
     deleteProjectTask(projectID: String!, milestoneID: String!, taskID: String!): CreateProjectResult!
     updateProjectFeature(input: UpdateProjectFeature!): CreateProjectResult!
     deleteProjectFeature(projectID: String!, featureID: String!): CreateProjectResult!
+    setProjectStatus(projectID: String!, newStatus: String!): CreateProjectResult!
 
     createProjectComment(input: UpdateComment!) : CreateProjectCommentResult!
     createProjectCommentReply(input: UpdateCommentReply!) : CreateProjectCommentResult!

@@ -8,6 +8,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, safeArray } from '$lib/utils/helpers';
 	import type { UpdateProjectDaci, Project } from '$lib/graphql/generated/sdk';
+	import { BadgeProjectStatus } from '.';
 
 	interface Props {
 		id: string;
@@ -129,7 +130,10 @@
 	Loading...
 {:then promiseData}
 	{#if project}
-		<SectionHeading>DACI: {project.projectBasics.name}</SectionHeading>
+		<SectionHeading>
+			DACI: {project.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+		</SectionHeading>
 	{/if}
 
 	{#if df}
