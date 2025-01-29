@@ -186,7 +186,7 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error) {
 	service := factory.GetProjectService()
 
-	result, err := service.SetProjectStatus(ctx, projectID, projectstatus.ProjectState(newStatus))
+	result, err := service.SetProjectStatus(ctx, projectID, projectstatus.ProjectState(newStatus), false)
 	if err != nil {
 		return nil, err
 	}
