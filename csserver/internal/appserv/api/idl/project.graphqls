@@ -21,7 +21,6 @@ type Project {
 type ProjectBasics {
   name: String!
   description: String!
-  status: String!
   startDate: Time
   ownerID: String
   owner: User

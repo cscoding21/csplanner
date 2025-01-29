@@ -58,7 +58,7 @@
         filterArray = [...filterArray, kwfil]
 
         if (status && status.length > 0) {
-            const stfil = { key: 'basics.status', value: status.join(","), operation: 'in' }
+            const stfil = { key: 'status.status', value: status.join(","), operation: 'in' }
             filterArray = [...filterArray, stfil]
         }
 

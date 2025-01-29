@@ -202,7 +202,7 @@
 {#if result.project}
 <SectionHeading>
     Schedule: {result.project.projectBasics.name}
-    <span class="float-right"><BadgeProjectStatus status={result.project.projectBasics.status} /></span>
+    <span class="float-right"><BadgeProjectStatus status={result.project.projectStatusBlock?.status} /></span>
 </SectionHeading>
 {/if}
 

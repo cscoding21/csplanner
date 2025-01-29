@@ -50,7 +50,7 @@ func NewPortfolioService(
 // GetUnbalancedPortfolio retrieves the currently scheduled projects
 func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfolio, error) {
 	pf := common.NewPagedResultsForAllRecords[project.Project]()
-	pf.Filters.AddFilter(common.Filter{Key: "basics.status", Value: "scheduled,inflight", Operation: common.FilterOperationIn})
+	pf.Filters.AddFilter(common.Filter{Key: "status.status", Value: "scheduled,inflight", Operation: common.FilterOperationIn})
 
 	rm, err := ps.ResourceService.GetResourceMap(ctx, false)
 	if err != nil {

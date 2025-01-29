@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, Heading, Hr, P, Badge } from 'flowbite-svelte';
+	import { Card, Heading, Hr, P } from 'flowbite-svelte';
 	import type { Project, Resource } from '$lib/graphql/generated/sdk';
 	import { formatDate } from '$lib/utils/format';
 	import { ResourceList, MoneyDisplay } from '$lib/components';
@@ -17,7 +17,7 @@
 		<a href="project/detail/{project.id}#snapshot">
 			{project.projectBasics?.name}
 		</a>
-		<BadgeProjectStatus status={project.projectBasics.status}  />
+		<BadgeProjectStatus status={project.projectStatusBlock?.status}  />
 		{#if project.projectValue?.calculated?.netPresentValue}
 			<span class="float-right text-lg">
 				<MoneyDisplay amount={project.projectValue?.calculated?.netPresentValue} />

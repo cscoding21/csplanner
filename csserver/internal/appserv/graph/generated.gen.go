@@ -294,7 +294,6 @@ type ComplexityRoot struct {
 		Owner       func(childComplexity int) int
 		OwnerID     func(childComplexity int) int
 		StartDate   func(childComplexity int) int
-		Status      func(childComplexity int) int
 	}
 
 	ProjectCost struct {
@@ -1856,13 +1855,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectBasics.StartDate(childComplexity), true
 
-	case "ProjectBasics.status":
-		if e.complexity.ProjectBasics.Status == nil {
-			break
-		}
-
-		return e.complexity.ProjectBasics.Status(childComplexity), true
-
 	case "ProjectCost.blendedRate":
 		if e.complexity.ProjectCost.BlendedRate == nil {
 			break
@@ -3347,7 +3339,6 @@ type Project {
 type ProjectBasics {
   name: String!
   description: String!
-  status: String!
   startDate: Time
   ownerID: String
   owner: User
@@ -11087,8 +11078,6 @@ func (ec *executionContext) fieldContext_Project_projectBasics(_ context.Context
 				return ec.fieldContext_ProjectBasics_name(ctx, field)
 			case "description":
 				return ec.fieldContext_ProjectBasics_description(ctx, field)
-			case "status":
-				return ec.fieldContext_ProjectBasics_status(ctx, field)
 			case "startDate":
 				return ec.fieldContext_ProjectBasics_startDate(ctx, field)
 			case "ownerID":
@@ -12222,50 +12211,6 @@ func (ec *executionContext) _ProjectBasics_description(ctx context.Context, fiel
 }
 
 func (ec *executionContext) fieldContext_ProjectBasics_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectBasics",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectBasics_status(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectBasics_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Status, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectBasics_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectBasics",
 		Field:      field,
@@ -24097,11 +24042,6 @@ func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.Selectio
 			}
 		case "description":
 			out.Values[i] = ec._ProjectBasics_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "status":
-			out.Values[i] = ec._ProjectBasics_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

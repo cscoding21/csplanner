@@ -10,6 +10,11 @@ import (
 
 // AugmentPortfolio enhance calculate and caches properties of a portfolio
 func AugmentPortfolio(port *idl.Portfolio) {
+	//---exit conditions
+	if port.Begin == nil || port.End == nil {
+		return
+	}
+
 	resourceList := findResources()
 
 	orgCapacity := 0

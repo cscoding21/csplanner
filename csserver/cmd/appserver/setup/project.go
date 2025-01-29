@@ -274,15 +274,28 @@ func CreateTestProjects(ctx context.Context) error {
 	} else {
 		log.Infof("PROJECT CREATED: %s", pr.Object.ProjectBasics.Name)
 	}
+	pr, err = ps.SetProjectStatus(ctx, pr.Object.ID, projectstatus.Scheduled, true)
+	if err != nil {
+		log.Errorf("Set Project Status Error (YTS): %s", err)
+	} else {
+		log.Infof("PROJECT STATUS UPDATED: %s", pr.Object.ProjectBasics.Name)
+	}
 
 	otherProjects := findPortfolioProjects()
 
-	for _, project := range otherProjects {
-		pr, err = ps.SaveProject(ctx, project, *org)
+	for _, otherProject := range otherProjects {
+		st := otherProject.ProjectStatusBlock.Status
+		pr, err = ps.SaveProject(ctx, otherProject, *org)
 		if err != nil {
 			log.Errorf("Save Project Error (OTHER): %s", err)
 		} else {
 			log.Infof("PROJECT CREATED: %s", pr.Object.ProjectBasics.Name)
+		}
+		pr, err = ps.SetProjectStatus(ctx, pr.Object.ID, st, true)
+		if err != nil {
+			log.Errorf("Set Project Status Error (YTS): %s", err)
+		} else {
+			log.Infof("PROJECT STATUS UPDATED: %s", pr.Object.ProjectBasics.Name)
 		}
 	}
 
@@ -312,8 +325,8 @@ func findPortfolioProjects() []project.Project {
 		{name: "Video: Inflight 3", status: projectstatus.InFlight},
 	}
 
-	for _, p := range names {
-		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status))
+	for i, p := range names {
+		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status, (i + 2)))
 
 		proj.ProjectValue.FundingSource = "external"
 		proj.ProjectValue.YearOneValue = math.Round(1000.0 * rand.Float64())
@@ -328,7 +341,7 @@ func findPortfolioProjects() []project.Project {
 	return outProjects
 }
 
-func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) project.Project {
+func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id int) project.Project {
 	rs := factory.GetResourceService()
 	us := factory.GetUserService()
 	ctx := context.Background()
@@ -336,6 +349,9 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState) pro
 	allUsers, _ := us.FindAllUsers(ctx)
 
 	proj := project.Project{
+		ControlFields: common.ControlFields{
+			ID: fmt.Sprintf("project:%v", id),
+		},
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
 			Description: "Here's a video to add to the portfolio",

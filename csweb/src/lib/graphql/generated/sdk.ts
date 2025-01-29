@@ -438,7 +438,6 @@ export type ProjectBasics = {
   owner?: Maybe<User>;
   ownerID?: Maybe<Scalars['String']['output']>;
   startDate?: Maybe<Scalars['Time']['output']>;
-  status: Scalars['String']['output'];
 };
 
 export type ProjectCost = {

@@ -45,7 +45,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.NewProject
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.NewProject))
 
@@ -63,7 +63,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Draft
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.NewProject,
 				projectstatus.Proposed,
@@ -88,7 +88,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Proposed
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Draft))
 
@@ -107,7 +107,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Approved
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Proposed))
 
@@ -126,7 +126,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Rejected
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Proposed,
 				projectstatus.Approved,
@@ -147,7 +147,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Backlogged
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Approved))
 
@@ -166,7 +166,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Scheduled
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Approved))
 
@@ -185,7 +185,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.InFlight
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.Scheduled))
 
@@ -204,7 +204,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Complete
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.InFlight))
 
@@ -223,7 +223,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Deferred
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				projectstatus.InFlight))
 
@@ -242,7 +242,27 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 			currentStatus := p.ProjectStatusBlock.Status
 			thisState := projectstatus.Abandoned
 
-			//---states where that can be transitioned into this state
+			//---states that can be transitioned into this state
+			result.Append(checkStateTransition(currentStatus, thisState,
+				thisState,
+				projectstatus.Scheduled))
+
+			return result
+		},
+	},
+
+	projectstatus.Exception: {
+		State:       projectstatus.Exception,
+		Description: "denotes a mapping error...should never happen",
+		//---states that can be entered from this state
+		NextValidStates: []projectstatus.ProjectState{projectstatus.Draft},
+
+		Can: func(p *Project) validate.ValidationResult {
+			result := validate.NewSuccessValidationResult()
+			currentStatus := p.ProjectStatusBlock.Status
+			thisState := projectstatus.Exception
+
+			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
 				thisState,
 				projectstatus.Scheduled))

@@ -51,18 +51,18 @@
 				break;
 			case 'scheduled':
 				badgeName = 'Scheduled';
-				badgeColor = 'purple';
-				badgeIndicatorColor = 'purple';
+				badgeColor = 'green';
+				badgeIndicatorColor = 'green';
 				break;
 			case 'inflight':
 				badgeName = 'In-flight';
-				badgeColor = 'blue';
-				badgeIndicatorColor = 'blue';
+				badgeColor = 'green';
+				badgeIndicatorColor = 'green';
 				break;
 			case 'complete':
 				badgeName = 'Complete';
-				badgeColor = 'green';
-				badgeIndicatorColor = 'green';
+				badgeColor = 'none';
+				badgeIndicatorColor = 'none';
 				break;
 			case 'deferred':
 				badgeName = 'Deferred';

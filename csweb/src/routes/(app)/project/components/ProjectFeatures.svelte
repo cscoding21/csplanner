@@ -56,7 +56,7 @@
 {#if project}
 <SectionHeading>
 	Features: {project.projectBasics.name}
-	<span class="float-right"><BadgeProjectStatus status={project.projectBasics.status} /></span>
+	<span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
 </SectionHeading>
 
 <div class="mb-8">

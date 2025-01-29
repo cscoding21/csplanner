@@ -146,7 +146,7 @@
 				  <th scope="row" class="py-3 px-6 text-base">Capacity</th>
 				  {#each portfolio.weekSummary as week}
 				  {#if week}
-				  <td class="py-3 px-6">{formatPercent.format(week.allocatedHours / week.orgCapacity)} <br />
+				  <td class="py-3 px-6 text-center">{formatPercent.format(week.allocatedHours / week.orgCapacity)} <br />
 					<small class="whitespace-nowrap">{week.allocatedHours} / {week.orgCapacity}</small>
 				  </td>
 				  {/if}
