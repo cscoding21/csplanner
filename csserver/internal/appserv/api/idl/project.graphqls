@@ -9,6 +9,7 @@ type Project {
   createdBy: String
   updatedBy: String
   projectBasics: ProjectBasics!
+  projectStatusBlock: ProjectStatusBlock!
   projectValue: ProjectValue!
   projectCost: ProjectCost!
   projectDaci: ProjectDaci!
@@ -92,6 +93,17 @@ type ProjectMilestoneTask {
 
 type ProjectFilters {
   status: String
+}
+
+type ProjectStatusBlock {
+  status: String!
+  allowedNextStates: [ProjectStatusTransition!]
+}
+
+type ProjectStatusTransition {
+	nextState: String!
+  canEnter: Boolean!
+	checkResult: ValidationResult!
 }
 
 

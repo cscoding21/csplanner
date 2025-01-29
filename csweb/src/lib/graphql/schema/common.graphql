@@ -33,3 +33,11 @@ fragment pagingFragment on Pagination {
 	resultsPerPage
 	after
 }
+
+fragment validationResultFragment on ValidationResult {
+	pass
+    messages {
+      field
+      message
+    }
+}

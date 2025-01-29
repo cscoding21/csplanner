@@ -77,6 +77,7 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 		return nil, err
 	}
 
+	service.GetStatusTransitionDetails(obj)
 	out := csmap.ProjectProjectToIdl(*obj)
 	augment.AugmentProject(obj, &out)
 
@@ -130,7 +131,6 @@ func (r *queryResolver) CheckProjectStatus(ctx context.Context, projectID string
 	out := csmap.GetValidationResultIdl(result)
 
 	return &out, nil
-
 }
 
 // FindProjectComments is the resolver for the findProjectComments field.

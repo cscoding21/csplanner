@@ -186,6 +186,7 @@ export type Mutation = {
   deleteResourceSkill: Status;
   setNotificationsRead: Status;
   setProjectMilestonesFromTemplate: CreateProjectResult;
+  setProjectStatus: CreateProjectResult;
   toggleEmote: Status;
   updateOrganization: CreateOrganizationResult;
   updateProject: CreateProjectResult;
@@ -269,6 +270,12 @@ export type MutationSetNotificationsReadArgs = {
 
 export type MutationSetProjectMilestonesFromTemplateArgs = {
   input?: InputMaybe<UpdateProjectMilestoneTemplate>;
+};
+
+
+export type MutationSetProjectStatusArgs = {
+  newStatus: Scalars['String']['input'];
+  projectID: Scalars['String']['input'];
 };
 
 
@@ -395,6 +402,7 @@ export type Project = {
   projectDaci: ProjectDaci;
   projectFeatures?: Maybe<Array<ProjectFeature>>;
   projectMilestones?: Maybe<Array<ProjectMilestone>>;
+  projectStatusBlock: ProjectStatusBlock;
   projectValue: ProjectValue;
   updatedAt?: Maybe<Scalars['Time']['output']>;
   updatedBy?: Maybe<Scalars['String']['output']>;
@@ -523,6 +531,19 @@ export type ProjectScheduleResult = {
   schedule: Schedule;
 };
 
+export type ProjectStatusBlock = {
+  __typename?: 'ProjectStatusBlock';
+  allowedNextStates?: Maybe<Array<ProjectStatusTransition>>;
+  status: Scalars['String']['output'];
+};
+
+export type ProjectStatusTransition = {
+  __typename?: 'ProjectStatusTransition';
+  canEnter: Scalars['Boolean']['output'];
+  checkResult: ValidationResult;
+  nextState: Scalars['String']['output'];
+};
+
 export type ProjectTaskCalculatedData = {
   __typename?: 'ProjectTaskCalculatedData';
   actualizedCost?: Maybe<Scalars['Float']['output']>;
@@ -573,6 +594,7 @@ export type ProjecttemplateResults = {
 export type Query = {
   __typename?: 'Query';
   calculateProjectSchedule: ProjectScheduleResult;
+  checkProjectStatus: ValidationResult;
   currentUser?: Maybe<User>;
   findActivity: ActivityResults;
   findAllLists: ListResults;
@@ -596,6 +618,12 @@ export type Query = {
 export type QueryCalculateProjectScheduleArgs = {
   projectID: Scalars['String']['input'];
   startDate: Scalars['Time']['input'];
+};
+
+
+export type QueryCheckProjectStatusArgs = {
+  newStatus: Scalars['String']['input'];
+  projectID: Scalars['String']['input'];
 };
 
 
@@ -777,7 +805,6 @@ export type UpdateProjectBasics = {
   name: Scalars['String']['input'];
   ownerID?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['Time']['input']>;
-  status?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateProjectCost = {
@@ -978,6 +1005,15 @@ export const PagingFragmentFragmentDoc = gql`
   after
 }
     `;
+export const ValidationResultFragmentFragmentDoc = gql`
+    fragment validationResultFragment on ValidationResult {
+  pass
+  messages {
+    field
+    message
+  }
+}
+    `;
 export const NotificationFragmentFragmentDoc = gql`
     fragment notificationFragment on Notification {
   id
@@ -1028,11 +1064,24 @@ export const ProjectFragmentFragmentDoc = gql`
   projectBasics {
     name
     description
-    status
     startDate
     ownerID
     owner {
       ...userFragment
+    }
+  }
+  projectStatusBlock {
+    status
+    allowedNextStates {
+      nextState
+      canEnter
+      checkResult {
+        pass
+        messages {
+          field
+          message
+        }
+      }
     }
   }
   projectValue {
@@ -1340,6 +1389,13 @@ export const GetProjectDocument = gql`
   }
 }
     ${ProjectFragmentFragmentDoc}`;
+export const CheckProjectStatusDocument = gql`
+    query checkProjectStatus($projectID: String!, $newStatus: String!) {
+  checkProjectStatus(projectID: $projectID, newStatus: $newStatus) {
+    ...validationResultFragment
+  }
+}
+    ${ValidationResultFragmentFragmentDoc}`;
 export const FindAllProjectTemplatesDocument = gql`
     query findAllProjectTemplates {
   findAllProjectTemplates {
@@ -1455,6 +1511,19 @@ ${ProjectFragmentFragmentDoc}`;
 export const DeleteProjectFeatureDocument = gql`
     mutation deleteProjectFeature($projectID: String!, $featureID: String!) {
   deleteProjectFeature(projectID: $projectID, featureID: $featureID) {
+    status {
+      ...statusFragment
+    }
+    project {
+      ...projectFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
+export const SetProjectStatusDocument = gql`
+    mutation setProjectStatus($projectID: String!, $newStatus: String!) {
+  setProjectStatus(projectID: $projectID, newStatus: $newStatus) {
     status {
       ...statusFragment
     }
@@ -1630,6 +1699,9 @@ export function getSdk<C>(requester: Requester<C>) {
     getProject(variables: GetProjectQueryVariables, options?: C): Promise<GetProjectQuery> {
       return requester<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, variables, options) as Promise<GetProjectQuery>;
     },
+    checkProjectStatus(variables: CheckProjectStatusQueryVariables, options?: C): Promise<CheckProjectStatusQuery> {
+      return requester<CheckProjectStatusQuery, CheckProjectStatusQueryVariables>(CheckProjectStatusDocument, variables, options) as Promise<CheckProjectStatusQuery>;
+    },
     findAllProjectTemplates(variables?: FindAllProjectTemplatesQueryVariables, options?: C): Promise<FindAllProjectTemplatesQuery> {
       return requester<FindAllProjectTemplatesQuery, FindAllProjectTemplatesQueryVariables>(FindAllProjectTemplatesDocument, variables, options) as Promise<FindAllProjectTemplatesQuery>;
     },
@@ -1659,6 +1731,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     deleteProjectFeature(variables: DeleteProjectFeatureMutationVariables, options?: C): Promise<DeleteProjectFeatureMutation> {
       return requester<DeleteProjectFeatureMutation, DeleteProjectFeatureMutationVariables>(DeleteProjectFeatureDocument, variables, options) as Promise<DeleteProjectFeatureMutation>;
+    },
+    setProjectStatus(variables: SetProjectStatusMutationVariables, options?: C): Promise<SetProjectStatusMutation> {
+      return requester<SetProjectStatusMutation, SetProjectStatusMutationVariables>(SetProjectStatusDocument, variables, options) as Promise<SetProjectStatusMutation>;
     },
     createUser(variables: CreateUserMutationVariables, options?: C): Promise<CreateUserMutation> {
       return requester<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, variables, options) as Promise<CreateUserMutation>;

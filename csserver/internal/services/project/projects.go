@@ -7,8 +7,11 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
+	"fmt"
 
 	"github.com/cscoding21/csval/validate"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var resourceMap map[string]resource.Resource
@@ -30,7 +33,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 	}
 
 	//---ensure that the project status is not set through a back-channel
-	pro.ProjectBasics.Status = lastProject.ProjectBasics.Status
+	pro.ProjectStatusBlock.Status = lastProject.ProjectStatusBlock.Status
 
 	lastProject.ProjectBasics = pro.ProjectBasics
 	lastProject.ProjectValue = pro.ProjectValue
@@ -53,7 +56,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 }
 
 func (s *ProjectService) newProject(ctx context.Context, pro Project, org organization.Organization, val validate.ValidationResult) (common.UpdateResult[Project], error) {
-	pro.ProjectBasics.Status = projectstatus.NewProject
+	pro.ProjectStatusBlock.Status = projectstatus.NewProject
 	proj, err := s.CreateProject(ctx, &pro)
 	if err != nil {
 		return common.NewUpdateResult(&val, &pro), err
@@ -74,7 +77,12 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, org organi
 }
 
 // SetProjectStatus update the status of a project by adhering to the rules of the state machine
-func (s *ProjectService) SetProjectStatus(ctx context.Context, projectID string, status projectstatus.ProjectState) (common.UpdateResult[Project], error) {
+func (s *ProjectService) SetProjectStatus(
+	ctx context.Context,
+	projectID string,
+	status projectstatus.ProjectState,
+	force bool) (common.UpdateResult[Project], error) {
+
 	p, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		ev := validate.NewFailingValidationResult(validate.NewValidationMessage("", err.Error()))
@@ -85,11 +93,11 @@ func (s *ProjectService) SetProjectStatus(ctx context.Context, projectID string,
 
 	val := newState.Can(p)
 
-	if !val.Pass {
-		return common.NewUpdateResult(&val, p), err
+	if !val.Pass && !force {
+		return common.NewUpdateResult(&val, p), fmt.Errorf("illegal state transition")
 	}
 
-	p.ProjectBasics.Status = newState.State
+	p.ProjectStatusBlock.Status = newState.State
 
 	return s.UpdateProject(ctx, p)
 }
@@ -134,4 +142,25 @@ func (s *ProjectService) GetResourceMap(force bool) (map[string]resource.Resourc
 	resourceMap = m
 
 	return resourceMap, nil
+}
+
+// GetStatusTransitionDetails populate information about the project status state machine
+func (s *ProjectService) GetStatusTransitionDetails(p *Project) {
+	stateInfo := stateMachineMap[p.ProjectStatusBlock.Status]
+
+	log.Warn(stateInfo)
+	for _, si := range stateInfo.NextValidStates {
+		pst := ProjectStatusTransition{
+			NextState: si,
+		}
+
+		potentialStateInfo := stateMachineMap[si]
+		result := potentialStateInfo.Can(p)
+		pst.CheckResults = result
+		pst.CanEnter = result.Pass
+
+		log.Warn(pst)
+
+		p.ProjectStatusBlock.AllowedNextStates = append(p.ProjectStatusBlock.AllowedNextStates, &pst)
+	}
 }

@@ -5,7 +5,7 @@
         ResourceList,
         UserCard
     } from "$lib/components";
-    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus } from ".";
+    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ProjectStatusUpdate } from ".";
     import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover, Hr } from "flowbite-svelte";
     import { QuestionCircleSolid } from "flowbite-svelte-icons";
     import { 
@@ -45,6 +45,8 @@
 </script>
 
 <div class="grid grid-cols-3 gap-8">
+
+    <ProjectStatusUpdate id={id} />
 
 
 {#await loadPage()}

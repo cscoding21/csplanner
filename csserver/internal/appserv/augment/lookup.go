@@ -168,3 +168,9 @@ func getUserByEmail(email string) *idl.User {
 
 	return nil
 }
+
+func getStatusTransitionDetails(p *project.Project) {
+	service := factory.GetProjectService()
+
+	service.GetStatusTransitionDetails(p)
+}

@@ -202,7 +202,6 @@ func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID strin
 	}
 
 	return &out, nil
-
 }
 
 // CreateProjectComment is the resolver for the createProjectComment field.

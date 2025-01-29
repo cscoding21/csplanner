@@ -253,17 +253,18 @@ type ComplexityRoot struct {
 	}
 
 	Project struct {
-		CreatedAt         func(childComplexity int) int
-		CreatedBy         func(childComplexity int) int
-		ID                func(childComplexity int) int
-		ProjectBasics     func(childComplexity int) int
-		ProjectCost       func(childComplexity int) int
-		ProjectDaci       func(childComplexity int) int
-		ProjectFeatures   func(childComplexity int) int
-		ProjectMilestones func(childComplexity int) int
-		ProjectValue      func(childComplexity int) int
-		UpdatedAt         func(childComplexity int) int
-		UpdatedBy         func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
+		CreatedBy          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		ProjectBasics      func(childComplexity int) int
+		ProjectCost        func(childComplexity int) int
+		ProjectDaci        func(childComplexity int) int
+		ProjectFeatures    func(childComplexity int) int
+		ProjectMilestones  func(childComplexity int) int
+		ProjectStatusBlock func(childComplexity int) int
+		ProjectValue       func(childComplexity int) int
+		UpdatedAt          func(childComplexity int) int
+		UpdatedBy          func(childComplexity int) int
 	}
 
 	ProjectActivity struct {
@@ -373,6 +374,17 @@ type ComplexityRoot struct {
 
 	ProjectScheduleResult struct {
 		Schedule func(childComplexity int) int
+	}
+
+	ProjectStatusBlock struct {
+		AllowedNextStates func(childComplexity int) int
+		Status            func(childComplexity int) int
+	}
+
+	ProjectStatusTransition struct {
+		CanEnter    func(childComplexity int) int
+		CheckResult func(childComplexity int) int
+		NextState   func(childComplexity int) int
 	}
 
 	ProjectTaskCalculatedData struct {
@@ -1676,6 +1688,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.ProjectMilestones(childComplexity), true
 
+	case "Project.projectStatusBlock":
+		if e.complexity.Project.ProjectStatusBlock == nil {
+			break
+		}
+
+		return e.complexity.Project.ProjectStatusBlock(childComplexity), true
+
 	case "Project.projectValue":
 		if e.complexity.Project.ProjectValue == nil {
 			break
@@ -2165,6 +2184,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectScheduleResult.Schedule(childComplexity), true
+
+	case "ProjectStatusBlock.allowedNextStates":
+		if e.complexity.ProjectStatusBlock.AllowedNextStates == nil {
+			break
+		}
+
+		return e.complexity.ProjectStatusBlock.AllowedNextStates(childComplexity), true
+
+	case "ProjectStatusBlock.status":
+		if e.complexity.ProjectStatusBlock.Status == nil {
+			break
+		}
+
+		return e.complexity.ProjectStatusBlock.Status(childComplexity), true
+
+	case "ProjectStatusTransition.canEnter":
+		if e.complexity.ProjectStatusTransition.CanEnter == nil {
+			break
+		}
+
+		return e.complexity.ProjectStatusTransition.CanEnter(childComplexity), true
+
+	case "ProjectStatusTransition.checkResult":
+		if e.complexity.ProjectStatusTransition.CheckResult == nil {
+			break
+		}
+
+		return e.complexity.ProjectStatusTransition.CheckResult(childComplexity), true
+
+	case "ProjectStatusTransition.nextState":
+		if e.complexity.ProjectStatusTransition.NextState == nil {
+			break
+		}
+
+		return e.complexity.ProjectStatusTransition.NextState(childComplexity), true
 
 	case "ProjectTaskCalculatedData.actualizedCost":
 		if e.complexity.ProjectTaskCalculatedData.ActualizedCost == nil {
@@ -3281,6 +3335,7 @@ type Project {
   createdBy: String
   updatedBy: String
   projectBasics: ProjectBasics!
+  projectStatusBlock: ProjectStatusBlock!
   projectValue: ProjectValue!
   projectCost: ProjectCost!
   projectDaci: ProjectDaci!
@@ -3364,6 +3419,17 @@ type ProjectMilestoneTask {
 
 type ProjectFilters {
   status: String
+}
+
+type ProjectStatusBlock {
+  status: String!
+  allowedNextStates: [ProjectStatusTransition!]
+}
+
+type ProjectStatusTransition {
+	nextState: String!
+  canEnter: Boolean!
+	checkResult: ValidationResult!
 }
 
 
@@ -3709,7 +3775,6 @@ input UpdateUser {
     getOrganization: Organization!
 
     getPortfolio: Portfolio!
-    # getResourceAllocationGrid: ResourceAllocationGrid!
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
@@ -6782,6 +6847,8 @@ func (ec *executionContext) fieldContext_CreateProjectResult_project(_ context.C
 				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
+			case "projectStatusBlock":
+				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
 			case "projectValue":
 				return ec.fieldContext_Project_projectValue(ctx, field)
 			case "projectCost":
@@ -11035,6 +11102,56 @@ func (ec *executionContext) fieldContext_Project_projectBasics(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_projectStatusBlock(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_projectStatusBlock(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectStatusBlock, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectStatusBlock)
+	fc.Result = res
+	return ec.marshalNProjectStatusBlock2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectStatusBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_projectStatusBlock(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_ProjectStatusBlock_status(ctx, field)
+			case "allowedNextStates":
+				return ec.fieldContext_ProjectStatusBlock_allowedNextStates(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectStatusBlock", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_projectValue(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_projectValue(ctx, field)
 	if err != nil {
@@ -11399,6 +11516,8 @@ func (ec *executionContext) fieldContext_ProjectActivity_project(_ context.Conte
 				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
+			case "projectStatusBlock":
+				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
 			case "projectValue":
 				return ec.fieldContext_Project_projectValue(ctx, field)
 			case "projectCost":
@@ -14431,6 +14550,8 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
+			case "projectStatusBlock":
+				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
 			case "projectValue":
 				return ec.fieldContext_Project_projectValue(ctx, field)
 			case "projectCost":
@@ -14503,6 +14624,237 @@ func (ec *executionContext) fieldContext_ProjectScheduleResult_schedule(_ contex
 				return ec.fieldContext_Schedule_exceptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Schedule", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectStatusBlock_status(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectStatusBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectStatusBlock_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectStatusBlock_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectStatusBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectStatusBlock_allowedNextStates(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectStatusBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectStatusBlock_allowedNextStates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AllowedNextStates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.ProjectStatusTransition)
+	fc.Result = res
+	return ec.marshalOProjectStatusTransition2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectStatusTransitionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectStatusBlock_allowedNextStates(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectStatusBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "nextState":
+				return ec.fieldContext_ProjectStatusTransition_nextState(ctx, field)
+			case "canEnter":
+				return ec.fieldContext_ProjectStatusTransition_canEnter(ctx, field)
+			case "checkResult":
+				return ec.fieldContext_ProjectStatusTransition_checkResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectStatusTransition", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectStatusTransition_nextState(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectStatusTransition) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectStatusTransition_nextState(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NextState, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectStatusTransition_nextState(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectStatusTransition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectStatusTransition_canEnter(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectStatusTransition) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectStatusTransition_canEnter(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CanEnter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectStatusTransition_canEnter(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectStatusTransition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectStatusTransition_checkResult(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectStatusTransition) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectStatusTransition_checkResult(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheckResult, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ValidationResult)
+	fc.Result = res
+	return ec.marshalNValidationResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectStatusTransition_checkResult(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectStatusTransition",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "pass":
+				return ec.fieldContext_ValidationResult_pass(ctx, field)
+			case "messages":
+				return ec.fieldContext_ValidationResult_messages(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ValidationResult", field.Name)
 		},
 	}
 	return fc, nil
@@ -15747,6 +16099,8 @@ func (ec *executionContext) fieldContext_Query_getProject(ctx context.Context, f
 				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
+			case "projectStatusBlock":
+				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
 			case "projectValue":
 				return ec.fieldContext_Project_projectValue(ctx, field)
 			case "projectCost":
@@ -17839,6 +18193,8 @@ func (ec *executionContext) fieldContext_Schedule_project(_ context.Context, fie
 				return ec.fieldContext_Project_updatedBy(ctx, field)
 			case "projectBasics":
 				return ec.fieldContext_Project_projectBasics(ctx, field)
+			case "projectStatusBlock":
+				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
 			case "projectValue":
 				return ec.fieldContext_Project_projectValue(ctx, field)
 			case "projectCost":
@@ -23545,6 +23901,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "projectStatusBlock":
+			out.Values[i] = ec._Project_projectStatusBlock(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "projectValue":
 			out.Values[i] = ec._Project_projectValue(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -24273,6 +24634,96 @@ func (ec *executionContext) _ProjectScheduleResult(ctx context.Context, sel ast.
 			out.Values[i] = graphql.MarshalString("ProjectScheduleResult")
 		case "schedule":
 			out.Values[i] = ec._ProjectScheduleResult_schedule(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectStatusBlockImplementors = []string{"ProjectStatusBlock"}
+
+func (ec *executionContext) _ProjectStatusBlock(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectStatusBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectStatusBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectStatusBlock")
+		case "status":
+			out.Values[i] = ec._ProjectStatusBlock_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "allowedNextStates":
+			out.Values[i] = ec._ProjectStatusBlock_allowedNextStates(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectStatusTransitionImplementors = []string{"ProjectStatusTransition"}
+
+func (ec *executionContext) _ProjectStatusTransition(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectStatusTransition) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectStatusTransitionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectStatusTransition")
+		case "nextState":
+			out.Values[i] = ec._ProjectStatusTransition_nextState(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "canEnter":
+			out.Values[i] = ec._ProjectStatusTransition_canEnter(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "checkResult":
+			out.Values[i] = ec._ProjectStatusTransition_checkResult(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -26604,6 +27055,26 @@ func (ec *executionContext) marshalNProjectScheduleResult2ᚖcsserverᚋinternal
 	return ec._ProjectScheduleResult(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectStatusBlock2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectStatusBlock(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectStatusBlock) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectStatusBlock(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjectStatusTransition2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectStatusTransition(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectStatusTransition) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectStatusTransition(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProjectValue2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValue(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectValue) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -27927,6 +28398,53 @@ func (ec *executionContext) marshalOProjectMilestoneCalculatedData2ᚖcsserver�
 		return graphql.Null
 	}
 	return ec._ProjectMilestoneCalculatedData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectStatusTransition2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectStatusTransitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectStatusTransition) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjectStatusTransition2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectStatusTransition(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOProjectTaskCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectTaskCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectTaskCalculatedData) graphql.Marshaler {

@@ -7,12 +7,25 @@ fragment projectFragment on Project {
 	projectBasics {
 		name
 		description
-		status
 		startDate
 		ownerID
 		owner {
 			...userFragment
 		}
+	}
+	projectStatusBlock {
+		status
+		allowedNextStates {
+			nextState
+			canEnter
+			checkResult	{
+				pass
+				messages {
+					field
+					message
+				}
+		}
+      }
 	}
 	projectValue {
 		fundingSource
@@ -117,6 +130,12 @@ query getProject($id: String!) {
 	}
 }
 
+query checkProjectStatus ($projectID: String!, $newStatus: String!) {
+	checkProjectStatus(projectID: $projectID, newStatus: $newStatus) {
+		...validationResultFragment
+	}
+}
+
 query findAllProjectTemplates {
 	findAllProjectTemplates {
 		results {
@@ -212,6 +231,17 @@ mutation updateProjectFeature($input: UpdateProjectFeature!) {
 
 mutation deleteProjectFeature($projectID: String!, $featureID: String!) {
 	deleteProjectFeature(projectID: $projectID, featureID: $featureID) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
+}
+
+mutation setProjectStatus ($projectID: String!, $newStatus: String!) {
+	setProjectStatus(projectID: $projectID, newStatus: $newStatus) {
 		status {
 			...statusFragment
 		}

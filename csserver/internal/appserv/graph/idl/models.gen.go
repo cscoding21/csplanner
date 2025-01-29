@@ -207,17 +207,18 @@ type PortfolioWeekSummary struct {
 }
 
 type Project struct {
-	ID                *string             `json:"id,omitempty"`
-	CreatedAt         *time.Time          `json:"createdAt,omitempty"`
-	UpdatedAt         *time.Time          `json:"updatedAt,omitempty"`
-	CreatedBy         *string             `json:"createdBy,omitempty"`
-	UpdatedBy         *string             `json:"updatedBy,omitempty"`
-	ProjectBasics     *ProjectBasics      `json:"projectBasics"`
-	ProjectValue      *ProjectValue       `json:"projectValue"`
-	ProjectCost       *ProjectCost        `json:"projectCost"`
-	ProjectDaci       *ProjectDaci        `json:"projectDaci"`
-	ProjectFeatures   []*ProjectFeature   `json:"projectFeatures,omitempty"`
-	ProjectMilestones []*ProjectMilestone `json:"projectMilestones,omitempty"`
+	ID                 *string             `json:"id,omitempty"`
+	CreatedAt          *time.Time          `json:"createdAt,omitempty"`
+	UpdatedAt          *time.Time          `json:"updatedAt,omitempty"`
+	CreatedBy          *string             `json:"createdBy,omitempty"`
+	UpdatedBy          *string             `json:"updatedBy,omitempty"`
+	ProjectBasics      *ProjectBasics      `json:"projectBasics"`
+	ProjectStatusBlock *ProjectStatusBlock `json:"projectStatusBlock"`
+	ProjectValue       *ProjectValue       `json:"projectValue"`
+	ProjectCost        *ProjectCost        `json:"projectCost"`
+	ProjectDaci        *ProjectDaci        `json:"projectDaci"`
+	ProjectFeatures    []*ProjectFeature   `json:"projectFeatures,omitempty"`
+	ProjectMilestones  []*ProjectMilestone `json:"projectMilestones,omitempty"`
 }
 
 type ProjectActivity struct {
@@ -327,6 +328,17 @@ type ProjectResults struct {
 
 type ProjectScheduleResult struct {
 	Schedule *Schedule `json:"schedule"`
+}
+
+type ProjectStatusBlock struct {
+	Status            string                     `json:"status"`
+	AllowedNextStates []*ProjectStatusTransition `json:"allowedNextStates,omitempty"`
+}
+
+type ProjectStatusTransition struct {
+	NextState   string            `json:"nextState"`
+	CanEnter    bool              `json:"canEnter"`
+	CheckResult *ValidationResult `json:"checkResult"`
 }
 
 type ProjectTaskCalculatedData struct {

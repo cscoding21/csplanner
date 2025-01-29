@@ -11,6 +11,8 @@ import (
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"time"
+
+	"github.com/cscoding21/csval/validate"
 )
 
 // Project the primary object representing a product
@@ -19,21 +21,21 @@ type Project struct {
 	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
-	ProjectBasics     *ProjectBasics      `json:"basics"`
-	ProjectValue      *ProjectValue       `json:"value"`
-	ProjectCost       *ProjectCost        `json:"cost"`
-	ProjectDaci       *ProjectDaci        `json:"daci"`
-	ProjectFeatures   []*ProjectFeature   `json:"features"`
-	ProjectMilestones []*ProjectMilestone `json:"milestones"`
+	ProjectBasics      *ProjectBasics      `json:"basics"`
+	ProjectStatusBlock *ProjectStatusBlock `json:"status"`
+	ProjectValue       *ProjectValue       `json:"value"`
+	ProjectCost        *ProjectCost        `json:"cost"`
+	ProjectDaci        *ProjectDaci        `json:"daci"`
+	ProjectFeatures    []*ProjectFeature   `json:"features"`
+	ProjectMilestones  []*ProjectMilestone `json:"milestones"`
 }
 
 // ProjectBasics basic elements of a project
 type ProjectBasics struct {
-	Name        string                     `json:"name"`
-	Description string                     `json:"description"`
-	Status      projectstatus.ProjectState `json:"status"`
-	StartDate   *time.Time                 `json:"start_time"`
-	OwnerID     string                     `json:"owner_id"`
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	StartDate   *time.Time `json:"start_time"`
+	OwnerID     string     `json:"owner_id"`
 }
 
 // ProjectValue properties used in calculating the value of a project
@@ -128,4 +130,15 @@ type ProjectTaskCalculatedData struct {
 	CommsHourAdjustment        int     `json:"comms_hour_adjustment"`
 
 	Exceptions []string `json:"exceptions"`
+}
+
+type ProjectStatusBlock struct {
+	Status            projectstatus.ProjectState `json:"status"`
+	AllowedNextStates []*ProjectStatusTransition
+}
+
+type ProjectStatusTransition struct {
+	NextState    projectstatus.ProjectState `json:"next_state"`
+	CanEnter     bool                       `json:"can_enter"`
+	CheckResults validate.ValidationResult  `json:"check_results"`
 }

@@ -14,7 +14,8 @@ import type {
 	UpdateProjectBasics,
 	CreateProjectResult,
 	ProjecttemplateResults,
-	ProjectScheduleResult
+	ProjectScheduleResult,
+	ValidationResult
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import {
@@ -29,7 +30,9 @@ import {
 	UpdateProjectTaskDocument,
 	CreateProjectDocument,
 	GetProjectDocument,
-	CalculateProjectScheduleDocument
+	CalculateProjectScheduleDocument,
+	CheckProjectStatusDocument,
+	SetProjectStatusDocument
 } from '$lib/graphql/generated/sdk';
 import { coalesceToType } from '$lib/forms/helpers';
 import { safeArray } from '$lib/utils/helpers';
@@ -73,6 +76,28 @@ export const getProject = async (id: any): Promise<Project> => {
 		.then((pro) => {
 			if (pro) {
 				return pro.data.getProject;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+
+/**
+ * check to see if a project status can be updated to a given state
+ * @param projectID the project ID to check
+ * @param newStatus the status of the update dry-run
+ * @returns a validation result
+ */
+export const checkProjectStatus = async (projectID: string, newStatus: string): Promise<ValidationResult> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: CheckProjectStatusDocument, variables: { projectID, newStatus } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.checkProjectStatus;
 			}
 		})
 		.catch((err) => {
@@ -133,6 +158,27 @@ export const updateProject = async (input: UpdateProject): Promise<CreateProject
 		.then((pro) => {
 			if (pro) {
 				return pro.data.updateProject;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * try to update the status of a project
+ * @param projectID the project ID to update
+ * @param newStatus the new status
+ * @returns an update project object
+ */
+export const setProjectStatus = async (projectID: string, newStatus: string): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: SetProjectStatusDocument, variables: { projectID, newStatus } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.setProjectStatus;
 			}
 		})
 		.catch((err) => {

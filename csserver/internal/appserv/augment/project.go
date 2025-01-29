@@ -3,6 +3,7 @@ package augment
 import (
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/services/project"
+	"csserver/internal/services/project/ptypes/projectstatus"
 )
 
 func AugmentProject(model *project.Project, proj *idl.Project) {
@@ -14,6 +15,23 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 	resourceList := findResources()
 
 	proj.ProjectBasics.Owner = getUserByEmail(model.ProjectBasics.OwnerID)
+
+	for i, s := range proj.ProjectStatusBlock.AllowedNextStates {
+		tra := getStateTransition(*model, projectstatus.ProjectState(s.NextState))
+		messages := []*idl.ValidationMessage{}
+
+		for _, m := range tra.CheckResults.Messages {
+			messages = append(messages, &idl.ValidationMessage{
+				Message: m.Message,
+				Field:   m.Field,
+			})
+		}
+
+		proj.ProjectStatusBlock.AllowedNextStates[i].CheckResult = &idl.ValidationResult{
+			Pass:     tra.CheckResults.Pass,
+			Messages: messages,
+		}
+	}
 
 	for i, m := range proj.ProjectMilestones {
 		if len(m.Tasks) == 0 {
@@ -77,4 +95,14 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 			}
 		}
 	}
+}
+
+func getStateTransition(model project.Project, status projectstatus.ProjectState) *project.ProjectStatusTransition {
+	for _, pst := range model.ProjectStatusBlock.AllowedNextStates {
+		if pst.NextState == status {
+			return pst
+		}
+	}
+
+	return nil
 }
