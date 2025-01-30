@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
-    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatus, type Week } from ".";
+    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, type Week } from ".";
 	import { calculateProjectSchedule } from "$lib/services/project";
     import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
@@ -8,7 +8,6 @@
     import { SectionHeading } from "$lib/components";
     import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
-    import { InfoCircleSolid } from "flowbite-svelte-icons";
 
     interface ScheduleRow {
         label: string
@@ -206,7 +205,7 @@
 </SectionHeading>
 {/if}
 
-<ProjectStatus project={result.project} schedule={result} update={() => console.log("update")} />
+<ProjectStatusBanner project={result.project} schedule={result} update={() => console.log("update")} />
 
 {#if result.exceptions}
     <ul class="">

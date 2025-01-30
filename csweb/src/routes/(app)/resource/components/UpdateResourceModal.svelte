@@ -10,10 +10,11 @@
 	import { deepCopy } from '$lib/utils/helpers';
 	import { handleFileUpload } from '$lib/services/file';
 	import type { Snippet } from 'svelte';
+	import NumberInput from '$lib/components/forms/NumberInput.svelte';
 
 	let editModalOpen: boolean = $state(false);
 	let isUpdate = $state(false);
-	let errors = $state({ name: '', role: '', initialCost: '', annualizedCost: '', type: '', status: '' });
+	let errors = $state({ name: '', role: '', initialCost: '', annualizedCost: '', type: '', status: '', availableHoursPerWeek: '' });
 	let rf = $state(deepCopy(resourceForm));
 	let formTitle = $state('New Resource');
 
@@ -130,6 +131,13 @@
 		error={errors.type}
 		options={typeOpts}
 	/>
+
+	<NumberInput
+		bind:value={rf.availableHoursPerWeek as number}
+		fieldName="Available Hours per Week"
+		error={errors.availableHoursPerWeek}
+	/>
+
 
 	<SelectInput
 		bind:value={rf.status as string}

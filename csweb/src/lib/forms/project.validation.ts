@@ -62,7 +62,6 @@ export const getDefaultProject = (): UpdateProject => {
 			name: '',
 			description: '',
 			ownerID: '',
-			status: 'draft'
 		},
 		projectValue: {
 			fundingSource: '',

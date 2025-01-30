@@ -15,13 +15,13 @@
 
 
 {#if schedule}
-    {#if project.projectBasics.status === "scheduled"}
+    {#if project.projectStatusBlock.status === "scheduled"}
     <Alert border color="blue" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
         <span class="font-medium">Project scheduled</span>
         This project has been scheduled and is set to begin on <b>{formatDate(project.projectBasics.startDate)}</b>
     </Alert>
-    {:else if project.projectBasics.status === "inflight"}
+    {:else if project.projectStatusBlock.status === "inflight"}
     <Alert border color="green" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
         <span class="font-medium">Project in-flight!</span>
@@ -31,7 +31,7 @@
 {:else}
     <Alert border color="green" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
-        <span class="font-medium">{project.projectBasics.status}</span>
+        <span class="font-medium">{project.projectStatusBlock.status}</span>
         <Button slot="close-button" size="xs" let:close on:click={close} class="ms-auto">Dismiss</Button>
     </Alert>
 {/if}

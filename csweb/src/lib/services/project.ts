@@ -175,7 +175,7 @@ export const setProjectStatus = async (projectID: string, newStatus: string): Pr
 	const client = getApolloClient();
 
 	return client
-		.query({ query: SetProjectStatusDocument, variables: { projectID, newStatus } })
+		.mutate({ mutation: SetProjectStatusDocument, variables: { projectID, newStatus } })
 		.then((pro) => {
 			if (pro) {
 				return pro.data.setProjectStatus;

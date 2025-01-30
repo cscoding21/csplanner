@@ -50,8 +50,6 @@
 		taskForm.status = 'new';
 		taskForm.requiredSkillID = '';
 		taskForm.resourceIDs = [];
-		taskForm.startDate = null;
-		taskForm.endDate = null;
 	};
 
 	const getTaskForm = (): UpdateProjectMilestoneTask => {
@@ -72,9 +70,7 @@
 			hourEstimate: 0,
 			status: '',
 			requiredSkillID: '',
-			resourceIDs: [],
-			startDate: null,
-			endDate: null
+			resourceIDs: []
 		};
 	};
 

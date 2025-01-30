@@ -32,7 +32,6 @@
 	};
 
 	const buildPortfolioTable = (res:Portfolio):any => {
-		//weeks = getCSWeeks(new Date(res.begin), new Date(res.end))
 		portfolioTable.header = ["Project", ...res.weekSummary.map(w => formatDateNoYear(w?.end))]
 
 		for(let i = 0; i < res.schedule.length; i++) {

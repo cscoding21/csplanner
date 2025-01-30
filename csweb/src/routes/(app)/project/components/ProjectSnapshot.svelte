@@ -27,8 +27,6 @@
     const load = async (): Promise<Project> => {
 		return await getProject(id)
 			.then((proj) => {
-                //proj.projectFeatures?.sort((a, b) => a.priority.localeCompare(b.priority))
-
 				return proj;
 			})
 			.catch((err) => {
@@ -46,19 +44,19 @@
 
 <div class="grid grid-cols-3 gap-8">
 
-    <ProjectStatusUpdate id={id} />
-
 
 {#await loadPage()}
 	Loading...
 {:then promiseData}
 
 {#if project}
+
 <!-- col span 3 -->
 <div class="col-span-3">
 <SectionHeading>
     Financials: {project.projectBasics.name}
-    <span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+    <span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} />
+    </span>
 </SectionHeading>
 </div>
 {/if}

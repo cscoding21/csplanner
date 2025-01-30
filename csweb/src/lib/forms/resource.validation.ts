@@ -10,7 +10,8 @@ export const resourceForm: any = {
 	email: '',
 	profileImage: '',
 	initialCost: 0.0,
-	annualizedCost: 0.0
+	annualizedCost: 0.0,
+	availableHoursPerWeek: 0
 };
 
 export const resetFormValues = (form: any) => {
@@ -24,6 +25,7 @@ export const resetFormValues = (form: any) => {
 	form.profileImage = '';
 	form.initialCost = 0.0;
 	form.annualizedCost = 0.0;
+	form.availableHoursPerWeek = 0;
 };
 
 export const resourceSchema = yup.object().shape({
@@ -36,5 +38,6 @@ export const resourceSchema = yup.object().shape({
 	email: yup.string().email(),
 	profileImage: yup.string(),
 	initialCost: yup.number(),
-	annualizedCost: yup.number()
+	annualizedCost: yup.number(),
+	availableHoursPerWeek: yup.number()
 });

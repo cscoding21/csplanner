@@ -15,9 +15,10 @@
 		ProjectSchedule
 	} from '../../components';
 	import { CommentList, CSSection } from "$lib/components";
-	import { TrashBinOutline, MessagesOutline } from 'flowbite-svelte-icons';
+	import { TrashBinOutline, MessagesOutline, ArrowRightToBracketOutline } from 'flowbite-svelte-icons';
 	import type { Project } from '$lib/graphql/generated/sdk';
 	import { sineIn } from 'svelte/easing';
+	import ProjectStatusUpdate from '../../components/ProjectStatusUpdate.svelte';
 
 	const id = $page.params.id;
 	let hash = $state($page.url.hash);
@@ -54,7 +55,11 @@
 {:then promiseData}
 	<ProjectActionBar pageDetail={project.projectBasics?.name}>
 		<ButtonGroup>
-			<DeleteProject id={id || ''} name={project.projectBasics?.name}>
+			<ProjectStatusUpdate id={id}>
+				<ArrowRightToBracketOutline size="sm" class="mr-2"  />
+				Status
+			</ProjectStatusUpdate>
+			<DeleteProject id={id} name={project.projectBasics?.name}>
 				<TrashBinOutline size="sm" class="mr-2" />
 				Delete
 			</DeleteProject>
@@ -69,7 +74,7 @@
 	<div class="flex w-full col-span-5">
 		{#if hash == "#snapshot"}
 			<CSSection>
-				<ProjectSnapshot {id} />
+				<ProjectSnapshot {id}  />
 			</CSSection>
 		{:else if hash == '#basics'}
 			<CSSection>
