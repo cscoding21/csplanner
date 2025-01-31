@@ -96,6 +96,8 @@ maps:
       target_name: "ProjectBasics"
     - source_name: "UpdateProjectValue"
       target_name: "ProjectValue"
+    - source_name: "UpdateProjectValueLine"
+      target_name: "ProjectValueLine"
     - source_name: "UpdateProjectCost"
       target_name: "ProjectCost"
     - source_name: "UpdateProjectDaci"

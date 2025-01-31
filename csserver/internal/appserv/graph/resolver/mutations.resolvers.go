@@ -182,6 +182,52 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 	return &out, nil
 }
 
+// UpdateProjectValueLine is the resolver for the updateProjectValueLine field.
+func (r *mutationResolver) UpdateProjectValueLine(ctx context.Context, input idl.UpdateProjectValueLine) (*idl.CreateProjectResult, error) {
+	service := factory.GetProjectService()
+
+	vl := csmap.UpdateProjectValueLineIdlToProject(input)
+
+	result, err := service.UpdateProjectValueLine(ctx, input.ProjectID, vl)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
+}
+
+// DeleteProjectValueLine is the resolver for the deleteProjectValueLine field.
+func (r *mutationResolver) DeleteProjectValueLine(ctx context.Context, projectID string, valueLineID string) (*idl.CreateProjectResult, error) {
+	service := factory.GetProjectService()
+
+	result, err := service.DeleteValueLineProject(ctx, projectID, valueLineID)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(*result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
+}
+
 // SetProjectStatus is the resolver for the setProjectStatus field.
 func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error) {
 	service := factory.GetProjectService()

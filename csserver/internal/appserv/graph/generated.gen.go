@@ -179,6 +179,7 @@ type ComplexityRoot struct {
 		DeleteProjectComment             func(childComplexity int, id string) int
 		DeleteProjectFeature             func(childComplexity int, projectID string, featureID string) int
 		DeleteProjectTask                func(childComplexity int, projectID string, milestoneID string, taskID string) int
+		DeleteProjectValueLine           func(childComplexity int, projectID string, valueLineID string) int
 		DeleteResource                   func(childComplexity int, id string) int
 		DeleteResourceSkill              func(childComplexity int, resourceID string, skillID string) int
 		SetNotificationsRead             func(childComplexity int, input []string) int
@@ -190,6 +191,7 @@ type ComplexityRoot struct {
 		UpdateProjectComment             func(childComplexity int, input idl.UpdateComment) int
 		UpdateProjectFeature             func(childComplexity int, input idl.UpdateProjectFeature) int
 		UpdateProjectTask                func(childComplexity int, input idl.UpdateProjectMilestoneTask) int
+		UpdateProjectValueLine           func(childComplexity int, input idl.UpdateProjectValueLine) int
 		UpdateResource                   func(childComplexity int, input idl.UpdateResource) int
 		UpdateResourceSkill              func(childComplexity int, input idl.UpdateSkill) int
 		UpdateUser                       func(childComplexity int, input idl.UpdateUser) int
@@ -393,19 +395,30 @@ type ComplexityRoot struct {
 	}
 
 	ProjectValue struct {
-		Calculated     func(childComplexity int) int
-		DiscountRate   func(childComplexity int) int
-		FundingSource  func(childComplexity int) int
-		YearFiveValue  func(childComplexity int) int
-		YearFourValue  func(childComplexity int) int
-		YearOneValue   func(childComplexity int) int
-		YearThreeValue func(childComplexity int) int
-		YearTwoValue   func(childComplexity int) int
+		Calculated        func(childComplexity int) int
+		DiscountRate      func(childComplexity int) int
+		ProjectValueLines func(childComplexity int) int
 	}
 
 	ProjectValueCalculatedData struct {
 		InternalRateOfReturn func(childComplexity int) int
 		NetPresentValue      func(childComplexity int) int
+		YearFiveValue        func(childComplexity int) int
+		YearFourValue        func(childComplexity int) int
+		YearOneValue         func(childComplexity int) int
+		YearThreeValue       func(childComplexity int) int
+		YearTwoValue         func(childComplexity int) int
+	}
+
+	ProjectValueLine struct {
+		FundingSource  func(childComplexity int) int
+		ID             func(childComplexity int) int
+		ValueCategory  func(childComplexity int) int
+		YearFiveValue  func(childComplexity int) int
+		YearFourValue  func(childComplexity int) int
+		YearOneValue   func(childComplexity int) int
+		YearThreeValue func(childComplexity int) int
+		YearTwoValue   func(childComplexity int) int
 	}
 
 	Projecttemplate struct {
@@ -554,6 +567,8 @@ type MutationResolver interface {
 	DeleteProjectTask(ctx context.Context, projectID string, milestoneID string, taskID string) (*idl.CreateProjectResult, error)
 	UpdateProjectFeature(ctx context.Context, input idl.UpdateProjectFeature) (*idl.CreateProjectResult, error)
 	DeleteProjectFeature(ctx context.Context, projectID string, featureID string) (*idl.CreateProjectResult, error)
+	UpdateProjectValueLine(ctx context.Context, input idl.UpdateProjectValueLine) (*idl.CreateProjectResult, error)
+	DeleteProjectValueLine(ctx context.Context, projectID string, valueLineID string) (*idl.CreateProjectResult, error)
 	SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error)
 	CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error)
 	CreateProjectCommentReply(ctx context.Context, input idl.UpdateCommentReply) (*idl.CreateProjectCommentResult, error)
@@ -1211,6 +1226,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteProjectTask(childComplexity, args["projectID"].(string), args["milestoneID"].(string), args["taskID"].(string)), true
 
+	case "Mutation.deleteProjectValueLine":
+		if e.complexity.Mutation.DeleteProjectValueLine == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteProjectValueLine_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteProjectValueLine(childComplexity, args["projectID"].(string), args["valueLineID"].(string)), true
+
 	case "Mutation.deleteResource":
 		if e.complexity.Mutation.DeleteResource == nil {
 			break
@@ -1342,6 +1369,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateProjectTask(childComplexity, args["input"].(idl.UpdateProjectMilestoneTask)), true
+
+	case "Mutation.updateProjectValueLine":
+		if e.complexity.Mutation.UpdateProjectValueLine == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProjectValueLine_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProjectValueLine(childComplexity, args["input"].(idl.UpdateProjectValueLine)), true
 
 	case "Mutation.updateResource":
 		if e.complexity.Mutation.UpdateResource == nil {
@@ -2247,47 +2286,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectValue.DiscountRate(childComplexity), true
 
-	case "ProjectValue.fundingSource":
-		if e.complexity.ProjectValue.FundingSource == nil {
+	case "ProjectValue.projectValueLines":
+		if e.complexity.ProjectValue.ProjectValueLines == nil {
 			break
 		}
 
-		return e.complexity.ProjectValue.FundingSource(childComplexity), true
-
-	case "ProjectValue.yearFiveValue":
-		if e.complexity.ProjectValue.YearFiveValue == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.YearFiveValue(childComplexity), true
-
-	case "ProjectValue.yearFourValue":
-		if e.complexity.ProjectValue.YearFourValue == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.YearFourValue(childComplexity), true
-
-	case "ProjectValue.yearOneValue":
-		if e.complexity.ProjectValue.YearOneValue == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.YearOneValue(childComplexity), true
-
-	case "ProjectValue.yearThreeValue":
-		if e.complexity.ProjectValue.YearThreeValue == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.YearThreeValue(childComplexity), true
-
-	case "ProjectValue.yearTwoValue":
-		if e.complexity.ProjectValue.YearTwoValue == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.YearTwoValue(childComplexity), true
+		return e.complexity.ProjectValue.ProjectValueLines(childComplexity), true
 
 	case "ProjectValueCalculatedData.internalRateOfReturn":
 		if e.complexity.ProjectValueCalculatedData.InternalRateOfReturn == nil {
@@ -2302,6 +2306,97 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectValueCalculatedData.NetPresentValue(childComplexity), true
+
+	case "ProjectValueCalculatedData.yearFiveValue":
+		if e.complexity.ProjectValueCalculatedData.YearFiveValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.YearFiveValue(childComplexity), true
+
+	case "ProjectValueCalculatedData.yearFourValue":
+		if e.complexity.ProjectValueCalculatedData.YearFourValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.YearFourValue(childComplexity), true
+
+	case "ProjectValueCalculatedData.yearOneValue":
+		if e.complexity.ProjectValueCalculatedData.YearOneValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.YearOneValue(childComplexity), true
+
+	case "ProjectValueCalculatedData.yearThreeValue":
+		if e.complexity.ProjectValueCalculatedData.YearThreeValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.YearThreeValue(childComplexity), true
+
+	case "ProjectValueCalculatedData.yearTwoValue":
+		if e.complexity.ProjectValueCalculatedData.YearTwoValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.YearTwoValue(childComplexity), true
+
+	case "ProjectValueLine.fundingSource":
+		if e.complexity.ProjectValueLine.FundingSource == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.FundingSource(childComplexity), true
+
+	case "ProjectValueLine.id":
+		if e.complexity.ProjectValueLine.ID == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.ID(childComplexity), true
+
+	case "ProjectValueLine.valueCategory":
+		if e.complexity.ProjectValueLine.ValueCategory == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.ValueCategory(childComplexity), true
+
+	case "ProjectValueLine.yearFiveValue":
+		if e.complexity.ProjectValueLine.YearFiveValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.YearFiveValue(childComplexity), true
+
+	case "ProjectValueLine.yearFourValue":
+		if e.complexity.ProjectValueLine.YearFourValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.YearFourValue(childComplexity), true
+
+	case "ProjectValueLine.yearOneValue":
+		if e.complexity.ProjectValueLine.YearOneValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.YearOneValue(childComplexity), true
+
+	case "ProjectValueLine.yearThreeValue":
+		if e.complexity.ProjectValueLine.YearThreeValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.YearThreeValue(childComplexity), true
+
+	case "ProjectValueLine.yearTwoValue":
+		if e.complexity.ProjectValueLine.YearTwoValue == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.YearTwoValue(childComplexity), true
 
 	case "Projecttemplate.id":
 		if e.complexity.Projecttemplate.ID == nil {
@@ -2957,6 +3052,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateProjectMilestoneTask,
 		ec.unmarshalInputUpdateProjectMilestoneTemplate,
 		ec.unmarshalInputUpdateProjectValue,
+		ec.unmarshalInputUpdateProjectValueLine,
 		ec.unmarshalInputUpdateResource,
 		ec.unmarshalInputUpdateSkill,
 		ec.unmarshalInputUpdateUser,
@@ -3346,14 +3442,20 @@ type ProjectBasics {
 
 
 type ProjectValue {
-  fundingSource: String
   discountRate: Float
+  projectValueLines: [ProjectValueLine!]
+  calculated: ProjectValueCalculatedData
+}
+
+type ProjectValueLine {
+  id: String!
+  fundingSource: String!
+  valueCategory: String!
   yearOneValue: Float
   yearTwoValue: Float
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
-  calculated: ProjectValueCalculatedData
 }
 
 
@@ -3452,6 +3554,12 @@ type ProjectCostCalculatedData {
 type ProjectValueCalculatedData {
   netPresentValue: Float
   internalRateOfReturn: Float
+
+  yearOneValue: Float
+  yearTwoValue: Float
+  yearThreeValue: Float
+  yearFourValue: Float
+  yearFiveValue: Float
 }
 
 type ProjectMilestoneCalculatedData {
@@ -3479,7 +3587,6 @@ type ProjectTaskCalculatedData {
 #----------------------
 
 
-
 input UpdateProject {
   id: String
   projectBasics: UpdateProjectBasics
@@ -3500,8 +3607,13 @@ input UpdateProjectBasics {
 
 
 input UpdateProjectValue {
-  fundingSource: String
   discountRate: Float
+}
+
+input UpdateProjectValueLine {
+  projectID: String!
+  fundingSource: String!
+  valueCategory: String!
   yearOneValue: Float
   yearTwoValue: Float
   yearThreeValue: Float
@@ -3727,6 +3839,8 @@ input UpdateUser {
     deleteProjectTask(projectID: String!, milestoneID: String!, taskID: String!): CreateProjectResult!
     updateProjectFeature(input: UpdateProjectFeature!): CreateProjectResult!
     deleteProjectFeature(projectID: String!, featureID: String!): CreateProjectResult!
+    updateProjectValueLine(input: UpdateProjectValueLine!): CreateProjectResult!
+    deleteProjectValueLine(projectID: String!, valueLineID: String!): CreateProjectResult!
     setProjectStatus(projectID: String!, newStatus: String!): CreateProjectResult!
 
     createProjectComment(input: UpdateComment!) : CreateProjectCommentResult!
@@ -3958,6 +4072,30 @@ func (ec *executionContext) field_Mutation_deleteProjectTask_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteProjectValueLine_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["valueLineID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLineID"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["valueLineID"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteProject_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4133,6 +4271,21 @@ func (ec *executionContext) field_Mutation_updateProjectTask_args(ctx context.Co
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateProjectMilestoneTask2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectMilestoneTask(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectValueLine_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 idl.UpdateProjectValueLine
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateProjectValueLine2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectValueLine(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -8275,6 +8428,128 @@ func (ec *executionContext) fieldContext_Mutation_deleteProjectFeature(ctx conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateProjectValueLine(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateProjectValueLine(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateProjectValueLine(rctx, fc.Args["input"].(idl.UpdateProjectValueLine))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.CreateProjectResult)
+	fc.Result = res
+	return ec.marshalNCreateProjectResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateProjectValueLine(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_CreateProjectResult_status(ctx, field)
+			case "project":
+				return ec.fieldContext_CreateProjectResult_project(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateProjectResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateProjectValueLine_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteProjectValueLine(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteProjectValueLine(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteProjectValueLine(rctx, fc.Args["projectID"].(string), fc.Args["valueLineID"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.CreateProjectResult)
+	fc.Result = res
+	return ec.marshalNCreateProjectResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteProjectValueLine(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_CreateProjectResult_status(ctx, field)
+			case "project":
+				return ec.fieldContext_CreateProjectResult_project(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateProjectResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteProjectValueLine_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_setProjectStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_setProjectStatus(ctx, field)
 	if err != nil {
@@ -11180,20 +11455,10 @@ func (ec *executionContext) fieldContext_Project_projectValue(_ context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "fundingSource":
-				return ec.fieldContext_ProjectValue_fundingSource(ctx, field)
 			case "discountRate":
 				return ec.fieldContext_ProjectValue_discountRate(ctx, field)
-			case "yearOneValue":
-				return ec.fieldContext_ProjectValue_yearOneValue(ctx, field)
-			case "yearTwoValue":
-				return ec.fieldContext_ProjectValue_yearTwoValue(ctx, field)
-			case "yearThreeValue":
-				return ec.fieldContext_ProjectValue_yearThreeValue(ctx, field)
-			case "yearFourValue":
-				return ec.fieldContext_ProjectValue_yearFourValue(ctx, field)
-			case "yearFiveValue":
-				return ec.fieldContext_ProjectValue_yearFiveValue(ctx, field)
+			case "projectValueLines":
+				return ec.fieldContext_ProjectValue_projectValueLines(ctx, field)
 			case "calculated":
 				return ec.fieldContext_ProjectValue_calculated(ctx, field)
 			}
@@ -14928,47 +15193,6 @@ func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_resourceConte
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectValue_fundingSource(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_fundingSource(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.FundingSource, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectValue_fundingSource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ProjectValue_discountRate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectValue_discountRate(ctx, field)
 	if err != nil {
@@ -15010,8 +15234,8 @@ func (ec *executionContext) fieldContext_ProjectValue_discountRate(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectValue_yearOneValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_yearOneValue(ctx, field)
+func (ec *executionContext) _ProjectValue_projectValueLines(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValue_projectValueLines(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15024,7 +15248,7 @@ func (ec *executionContext) _ProjectValue_yearOneValue(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.YearOneValue, nil
+		return obj.ProjectValueLines, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15033,183 +15257,37 @@ func (ec *executionContext) _ProjectValue_yearOneValue(ctx context.Context, fiel
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*float64)
+	res := resTmp.([]*idl.ProjectValueLine)
 	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+	return ec.marshalOProjectValueLine2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValueLineᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectValue_yearOneValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectValue_projectValueLines(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectValue",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectValue_yearTwoValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_yearTwoValue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.YearTwoValue, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectValue_yearTwoValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectValue_yearThreeValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_yearThreeValue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.YearThreeValue, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectValue_yearThreeValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectValue_yearFourValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_yearFourValue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.YearFourValue, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectValue_yearFourValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ProjectValue_yearFiveValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_yearFiveValue(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.YearFiveValue, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectValue_yearFiveValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ProjectValueLine_id(ctx, field)
+			case "fundingSource":
+				return ec.fieldContext_ProjectValueLine_fundingSource(ctx, field)
+			case "valueCategory":
+				return ec.fieldContext_ProjectValueLine_valueCategory(ctx, field)
+			case "yearOneValue":
+				return ec.fieldContext_ProjectValueLine_yearOneValue(ctx, field)
+			case "yearTwoValue":
+				return ec.fieldContext_ProjectValueLine_yearTwoValue(ctx, field)
+			case "yearThreeValue":
+				return ec.fieldContext_ProjectValueLine_yearThreeValue(ctx, field)
+			case "yearFourValue":
+				return ec.fieldContext_ProjectValueLine_yearFourValue(ctx, field)
+			case "yearFiveValue":
+				return ec.fieldContext_ProjectValueLine_yearFiveValue(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectValueLine", field.Name)
 		},
 	}
 	return fc, nil
@@ -15255,6 +15333,16 @@ func (ec *executionContext) fieldContext_ProjectValue_calculated(_ context.Conte
 				return ec.fieldContext_ProjectValueCalculatedData_netPresentValue(ctx, field)
 			case "internalRateOfReturn":
 				return ec.fieldContext_ProjectValueCalculatedData_internalRateOfReturn(ctx, field)
+			case "yearOneValue":
+				return ec.fieldContext_ProjectValueCalculatedData_yearOneValue(ctx, field)
+			case "yearTwoValue":
+				return ec.fieldContext_ProjectValueCalculatedData_yearTwoValue(ctx, field)
+			case "yearThreeValue":
+				return ec.fieldContext_ProjectValueCalculatedData_yearThreeValue(ctx, field)
+			case "yearFourValue":
+				return ec.fieldContext_ProjectValueCalculatedData_yearFourValue(ctx, field)
+			case "yearFiveValue":
+				return ec.fieldContext_ProjectValueCalculatedData_yearFiveValue(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectValueCalculatedData", field.Name)
 		},
@@ -15334,6 +15422,548 @@ func (ec *executionContext) _ProjectValueCalculatedData_internalRateOfReturn(ctx
 func (ec *executionContext) fieldContext_ProjectValueCalculatedData_internalRateOfReturn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_yearOneValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_yearOneValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearOneValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_yearOneValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_yearTwoValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_yearTwoValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearTwoValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_yearTwoValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_yearThreeValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_yearThreeValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearThreeValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_yearThreeValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_yearFourValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_yearFourValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearFourValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_yearFourValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_yearFiveValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_yearFiveValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearFiveValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_yearFiveValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_id(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_fundingSource(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_fundingSource(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FundingSource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_fundingSource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_valueCategory(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_valueCategory(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ValueCategory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_valueCategory(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_yearOneValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_yearOneValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearOneValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_yearOneValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_yearTwoValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_yearTwoValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearTwoValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_yearTwoValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_yearThreeValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_yearThreeValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearThreeValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_yearThreeValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_yearFourValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_yearFourValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearFourValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_yearFourValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_yearFiveValue(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_yearFiveValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.YearFiveValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_yearFiveValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -22124,20 +22754,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"fundingSource", "discountRate", "yearOneValue", "yearTwoValue", "yearThreeValue", "yearFourValue", "yearFiveValue"}
+	fieldsInOrder := [...]string{"discountRate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "fundingSource":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fundingSource"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.FundingSource = data
 		case "discountRate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("discountRate"))
 			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
@@ -22145,6 +22768,47 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 				return it, err
 			}
 			it.DiscountRate = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateProjectValueLine(ctx context.Context, obj interface{}) (idl.UpdateProjectValueLine, error) {
+	var it idl.UpdateProjectValueLine
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"projectID", "fundingSource", "valueCategory", "yearOneValue", "yearTwoValue", "yearThreeValue", "yearFourValue", "yearFiveValue"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "projectID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectID = data
+		case "fundingSource":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fundingSource"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FundingSource = data
+		case "valueCategory":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueCategory"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ValueCategory = data
 		case "yearOneValue":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("yearOneValue"))
 			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
@@ -23306,6 +23970,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteProjectFeature":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProjectFeature(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateProjectValueLine":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateProjectValueLine(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteProjectValueLine":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteProjectValueLine(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -24741,20 +25419,10 @@ func (ec *executionContext) _ProjectValue(ctx context.Context, sel ast.Selection
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ProjectValue")
-		case "fundingSource":
-			out.Values[i] = ec._ProjectValue_fundingSource(ctx, field, obj)
 		case "discountRate":
 			out.Values[i] = ec._ProjectValue_discountRate(ctx, field, obj)
-		case "yearOneValue":
-			out.Values[i] = ec._ProjectValue_yearOneValue(ctx, field, obj)
-		case "yearTwoValue":
-			out.Values[i] = ec._ProjectValue_yearTwoValue(ctx, field, obj)
-		case "yearThreeValue":
-			out.Values[i] = ec._ProjectValue_yearThreeValue(ctx, field, obj)
-		case "yearFourValue":
-			out.Values[i] = ec._ProjectValue_yearFourValue(ctx, field, obj)
-		case "yearFiveValue":
-			out.Values[i] = ec._ProjectValue_yearFiveValue(ctx, field, obj)
+		case "projectValueLines":
+			out.Values[i] = ec._ProjectValue_projectValueLines(ctx, field, obj)
 		case "calculated":
 			out.Values[i] = ec._ProjectValue_calculated(ctx, field, obj)
 		default:
@@ -24795,6 +25463,75 @@ func (ec *executionContext) _ProjectValueCalculatedData(ctx context.Context, sel
 			out.Values[i] = ec._ProjectValueCalculatedData_netPresentValue(ctx, field, obj)
 		case "internalRateOfReturn":
 			out.Values[i] = ec._ProjectValueCalculatedData_internalRateOfReturn(ctx, field, obj)
+		case "yearOneValue":
+			out.Values[i] = ec._ProjectValueCalculatedData_yearOneValue(ctx, field, obj)
+		case "yearTwoValue":
+			out.Values[i] = ec._ProjectValueCalculatedData_yearTwoValue(ctx, field, obj)
+		case "yearThreeValue":
+			out.Values[i] = ec._ProjectValueCalculatedData_yearThreeValue(ctx, field, obj)
+		case "yearFourValue":
+			out.Values[i] = ec._ProjectValueCalculatedData_yearFourValue(ctx, field, obj)
+		case "yearFiveValue":
+			out.Values[i] = ec._ProjectValueCalculatedData_yearFiveValue(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectValueLineImplementors = []string{"ProjectValueLine"}
+
+func (ec *executionContext) _ProjectValueLine(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectValueLine) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectValueLineImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectValueLine")
+		case "id":
+			out.Values[i] = ec._ProjectValueLine_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "fundingSource":
+			out.Values[i] = ec._ProjectValueLine_fundingSource(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "valueCategory":
+			out.Values[i] = ec._ProjectValueLine_valueCategory(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "yearOneValue":
+			out.Values[i] = ec._ProjectValueLine_yearOneValue(ctx, field, obj)
+		case "yearTwoValue":
+			out.Values[i] = ec._ProjectValueLine_yearTwoValue(ctx, field, obj)
+		case "yearThreeValue":
+			out.Values[i] = ec._ProjectValueLine_yearThreeValue(ctx, field, obj)
+		case "yearFourValue":
+			out.Values[i] = ec._ProjectValueLine_yearFourValue(ctx, field, obj)
+		case "yearFiveValue":
+			out.Values[i] = ec._ProjectValueLine_yearFiveValue(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -27025,6 +27762,16 @@ func (ec *executionContext) marshalNProjectValue2ᚖcsserverᚋinternalᚋappser
 	return ec._ProjectValue(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectValueLine2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValueLine(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectValueLine) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectValueLine(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplate(ctx context.Context, sel ast.SelectionSet, v *idl.Projecttemplate) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -27343,6 +28090,11 @@ func (ec *executionContext) unmarshalNUpdateProjectMilestoneTask2csserverᚋinte
 func (ec *executionContext) unmarshalNUpdateProjectMilestoneTask2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectMilestoneTask(ctx context.Context, v interface{}) (*idl.UpdateProjectMilestoneTask, error) {
 	res, err := ec.unmarshalInputUpdateProjectMilestoneTask(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateProjectValueLine2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectValueLine(ctx context.Context, v interface{}) (idl.UpdateProjectValueLine, error) {
+	res, err := ec.unmarshalInputUpdateProjectValueLine(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateResource2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateResource(ctx context.Context, v interface{}) (idl.UpdateResource, error) {
@@ -28399,6 +29151,53 @@ func (ec *executionContext) marshalOProjectValueCalculatedData2ᚖcsserverᚋint
 		return graphql.Null
 	}
 	return ec._ProjectValueCalculatedData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectValueLine2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValueLineᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectValueLine) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjectValueLine2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectValueLine(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOProjecttemplate2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplateᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Projecttemplate) graphql.Marshaler {

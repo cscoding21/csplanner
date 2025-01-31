@@ -57,13 +57,18 @@ func CreateTestProjects(ctx context.Context) error {
 			{ID: utils.ValToRef(uuid.New().String()), Priority: featurepriority.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 		},
 		ProjectValue: &project.ProjectValue{
-			FundingSource:  "internal",
-			DiscountRate:   7.0,
-			YearOneValue:   10000.0,
-			YearTwoValue:   10000.0,
-			YearThreeValue: 20000.0,
-			YearFourValue:  10000.0,
-			YearFiveValue:  40000.0,
+			DiscountRate: 7.0,
+			ProjectValueLines: []*project.ProjectValueLine{
+				&project.ProjectValueLine{
+					FundingSource:  "internal",
+					ValueCategory:  "revenue",
+					YearOneValue:   10000.0,
+					YearTwoValue:   10000.0,
+					YearThreeValue: 20000.0,
+					YearFourValue:  10000.0,
+					YearFiveValue:  40000.0,
+				},
+			},
 		},
 		ProjectDaci: &project.ProjectDaci{
 			DriverIDs:      []*string{&allResources.Results[0].ID, &allResources.Results[1].ID},
@@ -328,12 +333,11 @@ func findPortfolioProjects() []project.Project {
 	for i, p := range names {
 		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status, (i + 2)))
 
-		proj.ProjectValue.FundingSource = "external"
-		proj.ProjectValue.YearOneValue = math.Round(1000.0 * rand.Float64())
-		proj.ProjectValue.YearTwoValue = math.Round(1000.0 * rand.Float64())
-		proj.ProjectValue.YearThreeValue = math.Round(2000.0 * rand.Float64())
-		proj.ProjectValue.YearFourValue = math.Round(1000.0 * rand.Float64())
-		proj.ProjectValue.YearFiveValue = math.Round(4000.0 * rand.Float64())
+		proj.ProjectValue.ProjectValueLines[0].YearOneValue = math.Round(1000.0 * rand.Float64())
+		proj.ProjectValue.ProjectValueLines[0].YearTwoValue = math.Round(1000.0 * rand.Float64())
+		proj.ProjectValue.ProjectValueLines[0].YearThreeValue = math.Round(2000.0 * rand.Float64())
+		proj.ProjectValue.ProjectValueLines[0].YearFourValue = math.Round(1000.0 * rand.Float64())
+		proj.ProjectValue.ProjectValueLines[0].YearFiveValue = math.Round(4000.0 * rand.Float64())
 
 		outProjects = append(outProjects, *proj)
 	}
@@ -371,12 +375,18 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 			{ID: utils.ValToRef("projectfeature:4"), Priority: featurepriority.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 		},
 		ProjectValue: &project.ProjectValue{
-			DiscountRate:   7.0,
-			YearOneValue:   100.0,
-			YearTwoValue:   100.0,
-			YearThreeValue: 200.0,
-			YearFourValue:  100.0,
-			YearFiveValue:  400.0,
+			DiscountRate: 7.0,
+			ProjectValueLines: []*project.ProjectValueLine{
+				&project.ProjectValueLine{
+					FundingSource:  "internal",
+					ValueCategory:  "revenue",
+					YearOneValue:   100.0,
+					YearTwoValue:   100.0,
+					YearThreeValue: 200.0,
+					YearFourValue:  100.0,
+					YearFiveValue:  400.0,
+				},
+			},
 		},
 		ProjectDaci: &project.ProjectDaci{
 			DriverIDs:      []*string{&allResources.Results[rand.Intn(*allResources.Pagination.TotalResults-1)].ID},

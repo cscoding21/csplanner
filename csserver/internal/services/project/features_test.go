@@ -15,7 +15,7 @@ func TestDeleteFeatureFromProject(t *testing.T) {
 	currentFeatureCount := len(proj.ProjectFeatures)
 	expected := currentFeatureCount - 1
 
-	updatedProject := project.DeleteFeatureFromPrjectGraph(proj, "projectfeature:1")
+	updatedProject := project.DeleteFeatureFromProjectGraph(proj, "projectfeature:1")
 
 	updatedFeatureCount := len(updatedProject.ProjectFeatures)
 

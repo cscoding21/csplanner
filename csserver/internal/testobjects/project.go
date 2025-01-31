@@ -34,13 +34,19 @@ var testProject = project.Project{
 		{ID: utils.ValToRef("projectfeature:4"), Priority: featurepriority.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 	},
 	ProjectValue: &project.ProjectValue{
-		DiscountRate:   7.0,
-		YearOneValue:   1000.0,
-		YearTwoValue:   1000.0,
-		YearThreeValue: 2000.0,
-		YearFourValue:  1000.0,
-		YearFiveValue:  4000.0,
-		Calculated:     project.ProjectValueCalculatedData{},
+		DiscountRate: 7.0,
+		ProjectValueLines: []*project.ProjectValueLine{
+			&project.ProjectValueLine{
+				FundingSource:  "internal",
+				ValueCategory:  "revenue",
+				YearOneValue:   1000.0,
+				YearTwoValue:   1000.0,
+				YearThreeValue: 2000.0,
+				YearFourValue:  1000.0,
+				YearFiveValue:  4000.0,
+			},
+		},
+		Calculated: project.ProjectValueCalculatedData{},
 	},
 	ProjectMilestones: []*project.ProjectMilestone{
 		{
@@ -147,13 +153,18 @@ var updateProject = project.Project{
 		{ID: utils.ValToRef(uuid.New().String()), Priority: featurepriority.Medium, Name: "Outro", Description: "Like a linked list to other videos", Status: "proposed"},
 	},
 	ProjectValue: &project.ProjectValue{
-		FundingSource:  "internal",
-		DiscountRate:   7.0,
-		YearOneValue:   10000.0,
-		YearTwoValue:   10000.0,
-		YearThreeValue: 20000.0,
-		YearFourValue:  10000.0,
-		YearFiveValue:  40000.0,
+		DiscountRate: 7.0,
+		ProjectValueLines: []*project.ProjectValueLine{
+			&project.ProjectValueLine{
+				FundingSource:  "internal",
+				ValueCategory:  "revenue",
+				YearOneValue:   10000.0,
+				YearTwoValue:   10000.0,
+				YearThreeValue: 20000.0,
+				YearFourValue:  10000.0,
+				YearFiveValue:  40000.0,
+			},
+		},
 	},
 	ProjectDaci: &project.ProjectDaci{
 		DriverIDs:      []*string{common.ValToRef("jeph@jmk21.com")},

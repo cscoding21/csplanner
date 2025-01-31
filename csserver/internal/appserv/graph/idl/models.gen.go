@@ -347,19 +347,30 @@ type ProjectTaskCalculatedData struct {
 }
 
 type ProjectValue struct {
-	FundingSource  *string                     `json:"fundingSource,omitempty"`
-	DiscountRate   *float64                    `json:"discountRate,omitempty"`
-	YearOneValue   *float64                    `json:"yearOneValue,omitempty"`
-	YearTwoValue   *float64                    `json:"yearTwoValue,omitempty"`
-	YearThreeValue *float64                    `json:"yearThreeValue,omitempty"`
-	YearFourValue  *float64                    `json:"yearFourValue,omitempty"`
-	YearFiveValue  *float64                    `json:"yearFiveValue,omitempty"`
-	Calculated     *ProjectValueCalculatedData `json:"calculated,omitempty"`
+	DiscountRate      *float64                    `json:"discountRate,omitempty"`
+	ProjectValueLines []*ProjectValueLine         `json:"projectValueLines,omitempty"`
+	Calculated        *ProjectValueCalculatedData `json:"calculated,omitempty"`
 }
 
 type ProjectValueCalculatedData struct {
 	NetPresentValue      *float64 `json:"netPresentValue,omitempty"`
 	InternalRateOfReturn *float64 `json:"internalRateOfReturn,omitempty"`
+	YearOneValue         *float64 `json:"yearOneValue,omitempty"`
+	YearTwoValue         *float64 `json:"yearTwoValue,omitempty"`
+	YearThreeValue       *float64 `json:"yearThreeValue,omitempty"`
+	YearFourValue        *float64 `json:"yearFourValue,omitempty"`
+	YearFiveValue        *float64 `json:"yearFiveValue,omitempty"`
+}
+
+type ProjectValueLine struct {
+	ID             string   `json:"id"`
+	FundingSource  string   `json:"fundingSource"`
+	ValueCategory  string   `json:"valueCategory"`
+	YearOneValue   *float64 `json:"yearOneValue,omitempty"`
+	YearTwoValue   *float64 `json:"yearTwoValue,omitempty"`
+	YearThreeValue *float64 `json:"yearThreeValue,omitempty"`
+	YearFourValue  *float64 `json:"yearFourValue,omitempty"`
+	YearFiveValue  *float64 `json:"yearFiveValue,omitempty"`
 }
 
 type Projecttemplate struct {
@@ -552,8 +563,13 @@ type UpdateProjectMilestoneTemplate struct {
 }
 
 type UpdateProjectValue struct {
-	FundingSource  *string  `json:"fundingSource,omitempty"`
-	DiscountRate   *float64 `json:"discountRate,omitempty"`
+	DiscountRate *float64 `json:"discountRate,omitempty"`
+}
+
+type UpdateProjectValueLine struct {
+	ProjectID      string   `json:"projectID"`
+	FundingSource  string   `json:"fundingSource"`
+	ValueCategory  string   `json:"valueCategory"`
 	YearOneValue   *float64 `json:"yearOneValue,omitempty"`
 	YearTwoValue   *float64 `json:"yearTwoValue,omitempty"`
 	YearThreeValue *float64 `json:"yearThreeValue,omitempty"`

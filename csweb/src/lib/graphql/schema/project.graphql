@@ -28,16 +28,25 @@ fragment projectFragment on Project {
       }
 	}
 	projectValue {
-		fundingSource
 		discountRate
-		yearOneValue
-		yearTwoValue
-		yearThreeValue
-		yearFourValue
-		yearFiveValue
+		projectValueLines {
+			id
+			fundingSource
+			valueCategory
+			yearOneValue
+			yearTwoValue
+			yearThreeValue
+			yearFourValue
+			yearFiveValue
+		}
 		calculated {
 			netPresentValue
 			internalRateOfReturn
+			yearOneValue
+			yearTwoValue
+			yearThreeValue
+			yearFourValue
+			yearFiveValue
 		}
 	}
 	projectCost {
@@ -231,6 +240,28 @@ mutation updateProjectFeature($input: UpdateProjectFeature!) {
 
 mutation deleteProjectFeature($projectID: String!, $featureID: String!) {
 	deleteProjectFeature(projectID: $projectID, featureID: $featureID) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
+}
+
+mutation updateProjectValueLine($input: UpdateProjectValueLine!) {
+	updateProjectValueLine(input: $input) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
+}
+
+mutation deleteProjectValueLine($projectID: String!, $valueLineID: String!) {
+	deleteProjectValueLine(projectID: $projectID, valueLineID: $valueLineID) {
 		status {
 			...statusFragment
 		}

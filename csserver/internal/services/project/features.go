@@ -17,13 +17,13 @@ func (s *ProjectService) DeleteFeatureFromProject(ctx context.Context, projectID
 		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
 	}
 
-	updatedProject := DeleteFeatureFromPrjectGraph(*project, featureID)
+	updatedProject := DeleteFeatureFromProjectGraph(*project, featureID)
 	pro, err := s.UpdateProject(ctx, &updatedProject)
 	return &pro, err
 }
 
 // DeleteTaskFromProjectGraph if the feature exists in the project, remove it.
-func DeleteFeatureFromPrjectGraph(project Project, featureID string) Project {
+func DeleteFeatureFromProjectGraph(project Project, featureID string) Project {
 	for i, f := range project.ProjectFeatures {
 		if f.ID != nil && *f.ID == featureID {
 			project.ProjectFeatures = slices.Delete(project.ProjectFeatures, i, i+1)

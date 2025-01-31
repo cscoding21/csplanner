@@ -182,6 +182,7 @@ export type Mutation = {
   deleteProjectComment: Status;
   deleteProjectFeature: CreateProjectResult;
   deleteProjectTask: CreateProjectResult;
+  deleteProjectValueLine: CreateProjectResult;
   deleteResource: Status;
   deleteResourceSkill: Status;
   setNotificationsRead: Status;
@@ -193,6 +194,7 @@ export type Mutation = {
   updateProjectComment: CreateProjectCommentResult;
   updateProjectFeature: CreateProjectResult;
   updateProjectTask: CreateProjectResult;
+  updateProjectValueLine: CreateProjectResult;
   updateResource: CreateResourceResult;
   updateResourceSkill: Status;
   updateUser: CreateUserResult;
@@ -252,6 +254,12 @@ export type MutationDeleteProjectTaskArgs = {
 };
 
 
+export type MutationDeleteProjectValueLineArgs = {
+  projectID: Scalars['String']['input'];
+  valueLineID: Scalars['String']['input'];
+};
+
+
 export type MutationDeleteResourceArgs = {
   id: Scalars['String']['input'];
 };
@@ -306,6 +314,11 @@ export type MutationUpdateProjectFeatureArgs = {
 
 export type MutationUpdateProjectTaskArgs = {
   input: UpdateProjectMilestoneTask;
+};
+
+
+export type MutationUpdateProjectValueLineArgs = {
+  input: UpdateProjectValueLine;
 };
 
 
@@ -554,7 +567,13 @@ export type ProjectValue = {
   __typename?: 'ProjectValue';
   calculated?: Maybe<ProjectValueCalculatedData>;
   discountRate?: Maybe<Scalars['Float']['output']>;
-  fundingSource?: Maybe<Scalars['String']['output']>;
+  projectValueLines?: Maybe<Array<ProjectValueLine>>;
+};
+
+export type ProjectValueCalculatedData = {
+  __typename?: 'ProjectValueCalculatedData';
+  internalRateOfReturn?: Maybe<Scalars['Float']['output']>;
+  netPresentValue?: Maybe<Scalars['Float']['output']>;
   yearFiveValue?: Maybe<Scalars['Float']['output']>;
   yearFourValue?: Maybe<Scalars['Float']['output']>;
   yearOneValue?: Maybe<Scalars['Float']['output']>;
@@ -562,10 +581,16 @@ export type ProjectValue = {
   yearTwoValue?: Maybe<Scalars['Float']['output']>;
 };
 
-export type ProjectValueCalculatedData = {
-  __typename?: 'ProjectValueCalculatedData';
-  internalRateOfReturn?: Maybe<Scalars['Float']['output']>;
-  netPresentValue?: Maybe<Scalars['Float']['output']>;
+export type ProjectValueLine = {
+  __typename?: 'ProjectValueLine';
+  fundingSource: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  valueCategory: Scalars['String']['output'];
+  yearFiveValue?: Maybe<Scalars['Float']['output']>;
+  yearFourValue?: Maybe<Scalars['Float']['output']>;
+  yearOneValue?: Maybe<Scalars['Float']['output']>;
+  yearThreeValue?: Maybe<Scalars['Float']['output']>;
+  yearTwoValue?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Projecttemplate = {
@@ -859,7 +884,12 @@ export type UpdateProjectMilestoneTemplate = {
 
 export type UpdateProjectValue = {
   discountRate?: InputMaybe<Scalars['Float']['input']>;
-  fundingSource?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateProjectValueLine = {
+  fundingSource: Scalars['String']['input'];
+  projectID: Scalars['String']['input'];
+  valueCategory: Scalars['String']['input'];
   yearFiveValue?: InputMaybe<Scalars['Float']['input']>;
   yearFourValue?: InputMaybe<Scalars['Float']['input']>;
   yearOneValue?: InputMaybe<Scalars['Float']['input']>;
@@ -1084,16 +1114,25 @@ export const ProjectFragmentFragmentDoc = gql`
     }
   }
   projectValue {
-    fundingSource
     discountRate
-    yearOneValue
-    yearTwoValue
-    yearThreeValue
-    yearFourValue
-    yearFiveValue
+    projectValueLines {
+      id
+      fundingSource
+      valueCategory
+      yearOneValue
+      yearTwoValue
+      yearThreeValue
+      yearFourValue
+      yearFiveValue
+    }
     calculated {
       netPresentValue
       internalRateOfReturn
+      yearOneValue
+      yearTwoValue
+      yearThreeValue
+      yearFourValue
+      yearFiveValue
     }
   }
   projectCost {
@@ -1520,6 +1559,32 @@ export const DeleteProjectFeatureDocument = gql`
 }
     ${StatusFragmentFragmentDoc}
 ${ProjectFragmentFragmentDoc}`;
+export const UpdateProjectValueLineDocument = gql`
+    mutation updateProjectValueLine($input: UpdateProjectValueLine!) {
+  updateProjectValueLine(input: $input) {
+    status {
+      ...statusFragment
+    }
+    project {
+      ...projectFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
+export const DeleteProjectValueLineDocument = gql`
+    mutation deleteProjectValueLine($projectID: String!, $valueLineID: String!) {
+  deleteProjectValueLine(projectID: $projectID, valueLineID: $valueLineID) {
+    status {
+      ...statusFragment
+    }
+    project {
+      ...projectFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
 export const SetProjectStatusDocument = gql`
     mutation setProjectStatus($projectID: String!, $newStatus: String!) {
   setProjectStatus(projectID: $projectID, newStatus: $newStatus) {
@@ -1730,6 +1795,12 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     deleteProjectFeature(variables: DeleteProjectFeatureMutationVariables, options?: C): Promise<DeleteProjectFeatureMutation> {
       return requester<DeleteProjectFeatureMutation, DeleteProjectFeatureMutationVariables>(DeleteProjectFeatureDocument, variables, options) as Promise<DeleteProjectFeatureMutation>;
+    },
+    updateProjectValueLine(variables: UpdateProjectValueLineMutationVariables, options?: C): Promise<UpdateProjectValueLineMutation> {
+      return requester<UpdateProjectValueLineMutation, UpdateProjectValueLineMutationVariables>(UpdateProjectValueLineDocument, variables, options) as Promise<UpdateProjectValueLineMutation>;
+    },
+    deleteProjectValueLine(variables: DeleteProjectValueLineMutationVariables, options?: C): Promise<DeleteProjectValueLineMutation> {
+      return requester<DeleteProjectValueLineMutation, DeleteProjectValueLineMutationVariables>(DeleteProjectValueLineDocument, variables, options) as Promise<DeleteProjectValueLineMutation>;
     },
     setProjectStatus(variables: SetProjectStatusMutationVariables, options?: C): Promise<SetProjectStatusMutation> {
       return requester<SetProjectStatusMutation, SetProjectStatusMutationVariables>(SetProjectStatusDocument, variables, options) as Promise<SetProjectStatusMutation>;

@@ -28,14 +28,20 @@ type ProjectBasics {
 
 
 type ProjectValue {
-  fundingSource: String
   discountRate: Float
+  projectValueLines: [ProjectValueLine!]
+  calculated: ProjectValueCalculatedData
+}
+
+type ProjectValueLine {
+  id: String!
+  fundingSource: String!
+  valueCategory: String!
   yearOneValue: Float
   yearTwoValue: Float
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
-  calculated: ProjectValueCalculatedData
 }
 
 
@@ -134,6 +140,12 @@ type ProjectCostCalculatedData {
 type ProjectValueCalculatedData {
   netPresentValue: Float
   internalRateOfReturn: Float
+
+  yearOneValue: Float
+  yearTwoValue: Float
+  yearThreeValue: Float
+  yearFourValue: Float
+  yearFiveValue: Float
 }
 
 type ProjectMilestoneCalculatedData {
@@ -161,7 +173,6 @@ type ProjectTaskCalculatedData {
 #----------------------
 
 
-
 input UpdateProject {
   id: String
   projectBasics: UpdateProjectBasics
@@ -182,8 +193,13 @@ input UpdateProjectBasics {
 
 
 input UpdateProjectValue {
-  fundingSource: String
   discountRate: Float
+}
+
+input UpdateProjectValueLine {
+  projectID: String!
+  fundingSource: String!
+  valueCategory: String!
   yearOneValue: Float
   yearTwoValue: Float
   yearThreeValue: Float

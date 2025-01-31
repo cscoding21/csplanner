@@ -13,16 +13,31 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+func (p *Project) AggregateProjectValueLines() {
+	if len(p.ProjectValue.ProjectValueLines) == 0 {
+		return
+	}
+
+	for _, l := range p.ProjectValue.ProjectValueLines {
+		p.ProjectValue.Calculated.YearOneValue += l.YearOneValue
+		p.ProjectValue.Calculated.YearTwoValue += l.YearTwoValue
+		p.ProjectValue.Calculated.YearThreeValue += l.YearThreeValue
+		p.ProjectValue.Calculated.YearFourValue += l.YearFourValue
+		p.ProjectValue.Calculated.YearFiveValue += l.YearFiveValue
+	}
+}
+
 // GetProjectNPV calclate the NPV for the project based on cost and value entries
 func (p *Project) GetProjectNPV() float64 {
+	p.AggregateProjectValueLines()
 
 	values := []float64{
 		-(p.ProjectCost.Calculated.InitialCost),
-		p.ProjectValue.YearOneValue,
-		p.ProjectValue.YearTwoValue,
-		p.ProjectValue.YearThreeValue,
-		p.ProjectValue.YearFourValue,
-		p.ProjectValue.YearFiveValue,
+		p.ProjectValue.Calculated.YearOneValue,
+		p.ProjectValue.Calculated.YearTwoValue,
+		p.ProjectValue.Calculated.YearThreeValue,
+		p.ProjectValue.Calculated.YearFourValue,
+		p.ProjectValue.Calculated.YearFiveValue,
 	}
 
 	npv, err := finance.NPV((p.ProjectValue.DiscountRate / 100.0), values)
@@ -38,13 +53,15 @@ func (p *Project) GetProjectNPV() float64 {
 
 // GetProjectIRR calclate the NPV for the project based on cost and value entries
 func (p *Project) GetProjectIRR() float64 {
+	p.AggregateProjectValueLines()
+
 	values := []float64{
 		-(p.ProjectCost.Calculated.InitialCost),
-		p.ProjectValue.YearOneValue,
-		p.ProjectValue.YearTwoValue,
-		p.ProjectValue.YearThreeValue,
-		p.ProjectValue.YearFourValue,
-		p.ProjectValue.YearFiveValue,
+		p.ProjectValue.Calculated.YearOneValue,
+		p.ProjectValue.Calculated.YearTwoValue,
+		p.ProjectValue.Calculated.YearThreeValue,
+		p.ProjectValue.Calculated.YearFourValue,
+		p.ProjectValue.Calculated.YearFiveValue,
 	}
 
 	irr, err := finance.IRR(values)

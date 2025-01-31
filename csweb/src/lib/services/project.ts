@@ -12,6 +12,7 @@ import type {
 	UpdateProjectCost,
 	UpdateProjectDaci,
 	UpdateProjectBasics,
+	UpdateProjectValueLine,
 	CreateProjectResult,
 	ProjecttemplateResults,
 	ProjectScheduleResult,
@@ -32,7 +33,9 @@ import {
 	GetProjectDocument,
 	CalculateProjectScheduleDocument,
 	CheckProjectStatusDocument,
-	SetProjectStatusDocument
+	SetProjectStatusDocument,
+	UpdateProjectValueLineDocument,
+	DeleteProjectValueLineDocument
 } from '$lib/graphql/generated/sdk';
 import { coalesceToType } from '$lib/forms/helpers';
 import { safeArray } from '$lib/utils/helpers';
@@ -344,6 +347,55 @@ export const deleteProjectFeature = async (
 			return err;
 		});
 };
+
+
+/**
+ * Create or update a value line for a given project
+ * @param input the project id and value line to add
+ * @returns a status of the operation and the updated project entity
+ */
+export const updateProjectValueLine = async (
+	input: UpdateProjectValueLine
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: UpdateProjectValueLineDocument, variables: { input } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.updateProjectValueLine;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+
+/**
+ * Remove the specified value line from the target project
+ * @param projectID the project ID to update
+ * @param valueLineID the value line ID to delete
+ * @returns a status of the operation and the updated project entity
+ */
+export const deleteProjectValueLine = async (
+	projectID: string,
+	valueLineID: string
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: DeleteProjectValueLineDocument, variables: { projectID, valueLineID } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.deleteProjectValueLine;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
 
 /**
  * Create or update a task for a given project and milestone

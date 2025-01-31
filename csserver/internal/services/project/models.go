@@ -40,14 +40,20 @@ type ProjectBasics struct {
 
 // ProjectValue properties used in calculating the value of a project
 type ProjectValue struct {
-	FundingSource  string                     `json:"funding_source"`
-	DiscountRate   float64                    `json:"discount_rate"`
-	YearOneValue   float64                    `json:"year_one_value"`
-	YearTwoValue   float64                    `json:"year_two_value"`
-	YearThreeValue float64                    `json:"year_three_value"`
-	YearFourValue  float64                    `json:"year_four_value"`
-	YearFiveValue  float64                    `json:"year_five_value"`
-	Calculated     ProjectValueCalculatedData `json:"calculated"`
+	DiscountRate      float64                    `json:"discount_rate"`
+	ProjectValueLines []*ProjectValueLine        `json:"project_value_lines"`
+	Calculated        ProjectValueCalculatedData `json:"calculated"`
+}
+
+type ProjectValueLine struct {
+	ID             *string `json:"id,omitempty"`
+	ValueCategory  string  `json:"value_category"`
+	FundingSource  string  `json:"funding_source"`
+	YearOneValue   float64 `json:"year_one_value"`
+	YearTwoValue   float64 `json:"year_two_value"`
+	YearThreeValue float64 `json:"year_three_value"`
+	YearFourValue  float64 `json:"year_four_value"`
+	YearFiveValue  float64 `json:"year_five_value"`
 }
 
 // ProjectCost properties used to calculate the cost of a project
@@ -106,6 +112,11 @@ type ProjectCostCalculatedData struct {
 type ProjectValueCalculatedData struct {
 	NetPresentValue      float64 `json:"net_present_value"`
 	InternalRateOfReturn float64 `json:"internal_rate_of_return"`
+	YearOneValue         float64 `json:"year_one_value"`
+	YearTwoValue         float64 `json:"year_two_value"`
+	YearThreeValue       float64 `json:"year_three_value"`
+	YearFourValue        float64 `json:"year_four_value"`
+	YearFiveValue        float64 `json:"year_five_value"`
 }
 
 type ProjectMilestoneCalculatedData struct {
