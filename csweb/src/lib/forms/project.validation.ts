@@ -9,12 +9,18 @@ export const basicSchema = yup.object().shape({
 });
 
 export const valueSchema = yup.object().shape({
-	fundingSource: yup.string(),
 	discountRate: yup
 		.number()
 		.min(0.0, 'Discount rate cannot be lower than zero')
 		.max(20.0, 'Discount rate cannot be higher than 20%')
-		.nullable(),
+		.required(),
+	isCapitalized: yup.bool().required()
+});
+
+export const valueLineSchema = yup.object().shape({
+	id: yup.string(),
+	fundingSource: yup.string(),
+	valueCategory: yup.string(),
 	yearOneValue: yup.number().nullable(),
 	yearTwoValue: yup.number().nullable(),
 	yearThreeValue: yup.number().nullable(),
@@ -64,13 +70,8 @@ export const getDefaultProject = (): UpdateProject => {
 			ownerID: '',
 		},
 		projectValue: {
-			fundingSource: '',
-			discountRate: 7.0,
-			yearOneValue: 0.0,
-			yearTwoValue: 0.0,
-			yearThreeValue: 0.0,
-			yearFourValue: 0.0,
-			yearFiveValue: 0.0
+			isCapitalized: false,
+			discountRate: 7.0
 		},
 		projectCost: {
 			ongoing: 0.0,
@@ -86,6 +87,26 @@ export const getDefaultProject = (): UpdateProject => {
 		projectMilestones: []
 	};
 };
+
+export const valueDefaultForm = () => {
+	return {
+		discountRate: 0.0,
+		isCapitalized: false
+	}
+} 
+
+export const valueLineDefaultForm = () => {
+	return {
+		id: "",
+		fundingSource: "",
+		valueCategory: "",
+		yearOneValue: 0.0,
+		yearTwoValue: 0.0,
+		yearThreeValue: 0.0,
+		yearFourValue: 0.0,
+		yearFiveValue: 0.0
+	}
+} 
 
 export const getNewFeature = (projectID: string): any => {
 	return {

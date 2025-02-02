@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { Heading, Button, type SelectOptionType } from 'flowbite-svelte';
-	import { MoneyInput, PercentInput, SectionHeading, SelectInput } from '$lib/components';
-	import { getDefaultProject, valueSchema } from '$lib/forms/project.validation';
+	import { Button, Table, TableBody, TableBodyRow, TableBodyCell, TableHead, TableHeadCell, ButtonGroup, Toggle  } from 'flowbite-svelte';
+	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import type { SelectOptionType } from 'flowbite-svelte';
+	import { MoneyInput, PercentInput, SectionHeading, SelectInput, SectionSubHeading } from '$lib/components';
+	import { getDefaultProject, valueSchema, valueDefaultForm } from '$lib/forms/project.validation';
 	import { getProject, updateProjectValue } from '$lib/services/project';
 	import {
 		parseErrors,
@@ -13,7 +15,8 @@
 	import { callIf } from '$lib/utils/helpers';
 	import type { UpdateProjectValue, Project } from '$lib/graphql/generated/sdk';
 	import { getList } from '$lib/services/list';
-	import { BadgeProjectStatus } from '.';
+	import { BadgeProjectStatus, DeleteProjectValueLine, ProjectValueChart, ProjectValueCategoryDistributionChart } from '.';
+	import { formatCurrency } from '$lib/utils/format';
 
 	let errors: any = $state({});
 
@@ -65,7 +68,7 @@
 							});
 						} else {
 							addToast({
-								message: 'Error updating project basics: ' + res.status?.message,
+								message: 'Error updating project value: ' + res.status?.message,
 								dismissible: true,
 								type: 'error'
 							});
@@ -73,7 +76,7 @@
 					})
 					.catch((err) => {
 						addToast({
-							message: 'Error updating project basics: ' + err,
+							message: 'Error updating project value: ' + err,
 							dismissible: true,
 							type: 'error'
 						});
@@ -87,19 +90,13 @@
 	};
 
 	const loadPage = async () => {
-		getList('Funding Source')
-			.then((l) => {
-				fundingSourceOpts = findSelectOptsFromList(l);
-			})
-			.then(() => {
-				load().then(p => {
-					project = p
-				});
-			});
+		load().then(p => {
+			project = p
+		});
 	};
 
-	let valueForm = $state(getDefaultProject().projectValue);
-	let fundingSourceOpts = $state([] as SelectOptionType<string>[]);
+	let valueForm = $state(valueDefaultForm());
+	let isCapitalized = $state(false)
 </script>
 
 
@@ -113,64 +110,94 @@
 	</SectionHeading>
 	{/if}
 
-	{#if valueForm}
-		<SelectInput
-			bind:value={valueForm.fundingSource as string}
-			fieldName="Funding Source"
-			error={errors.fundingSource}
-			options={fundingSourceOpts}
-			update={() => callIf(update)}
-		/>
-
+	{#if project.projectValue.projectValueLines}
+	<div class="flex mb-8">
+		<div class="flex-1 px-2">
+			{#if valueForm}
+			<SectionSubHeading>Parameters</SectionSubHeading>
 		<PercentInput
-			bind:value={valueForm.discountRate as number}
-			fieldName="Discount Rate"
+			bind:value={valueForm.discountRate}
+			fieldName="Discount rate percentage"
 			error={errors.discountRate}
 			update={() => callIf(update)}
 		/>
 
-		<Heading tag="h6">Five Year Forecast</Heading>
-
-		<MoneyInput
-			bind:value={valueForm.yearOneValue as number}
-			fieldName="Estimated Year One Returns"
-			error={errors.yearOneValue}
-			update={() => callIf(update)}
-		/>
-
-		<MoneyInput
-			bind:value={valueForm.yearTwoValue as number}
-			fieldName="Estimated Year Two Returns"
-			error={errors.yearTwoValue}
-			update={() => callIf(update)}
-		/>
-
-		<MoneyInput
-			bind:value={valueForm.yearThreeValue as number}
-			fieldName="Estimated Year Tnree Returns"
-			error={errors.yearThreeValue}
-			update={() => callIf(update)}
-		/>
-
-		<MoneyInput
-			bind:value={valueForm.yearFourValue as number}
-			fieldName="Estimated Year Four Returns"
-			error={errors.yearFourValue}
-			update={() => callIf(update)}
-		/>
-
-		<MoneyInput
-			bind:value={valueForm.yearFiveValue as number}
-			fieldName="Estimated Year Five Returns"
-			error={errors.yearFiveValue}
-			update={() => callIf(update)}
-		/>
-
-		<div class="col-span-4">
-			<span class="float-right">
-				<Button on:click={updateValue}>Update Value</Button>
-			</span>
-			<br class="clear-both" />
+		<div class="pb-4 mb-2">
+			<Toggle class="mt-3" bind:checked={valueForm.isCapitalized}>Capitalized</Toggle>
 		</div>
-	{/if}
+
+		<Button
+			size="xs"
+			onclick={() => updateValue()}>
+			Update
+		</Button>
+		{/if}
+
+		</div>
+
+		<div class="flex-1 px-2">
+			<SectionSubHeading>Five Year Outlook</SectionSubHeading>
+			<ProjectValueChart {project}></ProjectValueChart>
+		</div>
+
+		<div class="flex-1 px-2">
+			<SectionSubHeading>Category Distribution</SectionSubHeading>
+			<ProjectValueCategoryDistributionChart {project}></ProjectValueCategoryDistributionChart>
+		</div>
+		
+	</div>
+
+	<SectionSubHeading>
+		Revenue Items
+	</SectionSubHeading>
+	<Table>
+		<TableHead>
+		  <TableHeadCell>Funding Source</TableHeadCell>
+		  <TableHeadCell>Category</TableHeadCell>
+		  <TableHeadCell>Year One</TableHeadCell>
+		  <TableHeadCell>Year Two</TableHeadCell>
+		  <TableHeadCell>Year Three</TableHeadCell>
+		  <TableHeadCell>Year Four</TableHeadCell>
+		  <TableHeadCell>Year Two</TableHeadCell>
+		  <TableHeadCell>Actions</TableHeadCell>
+		</TableHead>
+		<TableBody tableBodyClass="divide-y">
+			{#each project.projectValue.projectValueLines as line}
+		  <TableBodyRow>
+			<TableBodyCell>{line.fundingSource}</TableBodyCell>
+			<TableBodyCell>{line.valueCategory}</TableBodyCell>
+			<TableBodyCell>{formatCurrency.format(line.yearOneValue || 0)}</TableBodyCell>
+			<TableBodyCell>{formatCurrency.format(line.yearTwoValue || 0)}</TableBodyCell>
+			<TableBodyCell>{formatCurrency.format(line.yearThreeValue || 0)}</TableBodyCell>
+			<TableBodyCell>{formatCurrency.format(line.yearFourValue || 0)}</TableBodyCell>
+			<TableBodyCell>{formatCurrency.format(line.yearFiveValue || 0)}</TableBodyCell>
+			<TableBodyCell>
+				<ButtonGroup>
+				<Button
+					color="dark"
+					class=""
+					onclick={() => {
+						console.log('open a modal');
+					}}
+				>
+					<EditOutline size="sm" />
+				</Button>
+				<DeleteProjectValueLine
+					id={line.id || ''}
+					name={0 + (line.yearOneValue || 0) + (line.yearTwoValue || 0) + (line.yearThreeValue || 0) + (line.yearFourValue || 0) + (line.yearFiveValue || 0)}
+					projectID={id}
+					size="md"
+					update={() => callIf(update)}
+				>
+					<TrashBinOutline size="sm" class="" />
+				</DeleteProjectValueLine>
+				</ButtonGroup>
+			</TableBodyCell>
+		  </TableBodyRow>
+		  {/each}
+		</TableBody>
+	  </Table>
+	  {:else}
+	  	No Value here
+	  {/if}
 {/await}

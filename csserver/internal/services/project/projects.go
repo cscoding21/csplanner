@@ -32,13 +32,12 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 		return s.newProject(ctx, pro, org, val)
 	}
 
-	//---ensure that the project status is not set through a back-channel
-	pro.ProjectStatusBlock.Status = lastProject.ProjectStatusBlock.Status
-
 	lastProject.ProjectBasics = pro.ProjectBasics
-	lastProject.ProjectValue = pro.ProjectValue
 	lastProject.ProjectCost = pro.ProjectCost
 	lastProject.ProjectDaci = pro.ProjectDaci
+
+	lastProject.ProjectValue.DiscountRate = pro.ProjectValue.DiscountRate
+	lastProject.ProjectValue.IsCapitalized = pro.ProjectValue.IsCapitalized
 
 	lastProject.GetProjectInitialCost()
 	lastProject.GetProjectNPV()

@@ -8,7 +8,7 @@
 	let { children }: Props = $props();
 </script>
 
-<Heading tag="h6">
+<Heading tag="h6" class="text-md dark:text-gray-300 text-gray-600">
 	{#if children}
 		{@render children()}
 	{/if}

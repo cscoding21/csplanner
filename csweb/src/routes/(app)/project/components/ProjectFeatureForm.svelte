@@ -79,7 +79,7 @@
 </script>
 
 <SectionHeading>
-	{#if is(id)}
+	{#if is(feature?.id)}
 		Update feature
 	{:else}
 		Add a New feature

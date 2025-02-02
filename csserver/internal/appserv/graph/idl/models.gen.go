@@ -348,6 +348,7 @@ type ProjectTaskCalculatedData struct {
 
 type ProjectValue struct {
 	DiscountRate      *float64                    `json:"discountRate,omitempty"`
+	IsCapitalized     bool                        `json:"isCapitalized"`
 	ProjectValueLines []*ProjectValueLine         `json:"projectValueLines,omitempty"`
 	Calculated        *ProjectValueCalculatedData `json:"calculated,omitempty"`
 }
@@ -563,7 +564,8 @@ type UpdateProjectMilestoneTemplate struct {
 }
 
 type UpdateProjectValue struct {
-	DiscountRate *float64 `json:"discountRate,omitempty"`
+	DiscountRate  float64 `json:"discountRate"`
+	IsCapitalized bool    `json:"isCapitalized"`
 }
 
 type UpdateProjectValueLine struct {

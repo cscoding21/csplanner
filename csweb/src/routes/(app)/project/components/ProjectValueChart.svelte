@@ -18,11 +18,11 @@
 					name: 'Earnings',
 					color: '#5a67d8',
 					data: [
-						{ x: 'Year 1', y: p.projectValue?.yearOneValue },
-						{ x: 'Year 2', y: p.projectValue?.yearTwoValue },
-						{ x: 'Year 3', y: p.projectValue?.yearThreeValue },
-						{ x: 'Year 4', y: p.projectValue?.yearFourValue },
-						{ x: 'Year 5', y: p.projectValue?.yearFiveValue }
+						{ x: 'Year 1', y: p.projectValue?.calculated?.yearOneValue },
+						{ x: 'Year 2', y: p.projectValue?.calculated?.yearTwoValue },
+						{ x: 'Year 3', y: p.projectValue?.calculated?.yearThreeValue },
+						{ x: 'Year 4', y: p.projectValue?.calculated?.yearFourValue },
+						{ x: 'Year 5', y: p.projectValue?.calculated?.yearFiveValue }
 					]
 				}
 			],

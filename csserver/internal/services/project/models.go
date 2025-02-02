@@ -41,6 +41,7 @@ type ProjectBasics struct {
 // ProjectValue properties used in calculating the value of a project
 type ProjectValue struct {
 	DiscountRate      float64                    `json:"discount_rate"`
+	IsCapitalized     bool                       `json:"is_capitalized"`
 	ProjectValueLines []*ProjectValueLine        `json:"project_value_lines"`
 	Calculated        ProjectValueCalculatedData `json:"calculated"`
 }

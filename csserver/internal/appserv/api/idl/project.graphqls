@@ -29,6 +29,7 @@ type ProjectBasics {
 
 type ProjectValue {
   discountRate: Float
+  isCapitalized: Boolean!
   projectValueLines: [ProjectValueLine!]
   calculated: ProjectValueCalculatedData
 }
@@ -193,7 +194,8 @@ input UpdateProjectBasics {
 
 
 input UpdateProjectValue {
-  discountRate: Float
+  discountRate: Float!
+  isCapitalized: Boolean!
 }
 
 input UpdateProjectValueLine {

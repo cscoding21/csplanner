@@ -567,6 +567,7 @@ export type ProjectValue = {
   __typename?: 'ProjectValue';
   calculated?: Maybe<ProjectValueCalculatedData>;
   discountRate?: Maybe<Scalars['Float']['output']>;
+  isCapitalized: Scalars['Boolean']['output'];
   projectValueLines?: Maybe<Array<ProjectValueLine>>;
 };
 
@@ -883,7 +884,8 @@ export type UpdateProjectMilestoneTemplate = {
 };
 
 export type UpdateProjectValue = {
-  discountRate?: InputMaybe<Scalars['Float']['input']>;
+  discountRate: Scalars['Float']['input'];
+  isCapitalized: Scalars['Boolean']['input'];
 };
 
 export type UpdateProjectValueLine = {
@@ -1115,6 +1117,7 @@ export const ProjectFragmentFragmentDoc = gql`
   }
   projectValue {
     discountRate
+    isCapitalized
     projectValueLines {
       id
       fundingSource

@@ -3,7 +3,8 @@
         SectionHeading,
         MoneyDisplay,
         ResourceList,
-        UserCard
+        UserCard,
+        SectionSubHeading
     } from "$lib/components";
     import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ProjectStatusUpdate } from ".";
     import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover, Hr } from "flowbite-svelte";
@@ -55,22 +56,21 @@
 <div class="col-span-3">
 <SectionHeading>
     Financials: {project.projectBasics.name}
-    <span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} />
-    </span>
+    <span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
 </SectionHeading>
 </div>
 {/if}
 
 <div class="col-span-1">
     <!-- col span 1 -->
-    <SectionHeading>Executive Summary</SectionHeading>
+    <SectionSubHeading>Executive Summary</SectionSubHeading>
     <p class="mb-6 text-sm">{project.projectBasics?.description}</p>
 </div>
 
 
 <div class="col-span-1">
     <!-- col span 1 -->
-    <SectionHeading>Financials</SectionHeading>
+    <SectionSubHeading>Financials</SectionSubHeading>
     <ProjectValueChart {project}></ProjectValueChart>
     <ul class="list mb-6 col-span-2 text-xs p-2">
         <li>
@@ -84,13 +84,6 @@
             <span>Internal Rate of Return</span>
             <span class="float-right flex-auto font-semibold"
                 >{formatPercent.format(project.projectValue?.calculated?.internalRateOfReturn || 0)}</span
-            >
-        </li>
-
-        <li>
-            <span>Funding Source</span>
-            <span class="float-right flex-auto font-semibold"
-                >{project.projectValue?.fundingSource}</span
             >
         </li>
 
@@ -120,7 +113,7 @@
 
 <div class="col-span-1">
     <!-- col span 1 -->
-<SectionHeading>Team</SectionHeading>
+<SectionSubHeading>Team</SectionSubHeading>
 
 <div class="font-medium text-gray-900 dark:text-white">Owner</div>
 <UserCard user={project.projectBasics.owner as User} />
@@ -145,7 +138,7 @@
 
 <div class="col-span-2">
     <!-- col span 2 -->
-    <SectionHeading>Features</SectionHeading>
+    <SectionSubHeading>Features</SectionSubHeading>
     <Table>
         <TableHead>
           <TableHeadCell>Feature</TableHeadCell>

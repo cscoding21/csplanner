@@ -36,7 +36,8 @@ var testProject = project.Project{
 	ProjectValue: &project.ProjectValue{
 		DiscountRate: 7.0,
 		ProjectValueLines: []*project.ProjectValueLine{
-			&project.ProjectValueLine{
+			{
+				ID:             utils.ValToRef("projectvalue:1"),
 				FundingSource:  "internal",
 				ValueCategory:  "revenue",
 				YearOneValue:   1000.0,

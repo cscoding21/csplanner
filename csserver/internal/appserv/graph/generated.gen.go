@@ -397,6 +397,7 @@ type ComplexityRoot struct {
 	ProjectValue struct {
 		Calculated        func(childComplexity int) int
 		DiscountRate      func(childComplexity int) int
+		IsCapitalized     func(childComplexity int) int
 		ProjectValueLines func(childComplexity int) int
 	}
 
@@ -2286,6 +2287,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectValue.DiscountRate(childComplexity), true
 
+	case "ProjectValue.isCapitalized":
+		if e.complexity.ProjectValue.IsCapitalized == nil {
+			break
+		}
+
+		return e.complexity.ProjectValue.IsCapitalized(childComplexity), true
+
 	case "ProjectValue.projectValueLines":
 		if e.complexity.ProjectValue.ProjectValueLines == nil {
 			break
@@ -3443,6 +3451,7 @@ type ProjectBasics {
 
 type ProjectValue {
   discountRate: Float
+  isCapitalized: Boolean!
   projectValueLines: [ProjectValueLine!]
   calculated: ProjectValueCalculatedData
 }
@@ -3607,7 +3616,8 @@ input UpdateProjectBasics {
 
 
 input UpdateProjectValue {
-  discountRate: Float
+  discountRate: Float!
+  isCapitalized: Boolean!
 }
 
 input UpdateProjectValueLine {
@@ -11457,6 +11467,8 @@ func (ec *executionContext) fieldContext_Project_projectValue(_ context.Context,
 			switch field.Name {
 			case "discountRate":
 				return ec.fieldContext_ProjectValue_discountRate(ctx, field)
+			case "isCapitalized":
+				return ec.fieldContext_ProjectValue_isCapitalized(ctx, field)
 			case "projectValueLines":
 				return ec.fieldContext_ProjectValue_projectValueLines(ctx, field)
 			case "calculated":
@@ -15229,6 +15241,50 @@ func (ec *executionContext) fieldContext_ProjectValue_discountRate(_ context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValue_isCapitalized(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValue_isCapitalized(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCapitalized, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValue_isCapitalized(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValue",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -22754,7 +22810,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"discountRate"}
+	fieldsInOrder := [...]string{"discountRate", "isCapitalized"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22763,11 +22819,18 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 		switch k {
 		case "discountRate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("discountRate"))
-			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.DiscountRate = data
+		case "isCapitalized":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isCapitalized"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsCapitalized = data
 		}
 	}
 
@@ -25421,6 +25484,11 @@ func (ec *executionContext) _ProjectValue(ctx context.Context, sel ast.Selection
 			out.Values[i] = graphql.MarshalString("ProjectValue")
 		case "discountRate":
 			out.Values[i] = ec._ProjectValue_discountRate(ctx, field, obj)
+		case "isCapitalized":
+			out.Values[i] = ec._ProjectValue_isCapitalized(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "projectValueLines":
 			out.Values[i] = ec._ProjectValue_projectValueLines(ctx, field, obj)
 		case "calculated":

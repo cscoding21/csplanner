@@ -59,7 +59,8 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectValue: &project.ProjectValue{
 			DiscountRate: 7.0,
 			ProjectValueLines: []*project.ProjectValueLine{
-				&project.ProjectValueLine{
+				{
+					ID:             utils.ValToRef(uuid.New().String()),
 					FundingSource:  "internal",
 					ValueCategory:  "revenue",
 					YearOneValue:   10000.0,
@@ -377,7 +378,8 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 		ProjectValue: &project.ProjectValue{
 			DiscountRate: 7.0,
 			ProjectValueLines: []*project.ProjectValueLine{
-				&project.ProjectValueLine{
+				{
+					ID:             utils.ValToRef(uuid.New().String()),
 					FundingSource:  "internal",
 					ValueCategory:  "revenue",
 					YearOneValue:   100.0,

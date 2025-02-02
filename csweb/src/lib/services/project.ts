@@ -472,6 +472,8 @@ export const convertProjectToUpdateProject = (project: any): UpdateProject => {
 		id: project.id
 	};
 
+	console.log(coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema))
+
 	up.projectBasics = coalesceToType<UpdateProjectBasics>(project.projectBasics, basicSchema);
 	up.projectValue = coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema);
 	up.projectCost = coalesceToType<UpdateProjectCost>(project.projectCost, costSchema);

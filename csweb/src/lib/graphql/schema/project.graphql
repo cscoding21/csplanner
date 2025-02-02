@@ -29,6 +29,7 @@ fragment projectFragment on Project {
 	}
 	projectValue {
 		discountRate
+		isCapitalized
 		projectValueLines {
 			id
 			fundingSource
