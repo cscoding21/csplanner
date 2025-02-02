@@ -9,11 +9,11 @@
 	import type { ProjectFeature } from '$lib/graphql/generated/sdk';
 	import { TextAreaInput } from '$lib/components';
 	import { addToast } from '$lib/stores/toasts';
-	import { callIf } from '$lib/utils/helpers';
+	import { callIf, deepCopy } from '$lib/utils/helpers';
 
 	onMount(async () => {
 		if (feature && feature.id) {
-			featureForm = JSON.parse(JSON.stringify(feature));
+			featureForm = deepCopy(feature);
 			featureForm.projectID = projectID;
 		} else {
 			featureForm = getNewFeature(projectID);

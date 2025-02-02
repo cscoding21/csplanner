@@ -3622,6 +3622,7 @@ input UpdateProjectValue {
 
 input UpdateProjectValueLine {
   projectID: String!
+  id: String
   fundingSource: String!
   valueCategory: String!
   yearOneValue: Float
@@ -22844,7 +22845,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectValueLine(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectID", "fundingSource", "valueCategory", "yearOneValue", "yearTwoValue", "yearThreeValue", "yearFourValue", "yearFiveValue"}
+	fieldsInOrder := [...]string{"projectID", "id", "fundingSource", "valueCategory", "yearOneValue", "yearTwoValue", "yearThreeValue", "yearFourValue", "yearFiveValue"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22858,6 +22859,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectValueLine(ctx context.Con
 				return it, err
 			}
 			it.ProjectID = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
 		case "fundingSource":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fundingSource"))
 			data, err := ec.unmarshalNString2string(ctx, v)

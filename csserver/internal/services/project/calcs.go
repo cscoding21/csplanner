@@ -18,6 +18,12 @@ func (p *Project) AggregateProjectValueLines() {
 		return
 	}
 
+	p.ProjectValue.Calculated.YearOneValue = 0
+	p.ProjectValue.Calculated.YearTwoValue = 0
+	p.ProjectValue.Calculated.YearThreeValue = 0
+	p.ProjectValue.Calculated.YearFourValue = 0
+	p.ProjectValue.Calculated.YearFiveValue = 0
+
 	for _, l := range p.ProjectValue.ProjectValueLines {
 		p.ProjectValue.Calculated.YearOneValue += l.YearOneValue
 		p.ProjectValue.Calculated.YearTwoValue += l.YearTwoValue

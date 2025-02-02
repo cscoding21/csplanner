@@ -890,6 +890,7 @@ export type UpdateProjectValue = {
 
 export type UpdateProjectValueLine = {
   fundingSource: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
   projectID: Scalars['String']['input'];
   valueCategory: Scalars['String']['input'];
   yearFiveValue?: InputMaybe<Scalars['Float']['input']>;

@@ -19,8 +19,9 @@ export const valueSchema = yup.object().shape({
 
 export const valueLineSchema = yup.object().shape({
 	id: yup.string(),
-	fundingSource: yup.string(),
-	valueCategory: yup.string(),
+	projectID: yup.string().required(),
+	fundingSource: yup.string().required(),
+	valueCategory: yup.string().required(),
 	yearOneValue: yup.number().nullable(),
 	yearTwoValue: yup.number().nullable(),
 	yearThreeValue: yup.number().nullable(),
@@ -95,8 +96,9 @@ export const valueDefaultForm = () => {
 	}
 } 
 
-export const valueLineDefaultForm = () => {
+export const valueLineDefaultForm = (projectID: string): any => {
 	return {
+		projectID: projectID,
 		id: "",
 		fundingSource: "",
 		valueCategory: "",

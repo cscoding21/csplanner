@@ -46,6 +46,16 @@ func CreateTestLists(ctx context.Context) error {
 		},
 	}
 
+	valueCategoryList := list.List{
+		Name: "Value Catetgory",
+		Values: []list.ListItem{
+			{Value: "revenue", Name: "Revenue increase"},
+			{Value: "tax-benefit", Name: "Tax write-off"},
+			{Value: "risk-mitigation", Name: "Risk mitigation"},
+			{Value: "cost-reduction", Name: "Cost reduction"},
+		},
+	}
+
 	_, err := service.GetList(ctx, "Skills")
 	if err != nil {
 		log.Errorf("Error getting skills list: %v", err)
@@ -67,6 +77,20 @@ func CreateTestLists(ctx context.Context) error {
 		ur, err := service.CreateList(ctx, &fundingSourceList)
 		if err != nil {
 			log.Errorf("Error creating funding source list: %v", err)
+		}
+
+		if !ur.ValidationResult.Pass {
+			log.Warn(ur.ValidationResult.Pass, ur.ValidationResult.Messages)
+		}
+	}
+
+	_, err = service.GetList(ctx, "Value Catetgory")
+	if err != nil {
+		log.Errorf("Error getting value category list: %v", err)
+
+		ur, err := service.CreateList(ctx, &valueCategoryList)
+		if err != nil {
+			log.Errorf("Error creating value category list: %v", err)
 		}
 
 		if !ur.ValidationResult.Pass {

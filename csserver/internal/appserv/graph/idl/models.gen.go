@@ -570,6 +570,7 @@ type UpdateProjectValue struct {
 
 type UpdateProjectValueLine struct {
 	ProjectID      string   `json:"projectID"`
+	ID             *string  `json:"id,omitempty"`
 	FundingSource  string   `json:"fundingSource"`
 	ValueCategory  string   `json:"valueCategory"`
 	YearOneValue   *float64 `json:"yearOneValue,omitempty"`

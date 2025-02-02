@@ -1,22 +1,20 @@
 <script lang="ts">
-	import { Button, Table, TableBody, TableBodyRow, TableBodyCell, TableHead, TableHeadCell, ButtonGroup, Toggle  } from 'flowbite-svelte';
-	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
-	import type { SelectOptionType } from 'flowbite-svelte';
-	import { MoneyInput, PercentInput, SectionHeading, SelectInput, SectionSubHeading } from '$lib/components';
+	import { Button, Table, TableBody, TableBodyRow, TableBodyCell, TableHead, TableHeadCell, ButtonGroup, Toggle, Hr  } from 'flowbite-svelte';
+	import { AddressBookOutline, EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import { PercentInput, SectionHeading, SectionSubHeading } from '$lib/components';
 	import { getDefaultProject, valueSchema, valueDefaultForm } from '$lib/forms/project.validation';
 	import { getProject, updateProjectValue } from '$lib/services/project';
 	import {
 		parseErrors,
 		mergeErrors,
 		coalesceToType,
-		findSelectOptsFromList
 	} from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
 	import type { UpdateProjectValue, Project } from '$lib/graphql/generated/sdk';
-	import { getList } from '$lib/services/list';
 	import { BadgeProjectStatus, DeleteProjectValueLine, ProjectValueChart, ProjectValueCategoryDistributionChart } from '.';
 	import { formatCurrency } from '$lib/utils/format';
+	import ProjectValueLineFormModal from './ProjectValueLineFormModal.svelte';
 
 	let errors: any = $state({});
 
@@ -45,6 +43,15 @@
 				return err
 			});
 	};
+
+	function refresh() {
+		console.log('refreshing')
+		load().then(p => {
+			project = p
+
+			callIf(update);
+		})
+	}
 
 	const updateValue = async () => {
 		errors = {};
@@ -96,7 +103,6 @@
 	};
 
 	let valueForm = $state(valueDefaultForm());
-	let isCapitalized = $state(false)
 </script>
 
 
@@ -173,21 +179,19 @@
 			<TableBodyCell>{formatCurrency.format(line.yearFiveValue || 0)}</TableBodyCell>
 			<TableBodyCell>
 				<ButtonGroup>
-				<Button
-					color="dark"
-					class=""
-					onclick={() => {
-						console.log('open a modal');
-					}}
-				>
-					<EditOutline size="sm" />
-				</Button>
+					<ProjectValueLineFormModal
+						valueItem={line}
+						projectID={id}
+						size="md"
+						update={() => refresh()}>
+						<EditOutline size="sm" />
+					</ProjectValueLineFormModal>
 				<DeleteProjectValueLine
 					id={line.id || ''}
 					name={0 + (line.yearOneValue || 0) + (line.yearTwoValue || 0) + (line.yearThreeValue || 0) + (line.yearFourValue || 0) + (line.yearFiveValue || 0)}
 					projectID={id}
 					size="md"
-					update={() => callIf(update)}
+					update={() => refresh()}
 				>
 					<TrashBinOutline size="sm" class="" />
 				</DeleteProjectValueLine>
@@ -196,8 +200,30 @@
 		  </TableBodyRow>
 		  {/each}
 		</TableBody>
+		<tfoot>
+			<tr class="font-semibold text-gray-900 dark:text-white">
+			  <th scope="row" class="py-3 px-6 text-base">Totals</th>
+			  <th scope="row" class="py-3 px-6 text-base">&nbsp;</th>
+			  <td class="py-3 px-6">{formatCurrency.format(project.projectValue.calculated?.yearOneValue || 0)}</td>
+			  <td class="py-3 px-6">{formatCurrency.format(project.projectValue.calculated?.yearTwoValue || 0)}</td>
+			  <td class="py-3 px-6">{formatCurrency.format(project.projectValue.calculated?.yearThreeValue || 0)}</td>
+			  <td class="py-3 px-6">{formatCurrency.format(project.projectValue.calculated?.yearFourValue || 0)}</td>
+			  <td class="py-3 px-6">{formatCurrency.format(project.projectValue.calculated?.yearFiveValue || 0)}</td>
+			  <th scope="row" class="py-3 px-6 text-base">&nbsp;</th>
+			</tr>
+		  </tfoot>
 	  </Table>
 	  {:else}
 	  	No Value here
 	  {/if}
 {/await}
+
+<Hr />
+<ProjectValueLineFormModal
+	valueItem={undefined}
+	projectID={id}
+	size="md"
+	update={() => refresh()}>
+	Add Value Line
+</ProjectValueLineFormModal>
+

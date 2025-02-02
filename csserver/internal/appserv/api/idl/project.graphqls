@@ -200,6 +200,7 @@ input UpdateProjectValue {
 
 input UpdateProjectValueLine {
   projectID: String!
+  id: String
   fundingSource: String!
   valueCategory: String!
   yearOneValue: Float

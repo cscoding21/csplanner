@@ -29,6 +29,8 @@ export { default as ProjectTemplateSelector } from './ProjectTemplateSelector.sv
 export { default as ProjectValue } from './ProjectValue.svelte';
 export { default as ProjectValueCategoryDistributionChart } from './ProjectValueCategoryDistributionChart.svelte';
 export { default as ProjectValueChart } from './ProjectValueChart.svelte';
-export { default as ProjectValueLineUpdateForm } from './ProjectValueLineUpdateForm.svelte';
+export { default as ProjectValueLineForm } from './ProjectValueLineForm.svelte';
+export { default as ProjectValueLineFormModal } from './ProjectValueLineFormModal.svelte';
+
 
 export type { Week } from './ProjectScheduleCell.svelte';

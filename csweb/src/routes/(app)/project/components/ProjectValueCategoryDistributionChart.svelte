@@ -143,7 +143,10 @@
 				style: {
 					fontFamily: 'Inter, sans-serif',
 					colors: ['#ffffff']
-				}
+				},
+				formatter: function (val, opts) {
+					return formatCurrency.format(val as number * 1000.0)
+				},
 			},
 			grid: {
 			padding: {
@@ -165,11 +168,11 @@
 				}
 			}],
 			legend: {
-				show: true,
+				show: false,
 				labels: {
 					colors: ['#bbb'],
 				}
-			}
+			},
         };
 	};
 	let chart = new ApexCharts(document.querySelector('#chartPlaceholder'), getChartOptions(project));
