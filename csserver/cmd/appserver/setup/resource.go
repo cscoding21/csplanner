@@ -117,6 +117,7 @@ func CreateTestResources(ctx context.Context) error {
 				{ID: "product-management", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "requirements-gathering", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "communications", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
+				{ID: "ui", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 			},
 		},
 		{
@@ -170,6 +171,7 @@ func CreateTestResources(ctx context.Context) error {
 				{ID: "marketing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "content-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 				{ID: "frontend", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
+				{ID: "technical-writing", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
 			},
 		},
 		{

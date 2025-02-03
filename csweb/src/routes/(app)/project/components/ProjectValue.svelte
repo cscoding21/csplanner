@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, Table, TableBody, TableBodyRow, TableBodyCell, TableHead, TableHeadCell, ButtonGroup, Toggle, Hr  } from 'flowbite-svelte';
-	import { AddressBookOutline, EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
 	import { PercentInput, SectionHeading, SectionSubHeading } from '$lib/components';
 	import { getDefaultProject, valueSchema, valueDefaultForm } from '$lib/forms/project.validation';
 	import { getProject, updateProjectValue } from '$lib/services/project';
@@ -156,7 +156,7 @@
 	<SectionSubHeading>
 		Revenue Items
 	</SectionSubHeading>
-	<Table>
+	<Table hoverable={true}>
 		<TableHead>
 		  <TableHeadCell>Funding Source</TableHeadCell>
 		  <TableHeadCell>Category</TableHeadCell>
