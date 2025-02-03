@@ -44,6 +44,10 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		Can: func(p *Project) validate.ValidationResult {
 			result := validate.NewSuccessValidationResult()
 
+			if p.ProjectStatusBlock.Status != projectstatus.NewProject {
+				result.Append(getFailingMessage("Status", "Cannot enter state 'new' from any other state"))
+			}
+
 			// this state can only be entered on initial project creation
 			// it cannot be transioned at any other time
 
@@ -131,6 +135,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 
 			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Approved,
 				projectstatus.Proposed))
 
 			return result
@@ -174,7 +179,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 				projectstatus.Deferred,
 				projectstatus.Backlogged))
 
-			if p.ProjectBasics.StartDate == nil {
+			if p.ProjectBasics == nil || p.ProjectBasics.StartDate == nil {
 				result.Append(getFailingMessage("Start date", "Project start date must be set to schedule implementation work"))
 			}
 
@@ -196,6 +201,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 
 			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
+				projectstatus.Scheduled,
 				projectstatus.Deferred))
 			//---can auto-transition to scheduled if start date is set to the future
 
@@ -235,8 +241,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 
 			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
-				projectstatus.Draft,
-				projectstatus.Abandoned,
+				projectstatus.InFlight,
 				projectstatus.Scheduled))
 
 			return result

@@ -85,6 +85,7 @@ func (p *Project) GetProjectIRR() float64 {
 func (p *Project) GetProjectInitialCost() (int, float64) {
 	cost := 0.0
 	hours := 0
+	actualizedHours := 0
 
 	if len(p.ProjectMilestones) == 0 {
 		return hours, cost
@@ -96,19 +97,22 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 		}
 
 		for _, t := range m.Tasks {
-			hours = hours + t.HourEstimate
-			cost = cost + float64(t.HourEstimate)*(*p.ProjectCost.BlendedRate)
+			hours += t.HourEstimate
+			//cost += float64(hours) * (*p.ProjectCost.BlendedRate)
+			actualizedHours += t.Calculated.ActualizedHoursToComplete
+			cost = cost + float64(t.Calculated.ActualizedHoursToComplete)*(*p.ProjectCost.BlendedRate)
 		}
 	}
 
 	p.ProjectCost.Calculated.HourEstimate = hours
+	p.ProjectCost.Calculated.HoursActualized = actualizedHours
 	p.ProjectCost.Calculated.InitialCost = cost
 
 	return hours, cost
 }
 
 // CalculateProjectMilestoneStats iterate the milestones and calculate summary information
-func (s *ProjectService) CalculateProjectMilestoneStats(p *Project) {
+func (p *Project) CalculateProjectMilestoneStats() {
 	if len(p.ProjectMilestones) == 0 {
 		return
 	}

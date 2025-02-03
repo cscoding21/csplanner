@@ -305,8 +305,9 @@ type ComplexityRoot struct {
 	}
 
 	ProjectCostCalculatedData struct {
-		HourEstimate func(childComplexity int) int
-		InitialCost  func(childComplexity int) int
+		HourEstimate    func(childComplexity int) int
+		HoursActualized func(childComplexity int) int
+		InitialCost     func(childComplexity int) int
 	}
 
 	ProjectDaci struct {
@@ -1922,6 +1923,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectCostCalculatedData.HourEstimate(childComplexity), true
+
+	case "ProjectCostCalculatedData.hoursActualized":
+		if e.complexity.ProjectCostCalculatedData.HoursActualized == nil {
+			break
+		}
+
+		return e.complexity.ProjectCostCalculatedData.HoursActualized(childComplexity), true
 
 	case "ProjectCostCalculatedData.initialCost":
 		if e.complexity.ProjectCostCalculatedData.InitialCost == nil {
@@ -3558,6 +3566,7 @@ type CreateProjectCommentResult {
 type ProjectCostCalculatedData {
   initialCost: Float
   hourEstimate: Int!
+  hoursActualized: Int!
 }
 
 type ProjectValueCalculatedData {
@@ -12758,6 +12767,8 @@ func (ec *executionContext) fieldContext_ProjectCost_calculated(_ context.Contex
 				return ec.fieldContext_ProjectCostCalculatedData_initialCost(ctx, field)
 			case "hourEstimate":
 				return ec.fieldContext_ProjectCostCalculatedData_hourEstimate(ctx, field)
+			case "hoursActualized":
+				return ec.fieldContext_ProjectCostCalculatedData_hoursActualized(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectCostCalculatedData", field.Name)
 		},
@@ -12838,6 +12849,50 @@ func (ec *executionContext) _ProjectCostCalculatedData_hourEstimate(ctx context.
 }
 
 func (ec *executionContext) fieldContext_ProjectCostCalculatedData_hourEstimate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectCostCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectCostCalculatedData_hoursActualized(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCostCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCostCalculatedData_hoursActualized(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoursActualized, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectCostCalculatedData_hoursActualized(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectCostCalculatedData",
 		Field:      field,
@@ -24878,6 +24933,11 @@ func (ec *executionContext) _ProjectCostCalculatedData(ctx context.Context, sel 
 			out.Values[i] = ec._ProjectCostCalculatedData_initialCost(ctx, field, obj)
 		case "hourEstimate":
 			out.Values[i] = ec._ProjectCostCalculatedData_hourEstimate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hoursActualized":
+			out.Values[i] = ec._ProjectCostCalculatedData_hoursActualized(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

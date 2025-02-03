@@ -463,6 +463,7 @@ export type ProjectCost = {
 export type ProjectCostCalculatedData = {
   __typename?: 'ProjectCostCalculatedData';
   hourEstimate: Scalars['Int']['output'];
+  hoursActualized: Scalars['Int']['output'];
   initialCost?: Maybe<Scalars['Float']['output']>;
 };
 
@@ -1145,6 +1146,7 @@ export const ProjectFragmentFragmentDoc = gql`
     calculated {
       initialCost
       hourEstimate
+      hoursActualized
     }
   }
   projectDaci {

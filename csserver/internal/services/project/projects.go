@@ -42,7 +42,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 	lastProject.GetProjectInitialCost()
 	lastProject.GetProjectNPV()
 	lastProject.GetProjectIRR()
-	s.CalculateProjectMilestoneStats(lastProject)
+	lastProject.CalculateProjectMilestoneStats()
 
 	rm, err := s.GetResourceMap(false)
 	if err != nil {
@@ -50,6 +50,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 	}
 
 	lastProject.CalculateProjectTaskStats(org, rm)
+	lastProject.GetProjectInitialCost()
 
 	return s.UpdateProject(ctx, lastProject)
 }
@@ -66,7 +67,7 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, org organi
 	pro.GetProjectInitialCost()
 	pro.GetProjectNPV()
 	pro.GetProjectIRR()
-	s.CalculateProjectMilestoneStats(&pro)
+	pro.CalculateProjectMilestoneStats()
 
 	rm, _ := s.GetResourceMap(false)
 

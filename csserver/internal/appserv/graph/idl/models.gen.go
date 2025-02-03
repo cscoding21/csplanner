@@ -257,8 +257,9 @@ type ProjectCost struct {
 }
 
 type ProjectCostCalculatedData struct {
-	InitialCost  *float64 `json:"initialCost,omitempty"`
-	HourEstimate int      `json:"hourEstimate"`
+	InitialCost     *float64 `json:"initialCost,omitempty"`
+	HourEstimate    int      `json:"hourEstimate"`
+	HoursActualized int      `json:"hoursActualized"`
 }
 
 type ProjectDaci struct {

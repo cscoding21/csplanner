@@ -109,8 +109,11 @@
 			{formatCurrency.format(project.projectCost.calculated?.initialCost as number)}
 		</div>
 
-		<Heading tag="h6">Project Hours</Heading>
+		<Heading tag="h6">Estimated Project Hours</Heading>
 		<div class="mb-4 text-gray-50">{project.projectCost.calculated?.hourEstimate}</div>
+
+		<Heading tag="h6">Actualized Project Hours</Heading>
+		<div class="mb-4 text-gray-50">{project.projectCost.calculated?.hoursActualized}</div>
 
 		<MoneyInput
 			bind:value={costForm.ongoing as number}

@@ -23,7 +23,7 @@ func (s *ProjectService) DeleteTaskFromProject(ctx context.Context, projectID st
 
 	updatedProject := deleteTaskFromProjectGraph(*project, milestoneID, taskID)
 
-	s.CalculateProjectMilestoneStats(&updatedProject)
+	updatedProject.CalculateProjectMilestoneStats()
 	pro, err := s.UpdateProject(ctx, &updatedProject)
 	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
 }
@@ -61,7 +61,7 @@ func (s *ProjectService) UpdateProjectTask(
 
 	//---DO THE UPDATE
 	updatedProject := UpdateTaskFromProjectGraph(*project, milestoneID, task)
-	s.CalculateProjectMilestoneStats(&updatedProject)
+	updatedProject.CalculateProjectMilestoneStats()
 
 	rm, _ := s.GetResourceMap(false)
 	project.CalculateProjectTaskStats(org, rm)
@@ -140,7 +140,7 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 		project.ProjectMilestones = append(project.ProjectMilestones, &milestone)
 	}
 
-	s.CalculateProjectMilestoneStats(project)
+	project.CalculateProjectMilestoneStats()
 	pro, err := s.UpdateProject(ctx, project)
 
 	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
