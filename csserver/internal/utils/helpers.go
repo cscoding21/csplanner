@@ -2,14 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"slices"
 	"strings"
 )
-
-// IsOneOf returns true if the input string is one of the options.
-func IsOneOf(input string, options []string) bool {
-	return slices.Contains(options, input)
-}
 
 // RemoveAll removes all occurrences of items from input.
 func RemoveAll(input string, items ...string) string {

@@ -13,6 +13,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+func (p *Project) PerformAllCalcs(org organization.Organization, rm map[string]resource.Resource) {
+	p.AggregateProjectValueLines()
+	p.CalculateProjectMilestoneStats()
+	p.CalculateProjectTaskStats(org, rm)
+
+	p.GetProjectInitialCost()
+	p.GetProjectNPV()
+	p.GetProjectIRR()
+}
+
 func (p *Project) AggregateProjectValueLines() {
 	if len(p.ProjectValue.ProjectValueLines) == 0 {
 		return

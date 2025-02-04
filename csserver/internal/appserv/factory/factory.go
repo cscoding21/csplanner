@@ -13,6 +13,7 @@ import (
 	"csserver/internal/services/notification"
 	"csserver/internal/services/organization"
 	"csserver/internal/services/portfolio"
+	"csserver/internal/services/processor"
 	"csserver/internal/services/project"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
@@ -187,7 +188,7 @@ func GetProjectService() *project.ProjectService {
 	return project.NewProjectService(*surrealClient, config.ContextHelper{}, pubsub)
 }
 
-// GetProjectService return a project service instance
+// GetPortfolioService return a portfolio service instance
 func GetPortfolioService() *portfolio.PortfolioService {
 	surrealClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
@@ -200,6 +201,27 @@ func GetPortfolioService() *portfolio.PortfolioService {
 	}
 
 	return portfolio.NewPortfolioService(
+		*surrealClient,
+		config.ContextHelper{},
+		pubsub,
+		*projectServce,
+		*resourceService,
+		*schedService)
+}
+
+// GetProcessorService return a processor service instance
+func GetProcessorService() *processor.ProcessorService {
+	surrealClient := GetDBClient()
+	pubsub, err := GetPubSubClient()
+	projectServce := GetProjectService()
+	resourceService := GetResourceService()
+	schedService := GetScheduleService()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return processor.NewProcessorService(
 		*surrealClient,
 		config.ContextHelper{},
 		pubsub,

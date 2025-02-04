@@ -2,6 +2,7 @@ package setup
 
 import (
 	"context"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
 	"errors"
 )
@@ -16,6 +17,10 @@ func SetupTestData(ctx context.Context) error {
 	err = errors.Join(err, CreateTestResources(ctx))
 	err = errors.Join(err, CreateTestProjects(ctx))
 	err = errors.Join(err, CreateTestComments(ctx))
+
+	processor := factory.GetProcessorService()
+
+	err = errors.Join(err, processor.ProcessNightly(ctx))
 
 	return err
 }

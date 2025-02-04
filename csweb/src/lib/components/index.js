@@ -1,6 +1,8 @@
 //---Charts
-export { default as TimelineChart } from './charts/TimelineChart.svelte';
 export { default as DataCard } from './charts/DataCard.svelte';
+export { default as PieChart } from './charts/PieChart.svelte';
+export { default as TimelineChart } from './charts/TimelineChart.svelte';
+
 
 //---Chat
 export { default as CommentItem } from './chat/CommentItem.svelte';

@@ -10,3 +10,14 @@ func IsOneOf[T comparable](input T, opts ...T) bool {
 
 	return false
 }
+
+// Coalesce return the first non-nil value in the argument array
+func Coalesce[T any](opts ...*T) *T {
+	for _, o := range opts {
+		if o != nil {
+			return o
+		}
+	}
+
+	return nil
+}

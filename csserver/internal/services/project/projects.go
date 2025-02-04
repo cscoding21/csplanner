@@ -32,6 +32,11 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 		return s.newProject(ctx, pro, org, val)
 	}
 
+	rm, err := s.GetResourceMap(false)
+	if err != nil {
+		return common.UpdateResult[Project]{Object: lastProject}, err
+	}
+
 	lastProject.ProjectBasics = pro.ProjectBasics
 	lastProject.ProjectCost = pro.ProjectCost
 	lastProject.ProjectDaci = pro.ProjectDaci
@@ -39,18 +44,7 @@ func (s *ProjectService) SaveProject(ctx context.Context, pro Project, org organ
 	lastProject.ProjectValue.DiscountRate = pro.ProjectValue.DiscountRate
 	lastProject.ProjectValue.IsCapitalized = pro.ProjectValue.IsCapitalized
 
-	lastProject.GetProjectInitialCost()
-	lastProject.GetProjectNPV()
-	lastProject.GetProjectIRR()
-	lastProject.CalculateProjectMilestoneStats()
-
-	rm, err := s.GetResourceMap(false)
-	if err != nil {
-		return common.UpdateResult[Project]{Object: lastProject}, err
-	}
-
-	lastProject.CalculateProjectTaskStats(org, rm)
-	lastProject.GetProjectInitialCost()
+	lastProject.PerformAllCalcs(org, rm)
 
 	return s.UpdateProject(ctx, lastProject)
 }
@@ -62,16 +56,11 @@ func (s *ProjectService) newProject(ctx context.Context, pro Project, org organi
 		return common.NewUpdateResult(&val, &pro), err
 	}
 
-	pro = *proj.Object
-
-	pro.GetProjectInitialCost()
-	pro.GetProjectNPV()
-	pro.GetProjectIRR()
-	pro.CalculateProjectMilestoneStats()
-
 	rm, _ := s.GetResourceMap(false)
 
-	pro.CalculateProjectTaskStats(org, rm)
+	pro = *proj.Object
+
+	pro.PerformAllCalcs(org, rm)
 
 	return s.UpdateProject(ctx, &pro)
 }

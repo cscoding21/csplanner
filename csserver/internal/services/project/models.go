@@ -109,18 +109,7 @@ type ProjectCostCalculatedData struct {
 	InitialCost     float64 `json:"initial_cost"`
 	HourEstimate    int     `json:"hours_estimate"`
 	HoursActualized int     `json:"hours_actualized"`
-	//ResourceTaskAllocation []*ProjectResourceTaskAllocation `json:"resource_task_allocation"`
 }
-
-// type ProjectResourceTaskAllocation struct {
-// 	ResourceID      string  `json:"resource_id"`
-// 	ResourceName    string  `json:"resource_name"`
-// 	TaskID          string  `json:"task_id"`
-// 	TaskName        string  `json:"task_name"`
-// 	HoursEstimated  int     `json:"hours_estimated"`
-// 	HoursActualized int     `json:"hours_actualized"`
-// 	Cost            float64 `json:"cost"`
-// }
 
 type ProjectValueCalculatedData struct {
 	NetPresentValue      float64 `json:"net_present_value"`
