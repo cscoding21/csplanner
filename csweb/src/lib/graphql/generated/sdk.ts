@@ -626,6 +626,7 @@ export type Query = {
   findAllLists: ListResults;
   findAllProjectTemplates: ProjecttemplateResults;
   findAllResources: ResourceResults;
+  findAllRoles: RoleResults;
   findAllUsers: UserResults;
   findProjectComments: CommentResults;
   findProjects: ProjectResults;
@@ -717,7 +718,8 @@ export type Resource = {
   initialCost?: Maybe<Scalars['Float']['output']>;
   name: Scalars['String']['output'];
   profileImage?: Maybe<Scalars['String']['output']>;
-  role: Scalars['String']['output'];
+  role?: Maybe<Role>;
+  roleID?: Maybe<Scalars['String']['output']>;
   skills?: Maybe<Array<Skill>>;
   status: Scalars['String']['output'];
   type: Scalars['String']['output'];
@@ -735,6 +737,21 @@ export type ResourceResults = {
   filters: Filters;
   paging?: Maybe<Pagination>;
   results?: Maybe<Array<Resource>>;
+};
+
+export type Role = {
+  __typename?: 'Role';
+  description: Scalars['String']['output'];
+  hourlyRate?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type RoleResults = {
+  __typename?: 'RoleResults';
+  filters: Filters;
+  paging?: Maybe<Pagination>;
+  results?: Maybe<Array<Role>>;
 };
 
 export type Schedule = {
@@ -909,11 +926,19 @@ export type UpdateResource = {
   initialCost?: InputMaybe<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
   profileImage?: InputMaybe<Scalars['String']['input']>;
-  role?: InputMaybe<Scalars['String']['input']>;
+  roleID?: InputMaybe<Scalars['String']['input']>;
   skills?: InputMaybe<Array<UpdateSkill>>;
   status: Scalars['String']['input'];
   type: Scalars['String']['input'];
   userID?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateRole = {
+  __typename?: 'UpdateRole';
+  description: Scalars['String']['output'];
+  hourlyRate?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type UpdateSkill = {
@@ -1071,7 +1096,12 @@ export const ResourceFragmentFragmentDoc = gql`
   user {
     ...userFragment
   }
-  role
+  roleID
+  role {
+    name
+    description
+    hourlyRate
+  }
   profileImage
   userEmail
   initialCost
@@ -1697,6 +1727,21 @@ export const FindResourcesDocument = gql`
 }
     ${PagingFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
+export const FindAllRolesDocument = gql`
+    query findAllRoles {
+  findAllRoles {
+    paging {
+      ...pagingFragment
+    }
+    results {
+      id
+      name
+      description
+      hourlyRate
+    }
+  }
+}
+    ${PagingFragmentFragmentDoc}`;
 export const CalculateProjectScheduleDocument = gql`
     query calculateProjectSchedule($projectID: String!, $startDate: Time!) {
   calculateProjectSchedule(projectID: $projectID, startDate: $startDate) {
@@ -1837,6 +1882,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     findResources(variables: FindResourcesQueryVariables, options?: C): Promise<FindResourcesQuery> {
       return requester<FindResourcesQuery, FindResourcesQueryVariables>(FindResourcesDocument, variables, options) as Promise<FindResourcesQuery>;
+    },
+    findAllRoles(variables?: FindAllRolesQueryVariables, options?: C): Promise<FindAllRolesQuery> {
+      return requester<FindAllRolesQuery, FindAllRolesQueryVariables>(FindAllRolesDocument, variables, options) as Promise<FindAllRolesQuery>;
     },
     calculateProjectSchedule(variables: CalculateProjectScheduleQueryVariables, options?: C): Promise<CalculateProjectScheduleQuery> {
       return requester<CalculateProjectScheduleQuery, CalculateProjectScheduleQueryVariables>(CalculateProjectScheduleDocument, variables, options) as Promise<CalculateProjectScheduleQuery>;

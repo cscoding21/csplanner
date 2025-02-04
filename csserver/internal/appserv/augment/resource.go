@@ -12,6 +12,10 @@ func AugmentResource(res *idl.Resource) {
 		res.User = getUserByEmail(*res.UserEmail)
 	}
 
+	if res.RoleID != nil {
+		res.Role = getRoleById(*res.RoleID)
+	}
+
 	if len(res.Skills) == 0 {
 		return
 	}

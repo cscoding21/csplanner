@@ -12,6 +12,7 @@ func SetupTestData(ctx context.Context) error {
 
 	err := errors.Join(nil, CreateTestUsers(ctx))
 	err = errors.Join(err, CreateDefaultOrganization(ctx))
+	err = errors.Join(err, CreateTestRoles(ctx))
 	err = errors.Join(err, CreateTestLists(ctx))
 	err = errors.Join(err, CreateTestTemplates(ctx))
 	err = errors.Join(err, CreateTestResources(ctx))

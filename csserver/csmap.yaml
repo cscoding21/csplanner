@@ -76,6 +76,8 @@ maps:
       target_name: "Resource"
     - source_name: "UpdateSkill"
       target_name: "Skill"
+    - source_name: "UpdateRole"
+      target_name: "Role"
 
 
   - name: "project_target"

@@ -26,7 +26,7 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) 
 
 	res.Name = resource.Name
 	res.ProfileImage = resource.ProfileImage
-	res.Role = resource.Role
+	res.RoleID = resource.RoleID
 	res.AnnualizedCost = resource.AnnualizedCost
 	res.InitialCost = resource.InitialCost
 	res.Type = resource.Type

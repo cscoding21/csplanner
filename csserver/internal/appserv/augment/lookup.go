@@ -21,11 +21,13 @@ var (
 	_resourceCache *[]resource.Resource
 	_userCache     *[]user.User
 	_projectCache  *[]project.Project
+	_roleCache     *[]resource.Role
 
 	_skillCacheLock    sync.Mutex
 	_resourceCacheLock sync.Mutex
 	_userCacheLock     sync.Mutex
 	_projectCacheLock  sync.Mutex
+	_roleCacheLock     sync.Mutex
 )
 
 func getSkills() *[]list.ListItem {
@@ -68,6 +70,23 @@ func getResourceById(resources []resource.Resource, id string) *idl.Resource {
 			if r.UserEmail != nil {
 				out.User = getUserByEmail(*r.UserEmail)
 			}
+
+			if r.RoleID != nil {
+				out.Role = getRoleById(*r.RoleID)
+			}
+
+			return &out
+		}
+	}
+
+	return nil
+}
+
+func getRoleById(id string) *idl.Role {
+	roles := findRoles()
+	for _, p := range *roles {
+		if p.ID == id {
+			out := csmap.RoleResourceToIdl(p)
 
 			return &out
 		}
@@ -154,6 +173,28 @@ func findUsers() *[]user.User {
 	_userCache = &users.Results
 
 	return _userCache
+}
+
+func findRoles() *[]resource.Role {
+	if _roleCache != nil {
+		return _roleCache
+	}
+
+	_roleCacheLock.Lock()
+	defer _roleCacheLock.Unlock()
+
+	ctx := context.Background()
+	us := factory.GetResourceService()
+
+	roles, err := us.FindAllRoles(ctx)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	_roleCache = &roles.Results
+
+	return _roleCache
 }
 
 func getUserByEmail(email string) *idl.User {

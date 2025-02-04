@@ -3,7 +3,7 @@
 	import { TextInput, MoneyInput, SelectInput } from '$lib/components';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import { resourceSchema, resourceForm } from '$lib/forms/resource.validation';
-	import { getResource, updateResource } from '$lib/services/resource';
+	import { findAllRoles, getResource, updateResource } from '$lib/services/resource';
 	import type { UpdateResource } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { coalesceToType, mergeErrors, parseErrors } from '$lib/forms/helpers';
@@ -14,7 +14,7 @@
 
 	let editModalOpen: boolean = $state(false);
 	let isUpdate = $state(false);
-	let errors = $state({ name: '', role: '', initialCost: '', annualizedCost: '', type: '', status: '', availableHoursPerWeek: '' });
+	let errors = $state({ name: '', roleID: '', initialCost: '', annualizedCost: '', type: '', status: '', availableHoursPerWeek: '' });
 	let rf = $state(deepCopy(resourceForm));
 	let formTitle = $state('New Resource');
 
@@ -43,6 +43,8 @@
 		{name: "In House", value: "inhouse"},
 		{name: "Proposed", value: "proposed"},
 	]
+
+	let roleOpts:SelectOptionType<string>[] = $state([] as SelectOptionType<string>[])
 
 	const updateRes = async () => {
 		const resourceSchemaParsed = resourceSchema.cast(rf);
@@ -96,8 +98,18 @@
 
 		rf.profileImage = upload.url;
 	};
+
+	const loadPage = async () => {
+		findAllRoles()
+			.then((l) => {
+				roleOpts = l.results?.map(r => { return { name: r.name, value: r.id} }) as SelectOptionType<string>[];
+			});
+	};
 </script>
 
+{#await loadPage()}
+	Loading...
+{:then promiseData} 
 <Button onclick={() => (editModalOpen = true)}>
 	{#if children}{@render children()}{/if}
 </Button>
@@ -146,11 +158,11 @@
 		options={statusOpts}
 	/>
 
-	<TextInput
-		bind:value={rf.role}
+	<SelectInput
+		bind:value={rf.roleID as string}
 		fieldName="Role"
-		placeholder="Resource role"
-		error={errors.role}
+		error={errors.roleID}
+		options={roleOpts}
 	/>
 
 	<MoneyInput
@@ -176,3 +188,6 @@
 		</div>
 	</svelte:fragment> -->
 </Modal>
+
+{/await}
+

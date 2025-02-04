@@ -450,6 +450,7 @@ type ComplexityRoot struct {
 		FindAllLists             func(childComplexity int) int
 		FindAllProjectTemplates  func(childComplexity int) int
 		FindAllResources         func(childComplexity int) int
+		FindAllRoles             func(childComplexity int) int
 		FindAllUsers             func(childComplexity int) int
 		FindProjectComments      func(childComplexity int, projectID string) int
 		FindProjects             func(childComplexity int, pageAndFilter idl.PageAndFilter) int
@@ -478,6 +479,7 @@ type ComplexityRoot struct {
 		Name                  func(childComplexity int) int
 		ProfileImage          func(childComplexity int) int
 		Role                  func(childComplexity int) int
+		RoleID                func(childComplexity int) int
 		Skills                func(childComplexity int) int
 		Status                func(childComplexity int) int
 		Type                  func(childComplexity int) int
@@ -490,6 +492,19 @@ type ComplexityRoot struct {
 	}
 
 	ResourceResults struct {
+		Filters func(childComplexity int) int
+		Paging  func(childComplexity int) int
+		Results func(childComplexity int) int
+	}
+
+	Role struct {
+		Description func(childComplexity int) int
+		HourlyRate  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
+
+	RoleResults struct {
 		Filters func(childComplexity int) int
 		Paging  func(childComplexity int) int
 		Results func(childComplexity int) int
@@ -532,6 +547,13 @@ type ComplexityRoot struct {
 	TimeResponse struct {
 		TimeStamp func(childComplexity int) int
 		UnixTime  func(childComplexity int) int
+	}
+
+	UpdateRole struct {
+		Description func(childComplexity int) int
+		HourlyRate  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
 	}
 
 	User struct {
@@ -602,6 +624,7 @@ type QueryResolver interface {
 	GetPortfolio(ctx context.Context) (*idl.Portfolio, error)
 	FindAllUsers(ctx context.Context) (*idl.UserResults, error)
 	FindAllResources(ctx context.Context) (*idl.ResourceResults, error)
+	FindAllRoles(ctx context.Context) (*idl.RoleResults, error)
 	FindResources(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.ResourceResults, error)
 	FindUserNotifications(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.NotificationResults, error)
 	GetResource(ctx context.Context, id string) (*idl.Resource, error)
@@ -2548,6 +2571,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.FindAllResources(childComplexity), true
 
+	case "Query.findAllRoles":
+		if e.complexity.Query.FindAllRoles == nil {
+			break
+		}
+
+		return e.complexity.Query.FindAllRoles(childComplexity), true
+
 	case "Query.findAllUsers":
 		if e.complexity.Query.FindAllUsers == nil {
 			break
@@ -2747,6 +2777,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.Role(childComplexity), true
 
+	case "Resource.roleID":
+		if e.complexity.Resource.RoleID == nil {
+			break
+		}
+
+		return e.complexity.Resource.RoleID(childComplexity), true
+
 	case "Resource.skills":
 		if e.complexity.Resource.Skills == nil {
 			break
@@ -2809,6 +2846,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceResults.Results(childComplexity), true
+
+	case "Role.description":
+		if e.complexity.Role.Description == nil {
+			break
+		}
+
+		return e.complexity.Role.Description(childComplexity), true
+
+	case "Role.hourlyRate":
+		if e.complexity.Role.HourlyRate == nil {
+			break
+		}
+
+		return e.complexity.Role.HourlyRate(childComplexity), true
+
+	case "Role.id":
+		if e.complexity.Role.ID == nil {
+			break
+		}
+
+		return e.complexity.Role.ID(childComplexity), true
+
+	case "Role.name":
+		if e.complexity.Role.Name == nil {
+			break
+		}
+
+		return e.complexity.Role.Name(childComplexity), true
+
+	case "RoleResults.filters":
+		if e.complexity.RoleResults.Filters == nil {
+			break
+		}
+
+		return e.complexity.RoleResults.Filters(childComplexity), true
+
+	case "RoleResults.paging":
+		if e.complexity.RoleResults.Paging == nil {
+			break
+		}
+
+		return e.complexity.RoleResults.Paging(childComplexity), true
+
+	case "RoleResults.results":
+		if e.complexity.RoleResults.Results == nil {
+			break
+		}
+
+		return e.complexity.RoleResults.Results(childComplexity), true
 
 	case "Schedule.begin":
 		if e.complexity.Schedule.Begin == nil {
@@ -2956,6 +3042,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TimeResponse.UnixTime(childComplexity), true
+
+	case "UpdateRole.description":
+		if e.complexity.UpdateRole.Description == nil {
+			break
+		}
+
+		return e.complexity.UpdateRole.Description(childComplexity), true
+
+	case "UpdateRole.hourlyRate":
+		if e.complexity.UpdateRole.HourlyRate == nil {
+			break
+		}
+
+		return e.complexity.UpdateRole.HourlyRate(childComplexity), true
+
+	case "UpdateRole.id":
+		if e.complexity.UpdateRole.ID == nil {
+			break
+		}
+
+		return e.complexity.UpdateRole.ID(childComplexity), true
+
+	case "UpdateRole.name":
+		if e.complexity.UpdateRole.Name == nil {
+			break
+		}
+
+		return e.complexity.UpdateRole.Name(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -3696,7 +3810,8 @@ input UpdateProjectMilestoneTask {
   type: String!
   status: String!
   name: String!
-  role: String!
+  roleID: String
+  role: Role
   userEmail: String
   user: User
   profileImage: String
@@ -3714,13 +3829,20 @@ type Skill {
   proficiency: Float
 }
 
+type Role {
+  id: String!
+  name: String!
+  description: String!
+  hourlyRate: Float
+}
+
 
 input UpdateResource {
   id: String
   type: String!
   status: String!
   name: String!
-  role: String
+  roleID: String
   userID: String
   email: String
   initialCost: Float
@@ -3736,6 +3858,13 @@ input UpdateSkill {
   proficiency: Float!
 }
 
+type UpdateRole {
+  id: String!
+  name: String!
+  description: String!
+  hourlyRate: Float
+}
+
 
 type CreateResourceResult {
   status: Status!
@@ -3746,6 +3875,12 @@ type ResourceResults {
   paging: Pagination
   filters: Filters!
   results: [Resource!]
+}
+
+type RoleResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Role!]
 }`, BuiltIn: false},
 	{Name: "../api/idl/schedule.graphqls", Input: `
 type Schedule {
@@ -3903,6 +4038,7 @@ input UpdateUser {
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
+    findAllRoles: RoleResults!
     findResources(pageAndFilter: PageAndFilter): ResourceResults!
     findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
 
@@ -4927,6 +5063,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -7126,6 +7264,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -12075,6 +12215,8 @@ func (ec *executionContext) fieldContext_ProjectActivity_resource(_ context.Cont
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -12949,6 +13091,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -13018,6 +13162,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -13087,6 +13233,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -13156,6 +13304,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -14522,6 +14672,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -17409,6 +17561,58 @@ func (ec *executionContext) fieldContext_Query_findAllResources(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_findAllRoles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_findAllRoles(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FindAllRoles(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.RoleResults)
+	fc.Result = res
+	return ec.marshalNRoleResults2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRoleResults(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_findAllRoles(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "paging":
+				return ec.fieldContext_RoleResults_paging(ctx, field)
+			case "filters":
+				return ec.fieldContext_RoleResults_filters(ctx, field)
+			case "results":
+				return ec.fieldContext_RoleResults_results(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RoleResults", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_findResources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_findResources(ctx, field)
 	if err != nil {
@@ -17582,6 +17786,8 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -18120,6 +18326,47 @@ func (ec *executionContext) fieldContext_Resource_name(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Resource_roleID(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_roleID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RoleID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_roleID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Resource_role(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Resource_role(ctx, field)
 	if err != nil {
@@ -18141,14 +18388,11 @@ func (ec *executionContext) _Resource_role(ctx context.Context, field graphql.Co
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*idl.Role)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalORole2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRole(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Resource_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -18158,7 +18402,17 @@ func (ec *executionContext) fieldContext_Resource_role(_ context.Context, field 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Role_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Role_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Role_description(ctx, field)
+			case "hourlyRate":
+				return ec.fieldContext_Role_hourlyRate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
 		},
 	}
 	return fc, nil
@@ -18716,6 +18970,8 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_status(ctx, field)
 			case "name":
 				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
 			case "role":
 				return ec.fieldContext_Resource_role(ctx, field)
 			case "userEmail":
@@ -18736,6 +18992,329 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Role_id(ctx context.Context, field graphql.CollectedField, obj *idl.Role) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Role_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Role_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Role",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Role_name(ctx context.Context, field graphql.CollectedField, obj *idl.Role) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Role_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Role_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Role",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Role_description(ctx context.Context, field graphql.CollectedField, obj *idl.Role) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Role_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Role_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Role",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Role_hourlyRate(ctx context.Context, field graphql.CollectedField, obj *idl.Role) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Role_hourlyRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HourlyRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Role_hourlyRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Role",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RoleResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.RoleResults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RoleResults_paging(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Paging, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Pagination)
+	fc.Result = res
+	return ec.marshalOPagination2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPagination(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RoleResults_paging(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RoleResults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "totalResults":
+				return ec.fieldContext_Pagination_totalResults(ctx, field)
+			case "resultsPerPage":
+				return ec.fieldContext_Pagination_resultsPerPage(ctx, field)
+			case "pageNumber":
+				return ec.fieldContext_Pagination_pageNumber(ctx, field)
+			case "after":
+				return ec.fieldContext_Pagination_after(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Pagination", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RoleResults_filters(ctx context.Context, field graphql.CollectedField, obj *idl.RoleResults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RoleResults_filters(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Filters, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Filters)
+	fc.Result = res
+	return ec.marshalNFilters2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐFilters(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RoleResults_filters(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RoleResults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "filters":
+				return ec.fieldContext_Filters_filters(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Filters", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RoleResults_results(ctx context.Context, field graphql.CollectedField, obj *idl.RoleResults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RoleResults_results(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Results, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.Role)
+	fc.Result = res
+	return ec.marshalORole2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRoleᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RoleResults_results(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RoleResults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Role_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Role_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Role_description(ctx, field)
+			case "hourlyRate":
+				return ec.fieldContext_Role_hourlyRate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
 		},
 	}
 	return fc, nil
@@ -19732,6 +20311,179 @@ func (ec *executionContext) fieldContext_TimeResponse_timeStamp(_ context.Contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateRole_id(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateRole_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateRole_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateRole",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateRole_name(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateRole_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateRole_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateRole",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateRole_description(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateRole_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateRole_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateRole",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateRole_hourlyRate(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateRole_hourlyRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HourlyRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateRole_hourlyRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateRole",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -22983,7 +23735,7 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "type", "status", "name", "role", "userID", "email", "initialCost", "annualizedCost", "profileImage", "availableHoursPerWeek", "skills"}
+	fieldsInOrder := [...]string{"id", "type", "status", "name", "roleID", "userID", "email", "initialCost", "annualizedCost", "profileImage", "availableHoursPerWeek", "skills"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -23018,13 +23770,13 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 				return it, err
 			}
 			it.Name = data
-		case "role":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+		case "roleID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Role = data
+			it.RoleID = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -26161,6 +26913,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "findAllRoles":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_findAllRoles(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "findResources":
 			field := field
 
@@ -26371,11 +27145,10 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "roleID":
+			out.Values[i] = ec._Resource_roleID(ctx, field, obj)
 		case "role":
 			out.Values[i] = ec._Resource_role(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "userEmail":
 			out.Values[i] = ec._Resource_userEmail(ctx, field, obj)
 		case "user":
@@ -26471,6 +27244,100 @@ func (ec *executionContext) _ResourceResults(ctx context.Context, sel ast.Select
 			}
 		case "results":
 			out.Values[i] = ec._ResourceResults_results(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var roleImplementors = []string{"Role"}
+
+func (ec *executionContext) _Role(ctx context.Context, sel ast.SelectionSet, obj *idl.Role) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, roleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Role")
+		case "id":
+			out.Values[i] = ec._Role_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Role_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "description":
+			out.Values[i] = ec._Role_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hourlyRate":
+			out.Values[i] = ec._Role_hourlyRate(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var roleResultsImplementors = []string{"RoleResults"}
+
+func (ec *executionContext) _RoleResults(ctx context.Context, sel ast.SelectionSet, obj *idl.RoleResults) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, roleResultsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RoleResults")
+		case "paging":
+			out.Values[i] = ec._RoleResults_paging(ctx, field, obj)
+		case "filters":
+			out.Values[i] = ec._RoleResults_filters(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "results":
+			out.Values[i] = ec._RoleResults_results(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26740,6 +27607,57 @@ func (ec *executionContext) _TimeResponse(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var updateRoleImplementors = []string{"UpdateRole"}
+
+func (ec *executionContext) _UpdateRole(ctx context.Context, sel ast.SelectionSet, obj *idl.UpdateRole) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateRoleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateRole")
+		case "id":
+			out.Values[i] = ec._UpdateRole_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._UpdateRole_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "description":
+			out.Values[i] = ec._UpdateRole_description(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hourlyRate":
+			out.Values[i] = ec._UpdateRole_hourlyRate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28012,6 +28930,30 @@ func (ec *executionContext) marshalNResourceResults2ᚖcsserverᚋinternalᚋapp
 		return graphql.Null
 	}
 	return ec._ResourceResults(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRole2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRole(ctx context.Context, sel ast.SelectionSet, v *idl.Role) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Role(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRoleResults2csserverᚋinternalᚋappservᚋgraphᚋidlᚐRoleResults(ctx context.Context, sel ast.SelectionSet, v idl.RoleResults) graphql.Marshaler {
+	return ec._RoleResults(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRoleResults2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRoleResults(ctx context.Context, sel ast.SelectionSet, v *idl.RoleResults) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RoleResults(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSchedule2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduleᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Schedule) graphql.Marshaler {
@@ -29476,6 +30418,60 @@ func (ec *executionContext) marshalOResource2ᚖcsserverᚋinternalᚋappservᚋ
 		return graphql.Null
 	}
 	return ec._Resource(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORole2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Role) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRole2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRole(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalORole2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRole(ctx context.Context, sel ast.SelectionSet, v *idl.Role) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Role(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOScheduleException2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐScheduleExceptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ScheduleException) graphql.Marshaler {

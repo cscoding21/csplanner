@@ -27,7 +27,9 @@
 
 			<BadgeResourceStatus status={resource.status}  />
 		</Heading>
-		<span class="text-gray-500 dark:text-gray-400">{resource.role}</span>
+		{#if resource.role}
+		<span class="text-gray-500 dark:text-gray-400">{resource.role.name}</span>
+		{/if}
 		<p class="mb-3 text-xs font-light text-gray-500 dark:text-gray-400">
 			<ResourceSkillsList skills={resource.skills as Skill[]} />
 		</p>

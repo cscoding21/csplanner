@@ -283,6 +283,25 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 	return &out, nil
 }
 
+// FindAllRoles is the resolver for the findAllRoles field.
+func (r *queryResolver) FindAllRoles(ctx context.Context) (*idl.RoleResults, error) {
+	service := factory.GetResourceService()
+	results, err := service.FindAllRoles(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	out := idl.RoleResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.RoleResourceToIdlSlice(common.ValToRefSlice(results.Results)),
+	}
+
+	return &out, nil
+
+}
+
 // FindResources is the resolver for the findResources field.
 func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.ResourceResults, error) {
 	service := factory.GetResourceService()

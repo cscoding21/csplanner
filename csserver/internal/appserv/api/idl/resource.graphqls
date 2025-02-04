@@ -3,7 +3,8 @@ type Resource {
   type: String!
   status: String!
   name: String!
-  role: String!
+  roleID: String
+  role: Role
   userEmail: String
   user: User
   profileImage: String
@@ -21,13 +22,20 @@ type Skill {
   proficiency: Float
 }
 
+type Role {
+  id: String!
+  name: String!
+  description: String!
+  hourlyRate: Float
+}
+
 
 input UpdateResource {
   id: String
   type: String!
   status: String!
   name: String!
-  role: String
+  roleID: String
   userID: String
   email: String
   initialCost: Float
@@ -43,6 +51,13 @@ input UpdateSkill {
   proficiency: Float!
 }
 
+type UpdateRole {
+  id: String!
+  name: String!
+  description: String!
+  hourlyRate: Float
+}
+
 
 type CreateResourceResult {
   status: Status!
@@ -53,4 +68,10 @@ type ResourceResults {
   paging: Pagination
   filters: Filters!
   results: [Resource!]
+}
+
+type RoleResults {
+  paging: Pagination
+  filters: Filters!
+  results: [Role!]
 }

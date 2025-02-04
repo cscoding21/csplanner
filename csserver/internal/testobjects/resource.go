@@ -15,7 +15,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:1",
 		},
-		Role:                  "CEO",
+		RoleID:                utils.ValToRef("role:sa"),
 		Type:                  resourcetype.Human,
 		Name:                  "Jeph",
 		UserEmail:             utils.ValToRef("jeph@jmk21.com"),
@@ -32,7 +32,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:2",
 		},
-		Role:                  "Bartender",
+		RoleID:                utils.ValToRef("role:mk"),
 		Type:                  resourcetype.Human,
 		Name:                  "Tifa Lockhart",
 		UserEmail:             utils.ValToRef("tifa@jmk21.com"),
@@ -51,7 +51,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:3",
 		},
-		Role:                  "Ex-SOLDIER",
+		RoleID:                utils.ValToRef("role:be"),
 		Type:                  resourcetype.Human,
 		Name:                  "Cloud Strife",
 		UserEmail:             utils.ValToRef("cloud@jmk21.com"),
@@ -70,7 +70,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:4",
 		},
-		Role:                  "Florist",
+		RoleID:                utils.ValToRef("role:ui"),
 		Type:                  resourcetype.Human,
 		Name:                  "Aerith Gainsborough",
 		UserEmail:             utils.ValToRef("aerith@jmk21.com"),
@@ -89,7 +89,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:5",
 		},
-		Role:                  "Avalache",
+		RoleID:                utils.ValToRef("role:pm"),
 		Type:                  resourcetype.Human,
 		Name:                  "Barret Wallace",
 		ProfileImage:          utils.ValToRef("/barrett.png"),
@@ -109,7 +109,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:jeph",
 		},
-		Role:                  "CEO",
+		RoleID:                utils.ValToRef("role:sa"),
 		Type:                  resourcetype.Human,
 		Name:                  "Jeph",
 		UserEmail:             utils.ValToRef("jeph@jmk21.com"),
@@ -126,7 +126,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:tifa",
 		},
-		Role:                  "Bartender",
+		RoleID:                utils.ValToRef("role:mk"),
 		Type:                  resourcetype.Human,
 		Name:                  "Tifa Lockhart",
 		UserEmail:             utils.ValToRef("tifa@jmk21.com"),
@@ -145,7 +145,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:cloud",
 		},
-		Role:                  "Ex-SOLDIER",
+		RoleID:                utils.ValToRef("role:be"),
 		Type:                  resourcetype.Human,
 		Name:                  "Cloud Strife",
 		UserEmail:             utils.ValToRef("cloud@jmk21.com"),
@@ -165,7 +165,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:aerith",
 		},
-		Role:                  "Florist",
+		RoleID:                utils.ValToRef("role:ui"),
 		Type:                  resourcetype.Human,
 		Name:                  "Aerith Gainsborough",
 		UserEmail:             utils.ValToRef("aerith@jmk21.com"),
@@ -184,7 +184,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:barret",
 		},
-		Role:                  "Avalache",
+		RoleID:                utils.ValToRef("role:pm"),
 		Type:                  resourcetype.Human,
 		Name:                  "Barret Wallace",
 		ProfileImage:          utils.ValToRef("/barrett.png"),
@@ -202,7 +202,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:jessie",
 		},
-		Role:                  "Actress",
+		RoleID:                utils.ValToRef("role:mk"),
 		Type:                  resourcetype.Human,
 		Name:                  "Jessie Raspberry",
 		ProfileImage:          utils.ValToRef("/jessie.png"),
@@ -220,7 +220,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:biggs",
 		},
-		Role:                  "Avalache",
+		RoleID:                utils.ValToRef("role:pm"),
 		Type:                  resourcetype.Human,
 		Name:                  "Biggs",
 		ProfileImage:          utils.ValToRef("/biggs.png"),
@@ -237,7 +237,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:wedge",
 		},
-		Role:                  "Avalache",
+		RoleID:                utils.ValToRef("role:pdm"),
 		Type:                  resourcetype.Human,
 		Name:                  "Wedge",
 		ProfileImage:          utils.ValToRef("/wedge.png"),
@@ -256,7 +256,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:cid",
 		},
-		Role:                  "Pilot",
+		RoleID:                utils.ValToRef("role:sa"),
 		Type:                  resourcetype.Human,
 		Name:                  "Cid Highwind",
 		ProfileImage:          utils.ValToRef("/cid.png"),
@@ -275,7 +275,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:vincent",
 		},
-		Role:                  "Vampire",
+		RoleID:                utils.ValToRef("role:be"),
 		Type:                  resourcetype.Human,
 		Name:                  "Vincent Valentine",
 		ProfileImage:          utils.ValToRef("/vincent.png"),
@@ -293,7 +293,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:yuffie",
 		},
-		Role:                  "Ninja",
+		RoleID:                utils.ValToRef("role:pdm"),
 		Type:                  resourcetype.Human,
 		Name:                  "Yuffie Kisaragi",
 		ProfileImage:          utils.ValToRef("/yuffie.png"),
@@ -310,7 +310,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:red",
 		},
-		Role:                  "Rat Dog",
+		RoleID:                utils.ValToRef("role:pm"),
 		Type:                  resourcetype.Human,
 		Name:                  "Red XIII",
 		ProfileImage:          utils.ValToRef("/red13.png"),
@@ -327,7 +327,7 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:zack",
 		},
-		Role:                  "SOLDIER",
+		RoleID:                utils.ValToRef("role:be"),
 		Type:                  resourcetype.Human,
 		Name:                  "Zack Fair",
 		ProfileImage:          utils.ValToRef("/zack.png"),
@@ -346,7 +346,6 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:buster",
 		},
-		Role:           "Sword",
 		Type:           resourcetype.Equipment,
 		Name:           "Buster Sword",
 		InitialCost:    10000,
@@ -357,7 +356,6 @@ var testResources = []resource.Resource{
 		ControlFields: common.ControlFields{
 			ID: "resource:linode",
 		},
-		Role:           "Cloud Hosting",
 		Type:           resourcetype.Software,
 		Name:           "Linode Cloud Hosting",
 		InitialCost:    0,

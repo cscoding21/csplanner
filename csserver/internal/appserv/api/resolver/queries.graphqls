@@ -19,6 +19,7 @@ type Query {
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
+    findAllRoles: RoleResults!
     findResources(pageAndFilter: PageAndFilter): ResourceResults!
     findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
 

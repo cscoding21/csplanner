@@ -29,7 +29,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:jeph",
 			},
-			Role:                  "CEO",
+			RoleID:                utils.ValToRef("role:sa"),
 			Type:                  resourcetype.Human,
 			Name:                  "Jeph",
 			UserEmail:             utils.ValToRef("jeph@jmk21.com"),
@@ -46,7 +46,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:tifa",
 			},
-			Role:                  "Bartender",
+			RoleID:                utils.ValToRef("role:fe"),
 			Type:                  resourcetype.Human,
 			Name:                  "Tifa Lockhart",
 			UserEmail:             utils.ValToRef("tifa@jmk21.com"),
@@ -65,7 +65,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:cloud",
 			},
-			Role:                  "Ex-SOLDIER",
+			RoleID:                utils.ValToRef("role:be"),
 			Type:                  resourcetype.Human,
 			Name:                  "Cloud Strife",
 			UserEmail:             utils.ValToRef("cloud@jmk21.com"),
@@ -85,7 +85,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:aerith",
 			},
-			Role:                  "Florist",
+			RoleID:                utils.ValToRef("role:ui"),
 			Type:                  resourcetype.Human,
 			Name:                  "Aerith Gainsborough",
 			UserEmail:             utils.ValToRef("aerith@jmk21.com"),
@@ -104,7 +104,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:barret",
 			},
-			Role:                  "Avalache",
+			RoleID:                utils.ValToRef("role:pm"),
 			Type:                  resourcetype.Human,
 			Name:                  "Barret Wallace",
 			ProfileImage:          utils.ValToRef("/barrett.png"),
@@ -124,7 +124,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:jessie",
 			},
-			Role:                  "Actress",
+			RoleID:                utils.ValToRef("role:mk"),
 			Type:                  resourcetype.Human,
 			Name:                  "Jessie Raspberry",
 			ProfileImage:          utils.ValToRef("/jessie.png"),
@@ -142,7 +142,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:biggs",
 			},
-			Role:                  "Avalache",
+			RoleID:                utils.ValToRef("role:be"),
 			Type:                  resourcetype.Human,
 			Name:                  "Biggs",
 			ProfileImage:          utils.ValToRef("/biggs.png"),
@@ -159,7 +159,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:wedge",
 			},
-			Role:                  "Avalache",
+			RoleID:                utils.ValToRef("role:mk"),
 			Type:                  resourcetype.Human,
 			Name:                  "Wedge",
 			ProfileImage:          utils.ValToRef("/wedge.png"),
@@ -178,7 +178,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:cid",
 			},
-			Role:                  "Pilot",
+			RoleID:                utils.ValToRef("role:ta"),
 			Type:                  resourcetype.Human,
 			Name:                  "Cid Highwind",
 			ProfileImage:          utils.ValToRef("/cid.png"),
@@ -197,7 +197,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:vincent",
 			},
-			Role:                  "Vampire",
+			RoleID:                utils.ValToRef("role:te"),
 			Type:                  resourcetype.Human,
 			Name:                  "Vincent Valentine",
 			ProfileImage:          utils.ValToRef("/vincent.png"),
@@ -215,7 +215,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:yuffie",
 			},
-			Role:                  "Ninja",
+			RoleID:                utils.ValToRef("role:pdm"),
 			Type:                  resourcetype.Human,
 			Name:                  "Yuffie Kisaragi",
 			ProfileImage:          utils.ValToRef("/yuffie.png"),
@@ -232,7 +232,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:red",
 			},
-			Role:                  "Rat Dog",
+			RoleID:                utils.ValToRef("role:pdm"),
 			Type:                  resourcetype.Human,
 			Name:                  "Red XIII",
 			ProfileImage:          utils.ValToRef("/red13.png"),
@@ -249,7 +249,7 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:zack",
 			},
-			Role:                  "SOLDIER",
+			RoleID:                utils.ValToRef("role:ta"),
 			Type:                  resourcetype.Human,
 			Name:                  "Zack Fair",
 			ProfileImage:          utils.ValToRef("/zack.png"),
@@ -268,7 +268,6 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:buster",
 			},
-			Role:           "Sword",
 			Type:           resourcetype.Equipment,
 			Name:           "Buster Sword",
 			InitialCost:    10000,
@@ -279,7 +278,6 @@ func CreateTestResources(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "resource:linode",
 			},
-			Role:           "Cloud Hosting",
 			Type:           resourcetype.Software,
 			Name:           "Linode Cloud Hosting",
 			InitialCost:    0,

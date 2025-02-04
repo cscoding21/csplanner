@@ -407,7 +407,8 @@ type Resource struct {
 	Type                  string     `json:"type"`
 	Status                string     `json:"status"`
 	Name                  string     `json:"name"`
-	Role                  string     `json:"role"`
+	RoleID                *string    `json:"roleID,omitempty"`
+	Role                  *Role      `json:"role,omitempty"`
 	UserEmail             *string    `json:"userEmail,omitempty"`
 	User                  *User      `json:"user,omitempty"`
 	ProfileImage          *string    `json:"profileImage,omitempty"`
@@ -426,6 +427,19 @@ type ResourceResults struct {
 	Paging  *Pagination `json:"paging,omitempty"`
 	Filters *Filters    `json:"filters"`
 	Results []*Resource `json:"results,omitempty"`
+}
+
+type Role struct {
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	HourlyRate  *float64 `json:"hourlyRate,omitempty"`
+}
+
+type RoleResults struct {
+	Paging  *Pagination `json:"paging,omitempty"`
+	Filters *Filters    `json:"filters"`
+	Results []*Role     `json:"results,omitempty"`
 }
 
 type Schedule struct {
@@ -586,7 +600,7 @@ type UpdateResource struct {
 	Type                  string         `json:"type"`
 	Status                string         `json:"status"`
 	Name                  string         `json:"name"`
-	Role                  *string        `json:"role,omitempty"`
+	RoleID                *string        `json:"roleID,omitempty"`
 	UserID                *string        `json:"userID,omitempty"`
 	Email                 *string        `json:"email,omitempty"`
 	InitialCost           *float64       `json:"initialCost,omitempty"`
@@ -594,6 +608,13 @@ type UpdateResource struct {
 	ProfileImage          *string        `json:"profileImage,omitempty"`
 	AvailableHoursPerWeek *int           `json:"availableHoursPerWeek,omitempty"`
 	Skills                []*UpdateSkill `json:"skills,omitempty"`
+}
+
+type UpdateRole struct {
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	HourlyRate  *float64 `json:"hourlyRate,omitempty"`
 }
 
 type UpdateSkill struct {

@@ -22,7 +22,7 @@ type Resource struct {
 	Name                  string                        `json:"name" caval:"req"`
 	Type                  resourcetype.ResourceType     `json:"type" caval:"req"`
 	Status                resourcestatus.ResourceStatus `json:"status" caval:"req"`
-	Role                  string                        `json:"role"`
+	RoleID                *string                       `json:"role_id"`
 	UserEmail             *string                       `json:"user_email"`
 	ProfileImage          *string                       `json:"profile_image"`
 	InitialCost           float64                       `json:"initial_cost"`
@@ -47,4 +47,13 @@ type Skill struct {
 	ID          string   `json:"id,omitempty"`
 	Name        string   `json:"name"`
 	Proficiency *float64 `json:"proficiency"`
+}
+
+type Role struct {
+	//---common for all DB objects
+	common.ControlFields `csval:"validate"`
+
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	HourlyRate  *float64 `json:"hourly_rate"`
 }

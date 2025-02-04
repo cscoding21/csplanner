@@ -4,7 +4,12 @@ fragment resourceFragment on Resource {
 	user {
 		...userFragment	
 	}
-	role
+	roleID
+	role {
+		name
+		description
+		hourlyRate
+	}
 	profileImage
 	userEmail
 	initialCost
@@ -88,6 +93,21 @@ query findResources($input: PageAndFilter!) {
 		}
 		results {
 			...resourceFragment
+		}
+	}
+}
+
+
+query findAllRoles {
+	findAllRoles {
+		paging {
+			...pagingFragment
+		}
+		results {
+			id
+			name
+			description
+			hourlyRate
 		}
 	}
 }

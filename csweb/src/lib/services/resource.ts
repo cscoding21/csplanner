@@ -5,7 +5,9 @@ import type {
 	ResourceResults,
 	Status,
 	CreateResourceResult,
-	PageAndFilter
+	PageAndFilter,
+	Role,
+	RoleResults
 } from '$lib/graphql/generated/sdk';
 
 import {
@@ -16,7 +18,8 @@ import {
 	DeleteResourceDocument,
 	UpdateResourceSkillDocument,
 	DeleteResourceSkillDocument,
-	UpdateResourceDocument
+	UpdateResourceDocument,
+	FindAllRolesDocument
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 
@@ -181,3 +184,19 @@ export const deleteResourceSkill = async (resourceID: string, skillID: string): 
 			return err;
 		});
 };
+
+
+export const findAllRoles = async ():Promise<RoleResults> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: FindAllRolesDocument })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.findAllRoles;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+}

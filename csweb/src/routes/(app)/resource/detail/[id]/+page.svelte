@@ -128,7 +128,7 @@
 							</li>
 							<li>
 								<span>Role</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.role}</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.role?.name}</span>
 							</li>
 							<li>
 								<span>User</span>
