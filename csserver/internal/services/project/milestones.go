@@ -8,6 +8,7 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/projecttemplate"
+	"csserver/internal/services/resource"
 	"csserver/internal/utils"
 
 	"github.com/google/uuid"
@@ -52,6 +53,8 @@ func (s *ProjectService) UpdateProjectTask(
 	projectID string,
 	milestoneID string,
 	task ProjectMilestoneTask,
+	resourceMap map[string]resource.Resource,
+	roleMap map[string]resource.Role,
 	org organization.Organization) (*common.UpdateResult[Project], error) {
 
 	project, err := s.GetProjectByID(ctx, projectID)
@@ -63,8 +66,7 @@ func (s *ProjectService) UpdateProjectTask(
 	updatedProject := UpdateTaskFromProjectGraph(*project, milestoneID, task)
 	updatedProject.CalculateProjectMilestoneStats()
 
-	rm, _ := s.GetResourceMap(false)
-	project.CalculateProjectTaskStats(org, rm)
+	project.CalculateProjectTaskStats(org, resourceMap, roleMap)
 
 	pro, err := s.UpdateProject(ctx, &updatedProject)
 	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)

@@ -91,6 +91,10 @@ func (s *ProcessorService) ProcessCompleteProject(ctx context.Context, projects 
 	var e error
 
 	for _, p := range projects {
+		if p.ProjectStatusBlock.Status == projectstatus.Complete {
+			continue
+		}
+
 		incompleteCount := 0
 		for _, m := range p.ProjectMilestones {
 			for _, t := range m.Tasks {

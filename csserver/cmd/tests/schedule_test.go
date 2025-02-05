@@ -13,17 +13,19 @@ func TestCalculateProjectSchedule(t *testing.T) {
 
 	startTime := time.Now()
 
+	rs := factory.GetResourceService()
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		t.Error(err)
+	}
+
 	put, err := ps.GetProjectByID(ctx, "project:4k1b1vu9f1t64it9sk46")
 	if err != nil {
 		t.Error(err)
 	}
 
-	rm, err := ps.GetResourceMap(true)
-	if err != nil {
-		t.Error(err)
-	}
-
-	ram, err := ss.GetInitialResourceAllocationMap(rm)
+	ram, err := ss.GetInitialResourceAllocationMap(resourceMap)
 	if err != nil {
 		t.Error(err)
 	}

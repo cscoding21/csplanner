@@ -363,3 +363,70 @@ var testResources = []resource.Resource{
 		Status:         resourcestatus.Proposed,
 	},
 }
+
+var testRoles = []resource.Role{
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:sa",
+		},
+		Name:        "System Architect",
+		Description: "System architect desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:be",
+		},
+		Name:        "Backend Developer",
+		Description: "Backend developer desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:fe",
+		},
+		Name:        "Frontend Developer",
+		Description: "Frontent developer desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:ui",
+		},
+		Name:        "UI/UX",
+		Description: "UI/UX desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:pm",
+		},
+		Name:        "Project Manager",
+		Description: "Project manager desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:pdm",
+		},
+		Name:        "Product Manager",
+		Description: "Product manager desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:mk",
+		},
+		Name:        "Marketing",
+		Description: "Marketing desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+	{
+		ControlFields: common.ControlFields{
+			ID: "role:te",
+		},
+		Name:        "Test Engineer",
+		Description: "Test engineer desc",
+		HourlyRate:  utils.ValToRef(300.0),
+	},
+}

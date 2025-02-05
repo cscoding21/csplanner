@@ -29,13 +29,14 @@ func TestCalculateStatsForTask(t *testing.T) {
 	}
 
 	proj := testobjects.GetTestProject("project:1")
-	rm := testobjects.GetResourceMap()
+	resourceMap := testobjects.GetResourceMap()
+	roleMap := testobjects.GetRoleMap()
 	org := testobjects.GetTestOrganization()
 
 	for _, tc := range testCases {
 		task := proj.ProjectMilestones[tc.milestoneIndex].Tasks[tc.taskIndex]
 
-		project.CalculateStatsForTask(task, org, rm)
+		project.CalculateStatsForTask(task, org, resourceMap, roleMap)
 
 		if task.Calculated.SkillsHourAdjustment != tc.expectedSkillsHours {
 			t.Errorf("expected skills hours value not correct.  want %v - got %v", tc.expectedSkillsHours, task.Calculated.SkillsHourAdjustment)

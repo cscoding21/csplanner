@@ -12,6 +12,7 @@ import (
 
 var (
 	resourceMap map[string]Resource
+	roleMap     map[string]Role
 )
 
 // PatchResource performs a surgical update of a resource, specially handing certain fields
@@ -118,6 +119,27 @@ func (s *ResourceService) GetResourceMap(ctx context.Context, force bool) (map[s
 	resourceMap = m
 
 	return resourceMap, nil
+}
+
+// GetRoleMap return a map of all roles keyed by ID
+func (s *ResourceService) GetRoleMap(ctx context.Context, force bool) (map[string]Role, error) {
+	if resourceMap != nil && force {
+		return roleMap, nil
+	}
+
+	res, err := s.FindAllRoles(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	m := make(map[string]Role)
+	for _, r := range res.Results {
+		m[r.ID] = r
+	}
+
+	roleMap = m
+
+	return roleMap, nil
 }
 
 // skillsContain return true is a skill with the corresponging ID already exists

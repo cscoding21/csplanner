@@ -13,10 +13,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (p *Project) PerformAllCalcs(org organization.Organization, rm map[string]resource.Resource) {
+func (p *Project) PerformAllCalcs(org organization.Organization, resourceMap map[string]resource.Resource, roleMap map[string]resource.Role) {
 	p.AggregateProjectValueLines()
 	p.CalculateProjectMilestoneStats()
-	p.CalculateProjectTaskStats(org, rm)
+	p.CalculateProjectTaskStats(org, resourceMap, roleMap)
 
 	p.GetProjectInitialCost()
 	p.GetProjectNPV()
@@ -160,15 +160,15 @@ func (p *Project) CalculateProjectMilestoneStats() {
 }
 
 // CalculateProjectTasksStats update the calculated fields in a project task
-func (p *Project) CalculateProjectTaskStats(orgSettings organization.Organization, resources map[string]resource.Resource) {
+func (p *Project) CalculateProjectTaskStats(orgSettings organization.Organization, resources map[string]resource.Resource, roleMap map[string]resource.Role) {
 	for i, m := range p.ProjectMilestones {
 		for j := range m.Tasks {
-			CalculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources)
+			CalculateStatsForTask(p.ProjectMilestones[i].Tasks[j], orgSettings, resources, roleMap)
 		}
 	}
 }
 
-func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources map[string]resource.Resource) {
+func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources map[string]resource.Resource, roles map[string]resource.Role) {
 	exceptions := []string{}
 	baseHoursEstimate := task.HourEstimate
 	commsAdjustedHours := 0

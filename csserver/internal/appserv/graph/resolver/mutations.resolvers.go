@@ -61,11 +61,22 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdatePr
 // UpdateProject is the resolver for the updateProject field.
 func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error) {
 	service := factory.GetProjectService()
+	rs := factory.GetResourceService()
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	proj := csmap.UpdateProjectIdlToProject(input)
 
-	result, err := service.SaveProject(ctx, proj, *org)
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := service.SaveProject(ctx, proj, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}
@@ -92,11 +103,22 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*idl.S
 // UpdateProjectTask is the resolver for the updateProjectTask field.
 func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.UpdateProjectMilestoneTask) (*idl.CreateProjectResult, error) {
 	service := factory.GetProjectService()
+	rs := factory.GetResourceService()
 	org, _ := factory.GetDefaultOrganization(ctx)
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
 
 	task := csmap.UpdateProjectMilestoneTaskIdlToProject(input)
 
-	result, err := service.UpdateProjectTask(ctx, input.ProjectID, input.MilestoneID, task, *org)
+	result, err := service.UpdateProjectTask(ctx, input.ProjectID, input.MilestoneID, task, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}

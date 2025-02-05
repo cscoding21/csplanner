@@ -20,6 +20,18 @@ func TestSaveProject(t *testing.T) {
 		t.Error(err)
 	}
 
+	rs := factory.GetResourceService()
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		t.Error(err)
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		t.Error(err)
+	}
+
 	put, err := service.GetProjectByID(ctx, "project:1")
 	if err != nil {
 		t.Error(err)
@@ -27,7 +39,7 @@ func TestSaveProject(t *testing.T) {
 
 	put.ProjectBasics.Name = put.ProjectBasics.Name + " T1"
 
-	result, err := service.SaveProject(ctx, *put, *org)
+	result, err := service.SaveProject(ctx, *put, resourceMap, roleMap, *org)
 	if err != nil {
 		t.Error(err)
 	}

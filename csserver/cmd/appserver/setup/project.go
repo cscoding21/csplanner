@@ -30,6 +30,16 @@ func CreateTestProjects(ctx context.Context) error {
 		return nil
 	}
 
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return err
+	}
+
 	allResources, _ := rs.FindAllResources(ctx)
 	allUsers, _ := us.FindAllUsers(ctx)
 
@@ -274,7 +284,7 @@ func CreateTestProjects(ctx context.Context) error {
 		},
 	}
 
-	pr, err := ps.SaveProject(ctx, updateProject, *org)
+	pr, err := ps.SaveProject(ctx, updateProject, resourceMap, roleMap, *org)
 	if err != nil {
 		log.Errorf("Save Project Error (YTS): %s", err)
 	} else {
@@ -291,7 +301,7 @@ func CreateTestProjects(ctx context.Context) error {
 
 	for _, otherProject := range otherProjects {
 		st := otherProject.ProjectStatusBlock.Status
-		pr, err = ps.SaveProject(ctx, otherProject, *org)
+		pr, err = ps.SaveProject(ctx, otherProject, resourceMap, roleMap, *org)
 		if err != nil {
 			log.Errorf("Save Project Error (OTHER): %s", err)
 		} else {
