@@ -20,7 +20,7 @@ func TestCalculateProjectSchedule(t *testing.T) {
 		t.Error(err)
 	}
 
-	put, err := ps.GetProjectByID(ctx, "project:4k1b1vu9f1t64it9sk46")
+	put, err := ps.GetProjectByID(ctx, "project:1")
 	if err != nil {
 		t.Error(err)
 	}

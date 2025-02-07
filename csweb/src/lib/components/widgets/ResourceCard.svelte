@@ -19,8 +19,8 @@
 	>
 	<div class="text-left">
 		<div>{resource.name}</div>
-		<div><p>{resource.role}</p></div>
-		<div class="text-xs">
+		<div><p>{resource.role?.name}</p></div>
+		<div class="text-xs text-wrap">
 			<ResourceSkillsList skills={resource.skills as Skill[]} />
 		</div>
 		<div class="clear-both"></div>

@@ -561,7 +561,11 @@ export type ProjectTaskCalculatedData = {
   __typename?: 'ProjectTaskCalculatedData';
   actualizedCost?: Maybe<Scalars['Float']['output']>;
   actualizedHoursToComplete?: Maybe<Scalars['Int']['output']>;
+  averageHourlyRate?: Maybe<Scalars['Float']['output']>;
+  commsHourAdjustment?: Maybe<Scalars['Int']['output']>;
+  exceptions?: Maybe<Array<Scalars['String']['output']>>;
   resourceContention?: Maybe<Scalars['Float']['output']>;
+  skillsHourAdjustment?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProjectValue = {
@@ -1233,9 +1237,13 @@ export const ProjectFragmentFragmentDoc = gql`
         ...resourceFragment
       }
       calculated {
-        actualizedHoursToComplete
-        actualizedCost
         resourceContention
+        actualizedCost
+        actualizedHoursToComplete
+        commsHourAdjustment
+        skillsHourAdjustment
+        averageHourlyRate
+        exceptions
       }
     }
   }

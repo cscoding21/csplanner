@@ -167,6 +167,11 @@ type ProjectTaskCalculatedData {
   actualizedHoursToComplete: Int
 	actualizedCost: Float
 	resourceContention:  Float
+  averageHourlyRate: Float
+  skillsHourAdjustment: Int
+  commsHourAdjustment: Int
+
+  exceptions: [String!]
 }
 
 

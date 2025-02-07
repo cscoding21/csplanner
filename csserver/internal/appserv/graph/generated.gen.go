@@ -392,7 +392,11 @@ type ComplexityRoot struct {
 	ProjectTaskCalculatedData struct {
 		ActualizedCost            func(childComplexity int) int
 		ActualizedHoursToComplete func(childComplexity int) int
+		AverageHourlyRate         func(childComplexity int) int
+		CommsHourAdjustment       func(childComplexity int) int
+		Exceptions                func(childComplexity int) int
 		ResourceContention        func(childComplexity int) int
+		SkillsHourAdjustment      func(childComplexity int) int
 	}
 
 	ProjectValue struct {
@@ -2297,12 +2301,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectTaskCalculatedData.ActualizedHoursToComplete(childComplexity), true
 
+	case "ProjectTaskCalculatedData.averageHourlyRate":
+		if e.complexity.ProjectTaskCalculatedData.AverageHourlyRate == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.AverageHourlyRate(childComplexity), true
+
+	case "ProjectTaskCalculatedData.commsHourAdjustment":
+		if e.complexity.ProjectTaskCalculatedData.CommsHourAdjustment == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.CommsHourAdjustment(childComplexity), true
+
+	case "ProjectTaskCalculatedData.exceptions":
+		if e.complexity.ProjectTaskCalculatedData.Exceptions == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.Exceptions(childComplexity), true
+
 	case "ProjectTaskCalculatedData.resourceContention":
 		if e.complexity.ProjectTaskCalculatedData.ResourceContention == nil {
 			break
 		}
 
 		return e.complexity.ProjectTaskCalculatedData.ResourceContention(childComplexity), true
+
+	case "ProjectTaskCalculatedData.skillsHourAdjustment":
+		if e.complexity.ProjectTaskCalculatedData.SkillsHourAdjustment == nil {
+			break
+		}
+
+		return e.complexity.ProjectTaskCalculatedData.SkillsHourAdjustment(childComplexity), true
 
 	case "ProjectValue.calculated":
 		if e.complexity.ProjectValue.Calculated == nil {
@@ -3711,6 +3743,11 @@ type ProjectTaskCalculatedData {
   actualizedHoursToComplete: Int
 	actualizedCost: Float
 	resourceContention:  Float
+  averageHourlyRate: Float
+  skillsHourAdjustment: Int
+  commsHourAdjustment: Int
+
+  exceptions: [String!]
 }
 
 
@@ -14826,6 +14863,14 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_calculated(_ conte
 				return ec.fieldContext_ProjectTaskCalculatedData_actualizedCost(ctx, field)
 			case "resourceContention":
 				return ec.fieldContext_ProjectTaskCalculatedData_resourceContention(ctx, field)
+			case "averageHourlyRate":
+				return ec.fieldContext_ProjectTaskCalculatedData_averageHourlyRate(ctx, field)
+			case "skillsHourAdjustment":
+				return ec.fieldContext_ProjectTaskCalculatedData_skillsHourAdjustment(ctx, field)
+			case "commsHourAdjustment":
+				return ec.fieldContext_ProjectTaskCalculatedData_commsHourAdjustment(ctx, field)
+			case "exceptions":
+				return ec.fieldContext_ProjectTaskCalculatedData_exceptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectTaskCalculatedData", field.Name)
 		},
@@ -15408,6 +15453,170 @@ func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_resourceConte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_averageHourlyRate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_averageHourlyRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AverageHourlyRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_averageHourlyRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_skillsHourAdjustment(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_skillsHourAdjustment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SkillsHourAdjustment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_skillsHourAdjustment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_commsHourAdjustment(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_commsHourAdjustment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CommsHourAdjustment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_commsHourAdjustment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectTaskCalculatedData_exceptions(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectTaskCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectTaskCalculatedData_exceptions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Exceptions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectTaskCalculatedData_exceptions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectTaskCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -26268,6 +26477,14 @@ func (ec *executionContext) _ProjectTaskCalculatedData(ctx context.Context, sel 
 			out.Values[i] = ec._ProjectTaskCalculatedData_actualizedCost(ctx, field, obj)
 		case "resourceContention":
 			out.Values[i] = ec._ProjectTaskCalculatedData_resourceContention(ctx, field, obj)
+		case "averageHourlyRate":
+			out.Values[i] = ec._ProjectTaskCalculatedData_averageHourlyRate(ctx, field, obj)
+		case "skillsHourAdjustment":
+			out.Values[i] = ec._ProjectTaskCalculatedData_skillsHourAdjustment(ctx, field, obj)
+		case "commsHourAdjustment":
+			out.Values[i] = ec._ProjectTaskCalculatedData_commsHourAdjustment(ctx, field, obj)
+		case "exceptions":
+			out.Values[i] = ec._ProjectTaskCalculatedData_exceptions(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

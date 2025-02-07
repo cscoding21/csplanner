@@ -419,7 +419,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Research",
-						HourEstimate:    rand.Intn(10),
+						HourEstimate:    2 + rand.Intn(10),
 						Status:          "new",
 						RequiredSkillID: "business-analysis",
 						ResourceIDs:     []string{"resource:yuffie"},
@@ -427,7 +427,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Video Outline",
-						HourEstimate:    rand.Intn(11),
+						HourEstimate:    2 + rand.Intn(11),
 						Status:          "new",
 						RequiredSkillID: "content-writing",
 						ResourceIDs:     []string{"resource:tifa"},
@@ -435,7 +435,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Video Shoot",
-						HourEstimate:    rand.Intn(14),
+						HourEstimate:    2 + rand.Intn(14),
 						Status:          "new",
 						RequiredSkillID: "communications",
 						ResourceIDs:     []string{"resource:barret"},
@@ -443,7 +443,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Edit Video",
-						HourEstimate:    rand.Intn(6),
+						HourEstimate:    2 + rand.Intn(6),
 						Status:          "new",
 						RequiredSkillID: "video-editing",
 						ResourceIDs:     []string{"resource:jessie"},
@@ -451,7 +451,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Upload to All Platforms",
-						HourEstimate:    rand.Intn(3),
+						HourEstimate:    2 + rand.Intn(3),
 						Status:          "new",
 						RequiredSkillID: "frontend",
 						ResourceIDs:     []string{"resource:wedge"},
@@ -459,7 +459,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 					{
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Promote Upload",
-						HourEstimate:    rand.Intn(3),
+						HourEstimate:    2 + rand.Intn(3),
 						Status:          "new",
 						RequiredSkillID: "marketing",
 						ResourceIDs:     []string{"resource:wedge"},

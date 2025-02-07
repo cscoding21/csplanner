@@ -16,16 +16,11 @@ func TestCalculateStatsForTask(t *testing.T) {
 		expectedActualHours int
 		expectedExceptions  int
 	}{
-		/* high skilled resource with no comms cost and 120 hour base */
 		{milestoneIndex: 0, taskIndex: 0, expectedSkillsHours: -30, expectedCommsHours: 0, expectedActualHours: 90, expectedExceptions: 0},
-		/* mid skilled resource with no comms cost and 40 hour base */
 		{milestoneIndex: 0, taskIndex: 1, expectedSkillsHours: 0, expectedCommsHours: 0, expectedActualHours: 40, expectedExceptions: 0},
-		/* low skilled resource with no comms cost and 40 hour base */
-		{milestoneIndex: 0, taskIndex: 2, expectedSkillsHours: 10, expectedCommsHours: 0, expectedActualHours: 50, expectedExceptions: 0},
-		/* high & mid skilled resource with comms cost for 2 resources and 120 hour base */
+		{milestoneIndex: 0, taskIndex: 2, expectedSkillsHours: 0, expectedCommsHours: 0, expectedActualHours: 40, expectedExceptions: 0},
 		{milestoneIndex: 1, taskIndex: 0, expectedSkillsHours: -30, expectedCommsHours: 12, expectedActualHours: 102, expectedExceptions: 0},
-		/* resource exception: allocated resource does not have required skill */
-		{milestoneIndex: 1, taskIndex: 1, expectedSkillsHours: 0, expectedCommsHours: 0, expectedActualHours: 40, expectedExceptions: 1},
+		{milestoneIndex: 1, taskIndex: 1, expectedSkillsHours: -10, expectedCommsHours: 0, expectedActualHours: 30, expectedExceptions: 0},
 	}
 
 	proj := testobjects.GetTestProject("project:1")
@@ -33,29 +28,29 @@ func TestCalculateStatsForTask(t *testing.T) {
 	roleMap := testobjects.GetRoleMap()
 	org := testobjects.GetTestOrganization()
 
-	for _, tc := range testCases {
+	for i, tc := range testCases {
 		task := proj.ProjectMilestones[tc.milestoneIndex].Tasks[tc.taskIndex]
 
 		project.CalculateStatsForTask(task, org, resourceMap, roleMap)
 
 		if task.Calculated.SkillsHourAdjustment != tc.expectedSkillsHours {
-			t.Errorf("expected skills hours value not correct.  want %v - got %v", tc.expectedSkillsHours, task.Calculated.SkillsHourAdjustment)
+			t.Errorf("%v : expected skills hours value not correct.  want %v - got %v", i, tc.expectedSkillsHours, task.Calculated.SkillsHourAdjustment)
 		}
 
 		if task.Calculated.CommsHourAdjustment != tc.expectedCommsHours {
-			t.Errorf("expected comms hours value not correct.  want %v - got %v", tc.expectedCommsHours, task.Calculated.CommsHourAdjustment)
+			t.Errorf("%v : expected comms hours value not correct.  want %v - got %v", i, tc.expectedCommsHours, task.Calculated.CommsHourAdjustment)
 		}
 
 		if task.Calculated.ActualizedHoursToComplete != tc.expectedActualHours {
-			t.Errorf("expected value not correct.  want %v - got %v", tc.expectedActualHours, task.Calculated.ActualizedHoursToComplete)
+			t.Errorf("%v : expected value not correct.  want %v - got %v", i, tc.expectedActualHours, task.Calculated.ActualizedHoursToComplete)
 		}
 
 		if len(task.Calculated.Exceptions) != tc.expectedExceptions {
-			t.Errorf("resourse expected exception to occur but was not found")
+			t.Errorf("%v : resource expected exception to occur but was not found", i)
 		}
 
 		if task.Calculated.ActualizedHoursToComplete != (task.HourEstimate + task.Calculated.SkillsHourAdjustment + task.Calculated.CommsHourAdjustment) {
-			t.Errorf("actualized hours do not equal sum of estimate + skills adjustment + comms adjustment")
+			t.Errorf("%v : actualized hours do not equal sum of estimate + skills adjustment + comms adjustment", i)
 		}
 	}
 }

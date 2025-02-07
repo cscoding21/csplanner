@@ -299,7 +299,6 @@ func (r *queryResolver) FindAllRoles(ctx context.Context) (*idl.RoleResults, err
 	}
 
 	return &out, nil
-
 }
 
 // FindResources is the resolver for the findResources field.

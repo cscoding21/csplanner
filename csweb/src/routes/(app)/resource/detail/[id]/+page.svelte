@@ -113,7 +113,7 @@
 						<h5 class="mb-1 mt-2 text-xl font-medium text-gray-900 dark:text-white">
 							{resourcePromise.name}
 						</h5>
-						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.role}</span>
+						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.role?.name}</span>
 					</div>
 					<hr class="mb-4 mt-2" />
 					<div>

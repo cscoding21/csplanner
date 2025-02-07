@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	MAX_ITERATIONS_ALLOWED = 256
+	MAX_ITERATIONS_ALLOWED = 64
 )
 
 // ScheduleProject create a schedule for a single project "in a vacuum"
@@ -90,7 +90,9 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 					exceptionsCreated[task.TaskID] = msg
 				}
 				for _, resourceID := range task.ResourceIDs {
+					thisBatch := batches[bi].ScheduleItems[ti]
 					if batches[bi].ScheduleItems[ti].HoursToSchedule == batches[bi].ScheduleItems[ti].HoursScheduled {
+						fmt.Printf("batch complete...continuing: %v - %v : %v", thisBatch.HoursScheduled, thisBatch.HoursToSchedule, thisBatch.TaskID)
 						//---task is complete...continue
 						continue
 					}
@@ -120,6 +122,7 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 					}
 
 					if hoursToAllocate <= 0 {
+						hoursToCompleteBatch = hoursToAllocate
 						continue
 					}
 

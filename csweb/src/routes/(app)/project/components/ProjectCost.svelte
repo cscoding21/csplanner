@@ -7,9 +7,10 @@
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
 	import { coalesceToType } from '$lib/forms/helpers';
-	import type { UpdateProjectCost, Project } from '$lib/graphql/generated/sdk';
+	import type { UpdateProjectCost, Project, Resource } from '$lib/graphql/generated/sdk';
 	import { BadgeProjectStatus } from '.';
 	import { ClockOutline, ClockSolid, DollarOutline } from 'flowbite-svelte-icons';
+	import ResourceList from '$lib/components/widgets/ResourceList.svelte';
 
 	interface Props {
 		id: string;
@@ -21,11 +22,10 @@
 		taskName: string;
 		milestoneID: string;
 		milestoneName: string;
-		resourceID: string;
-		resourceName: string;
+		resource: Resource;
 		estimatedHours: number;
 		actualizedHours: number;
-		contention: number;
+		resourceCount: number;
 		cost: number;
 		costPerHour: number;
 	}
@@ -33,7 +33,7 @@
 	let { id, update }: Props = $props();
 	let project:Project = $state(getDefaultProject() as Project)
 	let costTable:FlatCostDetail[] = $state([] as FlatCostDetail[])
-	//let costByResource
+	let calculatedCostSum:number = $state(0.0);
 
 	let errors: any = $state({ ongoing: '', blendedRate: '' });
 
@@ -62,16 +62,16 @@
 							milestoneID: milestone.id,
 							milestoneName: milestone.phase.name,
 							taskID: task.id,
-							taskName: task.name,
-							resourceID: res.id as string,
-							resourceName: res.name,
-							contention: resourceCount,
+							taskName: task.name + " (" + task.requiredSkillID + ")",
+							resource: res,
+							resourceCount: resourceCount,
 							estimatedHours: (task.hourEstimate / resourceCount),
 							actualizedHours: ((task.calculated?.actualizedHoursToComplete || 0) / resourceCount),
 							cost: ((task.calculated?.actualizedCost || 0) / resourceCount),
-							costPerHour: (res.annualizedCost || 0) / 2000,
+							costPerHour: (task.calculated?.averageHourlyRate || 0),
 						}
 
+						calculatedCostSum += item.cost
 						out.push(item)
 					}
 				}
@@ -209,7 +209,7 @@
 			  <TableHeadCell>Resource</TableHeadCell>
 			  <TableHeadCell>Estimated hours</TableHeadCell>
 			  <TableHeadCell>Actual hours</TableHeadCell>
-			  <TableHeadCell>Contention</TableHeadCell>
+			  <TableHeadCell>Cost per Hour</TableHeadCell>
 			  <TableHeadCell>Cost</TableHeadCell>
 			</TableHead>
 			<TableBody tableBodyClass="divide-y">
@@ -217,35 +217,28 @@
 			  <TableBodyRow>
 				<TableBodyCell>{line.milestoneName}</TableBodyCell>
 				<TableBodyCell>{line.taskName}</TableBodyCell>
-				<TableBodyCell>{line.resourceName}</TableBodyCell>
+				<TableBodyCell>
+					<div>
+                        <span class="float-left mr-2"><ResourceList resources={[line.resource]} size="sm" maxSize={1} /></span>
+						{line.resource.name}
+					</div>
+				</TableBodyCell>
 				<TableBodyCell>{line.estimatedHours}</TableBodyCell>
 				<TableBodyCell>{line.actualizedHours}</TableBodyCell>
-				<TableBodyCell>{line.contention}</TableBodyCell>
+				<TableBodyCell>{formatCurrency.format(line.costPerHour || 0)}</TableBodyCell>
 				<TableBodyCell>{formatCurrency.format(line.cost || 0)}</TableBodyCell>
 			  </TableBodyRow>
 			  {/each}
 			</TableBody>
+			<tfoot>
+				<tr>
+					<th colspan="3">&nbsp;</th>
+					<th>&nbsp;</th>
+					<th>&nbsp;</th>
+					<th colspan="1">&nbsp;</th>
+					<th>{formatCurrency.format(calculatedCostSum)}</th>
+				</tr>
+			</tfoot>
 		  </Table>
-
-		<!-- <MoneyInput
-			bind:value={costForm.ongoing as number}
-			fieldName="Ongoing Cost of Ownership (annually)"
-			error={errors.ongoing}
-			update={() => update()}
-		/>
-
-		<MoneyInput
-			bind:value={costForm.blendedRate as number}
-			fieldName="Blended Hourly Rate"
-			error={errors.blendedRate}
-			update={() => update()}
-		/>
-
-		<div class="col-span-4">
-			<span class="float-right">
-				<Button on:click={updateCost}>Update Costs</Button>
-			</span>
-			<br class="clear-both" />
-		</div> -->
 	{/if}
 {/await}

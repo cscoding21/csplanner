@@ -21,6 +21,8 @@ func (p *Project) PerformAllCalcs(org organization.Organization, resourceMap map
 	p.GetProjectInitialCost()
 	p.GetProjectNPV()
 	p.GetProjectIRR()
+
+	p.CalculateProjectTeam()
 }
 
 func (p *Project) AggregateProjectValueLines() {
@@ -91,6 +93,50 @@ func (p *Project) GetProjectIRR() float64 {
 	return irr
 }
 
+func (p *Project) CalculateProjectTeam() {
+	tm := make(map[string]string)
+
+	for _, d := range p.ProjectDaci.DriverIDs {
+		if d != nil {
+			tm[*d] = *d
+		}
+	}
+
+	for _, d := range p.ProjectDaci.ApproverIDs {
+		if d != nil {
+			tm[*d] = *d
+		}
+	}
+
+	for _, d := range p.ProjectDaci.ContributorIDs {
+		if d != nil {
+			tm[*d] = *d
+		}
+	}
+
+	for _, d := range p.ProjectDaci.InformedIDs {
+		if d != nil {
+			tm[*d] = *d
+		}
+	}
+
+	for _, m := range p.ProjectMilestones {
+		for _, t := range m.Tasks {
+			for _, r := range t.ResourceIDs {
+				tm[r] = r
+			}
+		}
+	}
+
+	team := []string{}
+
+	for k := range tm {
+		team = append(team, k)
+	}
+
+	p.Calculated.Team = team
+}
+
 // GetProjectInitialCost calculates the initial cost of the project
 func (p *Project) GetProjectInitialCost() (int, float64) {
 	cost := 0.0
@@ -107,10 +153,7 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 		}
 
 		for _, t := range m.Tasks {
-			hours += t.HourEstimate
-			//cost += float64(hours) * (*p.ProjectCost.BlendedRate)
-			actualizedHours += t.Calculated.ActualizedHoursToComplete
-			cost = cost + float64(t.Calculated.ActualizedHoursToComplete)*(*p.ProjectCost.BlendedRate)
+			cost = cost + t.Calculated.ActualizedCost
 		}
 	}
 
@@ -168,11 +211,13 @@ func (p *Project) CalculateProjectTaskStats(orgSettings organization.Organizatio
 	}
 }
 
-func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resources map[string]resource.Resource, roles map[string]resource.Role) {
+func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.Organization, resourceMap map[string]resource.Resource, roleMap map[string]resource.Role) {
 	exceptions := []string{}
 	baseHoursEstimate := task.HourEstimate
 	commsAdjustedHours := 0
 	skillsAdjustedHours := 0
+	resourceList := []resource.Resource{}
+	hourlyChargeRate := orgSettings.Defaults.GenericBlendedHourlyRate
 
 	if len(task.ResourceIDs) > 0 {
 		if len(task.ResourceIDs) > 1 {
@@ -180,8 +225,15 @@ func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.
 		}
 
 		for _, r := range task.ResourceIDs {
-			res := getResource(resources, r)
+			res := getResource(resourceMap, r)
+			if res == nil {
+				exceptions = append(exceptions, fmt.Sprintf("Resource %s not found in lookup table", r))
+				continue
+			}
+
 			sk := getSkill(task.RequiredSkillID, *res)
+
+			resourceList = append(resourceList, *res)
 
 			if sk == nil {
 				exceptions = append(exceptions, fmt.Sprintf("Resource %s does not have skill %s for task %s", res.Name, task.RequiredSkillID, task.Name))
@@ -189,19 +241,38 @@ func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.
 			}
 
 			co := getProficiencyCoeffieicnt(*sk.Proficiency)
-			thisSkillsAdjustment := -1 * (int(co*float64(baseHoursEstimate)) - baseHoursEstimate)
+			//thisSkillsAdjustment := -1 * (int(co*float64(baseHoursEstimate)) - baseHoursEstimate)
+			thisSkillsAdjustment := (int(co*float64(baseHoursEstimate)) - baseHoursEstimate)
+
 			skillsAdjustedHours += thisSkillsAdjustment
 		}
 	} else {
 		exceptions = append(exceptions, "No resources allocated to task")
 	}
 
+	if len(resourceList) > 0 {
+		hourlyChargeRate = int(getAverageResourceChargePerHour(orgSettings, resourceList, roleMap))
+	}
+
 	task.Calculated.CommsHourAdjustment = commsAdjustedHours
 	task.Calculated.SkillsHourAdjustment = skillsAdjustedHours
 	task.Calculated.ResourceContention = float64(len(task.ResourceIDs))
+	task.Calculated.AverageHourlyRate = float64(hourlyChargeRate)
 	task.Calculated.ActualizedHoursToComplete = commsAdjustedHours + skillsAdjustedHours + baseHoursEstimate
+	task.Calculated.ActualizedCost = float64(task.Calculated.ActualizedHoursToComplete * hourlyChargeRate)
 
 	task.Calculated.Exceptions = append(task.Calculated.Exceptions, exceptions...)
+}
+
+func getAverageResourceChargePerHour(org organization.Organization, resources []resource.Resource, roleMap map[string]resource.Role) float64 {
+	rc := float64(len(resources))
+	total := 0.0
+
+	for _, r := range resources {
+		total += r.GetHourlyRate(roleMap, float64(org.Defaults.GenericBlendedHourlyRate), org.Defaults.WorkingHoursPerYear)
+	}
+
+	return total / rc
 }
 
 func getProficiencyCoeffieicnt(prof float64) float64 {

@@ -21,13 +21,14 @@ type Project struct {
 	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
-	ProjectBasics      *ProjectBasics      `json:"basics"`
-	ProjectStatusBlock *ProjectStatusBlock `json:"status"`
-	ProjectValue       *ProjectValue       `json:"value"`
-	ProjectCost        *ProjectCost        `json:"cost"`
-	ProjectDaci        *ProjectDaci        `json:"daci"`
-	ProjectFeatures    []*ProjectFeature   `json:"features"`
-	ProjectMilestones  []*ProjectMilestone `json:"milestones"`
+	ProjectBasics      *ProjectBasics        `json:"basics"`
+	ProjectStatusBlock *ProjectStatusBlock   `json:"status"`
+	ProjectValue       *ProjectValue         `json:"value"`
+	ProjectCost        *ProjectCost          `json:"cost"`
+	ProjectDaci        *ProjectDaci          `json:"daci"`
+	ProjectFeatures    []*ProjectFeature     `json:"features"`
+	ProjectMilestones  []*ProjectMilestone   `json:"milestones"`
+	Calculated         ProjectCalculatedData `json:"calculated"`
 }
 
 // ProjectBasics basic elements of a project
@@ -105,6 +106,10 @@ type ProjectMilestoneTask struct {
 	Calculated      ProjectTaskCalculatedData       `json:"calculated"`
 }
 
+type ProjectCalculatedData struct {
+	Team []string `json:"team"`
+}
+
 type ProjectCostCalculatedData struct {
 	InitialCost     float64 `json:"initial_cost"`
 	HourEstimate    int     `json:"hours_estimate"`
@@ -138,6 +143,7 @@ type ProjectTaskCalculatedData struct {
 	CommunicationOverhead      int     `json:"communication_overhead"`
 	ResourceSaturationOverhead int     `json:"resource_saturation_overhead"`
 	ActualizedCost             float64 `json:"actualized_cost"`
+	AverageHourlyRate          float64 `json:"average_hourly_rate"`
 	ResourceContention         float64 `json:"resource_contention"`
 	SkillsHourAdjustment       int     `json:"skills_hour_adjustment"`
 	CommsHourAdjustment        int     `json:"comms_hour_adjustment"`

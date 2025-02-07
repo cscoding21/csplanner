@@ -66,7 +66,7 @@ var testProject = project.Project{
 					HourEstimate:    120,
 					Status:          "new",
 					RequiredSkillID: "backend",
-					ResourceIDs:     []string{"resource:3"},
+					ResourceIDs:     []string{"resource:cloud"},
 					Calculated:      project.ProjectTaskCalculatedData{},
 				},
 				{
@@ -75,7 +75,7 @@ var testProject = project.Project{
 					HourEstimate:    40,
 					Status:          "new",
 					RequiredSkillID: "security",
-					ResourceIDs:     []string{"resource:1"},
+					ResourceIDs:     []string{"resource:jeph"},
 					Calculated:      project.ProjectTaskCalculatedData{},
 				},
 				{
@@ -84,7 +84,7 @@ var testProject = project.Project{
 					HourEstimate:    40,
 					Status:          "new",
 					RequiredSkillID: "requirements-gathering",
-					ResourceIDs:     []string{"resource:5"},
+					ResourceIDs:     []string{"resource:barret"},
 					Calculated:      project.ProjectTaskCalculatedData{},
 				},
 			},
@@ -105,7 +105,7 @@ var testProject = project.Project{
 					HourEstimate:    120,
 					Status:          "new",
 					RequiredSkillID: "devops",
-					ResourceIDs:     []string{"resource:1", "resource:3"},
+					ResourceIDs:     []string{"resource:zack", "resource:cid"},
 					Calculated:      project.ProjectTaskCalculatedData{},
 				},
 				{
@@ -114,7 +114,7 @@ var testProject = project.Project{
 					HourEstimate:    40,
 					Status:          "new",
 					RequiredSkillID: "project-management",
-					ResourceIDs:     []string{"resource:1"},
+					ResourceIDs:     []string{"resource:barret"},
 					Calculated:      project.ProjectTaskCalculatedData{},
 				},
 				{

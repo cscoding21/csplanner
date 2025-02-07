@@ -42,6 +42,25 @@ func (r *Resource) GetSkill(id string) *Skill {
 	return nil
 }
 
+// GetHourlyRate return the hourly charge for a user
+func (r *Resource) GetHourlyRate(roleMap map[string]Role, defaultRate float64, hoursPerYear int) float64 {
+	calculated := 0.0
+	if r.AnnualizedCost > 0 && hoursPerYear > 0 {
+		calculated = r.AnnualizedCost / float64(hoursPerYear)
+	}
+
+	if calculated > 0.0 {
+		return calculated
+	}
+
+	role, ok := roleMap[*r.RoleID]
+	if ok && *role.HourlyRate > 0.0 {
+		return *role.HourlyRate
+	}
+
+	return defaultRate
+}
+
 // Skill for people resources...a skill and proficiency that they possess
 type Skill struct {
 	ID          string   `json:"id,omitempty"`

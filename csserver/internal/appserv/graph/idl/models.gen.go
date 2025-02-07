@@ -345,6 +345,10 @@ type ProjectTaskCalculatedData struct {
 	ActualizedHoursToComplete *int     `json:"actualizedHoursToComplete,omitempty"`
 	ActualizedCost            *float64 `json:"actualizedCost,omitempty"`
 	ResourceContention        *float64 `json:"resourceContention,omitempty"`
+	AverageHourlyRate         *float64 `json:"averageHourlyRate,omitempty"`
+	SkillsHourAdjustment      *int     `json:"skillsHourAdjustment,omitempty"`
+	CommsHourAdjustment       *int     `json:"commsHourAdjustment,omitempty"`
+	Exceptions                []string `json:"exceptions,omitempty"`
 }
 
 type ProjectValue struct {

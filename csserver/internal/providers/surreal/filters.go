@@ -22,10 +22,7 @@ func loadFilters() map[string]string {
 
 	f["resource_in_project"] = `
 	AND (
-        daci.driver_ids ANYINSIDE [$resourceID]
-        OR daci.approver_ids ANYINSIDE [$resourceID]
-        OR daci.contributor_ids ANYINSIDE [$resourceID]
-        OR daci.informed_ids ANYINSIDE [$resourceID]
+        calculated.team ANYINSIDE [$resourceID]
     )
 	`
 
