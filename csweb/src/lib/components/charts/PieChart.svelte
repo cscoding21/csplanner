@@ -8,7 +8,7 @@
         labels: string[];
         format?: "none"|"currency"|undefined;
 	}
-	let { values, labels, format }: Props = $props();
+	let { values = $bindable(), labels = $bindable(), format }: Props = $props();
 
     const formatSelector = (val:any, f:"none"|"currency"|undefined) => {
         switch(f) {
@@ -24,14 +24,14 @@
         return  {
         	series: v,
 			chart: {
-				width: 240,
+				width: 260,
 				type: 'pie',
 			},
 			labels: l,
-			fill: {
-				colors: ['#5a67d8', '#FDBA8C'],
-				opacity: 0.75
-			},
+			// fill: {
+			// 	colors: ['#5a67d8', '#FDBA8C'],
+			// 	opacity: 0.75
+			// },
 			dataLabels: {
 				style: {
 					fontFamily: 'Inter, sans-serif',
@@ -61,7 +61,7 @@
 			legend: {
 				show: false,
 				labels: {
-					colors: ['#bbb','#bbb','#bbb','#bbb',],
+					colors: ['#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb'],
 				},
 			},
 			tooltip: {
@@ -74,9 +74,9 @@
 			}
         };
 	};
-	let chart = new ApexCharts(document.querySelector('#chartPlaceholder'), getChartOptions(values, labels));
+	let chart = new ApexCharts(document.querySelector('#pie_chartPlaceholder'), getChartOptions(values, labels));
 </script>
 
 
 <Chart options={getChartOptions(values, labels)} {chart} />
-<div id="chartPlaceholder"></div>
+<div id="pie_chartPlaceholder"></div>

@@ -82,3 +82,34 @@ export const safeInt = (input:any):number => {
 	return input as number
 }
 
+
+/**
+ * reshapes an array so that is suitable for pie charts
+ * @param groupByArray the array to group by
+ * @param groupByLabel the label field
+ * @param valueField the value field
+ * @returns an array with 
+ */
+export const csGroupBy = (groupByArray:any[], groupByLabel:string, valueField:string):any[] => {
+	    // Initialize an empty array to store the grouped results
+		const result:any[] = [];
+    
+		// Loop through each item in the input array
+		for (const item of groupByArray) {
+			// Get the label and its corresponding value from the current item
+			const labelValue = item[groupByLabel];
+			const currentValue = item[valueField];
+			
+			// If the label doesn't exist in the result, initialize it with 0 sum
+			if (!result.hasOwnProperty(labelValue)) {
+				result[labelValue] = 0;
+			}
+			
+			// Add the current value to the accumulated sum for this label
+			result[labelValue] += currentValue;
+		}
+		
+		return result;
+};
+
+
