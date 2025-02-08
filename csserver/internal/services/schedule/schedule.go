@@ -196,13 +196,21 @@ func GetScheduleItems(p *project.Project) []ScheduleBatch {
 		hoursToComplete := 0
 
 		for _, t := range m.Tasks {
+			hoursToSchedule := t.Calculated.ActualizedHoursToComplete
+			if t.Status == milestonestatus.Done || t.Status == milestonestatus.Removed {
+				//---no need to schedule
+				//continue
+
+				hoursToSchedule = 0
+			}
+
 			workspace := ScheduleWorkspace{
 				MilestoneID:     *m.ID,
 				MilestoneName:   m.Phase.Name,
 				TaskID:          *t.ID,
 				TaskName:        t.Name,
 				ResourceIDs:     t.ResourceIDs,
-				HoursToSchedule: t.Calculated.ActualizedHoursToComplete,
+				HoursToSchedule: hoursToSchedule,
 				HoursScheduled:  0,
 			}
 

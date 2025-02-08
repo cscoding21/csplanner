@@ -56,6 +56,7 @@ type ProjectValueLine struct {
 	YearThreeValue float64 `json:"year_three_value"`
 	YearFourValue  float64 `json:"year_four_value"`
 	YearFiveValue  float64 `json:"year_five_value"`
+	Description    string  `json:"description"`
 }
 
 // ProjectCost properties used to calculate the cost of a project

@@ -322,8 +322,9 @@ func findPortfolioProjects() []project.Project {
 	outProjects := []project.Project{}
 
 	type PT struct {
-		name   string
-		status projectstatus.ProjectState
+		name      string
+		status    projectstatus.ProjectState
+		startDate *time.Time
 	}
 
 	names := []PT{
@@ -334,15 +335,19 @@ func findPortfolioProjects() []project.Project {
 		{name: "Video: Golang Project Setup", status: projectstatus.Backlogged},
 		{name: "Video: Mapping Objects in our Project", status: projectstatus.Backlogged},
 		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft},
-		{name: "Video: Scheduled 1", status: projectstatus.Scheduled},
-		{name: "Video: Scheduled 2", status: projectstatus.Scheduled},
-		{name: "Video: Inflight 1", status: projectstatus.InFlight},
-		{name: "Video: Inflight 2", status: projectstatus.InFlight},
-		{name: "Video: Inflight 3", status: projectstatus.InFlight},
+		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: utils.ValToRef(time.Date(2025, 3, 1, 0, 0, 0, 0, time.UTC))},
+		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: utils.ValToRef(time.Date(2025, 5, 1, 0, 0, 0, 0, time.UTC))},
+		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(time.Now())},
+		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(time.Now())},
+		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(time.Now())},
 	}
 
 	for i, p := range names {
 		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status, (i + 2)))
+
+		if p.startDate != nil {
+			proj.ProjectBasics.StartDate = p.startDate
+		}
 
 		proj.ProjectValue.ProjectValueLines[0].YearOneValue = math.Round(1000.0 * rand.Float64())
 		proj.ProjectValue.ProjectValueLines[0].YearTwoValue = math.Round(1000.0 * rand.Float64())
@@ -421,6 +426,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 						Name:            "Research",
 						HourEstimate:    2 + rand.Intn(10),
 						Status:          "new",
+						Description:     "do the research",
 						RequiredSkillID: "business-analysis",
 						ResourceIDs:     []string{"resource:yuffie"},
 					},
@@ -429,6 +435,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 						Name:            "Video Outline",
 						HourEstimate:    2 + rand.Intn(11),
 						Status:          "new",
+						Description:     "make the outline",
 						RequiredSkillID: "content-writing",
 						ResourceIDs:     []string{"resource:tifa"},
 					},
@@ -437,6 +444,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 						Name:            "Video Shoot",
 						HourEstimate:    2 + rand.Intn(14),
 						Status:          "new",
+						Description:     "shoot the video",
 						RequiredSkillID: "communications",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -445,6 +453,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 						Name:            "Edit Video",
 						HourEstimate:    2 + rand.Intn(6),
 						Status:          "new",
+						Description:     "edit the video",
 						RequiredSkillID: "video-editing",
 						ResourceIDs:     []string{"resource:jessie"},
 					},
@@ -453,6 +462,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 						Name:            "Upload to All Platforms",
 						HourEstimate:    2 + rand.Intn(3),
 						Status:          "new",
+						Description:     "upload to the places",
 						RequiredSkillID: "frontend",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
@@ -461,6 +471,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 						Name:            "Promote Upload",
 						HourEstimate:    2 + rand.Intn(3),
 						Status:          "new",
+						Description:     "tell the world",
 						RequiredSkillID: "marketing",
 						ResourceIDs:     []string{"resource:wedge"},
 					},

@@ -1,0 +1,31 @@
+fragment organizationFragment on Organization {
+    name
+    id
+    defaults {
+      discountRate
+      commsCoefficient
+      focusFactor
+      hoursPerWeek
+      workingHoursPerYear
+      genericBlendedHourlyRate
+    }
+}
+
+
+query getOrganization {
+  getOrganization {
+    ...organizationFragment
+  }
+}
+
+
+mutation updateOrganization ($input: UpdateOrganization!) {
+	updateOrganization(input: $input) {
+		status {
+			...statusFragment
+		}
+		organization {
+			...organizationFragment
+		}
+	}
+}

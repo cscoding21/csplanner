@@ -24,7 +24,7 @@
         return  {
         	series: v,
 			chart: {
-				width: 260,
+				width: '60%',
 				type: 'pie',
 			},
 			labels: l,
@@ -59,9 +59,9 @@
 				}
 			}],
 			legend: {
-				show: false,
+				show: true,
 				labels: {
-					colors: ['#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb'],
+					colors: ['#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb'],
 				},
 			},
 			tooltip: {

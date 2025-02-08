@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import type { SelectOptionType } from "flowbite-svelte";
     import type { ProjectValueLine } from "$lib/graphql/generated/sdk";
-    import { SelectInput, MoneyInput } from "$lib/components"
+    import { SelectInput, MoneyInput, TextAreaInput } from "$lib/components"
     import { Heading, Button } from "flowbite-svelte"
     import { getList } from "$lib/services/list";
     import { callIf, deepCopy } from "$lib/utils/helpers";
@@ -144,6 +144,14 @@
     bind:value={valueItemForm.yearFiveValue as number}
     fieldName="Estimated Year Five Returns"
     error={errors.yearFiveValue}
+    update={() => callIf(update)}
+/>
+
+<TextAreaInput
+    bind:value={valueItemForm.description as string}
+    fieldName="Description / justification"
+    error={errors.description}
+    rows={3}
     update={() => callIf(update)}
 />
 

@@ -26,7 +26,8 @@ export const valueLineSchema = yup.object().shape({
 	yearTwoValue: yup.number().nullable(),
 	yearThreeValue: yup.number().nullable(),
 	yearFourValue: yup.number().nullable(),
-	yearFiveValue: yup.number().nullable()
+	yearFiveValue: yup.number().nullable(),
+	description: yup.string().required()
 });
 
 export const costSchema = yup.object().shape({

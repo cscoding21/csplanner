@@ -173,9 +173,12 @@ type Organization struct {
 }
 
 type OrganizationDefaults struct {
-	DiscountRate float64 `json:"discountRate"`
-	HoursPerWeek int     `json:"hoursPerWeek"`
-	FocusFactor  float64 `json:"focusFactor"`
+	DiscountRate             float64 `json:"discountRate"`
+	HoursPerWeek             int     `json:"hoursPerWeek"`
+	FocusFactor              float64 `json:"focusFactor"`
+	CommsCoefficient         float64 `json:"commsCoefficient"`
+	GenericBlendedHourlyRate float64 `json:"genericBlendedHourlyRate"`
+	WorkingHoursPerYear      float64 `json:"workingHoursPerYear"`
 }
 
 type PageAndFilter struct {
@@ -377,6 +380,7 @@ type ProjectValueLine struct {
 	YearThreeValue *float64 `json:"yearThreeValue,omitempty"`
 	YearFourValue  *float64 `json:"yearFourValue,omitempty"`
 	YearFiveValue  *float64 `json:"yearFiveValue,omitempty"`
+	Description    *string  `json:"description,omitempty"`
 }
 
 type Projecttemplate struct {
@@ -509,9 +513,12 @@ type UpdateOrganization struct {
 }
 
 type UpdateOrganizationDefaults struct {
-	DiscountRate float64 `json:"discountRate"`
-	HoursPerWeek int     `json:"hoursPerWeek"`
-	FocusFactor  float64 `json:"focusFactor"`
+	DiscountRate             float64  `json:"discountRate"`
+	HoursPerWeek             int      `json:"hoursPerWeek"`
+	FocusFactor              *float64 `json:"focusFactor,omitempty"`
+	CommsCoefficient         float64  `json:"commsCoefficient"`
+	GenericBlendedHourlyRate float64  `json:"genericBlendedHourlyRate"`
+	WorkingHoursPerYear      float64  `json:"workingHoursPerYear"`
 }
 
 type UpdateProject struct {
@@ -597,6 +604,7 @@ type UpdateProjectValueLine struct {
 	YearThreeValue *float64 `json:"yearThreeValue,omitempty"`
 	YearFourValue  *float64 `json:"yearFourValue,omitempty"`
 	YearFiveValue  *float64 `json:"yearFiveValue,omitempty"`
+	Description    *string  `json:"description,omitempty"`
 }
 
 type UpdateResource struct {

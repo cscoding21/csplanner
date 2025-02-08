@@ -39,6 +39,7 @@ fragment projectFragment on Project {
 			yearThreeValue
 			yearFourValue
 			yearFiveValue
+			description
 		}
 		calculated {
 			netPresentValue

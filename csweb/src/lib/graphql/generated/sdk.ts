@@ -185,6 +185,7 @@ export type Mutation = {
   deleteProjectValueLine: CreateProjectResult;
   deleteResource: Status;
   deleteResourceSkill: Status;
+  runProcesses: Status;
   setNotificationsRead: Status;
   setProjectMilestonesFromTemplate: CreateProjectResult;
   setProjectStatus: CreateProjectResult;
@@ -369,9 +370,12 @@ export type Organization = {
 
 export type OrganizationDefaults = {
   __typename?: 'OrganizationDefaults';
+  commsCoefficient: Scalars['Float']['output'];
   discountRate: Scalars['Float']['output'];
   focusFactor: Scalars['Float']['output'];
+  genericBlendedHourlyRate: Scalars['Float']['output'];
   hoursPerWeek: Scalars['Int']['output'];
+  workingHoursPerYear: Scalars['Float']['output'];
 };
 
 export type PageAndFilter = {
@@ -589,6 +593,7 @@ export type ProjectValueCalculatedData = {
 
 export type ProjectValueLine = {
   __typename?: 'ProjectValueLine';
+  description?: Maybe<Scalars['String']['output']>;
   fundingSource: Scalars['String']['output'];
   id: Scalars['String']['output'];
   valueCategory: Scalars['String']['output'];
@@ -832,9 +837,12 @@ export type UpdateOrganization = {
 };
 
 export type UpdateOrganizationDefaults = {
+  commsCoefficient: Scalars['Float']['input'];
   discountRate: Scalars['Float']['input'];
-  focusFactor: Scalars['Float']['input'];
+  focusFactor?: InputMaybe<Scalars['Float']['input']>;
+  genericBlendedHourlyRate: Scalars['Float']['input'];
   hoursPerWeek: Scalars['Int']['input'];
+  workingHoursPerYear: Scalars['Float']['input'];
 };
 
 export type UpdateProject = {
@@ -911,6 +919,7 @@ export type UpdateProjectValue = {
 };
 
 export type UpdateProjectValueLine = {
+  description?: InputMaybe<Scalars['String']['input']>;
   fundingSource: Scalars['String']['input'];
   id?: InputMaybe<Scalars['String']['input']>;
   projectID: Scalars['String']['input'];
@@ -1093,6 +1102,20 @@ export const NotificationFragmentFragmentDoc = gql`
   updatedAt
 }
     `;
+export const OrganizationFragmentFragmentDoc = gql`
+    fragment organizationFragment on Organization {
+  name
+  id
+  defaults {
+    discountRate
+    commsCoefficient
+    focusFactor
+    hoursPerWeek
+    workingHoursPerYear
+    genericBlendedHourlyRate
+  }
+}
+    `;
 export const ResourceFragmentFragmentDoc = gql`
     fragment resourceFragment on Resource {
   name
@@ -1163,6 +1186,7 @@ export const ProjectFragmentFragmentDoc = gql`
       yearThreeValue
       yearFourValue
       yearFiveValue
+      description
     }
     calculated {
       netPresentValue
@@ -1432,6 +1456,26 @@ export const SetNotificationsReadDocument = gql`
   }
 }
     `;
+export const GetOrganizationDocument = gql`
+    query getOrganization {
+  getOrganization {
+    ...organizationFragment
+  }
+}
+    ${OrganizationFragmentFragmentDoc}`;
+export const UpdateOrganizationDocument = gql`
+    mutation updateOrganization($input: UpdateOrganization!) {
+  updateOrganization(input: $input) {
+    status {
+      ...statusFragment
+    }
+    organization {
+      ...organizationFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${OrganizationFragmentFragmentDoc}`;
 export const GetPortfolioDocument = gql`
     query getPortfolio {
   getPortfolio {
@@ -1812,6 +1856,12 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     setNotificationsRead(variables: SetNotificationsReadMutationVariables, options?: C): Promise<SetNotificationsReadMutation> {
       return requester<SetNotificationsReadMutation, SetNotificationsReadMutationVariables>(SetNotificationsReadDocument, variables, options) as Promise<SetNotificationsReadMutation>;
+    },
+    getOrganization(variables?: GetOrganizationQueryVariables, options?: C): Promise<GetOrganizationQuery> {
+      return requester<GetOrganizationQuery, GetOrganizationQueryVariables>(GetOrganizationDocument, variables, options) as Promise<GetOrganizationQuery>;
+    },
+    updateOrganization(variables: UpdateOrganizationMutationVariables, options?: C): Promise<UpdateOrganizationMutation> {
+      return requester<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(UpdateOrganizationDocument, variables, options) as Promise<UpdateOrganizationMutation>;
     },
     getPortfolio(variables?: GetPortfolioQueryVariables, options?: C): Promise<GetPortfolioQuery> {
       return requester<GetPortfolioQuery, GetPortfolioQueryVariables>(GetPortfolioDocument, variables, options) as Promise<GetPortfolioQuery>;

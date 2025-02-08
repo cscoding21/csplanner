@@ -272,6 +272,15 @@ func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID strin
 	return &out, nil
 }
 
+// RunProcesses is the resolver for the runProcesses field.
+func (r *mutationResolver) RunProcesses(ctx context.Context) (*idl.Status, error) {
+	service := factory.GetProcessorService()
+
+	err := service.ProcessNightly(ctx)
+
+	return csmap.GetStatusFromError(err)
+}
+
 // CreateProjectComment is the resolver for the createProjectComment field.
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
 	service := factory.GetCommentService()
@@ -438,7 +447,23 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input idl.Upd
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error) {
-	panic(fmt.Errorf("not implemented: UpdateOrganization - updateOrganization"))
+	service := factory.GetOrganizationService()
+
+	model := csmap.UpdateOrganizationIdlToOrganization(input)
+
+	resp, err := service.SaveOrgDefaults(ctx, model.Defaults)
+	if err != nil {
+		return nil, err
+	}
+
+	//---map back the result
+	status, _ := csmap.GetStatusFromUpdateResult(resp)
+	out := idl.CreateOrganizationResult{
+		Status:       status,
+		Organization: common.ValToRef(csmap.OrganizationOrganizationToIdl(*resp.Object)),
+	}
+
+	return &out, nil
 }
 
 // SetProjectMilestonesFromTemplate is the resolver for the setProjectMilestonesFromTemplate field.

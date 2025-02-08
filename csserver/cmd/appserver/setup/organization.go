@@ -6,6 +6,7 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/services/organization"
+	"csserver/internal/utils"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -19,7 +20,7 @@ func CreateDefaultOrganization(ctx context.Context) error {
 		},
 		Name: "Default",
 		Defaults: organization.OrganizationDefaults{
-			FocusFactor:              5.0,
+			FocusFactor:              utils.ValToRef(5.0),
 			HoursPerWeek:             40,
 			DiscountRate:             7.0,
 			CommsCoefficient:         5.0,

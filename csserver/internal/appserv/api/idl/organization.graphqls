@@ -8,6 +8,9 @@ type OrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
   focusFactor: Float!
+  commsCoefficient: Float!
+  genericBlendedHourlyRate: Float!
+  workingHoursPerYear: Float!
 }
 
 
@@ -20,7 +23,10 @@ input UpdateOrganization {
 input UpdateOrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
-  focusFactor: Float!
+  focusFactor: Float
+  commsCoefficient: Float!
+  genericBlendedHourlyRate: Float!
+  workingHoursPerYear: Float!
 }
 
 

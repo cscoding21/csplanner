@@ -27,6 +27,7 @@
 	import type { Resource, Portfolio } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { findScheduledWorkForResource } from '$lib/services/portfolio';
+	import SectionHeading from '$lib/components/formatting/SectionHeading.svelte';
 
 	const id = $page.params.id;
 
@@ -203,6 +204,7 @@
 
 			<div>
 				<Card size="lg">
+					<SectionHeading>Project Allocation</SectionHeading>
 					{#if portfolio && portfolio.schedule}
 					<ul>
 					{#each portfolio.schedule as schedule}

@@ -19,10 +19,10 @@ type Organization struct {
 }
 
 type OrganizationDefaults struct {
-	DiscountRate             float64 `json:"discount_rate"`
-	HoursPerWeek             int     `json:"hours_per_week"`
-	FocusFactor              float64 `json:"focus_factor"`
-	CommsCoefficient         float64 `json:"comms_coefficient"`
-	GenericBlendedHourlyRate int     `json:"generic_blended_hourly_rate"`
-	WorkingHoursPerYear      int     `json:"working_hours_per_year"`
+	DiscountRate             float64  `json:"discount_rate"`
+	HoursPerWeek             int      `json:"hours_per_week"`
+	FocusFactor              *float64 `json:"focus_factor"`
+	CommsCoefficient         float64  `json:"comms_coefficient"`
+	GenericBlendedHourlyRate int      `json:"generic_blended_hourly_rate"`
+	WorkingHoursPerYear      int      `json:"working_hours_per_year"`
 }

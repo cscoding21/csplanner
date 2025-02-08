@@ -78,9 +78,9 @@
 			<span class="block text-sm">{cu?.firstName}</span>
 			<span class="block truncate text-sm font-medium">{cu?.email}</span>
 		</DropdownHeader>
-		<DropdownItem>Dashboard</DropdownItem>
-		<DropdownItem>Settings</DropdownItem>
-		<DropdownItem>Earnings</DropdownItem>
+		<DropdownItem>
+			<a href="/settings">Settings</a>
+		</DropdownItem>
 		<DropdownDivider />
 		<DropdownItem>
 			<button class="gb-initial" onclick={logoutUser}>Sign out</button>

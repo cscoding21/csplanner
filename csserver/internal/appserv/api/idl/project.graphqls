@@ -43,6 +43,7 @@ type ProjectValueLine {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
+  description: String
 }
 
 
@@ -214,6 +215,7 @@ input UpdateProjectValueLine {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
+  description: String
 }
 
 

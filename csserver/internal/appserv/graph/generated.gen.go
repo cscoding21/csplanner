@@ -182,6 +182,7 @@ type ComplexityRoot struct {
 		DeleteProjectValueLine           func(childComplexity int, projectID string, valueLineID string) int
 		DeleteResource                   func(childComplexity int, id string) int
 		DeleteResourceSkill              func(childComplexity int, resourceID string, skillID string) int
+		RunProcesses                     func(childComplexity int) int
 		SetNotificationsRead             func(childComplexity int, input []string) int
 		SetProjectMilestonesFromTemplate func(childComplexity int, input *idl.UpdateProjectMilestoneTemplate) int
 		SetProjectStatus                 func(childComplexity int, projectID string, newStatus string) int
@@ -226,9 +227,12 @@ type ComplexityRoot struct {
 	}
 
 	OrganizationDefaults struct {
-		DiscountRate func(childComplexity int) int
-		FocusFactor  func(childComplexity int) int
-		HoursPerWeek func(childComplexity int) int
+		CommsCoefficient         func(childComplexity int) int
+		DiscountRate             func(childComplexity int) int
+		FocusFactor              func(childComplexity int) int
+		GenericBlendedHourlyRate func(childComplexity int) int
+		HoursPerWeek             func(childComplexity int) int
+		WorkingHoursPerYear      func(childComplexity int) int
 	}
 
 	Pagination struct {
@@ -417,6 +421,7 @@ type ComplexityRoot struct {
 	}
 
 	ProjectValueLine struct {
+		Description    func(childComplexity int) int
 		FundingSource  func(childComplexity int) int
 		ID             func(childComplexity int) int
 		ValueCategory  func(childComplexity int) int
@@ -598,6 +603,7 @@ type MutationResolver interface {
 	UpdateProjectValueLine(ctx context.Context, input idl.UpdateProjectValueLine) (*idl.CreateProjectResult, error)
 	DeleteProjectValueLine(ctx context.Context, projectID string, valueLineID string) (*idl.CreateProjectResult, error)
 	SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error)
+	RunProcesses(ctx context.Context) (*idl.Status, error)
 	CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error)
 	CreateProjectCommentReply(ctx context.Context, input idl.UpdateCommentReply) (*idl.CreateProjectCommentResult, error)
 	DeleteProjectComment(ctx context.Context, id string) (*idl.Status, error)
@@ -1291,6 +1297,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteResourceSkill(childComplexity, args["resourceID"].(string), args["skillID"].(string)), true
 
+	case "Mutation.runProcesses":
+		if e.complexity.Mutation.RunProcesses == nil {
+			break
+		}
+
+		return e.complexity.Mutation.RunProcesses(childComplexity), true
+
 	case "Mutation.setNotificationsRead":
 		if e.complexity.Mutation.SetNotificationsRead == nil {
 			break
@@ -1580,6 +1593,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organization.Name(childComplexity), true
 
+	case "OrganizationDefaults.commsCoefficient":
+		if e.complexity.OrganizationDefaults.CommsCoefficient == nil {
+			break
+		}
+
+		return e.complexity.OrganizationDefaults.CommsCoefficient(childComplexity), true
+
 	case "OrganizationDefaults.discountRate":
 		if e.complexity.OrganizationDefaults.DiscountRate == nil {
 			break
@@ -1594,12 +1614,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrganizationDefaults.FocusFactor(childComplexity), true
 
+	case "OrganizationDefaults.genericBlendedHourlyRate":
+		if e.complexity.OrganizationDefaults.GenericBlendedHourlyRate == nil {
+			break
+		}
+
+		return e.complexity.OrganizationDefaults.GenericBlendedHourlyRate(childComplexity), true
+
 	case "OrganizationDefaults.hoursPerWeek":
 		if e.complexity.OrganizationDefaults.HoursPerWeek == nil {
 			break
 		}
 
 		return e.complexity.OrganizationDefaults.HoursPerWeek(childComplexity), true
+
+	case "OrganizationDefaults.workingHoursPerYear":
+		if e.complexity.OrganizationDefaults.WorkingHoursPerYear == nil {
+			break
+		}
+
+		return e.complexity.OrganizationDefaults.WorkingHoursPerYear(childComplexity), true
 
 	case "Pagination.after":
 		if e.complexity.Pagination.After == nil {
@@ -2412,6 +2446,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectValueCalculatedData.YearTwoValue(childComplexity), true
+
+	case "ProjectValueLine.description":
+		if e.complexity.ProjectValueLine.Description == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueLine.Description(childComplexity), true
 
 	case "ProjectValueLine.fundingSource":
 		if e.complexity.ProjectValueLine.FundingSource == nil {
@@ -3535,6 +3576,9 @@ type OrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
   focusFactor: Float!
+  commsCoefficient: Float!
+  genericBlendedHourlyRate: Float!
+  workingHoursPerYear: Float!
 }
 
 
@@ -3547,7 +3591,10 @@ input UpdateOrganization {
 input UpdateOrganizationDefaults {
   discountRate: Float!
   hoursPerWeek: Int!
-  focusFactor: Float!
+  focusFactor: Float
+  commsCoefficient: Float!
+  genericBlendedHourlyRate: Float!
+  workingHoursPerYear: Float!
 }
 
 
@@ -3619,6 +3666,7 @@ type ProjectValueLine {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
+  description: String
 }
 
 
@@ -3790,6 +3838,7 @@ input UpdateProjectValueLine {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
+  description: String
 }
 
 
@@ -4026,7 +4075,7 @@ input UpdateUser {
 
     createProject(input: UpdateProject!): CreateProjectResult!
     updateProject(input: UpdateProject!): CreateProjectResult!
-    deleteProject(id: String!) : Status!
+    deleteProject(id: String!): Status!
     updateProjectTask(input: UpdateProjectMilestoneTask!): CreateProjectResult!
     deleteProjectTask(projectID: String!, milestoneID: String!, taskID: String!): CreateProjectResult!
     updateProjectFeature(input: UpdateProjectFeature!): CreateProjectResult!
@@ -4034,6 +4083,7 @@ input UpdateUser {
     updateProjectValueLine(input: UpdateProjectValueLine!): CreateProjectResult!
     deleteProjectValueLine(projectID: String!, valueLineID: String!): CreateProjectResult!
     setProjectStatus(projectID: String!, newStatus: String!): CreateProjectResult!
+    runProcesses: Status!
 
     createProjectComment(input: UpdateComment!) : CreateProjectCommentResult!
     createProjectCommentReply(input: UpdateCommentReply!) : CreateProjectCommentResult!
@@ -8808,6 +8858,58 @@ func (ec *executionContext) fieldContext_Mutation_setProjectStatus(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_runProcesses(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_runProcesses(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RunProcesses(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_runProcesses(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_Status_success(ctx, field)
+			case "message":
+				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createProjectComment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createProjectComment(ctx, field)
 	if err != nil {
@@ -10535,6 +10637,12 @@ func (ec *executionContext) fieldContext_Organization_defaults(_ context.Context
 				return ec.fieldContext_OrganizationDefaults_hoursPerWeek(ctx, field)
 			case "focusFactor":
 				return ec.fieldContext_OrganizationDefaults_focusFactor(ctx, field)
+			case "commsCoefficient":
+				return ec.fieldContext_OrganizationDefaults_commsCoefficient(ctx, field)
+			case "genericBlendedHourlyRate":
+				return ec.fieldContext_OrganizationDefaults_genericBlendedHourlyRate(ctx, field)
+			case "workingHoursPerYear":
+				return ec.fieldContext_OrganizationDefaults_workingHoursPerYear(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationDefaults", field.Name)
 		},
@@ -10662,6 +10770,138 @@ func (ec *executionContext) _OrganizationDefaults_focusFactor(ctx context.Contex
 }
 
 func (ec *executionContext) fieldContext_OrganizationDefaults_focusFactor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationDefaults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationDefaults_commsCoefficient(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationDefaults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationDefaults_commsCoefficient(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CommsCoefficient, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationDefaults_commsCoefficient(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationDefaults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationDefaults_genericBlendedHourlyRate(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationDefaults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationDefaults_genericBlendedHourlyRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GenericBlendedHourlyRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationDefaults_genericBlendedHourlyRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationDefaults",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationDefaults_workingHoursPerYear(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationDefaults) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationDefaults_workingHoursPerYear(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkingHoursPerYear, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationDefaults_workingHoursPerYear(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrganizationDefaults",
 		Field:      field,
@@ -15759,6 +15999,8 @@ func (ec *executionContext) fieldContext_ProjectValue_projectValueLines(_ contex
 				return ec.fieldContext_ProjectValueLine_yearFourValue(ctx, field)
 			case "yearFiveValue":
 				return ec.fieldContext_ProjectValueLine_yearFiveValue(ctx, field)
+			case "description":
+				return ec.fieldContext_ProjectValueLine_description(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectValueLine", field.Name)
 		},
@@ -16442,6 +16684,47 @@ func (ec *executionContext) fieldContext_ProjectValueLine_yearFiveValue(_ contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueLine_description(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueLine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueLine_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueLine_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueLine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -23319,7 +23602,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationDefaults(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"discountRate", "hoursPerWeek", "focusFactor"}
+	fieldsInOrder := [...]string{"discountRate", "hoursPerWeek", "focusFactor", "commsCoefficient", "genericBlendedHourlyRate", "workingHoursPerYear"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -23342,11 +23625,32 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationDefaults(ctx context
 			it.HoursPerWeek = data
 		case "focusFactor":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("focusFactor"))
-			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.FocusFactor = data
+		case "commsCoefficient":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("commsCoefficient"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CommsCoefficient = data
+		case "genericBlendedHourlyRate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genericBlendedHourlyRate"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GenericBlendedHourlyRate = data
+		case "workingHoursPerYear":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workingHoursPerYear"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WorkingHoursPerYear = data
 		}
 	}
 
@@ -23861,7 +24165,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectValueLine(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectID", "id", "fundingSource", "valueCategory", "yearOneValue", "yearTwoValue", "yearThreeValue", "yearFourValue", "yearFiveValue"}
+	fieldsInOrder := [...]string{"projectID", "id", "fundingSource", "valueCategory", "yearOneValue", "yearTwoValue", "yearThreeValue", "yearFourValue", "yearFiveValue", "description"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -23931,6 +24235,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectValueLine(ctx context.Con
 				return it, err
 			}
 			it.YearFiveValue = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
 		}
 	}
 
@@ -25082,6 +25393,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "runProcesses":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_runProcesses(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createProjectComment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createProjectComment(ctx, field)
@@ -25405,6 +25723,21 @@ func (ec *executionContext) _OrganizationDefaults(ctx context.Context, sel ast.S
 			}
 		case "focusFactor":
 			out.Values[i] = ec._OrganizationDefaults_focusFactor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "commsCoefficient":
+			out.Values[i] = ec._OrganizationDefaults_commsCoefficient(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "genericBlendedHourlyRate":
+			out.Values[i] = ec._OrganizationDefaults_genericBlendedHourlyRate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "workingHoursPerYear":
+			out.Values[i] = ec._OrganizationDefaults_workingHoursPerYear(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -26637,6 +26970,8 @@ func (ec *executionContext) _ProjectValueLine(ctx context.Context, sel ast.Selec
 			out.Values[i] = ec._ProjectValueLine_yearFourValue(ctx, field, obj)
 		case "yearFiveValue":
 			out.Values[i] = ec._ProjectValueLine_yearFiveValue(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._ProjectValueLine_description(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
