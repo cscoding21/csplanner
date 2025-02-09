@@ -1,5 +1,5 @@
-import { FindAllListsDocument, GetListDocument } from '$lib/graphql/generated/sdk';
-import type { List, ListResults, ListItem } from '$lib/graphql/generated/sdk';
+import { FindAllListsDocument, GetListDocument, UpdateListDocument } from '$lib/graphql/generated/sdk';
+import type { List, ListResults, ListItem, CreateListResult, UpdateList } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 
 /**
@@ -34,6 +34,26 @@ export const getList = async (nameOrID: string): Promise<List> => {
 		.then((res) => {
 			if (res) {
 				return res.data.getList;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+/**
+ * Update the values of a specified list
+ * @param input The list in the updated state
+ * @returns the updated list and status of the update
+ */
+export const updateList = async (input: UpdateList): Promise<CreateListResult> => {
+	const client = getApolloClient();
+
+	return client
+		.query({ query: UpdateListDocument, variables: { input } })
+		.then((res) => {
+			if (res) {
+				return res.data.updateList;
 			}
 		})
 		.catch((err) => {

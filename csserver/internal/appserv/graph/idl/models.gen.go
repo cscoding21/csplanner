@@ -71,6 +71,11 @@ type ControlFields struct {
 	DeleteByUser *User      `json:"deleteByUser,omitempty"`
 }
 
+type CreateListResult struct {
+	Status *Status `json:"status"`
+	List   *List   `json:"list,omitempty"`
+}
+
 type CreateOrganizationResult struct {
 	Status       *Status       `json:"status"`
 	Organization *Organization `json:"organization,omitempty"`
@@ -89,6 +94,11 @@ type CreateProjectResult struct {
 type CreateResourceResult struct {
 	Status   *Status   `json:"status"`
 	Resource *Resource `json:"resource,omitempty"`
+}
+
+type CreateRoleResult struct {
+	Status *Status `json:"status"`
+	Role   *Role   `json:"role,omitempty"`
 }
 
 type CreateUserResult struct {
@@ -506,6 +516,17 @@ type UpdateCommentReply struct {
 	Text            string `json:"text"`
 }
 
+type UpdateList struct {
+	ID     string            `json:"id"`
+	Values []*UpdateListItem `json:"values"`
+}
+
+type UpdateListItem struct {
+	Value     string `json:"value"`
+	Name      string `json:"name"`
+	SortOrder *int   `json:"sortOrder,omitempty"`
+}
+
 type UpdateOrganization struct {
 	ID       *string                     `json:"id,omitempty"`
 	Name     string                      `json:"name"`
@@ -623,7 +644,7 @@ type UpdateResource struct {
 }
 
 type UpdateRole struct {
-	ID          string   `json:"id"`
+	ID          *string  `json:"id,omitempty"`
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	HourlyRate  *float64 `json:"hourlyRate,omitempty"`

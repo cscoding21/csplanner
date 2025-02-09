@@ -15,7 +15,7 @@ import (
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
-	"fmt"
+	"csserver/internal/utils"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -440,9 +440,29 @@ func (r *mutationResolver) DeleteResourceSkill(ctx context.Context, resourceID s
 	return csmap.GetStatusFromError(err)
 }
 
-// CreateOrganization is the resolver for the createOrganization field.
-func (r *mutationResolver) CreateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error) {
-	panic(fmt.Errorf("not implemented: CreateOrganization - createOrganization"))
+// UpdateRole is the resolver for the updateRole field.
+func (r *mutationResolver) UpdateRole(ctx context.Context, input idl.UpdateRole) (*idl.CreateRoleResult, error) {
+	service := factory.GetResourceService()
+	out := idl.CreateRoleResult{}
+
+	role := csmap.UpdateRoleIdlToResource(input)
+	result, err := service.UpsertRole(ctx, role)
+	if err != nil {
+		return nil, err
+	}
+
+	out.Status, _ = csmap.GetStatusFromUpdateResult(*result)
+	out.Role = common.ValToRef(csmap.RoleResourceToIdl(*result.Object))
+
+	return &out, nil
+}
+
+// DeleteRole is the resolver for the deleteRole field.
+func (r *mutationResolver) DeleteRole(ctx context.Context, id string) (*idl.Status, error) {
+	service := factory.GetResourceService()
+
+	err := service.DeleteRole(ctx, id)
+	return csmap.GetStatusFromError(err)
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.
@@ -462,6 +482,24 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 		Status:       status,
 		Organization: common.ValToRef(csmap.OrganizationOrganizationToIdl(*resp.Object)),
 	}
+
+	return &out, nil
+}
+
+// UpdateList is the resolver for the updateList field.
+func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList) (*idl.CreateListResult, error) {
+	service := factory.GetListService()
+	out := idl.CreateListResult{}
+
+	model := csmap.UpdateListIdlToList(input)
+
+	result, err := service.UpdateList(ctx, &model)
+	if err != nil {
+		return nil, err
+	}
+
+	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+	out.List = utils.ValToRef(csmap.ListListToIdl(*result.Object))
 
 	return &out, nil
 }

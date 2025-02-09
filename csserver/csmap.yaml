@@ -43,6 +43,16 @@ maps:
     imports: 
     - "csserver/internal/services/list"
     - "csserver/internal/common"
+  - name: "list_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/list/models.go"
+    imports: 
+    - "csserver/internal/common"
+    map_overrides:
+    - source_name: "UpdateList"
+      target_name: "List"
+    - source_name: "UpdateListItem"
+      target_name: "ListItem"
 
   - name: "organization_target"
     source_path: "internal/services/organization/models.go"

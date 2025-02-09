@@ -6,7 +6,8 @@ import type {
 	Status,
 	CreateResourceResult,
 	PageAndFilter,
-	Role,
+	UpdateRole,
+	CreateRoleResult,
 	RoleResults
 } from '$lib/graphql/generated/sdk';
 
@@ -19,7 +20,9 @@ import {
 	UpdateResourceSkillDocument,
 	DeleteResourceSkillDocument,
 	UpdateResourceDocument,
-	FindAllRolesDocument
+	FindAllRolesDocument,
+	DeleteRroleDocument,
+	UpdateRoleDocument
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 
@@ -200,3 +203,40 @@ export const findAllRoles = async ():Promise<RoleResults> => {
 			return err;
 		});
 }
+
+
+export const updateRole = async (input: UpdateRole): Promise<CreateRoleResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: UpdateRoleDocument, variables: { input } })
+		.then((res) => {
+			if (res) {
+				return res.data.updateRole;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+
+/**
+ * Delete a role
+ * @param id the ID of the role to delete
+ * @returns a status object for the operation
+ */
+export const deleteRole = async (id: string): Promise<Status> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: DeleteRroleDocument, variables: { id } })
+		.then((res) => {
+			if (res) {
+				return res.data.deleteRole;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};

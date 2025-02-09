@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { CSSection } from "$lib/components";
-    import { OrgSettings, Lists, Roles } from "./components";
+    import { OrgSettings, Lists, Roles, MyInfo } from "./components";
 
     let hash = $state($page.url.hash);
 </script>
@@ -22,7 +22,7 @@
 		{:else if hash == '#roles'}
 			<Roles />	
 		{:else if hash == '#my-info'}
-			About me
+			<MyInfo />
 		{/if}
 	</CSSection>
 	</div>

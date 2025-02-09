@@ -90,6 +90,12 @@ export type ControlFields = {
   updatedBy: Scalars['String']['output'];
 };
 
+export type CreateListResult = {
+  __typename?: 'CreateListResult';
+  list?: Maybe<List>;
+  status: Status;
+};
+
 export type CreateOrganizationResult = {
   __typename?: 'CreateOrganizationResult';
   organization?: Maybe<Organization>;
@@ -111,6 +117,12 @@ export type CreateProjectResult = {
 export type CreateResourceResult = {
   __typename?: 'CreateResourceResult';
   resource?: Maybe<Resource>;
+  status: Status;
+};
+
+export type CreateRoleResult = {
+  __typename?: 'CreateRoleResult';
+  role?: Maybe<Role>;
   status: Status;
 };
 
@@ -172,7 +184,6 @@ export type ListResults = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createOrganization: CreateOrganizationResult;
   createProject: CreateProjectResult;
   createProjectComment: CreateProjectCommentResult;
   createProjectCommentReply: CreateProjectCommentResult;
@@ -185,11 +196,13 @@ export type Mutation = {
   deleteProjectValueLine: CreateProjectResult;
   deleteResource: Status;
   deleteResourceSkill: Status;
+  deleteRole: Status;
   runProcesses: Status;
   setNotificationsRead: Status;
   setProjectMilestonesFromTemplate: CreateProjectResult;
   setProjectStatus: CreateProjectResult;
   toggleEmote: Status;
+  updateList: CreateListResult;
   updateOrganization: CreateOrganizationResult;
   updateProject: CreateProjectResult;
   updateProjectComment: CreateProjectCommentResult;
@@ -198,12 +211,8 @@ export type Mutation = {
   updateProjectValueLine: CreateProjectResult;
   updateResource: CreateResourceResult;
   updateResourceSkill: Status;
+  updateRole: CreateRoleResult;
   updateUser: CreateUserResult;
-};
-
-
-export type MutationCreateOrganizationArgs = {
-  input: UpdateOrganization;
 };
 
 
@@ -272,6 +281,11 @@ export type MutationDeleteResourceSkillArgs = {
 };
 
 
+export type MutationDeleteRoleArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationSetNotificationsReadArgs = {
   input: Array<Scalars['String']['input']>;
 };
@@ -290,6 +304,11 @@ export type MutationSetProjectStatusArgs = {
 
 export type MutationToggleEmoteArgs = {
   input: UpdateCommentEmote;
+};
+
+
+export type MutationUpdateListArgs = {
+  input: UpdateList;
 };
 
 
@@ -330,6 +349,11 @@ export type MutationUpdateResourceArgs = {
 
 export type MutationUpdateResourceSkillArgs = {
   input: UpdateSkill;
+};
+
+
+export type MutationUpdateRoleArgs = {
+  input: UpdateRole;
 };
 
 
@@ -830,6 +854,17 @@ export type UpdateCommentReply = {
   text: Scalars['String']['input'];
 };
 
+export type UpdateList = {
+  id: Scalars['String']['input'];
+  values: Array<UpdateListItem>;
+};
+
+export type UpdateListItem = {
+  name: Scalars['String']['input'];
+  sortOrder?: InputMaybe<Scalars['Int']['input']>;
+  value: Scalars['String']['input'];
+};
+
 export type UpdateOrganization = {
   defaults: UpdateOrganizationDefaults;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -947,11 +982,10 @@ export type UpdateResource = {
 };
 
 export type UpdateRole = {
-  __typename?: 'UpdateRole';
-  description: Scalars['String']['output'];
-  hourlyRate?: Maybe<Scalars['Float']['output']>;
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  description: Scalars['String']['input'];
+  hourlyRate?: InputMaybe<Scalars['Float']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
 };
 
 export type UpdateSkill = {
@@ -1085,6 +1119,17 @@ export const ValidationResultFragmentFragmentDoc = gql`
   }
 }
     `;
+export const ListFragmentFragmentDoc = gql`
+    fragment listFragment on List {
+  id
+  name
+  values {
+    value
+    name
+    sortOrder
+  }
+}
+    `;
 export const NotificationFragmentFragmentDoc = gql`
     fragment notificationFragment on Notification {
   id
@@ -1116,6 +1161,13 @@ export const OrganizationFragmentFragmentDoc = gql`
   }
 }
     `;
+export const RoleFragmentFragmentDoc = gql`
+    fragment roleFragment on Role {
+  name
+  description
+  hourlyRate
+}
+    `;
 export const ResourceFragmentFragmentDoc = gql`
     fragment resourceFragment on Resource {
   name
@@ -1125,9 +1177,7 @@ export const ResourceFragmentFragmentDoc = gql`
   }
   roleID
   role {
-    name
-    description
-    hourlyRate
+    ...roleFragment
   }
   profileImage
   userEmail
@@ -1143,7 +1193,8 @@ export const ResourceFragmentFragmentDoc = gql`
     proficiency
   }
 }
-    ${UserFragmentFragmentDoc}`;
+    ${UserFragmentFragmentDoc}
+${RoleFragmentFragmentDoc}`;
 export const ProjectFragmentFragmentDoc = gql`
     fragment projectFragment on Project {
   id
@@ -1412,29 +1463,32 @@ export const FindAllListsDocument = gql`
       ...pagingFragment
     }
     results {
-      id
-      name
-      values {
-        value
-        name
-      }
+      ...listFragment
     }
   }
 }
-    ${PagingFragmentFragmentDoc}`;
+    ${PagingFragmentFragmentDoc}
+${ListFragmentFragmentDoc}`;
 export const GetListDocument = gql`
     query getList($nameOrID: String!) {
   getList(nameOrID: $nameOrID) {
-    id
-    name
-    values {
-      value
-      name
-      sortOrder
+    ...listFragment
+  }
+}
+    ${ListFragmentFragmentDoc}`;
+export const UpdateListDocument = gql`
+    mutation updateList($input: UpdateList!) {
+  updateList(input: $input) {
+    status {
+      ...statusFragment
+    }
+    list {
+      ...listFragment
     }
   }
 }
-    `;
+    ${StatusFragmentFragmentDoc}
+${ListFragmentFragmentDoc}`;
 export const FindUserNotificationsDocument = gql`
     query findUserNotifications($input: PageAndFilter!) {
   findUserNotifications(pageAndFilter: $input) {
@@ -1716,15 +1770,15 @@ export const CreateResourceDocument = gql`
     mutation createResource($input: UpdateResource!) {
   createResource(input: $input) {
     status {
-      success
-      message
+      ...statusFragment
     }
     resource {
       ...resourceFragment
     }
   }
 }
-    ${ResourceFragmentFragmentDoc}`;
+    ${StatusFragmentFragmentDoc}
+${ResourceFragmentFragmentDoc}`;
 export const UpdateResourceDocument = gql`
     mutation updateResource($input: UpdateResource!) {
   updateResource(input: $input) {
@@ -1741,11 +1795,10 @@ ${ResourceFragmentFragmentDoc}`;
 export const DeleteResourceDocument = gql`
     mutation deleteResource($id: String!) {
   deleteResource(id: $id) {
-    success
-    message
+    ...statusFragment
   }
 }
-    `;
+    ${StatusFragmentFragmentDoc}`;
 export const GetResourceDocument = gql`
     query getResource($id: String!) {
   getResource(id: $id) {
@@ -1794,6 +1847,26 @@ export const FindAllRolesDocument = gql`
   }
 }
     ${PagingFragmentFragmentDoc}`;
+export const UpdateRoleDocument = gql`
+    mutation updateRole($input: UpdateRole!) {
+  updateRole(input: $input) {
+    status {
+      ...statusFragment
+    }
+    role {
+      ...roleFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${RoleFragmentFragmentDoc}`;
+export const DeleteRroleDocument = gql`
+    mutation deleteRrole($id: String!) {
+  deleteRole(id: $id) {
+    ...statusFragment
+  }
+}
+    ${StatusFragmentFragmentDoc}`;
 export const CalculateProjectScheduleDocument = gql`
     query calculateProjectSchedule($projectID: String!, $startDate: Time!) {
   calculateProjectSchedule(projectID: $projectID, startDate: $startDate) {
@@ -1850,6 +1923,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     getList(variables: GetListQueryVariables, options?: C): Promise<GetListQuery> {
       return requester<GetListQuery, GetListQueryVariables>(GetListDocument, variables, options) as Promise<GetListQuery>;
+    },
+    updateList(variables: UpdateListMutationVariables, options?: C): Promise<UpdateListMutation> {
+      return requester<UpdateListMutation, UpdateListMutationVariables>(UpdateListDocument, variables, options) as Promise<UpdateListMutation>;
     },
     findUserNotifications(variables: FindUserNotificationsQueryVariables, options?: C): Promise<FindUserNotificationsQuery> {
       return requester<FindUserNotificationsQuery, FindUserNotificationsQueryVariables>(FindUserNotificationsDocument, variables, options) as Promise<FindUserNotificationsQuery>;
@@ -1943,6 +2019,12 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     findAllRoles(variables?: FindAllRolesQueryVariables, options?: C): Promise<FindAllRolesQuery> {
       return requester<FindAllRolesQuery, FindAllRolesQueryVariables>(FindAllRolesDocument, variables, options) as Promise<FindAllRolesQuery>;
+    },
+    updateRole(variables: UpdateRoleMutationVariables, options?: C): Promise<UpdateRoleMutation> {
+      return requester<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument, variables, options) as Promise<UpdateRoleMutation>;
+    },
+    deleteRrole(variables: DeleteRroleMutationVariables, options?: C): Promise<DeleteRroleMutation> {
+      return requester<DeleteRroleMutation, DeleteRroleMutationVariables>(DeleteRroleDocument, variables, options) as Promise<DeleteRroleMutation>;
     },
     calculateProjectSchedule(variables: CalculateProjectScheduleQueryVariables, options?: C): Promise<CalculateProjectScheduleQuery> {
       return requester<CalculateProjectScheduleQuery, CalculateProjectScheduleQueryVariables>(CalculateProjectScheduleDocument, variables, options) as Promise<CalculateProjectScheduleQuery>;

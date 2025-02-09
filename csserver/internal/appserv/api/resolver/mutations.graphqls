@@ -25,9 +25,12 @@ type Mutation {
     deleteResource(id: String!) : Status!
     updateResourceSkill(input: UpdateSkill!) : Status!
     deleteResourceSkill(resourceID: String!, skillID: String!) : Status!
+    updateRole(input: UpdateRole!) : CreateRoleResult!
+    deleteRole(id: String!) : Status!
 
-    createOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
     updateOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
+
+    updateList(input: UpdateList!) : CreateListResult!
 
     setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate): CreateProjectResult!
 

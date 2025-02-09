@@ -114,6 +114,11 @@ type ComplexityRoot struct {
 		UpdatedBy    func(childComplexity int) int
 	}
 
+	CreateListResult struct {
+		List   func(childComplexity int) int
+		Status func(childComplexity int) int
+	}
+
 	CreateOrganizationResult struct {
 		Organization func(childComplexity int) int
 		Status       func(childComplexity int) int
@@ -132,6 +137,11 @@ type ComplexityRoot struct {
 	CreateResourceResult struct {
 		Resource func(childComplexity int) int
 		Status   func(childComplexity int) int
+	}
+
+	CreateRoleResult struct {
+		Role   func(childComplexity int) int
+		Status func(childComplexity int) int
 	}
 
 	CreateUserResult struct {
@@ -169,7 +179,6 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateOrganization               func(childComplexity int, input idl.UpdateOrganization) int
 		CreateProject                    func(childComplexity int, input idl.UpdateProject) int
 		CreateProjectComment             func(childComplexity int, input idl.UpdateComment) int
 		CreateProjectCommentReply        func(childComplexity int, input idl.UpdateCommentReply) int
@@ -182,11 +191,13 @@ type ComplexityRoot struct {
 		DeleteProjectValueLine           func(childComplexity int, projectID string, valueLineID string) int
 		DeleteResource                   func(childComplexity int, id string) int
 		DeleteResourceSkill              func(childComplexity int, resourceID string, skillID string) int
+		DeleteRole                       func(childComplexity int, id string) int
 		RunProcesses                     func(childComplexity int) int
 		SetNotificationsRead             func(childComplexity int, input []string) int
 		SetProjectMilestonesFromTemplate func(childComplexity int, input *idl.UpdateProjectMilestoneTemplate) int
 		SetProjectStatus                 func(childComplexity int, projectID string, newStatus string) int
 		ToggleEmote                      func(childComplexity int, input idl.UpdateCommentEmote) int
+		UpdateList                       func(childComplexity int, input idl.UpdateList) int
 		UpdateOrganization               func(childComplexity int, input idl.UpdateOrganization) int
 		UpdateProject                    func(childComplexity int, input idl.UpdateProject) int
 		UpdateProjectComment             func(childComplexity int, input idl.UpdateComment) int
@@ -195,6 +206,7 @@ type ComplexityRoot struct {
 		UpdateProjectValueLine           func(childComplexity int, input idl.UpdateProjectValueLine) int
 		UpdateResource                   func(childComplexity int, input idl.UpdateResource) int
 		UpdateResourceSkill              func(childComplexity int, input idl.UpdateSkill) int
+		UpdateRole                       func(childComplexity int, input idl.UpdateRole) int
 		UpdateUser                       func(childComplexity int, input idl.UpdateUser) int
 	}
 
@@ -558,13 +570,6 @@ type ComplexityRoot struct {
 		UnixTime  func(childComplexity int) int
 	}
 
-	UpdateRole struct {
-		Description func(childComplexity int) int
-		HourlyRate  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-	}
-
 	User struct {
 		Email        func(childComplexity int) int
 		FirstName    func(childComplexity int) int
@@ -614,8 +619,10 @@ type MutationResolver interface {
 	DeleteResource(ctx context.Context, id string) (*idl.Status, error)
 	UpdateResourceSkill(ctx context.Context, input idl.UpdateSkill) (*idl.Status, error)
 	DeleteResourceSkill(ctx context.Context, resourceID string, skillID string) (*idl.Status, error)
-	CreateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error)
+	UpdateRole(ctx context.Context, input idl.UpdateRole) (*idl.CreateRoleResult, error)
+	DeleteRole(ctx context.Context, id string) (*idl.Status, error)
 	UpdateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error)
+	UpdateList(ctx context.Context, input idl.UpdateList) (*idl.CreateListResult, error)
 	SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.CreateProjectResult, error)
 	SetNotificationsRead(ctx context.Context, input []string) (*idl.Status, error)
 }
@@ -973,6 +980,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ControlFields.UpdatedBy(childComplexity), true
 
+	case "CreateListResult.list":
+		if e.complexity.CreateListResult.List == nil {
+			break
+		}
+
+		return e.complexity.CreateListResult.List(childComplexity), true
+
+	case "CreateListResult.status":
+		if e.complexity.CreateListResult.Status == nil {
+			break
+		}
+
+		return e.complexity.CreateListResult.Status(childComplexity), true
+
 	case "CreateOrganizationResult.organization":
 		if e.complexity.CreateOrganizationResult.Organization == nil {
 			break
@@ -1028,6 +1049,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CreateResourceResult.Status(childComplexity), true
+
+	case "CreateRoleResult.role":
+		if e.complexity.CreateRoleResult.Role == nil {
+			break
+		}
+
+		return e.complexity.CreateRoleResult.Role(childComplexity), true
+
+	case "CreateRoleResult.status":
+		if e.complexity.CreateRoleResult.Status == nil {
+			break
+		}
+
+		return e.complexity.CreateRoleResult.Status(childComplexity), true
 
 	case "CreateUserResult.status":
 		if e.complexity.CreateUserResult.Status == nil {
@@ -1140,18 +1175,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ListResults.Results(childComplexity), true
-
-	case "Mutation.createOrganization":
-		if e.complexity.Mutation.CreateOrganization == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createOrganization_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateOrganization(childComplexity, args["input"].(idl.UpdateOrganization)), true
 
 	case "Mutation.createProject":
 		if e.complexity.Mutation.CreateProject == nil {
@@ -1297,6 +1320,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteResourceSkill(childComplexity, args["resourceID"].(string), args["skillID"].(string)), true
 
+	case "Mutation.deleteRole":
+		if e.complexity.Mutation.DeleteRole == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteRole_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteRole(childComplexity, args["id"].(string)), true
+
 	case "Mutation.runProcesses":
 		if e.complexity.Mutation.RunProcesses == nil {
 			break
@@ -1351,6 +1386,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ToggleEmote(childComplexity, args["input"].(idl.UpdateCommentEmote)), true
+
+	case "Mutation.updateList":
+		if e.complexity.Mutation.UpdateList == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateList(childComplexity, args["input"].(idl.UpdateList)), true
 
 	case "Mutation.updateOrganization":
 		if e.complexity.Mutation.UpdateOrganization == nil {
@@ -1447,6 +1494,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateResourceSkill(childComplexity, args["input"].(idl.UpdateSkill)), true
+
+	case "Mutation.updateRole":
+		if e.complexity.Mutation.UpdateRole == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateRole_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateRole(childComplexity, args["input"].(idl.UpdateRole)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -3116,34 +3175,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TimeResponse.UnixTime(childComplexity), true
 
-	case "UpdateRole.description":
-		if e.complexity.UpdateRole.Description == nil {
-			break
-		}
-
-		return e.complexity.UpdateRole.Description(childComplexity), true
-
-	case "UpdateRole.hourlyRate":
-		if e.complexity.UpdateRole.HourlyRate == nil {
-			break
-		}
-
-		return e.complexity.UpdateRole.HourlyRate(childComplexity), true
-
-	case "UpdateRole.id":
-		if e.complexity.UpdateRole.ID == nil {
-			break
-		}
-
-		return e.complexity.UpdateRole.ID(childComplexity), true
-
-	case "UpdateRole.name":
-		if e.complexity.UpdateRole.Name == nil {
-			break
-		}
-
-		return e.complexity.UpdateRole.Name(childComplexity), true
-
 	case "User.email":
 		if e.complexity.User.Email == nil {
 			break
@@ -3243,6 +3274,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateComment,
 		ec.unmarshalInputUpdateCommentEmote,
 		ec.unmarshalInputUpdateCommentReply,
+		ec.unmarshalInputUpdateList,
+		ec.unmarshalInputUpdateListItem,
 		ec.unmarshalInputUpdateOrganization,
 		ec.unmarshalInputUpdateOrganizationDefaults,
 		ec.unmarshalInputUpdateProject,
@@ -3257,6 +3290,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateProjectValue,
 		ec.unmarshalInputUpdateProjectValueLine,
 		ec.unmarshalInputUpdateResource,
+		ec.unmarshalInputUpdateRole,
 		ec.unmarshalInputUpdateSkill,
 		ec.unmarshalInputUpdateUser,
 	)
@@ -3543,6 +3577,22 @@ type ListResults {
   paging: Pagination
   filters: Filters!
   results: [List!]
+}
+
+input UpdateList {
+    id: String!
+    values: [UpdateListItem!]!
+}
+
+input UpdateListItem {
+  value: String!
+  name: String!
+  sortOrder: Int
+}
+
+type CreateListResult {
+  status: Status!
+  list: List
 }`, BuiltIn: false},
 	{Name: "../api/idl/notification.graphqls", Input: `type Notification {
   id: String!
@@ -3944,8 +3994,8 @@ input UpdateSkill {
   proficiency: Float!
 }
 
-type UpdateRole {
-  id: String!
+input UpdateRole {
+  id: String
   name: String!
   description: String!
   hourlyRate: Float
@@ -3955,6 +4005,11 @@ type UpdateRole {
 type CreateResourceResult {
   status: Status!
   resource: Resource
+}
+
+type CreateRoleResult {
+  status: Status!
+  role: Role
 }
 
 type ResourceResults {
@@ -4096,9 +4151,12 @@ input UpdateUser {
     deleteResource(id: String!) : Status!
     updateResourceSkill(input: UpdateSkill!) : Status!
     deleteResourceSkill(resourceID: String!, skillID: String!) : Status!
+    updateRole(input: UpdateRole!) : CreateRoleResult!
+    deleteRole(id: String!) : Status!
 
-    createOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
     updateOrganization(input: UpdateOrganization!) : CreateOrganizationResult!
+
+    updateList(input: UpdateList!) : CreateListResult!
 
     setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate): CreateProjectResult!
 
@@ -4152,21 +4210,6 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
-
-func (ec *executionContext) field_Mutation_createOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 idl.UpdateOrganization
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateOrganization2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateOrganization(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
 
 func (ec *executionContext) field_Mutation_createProjectCommentReply_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -4393,6 +4436,21 @@ func (ec *executionContext) field_Mutation_deleteResource_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_setNotificationsRead_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4454,6 +4512,21 @@ func (ec *executionContext) field_Mutation_toggleEmote_args(ctx context.Context,
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateCommentEmote2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateCommentEmote(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateList_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 idl.UpdateList
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateList2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateList(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -4574,6 +4647,21 @@ func (ec *executionContext) field_Mutation_updateResource_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateResource2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateResource(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateRole_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 idl.UpdateRole
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateRole2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateRole(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6918,6 +7006,107 @@ func (ec *executionContext) fieldContext_ControlFields_deleteByUser(_ context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _CreateListResult_status(ctx context.Context, field graphql.CollectedField, obj *idl.CreateListResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateListResult_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateListResult_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateListResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_Status_success(ctx, field)
+			case "message":
+				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateListResult_list(ctx context.Context, field graphql.CollectedField, obj *idl.CreateListResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateListResult_list(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.List, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.List)
+	fc.Result = res
+	return ec.marshalOList2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateListResult_list(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateListResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_List_id(ctx, field)
+			case "name":
+				return ec.fieldContext_List_name(ctx, field)
+			case "values":
+				return ec.fieldContext_List_values(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type List", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CreateOrganizationResult_status(ctx context.Context, field graphql.CollectedField, obj *idl.CreateOrganizationResult) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CreateOrganizationResult_status(ctx, field)
 	if err != nil {
@@ -7373,6 +7562,109 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateRoleResult_status(ctx context.Context, field graphql.CollectedField, obj *idl.CreateRoleResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateRoleResult_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateRoleResult_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateRoleResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_Status_success(ctx, field)
+			case "message":
+				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateRoleResult_role(ctx context.Context, field graphql.CollectedField, obj *idl.CreateRoleResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateRoleResult_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Role)
+	fc.Result = res
+	return ec.marshalORole2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐRole(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateRoleResult_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateRoleResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Role_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Role_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Role_description(ctx, field)
+			case "hourlyRate":
+				return ec.fieldContext_Role_hourlyRate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
 		},
 	}
 	return fc, nil
@@ -9530,8 +9822,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteResourceSkill(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createOrganization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createOrganization(ctx, field)
+func (ec *executionContext) _Mutation_updateRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateRole(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -9544,7 +9836,7 @@ func (ec *executionContext) _Mutation_createOrganization(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateOrganization(rctx, fc.Args["input"].(idl.UpdateOrganization))
+		return ec.resolvers.Mutation().UpdateRole(rctx, fc.Args["input"].(idl.UpdateRole))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9556,12 +9848,12 @@ func (ec *executionContext) _Mutation_createOrganization(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*idl.CreateOrganizationResult)
+	res := resTmp.(*idl.CreateRoleResult)
 	fc.Result = res
-	return ec.marshalNCreateOrganizationResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateOrganizationResult(ctx, field.Selections, res)
+	return ec.marshalNCreateRoleResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateRoleResult(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createOrganization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -9570,11 +9862,11 @@ func (ec *executionContext) fieldContext_Mutation_createOrganization(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "status":
-				return ec.fieldContext_CreateOrganizationResult_status(ctx, field)
-			case "organization":
-				return ec.fieldContext_CreateOrganizationResult_organization(ctx, field)
+				return ec.fieldContext_CreateRoleResult_status(ctx, field)
+			case "role":
+				return ec.fieldContext_CreateRoleResult_role(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type CreateOrganizationResult", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateRoleResult", field.Name)
 		},
 	}
 	defer func() {
@@ -9584,7 +9876,70 @@ func (ec *executionContext) fieldContext_Mutation_createOrganization(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createOrganization_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteRole(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteRole(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteRole(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_Status_success(ctx, field)
+			case "message":
+				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteRole_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9646,6 +10001,67 @@ func (ec *executionContext) fieldContext_Mutation_updateOrganization(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateOrganization_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateList(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateList(rctx, fc.Args["input"].(idl.UpdateList))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.CreateListResult)
+	fc.Result = res
+	return ec.marshalNCreateListResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateListResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_CreateListResult_status(ctx, field)
+			case "list":
+				return ec.fieldContext_CreateListResult_list(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateListResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateList_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -20808,179 +21224,6 @@ func (ec *executionContext) fieldContext_TimeResponse_timeStamp(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateRole_id(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateRole_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UpdateRole_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UpdateRole",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UpdateRole_name(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateRole_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UpdateRole_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UpdateRole",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UpdateRole_description(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateRole_description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UpdateRole_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UpdateRole",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UpdateRole_hourlyRate(ctx context.Context, field graphql.CollectedField, obj *idl.UpdateRole) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateRole_hourlyRate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.HourlyRate, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UpdateRole_hourlyRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UpdateRole",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *idl.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_id(ctx, field)
 	if err != nil {
@@ -23554,6 +23797,81 @@ func (ec *executionContext) unmarshalInputUpdateCommentReply(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateList(ctx context.Context, obj interface{}) (idl.UpdateList, error) {
+	var it idl.UpdateList
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "values"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "values":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("values"))
+			data, err := ec.unmarshalNUpdateListItem2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateListItemᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Values = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateListItem(ctx context.Context, obj interface{}) (idl.UpdateListItem, error) {
+	var it idl.UpdateListItem
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"value", "name", "sortOrder"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Value = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "sortOrder":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sortOrder"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SortOrder = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateOrganization(ctx context.Context, obj interface{}) (idl.UpdateOrganization, error) {
 	var it idl.UpdateOrganization
 	asMap := map[string]interface{}{}
@@ -24352,6 +24670,54 @@ func (ec *executionContext) unmarshalInputUpdateResource(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateRole(ctx context.Context, obj interface{}) (idl.UpdateRole, error) {
+	var it idl.UpdateRole
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "description", "hourlyRate"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "hourlyRate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hourlyRate"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HourlyRate = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateSkill(ctx context.Context, obj interface{}) (idl.UpdateSkill, error) {
 	var it idl.UpdateSkill
 	asMap := map[string]interface{}{}
@@ -24866,6 +25232,47 @@ func (ec *executionContext) _ControlFields(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var createListResultImplementors = []string{"CreateListResult"}
+
+func (ec *executionContext) _CreateListResult(ctx context.Context, sel ast.SelectionSet, obj *idl.CreateListResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createListResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateListResult")
+		case "status":
+			out.Values[i] = ec._CreateListResult_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "list":
+			out.Values[i] = ec._CreateListResult_list(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var createOrganizationResultImplementors = []string{"CreateOrganizationResult"}
 
 func (ec *executionContext) _CreateOrganizationResult(ctx context.Context, sel ast.SelectionSet, obj *idl.CreateOrganizationResult) graphql.Marshaler {
@@ -25001,6 +25408,47 @@ func (ec *executionContext) _CreateResourceResult(ctx context.Context, sel ast.S
 			}
 		case "resource":
 			out.Values[i] = ec._CreateResourceResult_resource(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var createRoleResultImplementors = []string{"CreateRoleResult"}
+
+func (ec *executionContext) _CreateRoleResult(ctx context.Context, sel ast.SelectionSet, obj *idl.CreateRoleResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createRoleResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateRoleResult")
+		case "status":
+			out.Values[i] = ec._CreateRoleResult_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "role":
+			out.Values[i] = ec._CreateRoleResult_role(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25470,9 +25918,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createOrganization":
+		case "updateRole":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createOrganization(ctx, field)
+				return ec._Mutation_updateRole(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteRole":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteRole(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -25480,6 +25935,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateOrganization":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateOrganization(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateList":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateList(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -28182,57 +28644,6 @@ func (ec *executionContext) _TimeResponse(ctx context.Context, sel ast.Selection
 	return out
 }
 
-var updateRoleImplementors = []string{"UpdateRole"}
-
-func (ec *executionContext) _UpdateRole(ctx context.Context, sel ast.SelectionSet, obj *idl.UpdateRole) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, updateRoleImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("UpdateRole")
-		case "id":
-			out.Values[i] = ec._UpdateRole_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._UpdateRole_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "description":
-			out.Values[i] = ec._UpdateRole_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "hourlyRate":
-			out.Values[i] = ec._UpdateRole_hourlyRate(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var userImplementors = []string{"User"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *idl.User) graphql.Marshaler {
@@ -28800,6 +29211,20 @@ func (ec *executionContext) marshalNCommentResults2ᚖcsserverᚋinternalᚋapps
 	return ec._CommentResults(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNCreateListResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateListResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateListResult) graphql.Marshaler {
+	return ec._CreateListResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateListResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateListResult(ctx context.Context, sel ast.SelectionSet, v *idl.CreateListResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateListResult(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCreateOrganizationResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateOrganizationResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateOrganizationResult) graphql.Marshaler {
 	return ec._CreateOrganizationResult(ctx, sel, &v)
 }
@@ -28854,6 +29279,20 @@ func (ec *executionContext) marshalNCreateResourceResult2ᚖcsserverᚋinternal�
 		return graphql.Null
 	}
 	return ec._CreateResourceResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCreateRoleResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateRoleResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateRoleResult) graphql.Marshaler {
+	return ec._CreateRoleResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateRoleResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateRoleResult(ctx context.Context, sel ast.SelectionSet, v *idl.CreateRoleResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateRoleResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNCreateUserResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateUserResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateUserResult) graphql.Marshaler {
@@ -29687,6 +30126,33 @@ func (ec *executionContext) unmarshalNUpdateCommentReply2csserverᚋinternalᚋa
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateList2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateList(ctx context.Context, v interface{}) (idl.UpdateList, error) {
+	res, err := ec.unmarshalInputUpdateList(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateListItem2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateListItemᚄ(ctx context.Context, v interface{}) ([]*idl.UpdateListItem, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*idl.UpdateListItem, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUpdateListItem2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateListItem(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNUpdateListItem2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateListItem(ctx context.Context, v interface{}) (*idl.UpdateListItem, error) {
+	res, err := ec.unmarshalInputUpdateListItem(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdateOrganization2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateOrganization(ctx context.Context, v interface{}) (idl.UpdateOrganization, error) {
 	res, err := ec.unmarshalInputUpdateOrganization(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -29729,6 +30195,11 @@ func (ec *executionContext) unmarshalNUpdateProjectValueLine2csserverᚋinternal
 
 func (ec *executionContext) unmarshalNUpdateResource2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateResource(ctx context.Context, v interface{}) (idl.UpdateResource, error) {
 	res, err := ec.unmarshalInputUpdateResource(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateRole2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateRole(ctx context.Context, v interface{}) (idl.UpdateRole, error) {
+	res, err := ec.unmarshalInputUpdateRole(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

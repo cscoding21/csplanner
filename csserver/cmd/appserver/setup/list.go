@@ -14,7 +14,7 @@ func CreateTestLists(ctx context.Context) error {
 	//uuid.New().String()
 	skillsList := list.List{
 		Name: "Skills",
-		Values: []list.ListItem{
+		Values: []*list.ListItem{
 			{Value: "backend", Name: "Backend Development"},
 			{Value: "frontend", Name: "Frontend Development"},
 			{Value: "database", Name: "Database Development"},
@@ -40,7 +40,7 @@ func CreateTestLists(ctx context.Context) error {
 
 	fundingSourceList := list.List{
 		Name: "Funding Source",
-		Values: []list.ListItem{
+		Values: []*list.ListItem{
 			{Value: "internal", Name: "Internal"},
 			{Value: "external", Name: "External"},
 		},
@@ -48,7 +48,7 @@ func CreateTestLists(ctx context.Context) error {
 
 	valueCategoryList := list.List{
 		Name: "Value Catetgory",
-		Values: []list.ListItem{
+		Values: []*list.ListItem{
 			{Value: "revenue", Name: "Revenue increase"},
 			{Value: "tax-benefit", Name: "Tax write-off"},
 			{Value: "risk-mitigation", Name: "Risk mitigation"},

@@ -1,27 +1,38 @@
+fragment listFragment on List {
+	id
+	name
+	values {
+		value
+		name
+		sortOrder
+	}
+}
+
+
 query findAllLists {
 	findAllLists {
 		paging {
 			...pagingFragment
 		}
 		results {
-			id
-			name
-			values {
-				value
-				name
-			}
+			...listFragment
 		}
 	}
 }
 
 query getList($nameOrID: String!) {
 	getList(nameOrID: $nameOrID) {
-		id
-		name
-		values {
-			value
-			name
-			sortOrder
+		...listFragment
+	}
+}
+
+mutation updateList($input: UpdateList!) {
+	updateList(input: $input) {
+		status {
+			...statusFragment
+		}
+		list {
+			...listFragment
 		}
 	}
 }

@@ -6,9 +6,7 @@ fragment resourceFragment on Resource {
 	}
 	roleID
 	role {
-		name
-		description
-		hourlyRate
+		...roleFragment
 	}
 	profileImage
 	userEmail
@@ -23,6 +21,12 @@ fragment resourceFragment on Resource {
 		name
 		proficiency
 	}
+}
+
+fragment roleFragment on Role {
+	name
+	description
+	hourlyRate
 }
 
 mutation updateResourceSkill($input: UpdateSkill!) {
@@ -42,8 +46,7 @@ mutation deleteResourceSkill($resourceID: String!, $skillID: String!) {
 mutation createResource($input: UpdateResource!) {
 	createResource(input: $input) {
 		status {
-			success
-			message
+			...statusFragment
 		}
 		resource {
 			...resourceFragment
@@ -64,8 +67,7 @@ mutation updateResource($input: UpdateResource!) {
 
 mutation deleteResource($id: String!) {
 	deleteResource(id: $id) {
-		success
-		message
+		...statusFragment
 	}
 }
 
@@ -109,5 +111,22 @@ query findAllRoles {
 			description
 			hourlyRate
 		}
+	}
+}
+
+mutation updateRole($input: UpdateRole!) {
+	updateRole(input: $input) {
+		status {
+			...statusFragment
+		}
+		role {
+			...roleFragment
+		}
+	}
+}
+
+mutation deleteRrole($id: String!) {
+	deleteRole(id: $id) {
+		...statusFragment
 	}
 }

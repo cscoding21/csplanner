@@ -41,3 +41,18 @@ export const resourceSchema = yup.object().shape({
 	annualizedCost: yup.number(),
 	availableHoursPerWeek: yup.number()
 });
+
+
+export const roleForm: any = {
+	id: '',
+	name: '',
+	description: '',
+	hourlyRate: 0.0
+};
+
+export const roleSchema = yup.object().shape({
+	id: yup.string(),
+	name: yup.string().required(),
+	description: yup.string().required(),
+	hourlyRate: yup.number()
+});

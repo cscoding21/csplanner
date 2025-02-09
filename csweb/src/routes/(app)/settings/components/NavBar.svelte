@@ -14,7 +14,22 @@
 		AngleUpOutline,
 		GithubSolid,
 		ChartPieOutline,
-		TableColumnSolid
+		TableColumnSolid,
+
+		UserOutline,
+
+		OutdentOutline,
+
+		AdjustmentsVerticalOutline,
+
+		ListOutline,
+
+		RectangleListOutline
+
+
+
+
+
 	} from 'flowbite-svelte-icons';
 
 	export let drawerHidden: boolean = false;
@@ -41,10 +56,10 @@
 	});
 
 	let posts = [
-		{ name: 'My Info', icon: ChartPieOutline, href: '#my-info' },
-		{ name: 'Org Settings', icon: ChartPieOutline, href: '#org-settings' },
-		{ name: 'Lists', icon: ChartPieOutline, href: '#lists' },
-		{ name: 'Roles', icon: ChartPieOutline, href: '#roles' },
+		{ name: 'My Info', icon: UserOutline, href: '#my-info' },
+		{ name: 'Org Settings', icon: AdjustmentsVerticalOutline, href: '#org-settings' },
+		{ name: 'Lists', icon: ListOutline, href: '#lists' },
+		{ name: 'Roles', icon: RectangleListOutline, href: '#roles' },
 	];
 
 	let links = [

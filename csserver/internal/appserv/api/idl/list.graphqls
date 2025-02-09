@@ -16,3 +16,19 @@ type ListResults {
   filters: Filters!
   results: [List!]
 }
+
+input UpdateList {
+    id: String!
+    values: [UpdateListItem!]!
+}
+
+input UpdateListItem {
+  value: String!
+  name: String!
+  sortOrder: Int
+}
+
+type CreateListResult {
+  status: Status!
+  list: List
+}

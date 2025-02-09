@@ -4,14 +4,6 @@
     import { addToast } from "$lib/stores/toasts";
 
     let lists = $state([] as List[])
-    
-    function refresh() {
-		load().then(l => {
-
-            lists = l.results as List[]
-			console.log(lists)
-		})
-	}
 
 	const load = async ():Promise<ListResults> => {
 		return await findAllLists()

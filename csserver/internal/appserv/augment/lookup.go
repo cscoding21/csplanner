@@ -9,6 +9,7 @@ import (
 	"csserver/internal/services/list"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
+	"csserver/internal/utils"
 	"strings"
 	"sync"
 
@@ -47,7 +48,8 @@ func getSkills() *[]list.ListItem {
 		return nil
 	}
 
-	_skillCache = &skillList.Values
+	sc := utils.RefToValSlice(skillList.Values)
+	_skillCache = &sc
 
 	return _skillCache
 }

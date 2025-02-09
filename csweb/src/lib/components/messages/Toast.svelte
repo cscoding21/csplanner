@@ -28,28 +28,28 @@
 		</div>
 	{:else if toast.type === 'error'}
 		<div
-			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200"
+			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200"
 		>
 			<CloseCircleSolid class="h-5 w-5" />
 			<span class="sr-only">Error icon</span>
 		</div>
 	{:else if toast.type === 'warn'}
 		<div
-			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200"
+			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-yellow-100 text-yellow-500 dark:bg-yellow-800 dark:text-yellow-200"
 		>
 			<ExclamationCircleSolid class="h-5 w-5" />
 			<span class="sr-only">Warning icon</span>
 		</div>
 	{:else if toast.type === 'info'}
 		<div
-			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200"
+			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-500 dark:bg-blue-800 dark:text-blue-200"
 		>
 			<ExclamationCircleOutline class="h-5 w-5" />
 			<span class="sr-only">Info icon</span>
 		</div>
 	{:else if toast.type === 'user'}
 		<div
-			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200"
+			class="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-200"
 		>
 			<Avatar src={toast.image} class="h-5 w-5" />
 			<span class="sr-only">User profile image</span>
