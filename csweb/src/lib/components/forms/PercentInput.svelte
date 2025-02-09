@@ -2,14 +2,16 @@
 	import { FormErrorMessage } from '$lib/components';
 	import { SalePercentOutline } from 'flowbite-svelte-icons';
 	import { callIf } from '$lib/utils/helpers';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		fieldName: string;
 		error: string;
+		children?: Snippet;
 		value: number;
 		update?: Function;
 	}
-	let { fieldName, error, value = $bindable(), update }: Props = $props();
+	let { fieldName, children, error, value = $bindable(), update }: Props = $props();
 </script>
 
 <div class="mb-6">
@@ -32,4 +34,8 @@
 		/>
 	</div>
 	<FormErrorMessage message={error} />
+
+	{#if children}
+	<small class="">{@render children()}</small>
+	{/if}
 </div>

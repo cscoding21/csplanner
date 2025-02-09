@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		fieldName: string;
@@ -7,12 +8,14 @@
 		value: string;
 		placeholder?: string;
 		update: Function;
+		children?: Snippet;
 	}
 	let {
 		fieldName,
 		error = $bindable(),
 		value = $bindable(),
 		placeholder,
+		children,
 		update
 	}: Props = $props();
 </script>
@@ -32,4 +35,8 @@
 	/>
 
 	<FormErrorMessage message={error} />
+
+	{#if children}
+	<small class="">{@render children()}</small>
+	{/if}
 </div>

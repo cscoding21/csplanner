@@ -3,16 +3,18 @@
 	import { Input, ButtonGroup, InputAddon } from 'flowbite-svelte';
 	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 	import { callIf } from '$lib/utils/helpers';
+	import type { Snippet } from 'svelte';
 
 	let show = $state(false);
 
 	interface Props {
 		fieldName: string;
 		error: string;
+		children?: Snippet;
 		value: string;
 		update?: Function;
 	}
-	let { fieldName, error = $bindable(), value = $bindable(), update }: Props = $props();
+	let { fieldName, children, error = $bindable(), value = $bindable(), update }: Props = $props();
 </script>
 
 <div class="mb-6">
@@ -44,4 +46,8 @@
 	</ButtonGroup>
 
 	<FormErrorMessage message={error} />
+
+	{#if children}
+	<small class="">{@render children()}</small>
+	{/if}
 </div>

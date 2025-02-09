@@ -18,7 +18,7 @@
 	import { TrashBinOutline, MessagesOutline, ArrowRightToBracketOutline } from 'flowbite-svelte-icons';
 	import type { Project } from '$lib/graphql/generated/sdk';
 	import { sineIn } from 'svelte/easing';
-	import ProjectStatusUpdate from '../../components/ProjectStatusUpdate.svelte';
+	import { ProjectStatusUpdate } from '../../components';
 
 	const id = $page.params.id;
 	let hash = $state($page.url.hash);
@@ -72,39 +72,25 @@
 
 	<div class="grid grid-cols-5">
 	<div class="flex w-full col-span-5">
+		<CSSection>
 		{#if hash == "#snapshot"}
-			<CSSection>
-				<ProjectSnapshot {id}  />
-			</CSSection>
+			<ProjectSnapshot {id}  />
 		{:else if hash == '#basics'}
-			<CSSection>
-				<ProjectBasics {id} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectBasics {id} update={() => console.log("update")} />
 		{:else if hash == '#daci'}
-			<CSSection>
-				<ProjectDACI {id} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectDACI {id} update={() => console.log("update")} />
 		{:else if hash == '#features'}
-			<CSSection>
-				<ProjectFeatures {id} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectFeatures {id} update={() => console.log("update")} />
 		{:else if hash == '#milestones'}
-			<CSSection>
-				<ProjectMilestones {id} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectMilestones {id} update={() => console.log("update")} />
 		{:else if hash == '#value'}
-			<CSSection>
-				<ProjectValue {id} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectValue {id} update={() => console.log("update")} />
 		{:else if hash == '#costs'}
-			<CSSection>
-				<ProjectCost {id} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectCost {id} update={() => console.log("update")} />
 		{:else if hash == '#schedule'}
-			<CSSection>
-				<ProjectSchedule {id} startDate={new Date()} update={() => console.log("update")} />
-			</CSSection>
+			<ProjectSchedule {id} startDate={new Date()} update={() => console.log("update")} />
 		{/if}
+	</CSSection>
 	</div>
 	
 	</div>

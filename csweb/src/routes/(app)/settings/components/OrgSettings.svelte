@@ -111,43 +111,51 @@
 			bind:value={of.discountRate}
 			fieldName="Discount rate"
 			placeholder="Discount rate"
-			error={errors.discountRate}
-		/>
+			error={errors.discountRate}>
+            The discount rate is in the net present value calculation of a project.
+        </NumberInput>
 
         <NumberInput
 			bind:value={of.hoursPerWeek}
 			fieldName="Working hours per week"
 			placeholder="Working hours per week"
-			error={errors.hoursPerWeek}
-		/>
+			error={errors.hoursPerWeek}> 
+            This value is used for estimating a work week ***check to see if it can be overridden at the resource level***
+        </NumberInput>
 
         <NumberInput
 			bind:value={of.focusFactor}
 			fieldName="Focus factor"
 			placeholder="Focus factor"
-			error={errors.focusFactor}
-		/>
+			error={errors.focusFactor}> 
+            This value is used to estimate additional hours for users that are involved in multiple projects
+        </NumberInput>
 
         <NumberInput
 			bind:value={of.commsCoefficient}
 			fieldName="Comms coefficient"
 			placeholder="Comms coefficient"
-			error={errors.commsCoefficient}
-		/>
+			error={errors.commsCoefficient}> 
+            This value is used to estimate additional hours for multiple users working on a single task
+        </NumberInput>
 
         <NumberInput
 			bind:value={of.genericBlendedHourlyRate}
 			fieldName="Generic blended hourly rate"
 			placeholder="Generic blended hourly rate"
-			error={errors.genericBlendedHourlyRate}
-		/>
+			error={errors.genericBlendedHourlyRate}> 
+            This is a default hourly rate that acts as a default when estimating project costs.  It can be overridden
+            at the role of individual level
+        </NumberInput>
 
         <NumberInput
 			bind:value={of.workingHoursPerYear}
-			fieldName="Workinng houre per year"
-			placeholder="Workinng houre per year"
-			error={errors.workingHoursPerYear}
-		/>
+			fieldName="Workinng hours per year"
+			placeholder="Workinng hours per year"
+			error={errors.workingHoursPerYear}> 
+            The number of working hours in a year is used to calculate an hourly rate for resources that have an annual cost 
+            associated with them.  This will override orginzation and role level values.
+        </NumberInput>
 
 		<div class="col-span-4">
 			<span class="float-right">

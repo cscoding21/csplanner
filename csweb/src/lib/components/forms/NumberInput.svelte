@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { type Snippet } from 'svelte';
 	import { FormErrorMessage } from '$lib/components';
 	import { callIf } from '$lib/utils/helpers';
 
@@ -9,8 +10,9 @@
 		min?: number;
 		update?: Function;
 		placeholder?: string;
+		children?: Snippet;
 	}
-	let { fieldName, min, update, placeholder, error = $bindable(), value = $bindable() }: Props = $props();
+	let { fieldName, min, update, children, placeholder, error = $bindable(), value = $bindable() }: Props = $props();
 </script>
 
 <div class="mb-6">
@@ -31,4 +33,8 @@
 		/>
 	</div>
 	<FormErrorMessage message={error} />
+
+	{#if children}
+	<small class="">{@render children()}</small>
+	{/if}
 </div>

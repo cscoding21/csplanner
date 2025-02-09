@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
 	import { callIf } from '$lib/utils/helpers';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		fieldName: string;
 		error: string;
 		placeholder?: string;
+		children?: Snippet;
 		value: string;
 		rows: number;
 		update?: Function;
@@ -14,6 +16,7 @@
 		fieldName,
 		error,
 		placeholder,
+		children,
 		update,
 		value = $bindable(),
 		rows = $bindable()
@@ -33,4 +36,8 @@
 	></textarea>
 
 	<FormErrorMessage message={error} />
+
+	{#if children}
+	<small class="">{@render children()}</small>
+	{/if}
 </div>

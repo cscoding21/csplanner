@@ -41,16 +41,10 @@
 	});
 
 	let posts = [
-		{
-			name: 'Settings',
-			icon: TableColumnSolid,
-			children: {
-				Organization: '#org-settings',
-				User: '#user-settings'
-			}
-		},
+		{ name: 'My Info', icon: ChartPieOutline, href: '#my-info' },
+		{ name: 'Org Settings', icon: ChartPieOutline, href: '#org-settings' },
 		{ name: 'Lists', icon: ChartPieOutline, href: '#lists' },
-		{ name: 'Manage Users', icon: ChartPieOutline, href: '#snapshot' },
+		{ name: 'Roles', icon: ChartPieOutline, href: '#roles' },
 	];
 
 	let links = [
@@ -75,34 +69,16 @@
 	>
 		<nav class="divide-y divide-gray-200 dark:divide-gray-700">
 			<SidebarGroup ulClass={groupClass} class="mb-3">
-				{#each posts as { name, icon, children, href } (name)}
-					{#if children}
-						<SidebarDropdownWrapper bind:isOpen={dropdowns[name]} label={name} class="pr-3">
-							<AngleDownOutline slot="arrowdown" strokeWidth="3.3" size="sm" />
-							<AngleUpOutline slot="arrowup" strokeWidth="3.3" size="sm" />
-							<svelte:component this={icon} slot="icon" class={iconClass} />
-
-							{#each Object.entries(children) as [title, href]}
-								<SidebarItem
-									label={title}
-									{href}
-									spanClass="ml-9"
-									class={itemClass}
-									active={activeMainSidebar === href}
-								/>
-							{/each}
-						</SidebarDropdownWrapper>
-					{:else}
-						<SidebarItem
-							label={name}
-							{href}
-							spanClass="ml-3"
-							class={itemClass}
-							active={activeMainSidebar === href}
-						>
-							<svelte:component this={icon} slot="icon" class={iconClass} />
-						</SidebarItem>
-					{/if}
+				{#each posts as { name, icon, href } (name)}
+				<SidebarItem
+					label={name}
+					{href}
+					spanClass="ml-3"
+					class={itemClass}
+					active={activeMainSidebar === href}
+				>
+					<svelte:component this={icon} slot="icon" class={iconClass} />
+				</SidebarItem>
 				{/each}
 			</SidebarGroup>
 			<SidebarGroup ulClass={groupClass}>

@@ -2,14 +2,16 @@
 	import { FormErrorMessage } from '$lib/components';
 	import { callIf } from '$lib/utils/helpers';
 	import { DollarOutline } from 'flowbite-svelte-icons';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		fieldName: string;
 		error: string;
 		value: number;
+		children?: Snippet;
 		update?: Function;
 	}
-	let { fieldName, error = $bindable(), value = $bindable(), update }: Props = $props();
+	let { children, fieldName, error = $bindable(), value = $bindable(), update }: Props = $props();
 
 	value = Math.round(value);
 </script>
@@ -34,4 +36,8 @@
 		/>
 	</div>
 	<FormErrorMessage message={error} />
+
+	{#if children}
+	<small class="">{@render children()}</small>
+	{/if}
 </div>
