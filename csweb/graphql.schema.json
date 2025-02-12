@@ -8452,22 +8452,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "confirmPassword",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "email",
             "description": null,
             "type": {
@@ -8484,7 +8468,7 @@
             "deprecationReason": null
           },
           {
-            "name": "name",
+            "name": "firstName",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -8500,7 +8484,23 @@
             "deprecationReason": null
           },
           {
-            "name": "password",
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lastName",
             "description": null,
             "type": {
               "kind": "NON_NULL",

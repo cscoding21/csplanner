@@ -46,3 +46,20 @@ export const getID = (...args:any):string => {
 
 	return normalizeID(btoa(str))
 }
+
+
+/**
+ * Take name as a string and convert it to an ID format
+ * @param name the name to be converted
+ * @returns the converted name
+ */
+export const nameToID = (name:string):string => {
+	const MAX_LENGTH:number = 64;
+	let str = name.toLocaleLowerCase().trimEnd().trimStart().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-]/g, '')
+
+	if (str.length > MAX_LENGTH) {
+		str = str.substring(0, MAX_LENGTH)
+	}
+
+	return normalizeID(str)
+}

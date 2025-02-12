@@ -995,10 +995,10 @@ export type UpdateSkill = {
 };
 
 export type UpdateUser = {
-  confirmPassword: Scalars['String']['input'];
   email: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
   profileImage?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1032,6 +1032,7 @@ export type ValidationResult = {
 
 export const UserFragmentFragmentDoc = gql`
     fragment userFragment on User {
+  id
   firstName
   lastName
   email
@@ -1894,6 +1895,19 @@ export const CurrentUserDocument = gql`
   }
 }
     ${UserFragmentFragmentDoc}`;
+export const UpdateUserDocument = gql`
+    mutation updateUser($input: UpdateUser!) {
+  updateUser(input: $input) {
+    status {
+      ...statusFragment
+    }
+    user {
+      ...userFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
 export type Requester<C = {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R> | AsyncIterable<R>
 export function getSdk<C>(requester: Requester<C>) {
   return {
@@ -2034,6 +2048,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     currentUser(variables?: CurrentUserQueryVariables, options?: C): Promise<CurrentUserQuery> {
       return requester<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, variables, options) as Promise<CurrentUserQuery>;
+    },
+    updateUser(variables: UpdateUserMutationVariables, options?: C): Promise<UpdateUserMutation> {
+      return requester<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, variables, options) as Promise<UpdateUserMutation>;
     }
   };
 }

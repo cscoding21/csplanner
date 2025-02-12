@@ -134,11 +134,17 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user *userService.User
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
+	kcUser, err := s.GetUser(ctx, user.Email)
+	if err != nil {
+		return common.NewUpdateResult[userService.User](&val, nil), err
+	}
+
 	props := make(map[string][]string)
 
 	props["profileImage"] = []string{user.ProfileImage}
 
 	u := gocloak.User{
+		ID:         &kcUser.ID,
 		FirstName:  &user.FirstName,
 		LastName:   &user.LastName,
 		Email:      &user.Email,

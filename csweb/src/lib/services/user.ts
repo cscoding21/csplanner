@@ -1,5 +1,5 @@
-import { FindAllUsersDocument } from '$lib/graphql/generated/sdk';
-import type { UserResults } from '$lib/graphql/generated/sdk';
+import { FindAllUsersDocument, UpdateUserDocument } from '$lib/graphql/generated/sdk';
+import type { CreateUserResult, UserResults, UpdateUser } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 
 /**
@@ -21,3 +21,25 @@ export const findAllUsers = async (): Promise<UserResults> => {
 			return err;
 		});
 };
+
+
+/**
+ * 
+ * @returns a status object with the updated user results
+ */
+export const updateUser = async(input:UpdateUser):Promise<CreateUserResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: UpdateUserDocument , variables: { input }  })
+		.then((userResults) => {
+			if (userResults) {
+				return userResults.data.updateUser;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+
+	return {}
+}

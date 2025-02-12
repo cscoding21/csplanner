@@ -1,4 +1,5 @@
 fragment userFragment on User {
+	id
 	firstName
 	lastName
 	email
@@ -19,5 +20,16 @@ query findAllUsers {
 query currentUser {
 	currentUser {
 		...userFragment
+	}
+}
+
+mutation updateUser($input: UpdateUser!)  {
+	updateUser(input: $input) {
+		status {
+			...statusFragment
+		}
+		user {
+			...userFragment
+		}
 	}
 }

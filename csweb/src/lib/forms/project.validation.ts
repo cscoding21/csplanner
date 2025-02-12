@@ -4,8 +4,7 @@ import type { UpdateProject } from '$lib/graphql/generated/sdk';
 export const basicSchema = yup.object().shape({
 	name: yup.string().required('Project name is required'),
 	description: yup.string().required('Description is required'),
-	ownerID: yup.string().required('Project owner is required'),
-	status: yup.string().required('Project status is required')
+	ownerID: yup.string().required('Project owner is required')
 });
 
 export const valueSchema = yup.object().shape({

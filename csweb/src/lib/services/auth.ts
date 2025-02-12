@@ -259,9 +259,10 @@ export function authService() {
 		}
 
 		const decoded = JSON.parse(atob(accessToken.split('.')[1]));
+		console.log(decoded)
 
 		user = {
-			id: decoded.dbid,
+			id: decoded.sub,
 			firstName: decoded.given_name,
 			lastName: decoded.family_name,
 			email: decoded.email,

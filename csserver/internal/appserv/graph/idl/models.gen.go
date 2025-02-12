@@ -657,11 +657,11 @@ type UpdateSkill struct {
 }
 
 type UpdateUser struct {
-	Name            string  `json:"name"`
-	Email           string  `json:"email"`
-	Password        string  `json:"password"`
-	ConfirmPassword string  `json:"confirmPassword"`
-	ProfileImage    *string `json:"profileImage,omitempty"`
+	FirstName    string  `json:"firstName"`
+	LastName     string  `json:"lastName"`
+	ID           string  `json:"id"`
+	Email        string  `json:"email"`
+	ProfileImage *string `json:"profileImage,omitempty"`
 }
 
 type User struct {

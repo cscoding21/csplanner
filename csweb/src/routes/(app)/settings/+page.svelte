@@ -21,7 +21,7 @@
 			<Lists />	
 		{:else if hash == '#roles'}
 			<Roles />	
-		{:else if hash == '#my-info'}
+		{:else if hash == '#my-info' || hash == ''}
 			<MyInfo />
 		{/if}
 	</CSSection>

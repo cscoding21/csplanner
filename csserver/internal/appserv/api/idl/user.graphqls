@@ -20,9 +20,9 @@ type UserResults {
 
 
 input UpdateUser {
-  name: String!
+  firstName: String!
+  lastName: String!
+  id: String!
   email: String!
-  password: String!
-  confirmPassword: String!
   profileImage: String
 }

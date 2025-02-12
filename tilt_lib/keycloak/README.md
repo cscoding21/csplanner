@@ -1,5 +1,7 @@
 # Configuring Keycloak from a New Install
 
+Local URL: __http://localhost:8080/auth__
+
 - Create realm __csplanner__ and import script __csplanner-realm-export.json__
 - Create user __csplanner-admin__ in __master__ realm
 - Create a password for csplanner-admin user by copying the appropriate secret from the secret file __kc-admin-pass.txt__ (or create a new password in the UI and change the secrets file) 

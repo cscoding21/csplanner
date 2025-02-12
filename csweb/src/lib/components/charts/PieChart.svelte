@@ -2,6 +2,7 @@
 	import { Chart } from 'flowbite-svelte';
 	import { type ApexOptions, default as ApexCharts } from 'apexcharts';
 	import { formatCurrency } from '$lib/utils/format';
+	import { getPrimaryColor, getTertiaryColor, getQuaternaryColor, getWhiteAndDark900Colors } from './chartConfig'
 
     interface Props {
 		values: number[];
@@ -20,60 +21,67 @@
         }
     }
 
-    let getChartOptions = (v:number[], l:string[]): ApexOptions => {
-        return  {
-        	series: v,
+	const getChartOptions = (v:number[], l:string[]):ApexOptions => {
+		return {
+			series: v,
+			colors: [getPrimaryColor(), getTertiaryColor(), getQuaternaryColor()],
 			chart: {
-				width: '60%',
-				type: 'pie',
+				height: 240,
+				width: "100%",
+				type: "pie",
+			},
+			stroke: {
+				colors: [getWhiteAndDark900Colors()],
+				lineCap: undefined,
+			},
+			plotOptions: {
+				// pie: {
+				// 	labels: {
+				// 		show: true,
+				// 	},
+				// 	size: "100%",
+				// 	dataLabels: {
+				// 		offset: -25,
+				// 	},
+				// },
 			},
 			labels: l,
-			// fill: {
-			// 	colors: ['#5a67d8', '#FDBA8C'],
-			// 	opacity: 0.75
-			// },
 			dataLabels: {
+				enabled: true,
 				style: {
-					fontFamily: 'Inter, sans-serif',
-					colors: ['#ffffff']
+					fontFamily: "Inter, sans-serif",
 				},
-				
 			},
-			grid: {
-			padding: {
-				top: 0,
-				bottom: 0,
-				left: 0,
-				right: 0,
-			},
-			},
-			responsive: [{
-				breakpoint: 480,
-				options: {
-					chart: {
-						width: 200
-					},
-					legend: {
-						position: 'bottom'
-					}
-				}
-			}],
 			legend: {
-				show: true,
+				position: "right",
+				fontFamily: "Inter, sans-serif",
 				labels: {
 					colors: ['#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb', '#bbb'],
 				},
 			},
-			tooltip: {
-				enabled: true,
-				y: {
-					formatter: function(value) {
+			yaxis: {
+				labels: {
+					formatter: function (value:any) {
 						return formatSelector(value, format);
-					}
-				}
-			}
-        };
+					},
+				},
+			},
+			xaxis: {
+				labels: {
+					formatter: function (value:any) {
+						return formatSelector(value, format);
+					},
+				},
+				axisTicks: {
+					show: false,
+				},
+				axisBorder: {
+					show: false,
+				},
+			},
+		};
 	};
+
 	let chart = new ApexCharts(document.querySelector('#pie_chartPlaceholder'), getChartOptions(values, labels));
 </script>
 

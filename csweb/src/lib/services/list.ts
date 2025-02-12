@@ -50,7 +50,7 @@ export const updateList = async (input: UpdateList): Promise<CreateListResult> =
 	const client = getApolloClient();
 
 	return client
-		.query({ query: UpdateListDocument, variables: { input } })
+		.mutate({ mutation: UpdateListDocument, variables: { input } })
 		.then((res) => {
 			if (res) {
 				return res.data.updateList;

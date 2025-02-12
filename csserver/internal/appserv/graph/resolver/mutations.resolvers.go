@@ -20,19 +20,20 @@ import (
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
-	out := idl.CreateUserResult{}
-	service := factory.GetIAMAdminService()
-	user := csmap.UpdateUserIdlToUser(input)
+	panic("cannot create user from app UI")
+	// out := idl.CreateUserResult{}
+	// service := factory.GetIAMAdminService()
+	// user := csmap.UpdateUserIdlToUser(input)
 
-	result, err := service.CreateUser(ctx, &user)
-	if err != nil {
-		out.Status, _ = csmap.GetStatusFromError(err)
-	} else {
-		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
-		out.User = common.ValToRef(csmap.UserUserToIdl(*result.Object))
-	}
+	// result, err := service.CreateUser(ctx, &user)
+	// if err != nil {
+	// 	out.Status, _ = csmap.GetStatusFromError(err)
+	// } else {
+	// 	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+	// 	out.User = common.ValToRef(csmap.UserUserToIdl(*result.Object))
+	// }
 
-	return &out, nil
+	// return &out, nil
 }
 
 // UpdateUser is the resolver for the updateUser field.
@@ -493,7 +494,7 @@ func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList)
 
 	model := csmap.UpdateListIdlToList(input)
 
-	result, err := service.UpdateList(ctx, &model)
+	result, err := service.SaveList(ctx, model)
 	if err != nil {
 		return nil, err
 	}

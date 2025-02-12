@@ -30,3 +30,19 @@ func (s *ListService) GetList(ctx context.Context, idOrName string) (*List, erro
 	list := utils.RefToVal(listArray)[0]
 	return common.HandleReturnWithValue[List](&list, err)
 }
+
+// SaveList higher order function for saving an existing list
+func (s *ListService) SaveList(ctx context.Context, list List) (common.UpdateResult[List], error) {
+	id := list.ID
+
+	existingList, err := s.GetList(ctx, id)
+	if err != nil {
+		return common.UpdateResult[List]{
+			Object: existingList,
+		}, err
+	}
+
+	existingList.Values = list.Values
+
+	return s.UpdateList(ctx, existingList)
+}

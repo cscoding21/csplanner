@@ -153,7 +153,9 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 		}
 
 		for _, t := range m.Tasks {
-			cost = cost + t.Calculated.ActualizedCost
+			cost += t.Calculated.ActualizedCost
+			hours += t.HourEstimate
+			actualizedHours += t.Calculated.ActualizedHoursToComplete
 		}
 	}
 
