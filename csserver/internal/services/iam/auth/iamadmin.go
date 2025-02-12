@@ -48,7 +48,6 @@ func NewIAMAdminService(
 
 // CreateUser create a new Keycloak user
 func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User) (common.UpdateResult[userService.User], error) {
-	log.Debug("---------------------------------")
 	val := user.Validate()
 	if !val.Pass {
 		return common.NewUpdateResult[userService.User](&val, nil), fmt.Errorf("validation failed")
@@ -134,7 +133,17 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user *userService.User
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
-	kcUser, err := s.GetUser(ctx, user.Email)
+	dbUser, err := s.UserService.GetUser(user.Email)
+	if err != nil {
+		return common.NewUpdateResult[userService.User](&val, nil), err
+	}
+
+	dbUser.FirstName = user.FirstName
+	dbUser.LastName = user.LastName
+	dbUser.ProfileImage = user.ProfileImage
+	dbUser.Email = user.Email
+
+	kcUser, err := s.getKCUser(ctx, user.Email)
 	if err != nil {
 		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
@@ -142,20 +151,19 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user *userService.User
 	props := make(map[string][]string)
 
 	props["profileImage"] = []string{user.ProfileImage}
+	props["dbid"] = []string{dbUser.ID}
 
-	u := gocloak.User{
-		ID:         &kcUser.ID,
-		FirstName:  &user.FirstName,
-		LastName:   &user.LastName,
-		Email:      &user.Email,
-		Enabled:    gocloak.BoolP(true),
-		Username:   &user.Email,
-		Attributes: &props,
+	kcUser.FirstName = &user.FirstName
+	kcUser.LastName = &user.LastName
+	kcUser.Email = &user.Email
+	kcUser.Attributes = &props
+
+	err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, *kcUser)
+	if err != nil {
+		return common.NewUpdateResult[userService.User](&val, nil), err
 	}
 
-	err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, u)
-
-	return common.NewUpdateResult[userService.User](&val, nil), err
+	return s.UserService.UpdateUser(ctx, dbUser)
 }
 
 // getAdminToken return an token that can be used for
@@ -179,14 +187,14 @@ func (s *IAMAdminService) GetCurrentUser(ctx context.Context) (*userService.User
 	return common.HandleReturnWithValue(user, err)
 }
 
-// GetUser get a user based on the passed in email
-func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userService.User, error) {
+// getKCUser retrieve a user record from Keycloak
+func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*gocloak.User, error) {
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
 		"master")
 	if err != nil {
-		return common.HandleReturnWithValue[userService.User](nil, err)
+		return nil, err
 	}
 
 	params := gocloak.GetUsersParams{
@@ -195,10 +203,17 @@ func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userS
 
 	users, err := s.KCClient.GetUsers(ctx, token.AccessToken, s.KCRealm, params)
 	if err != nil || len(users) == 0 {
-		return common.HandleReturnWithValue[userService.User](nil, err)
+		return nil, err
 	}
 
 	u := users[0]
+
+	return u, nil
+}
+
+// GetUser get a user based on the passed in email
+func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userService.User, error) {
+	u, err := s.getKCUser(ctx, idOrEmail)
 
 	user := userService.User{
 		ControlFields: common.ControlFields{

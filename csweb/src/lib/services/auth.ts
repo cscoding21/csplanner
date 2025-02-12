@@ -288,6 +288,7 @@ export function authService() {
 		login,
 		signout,
 		currentUser,
+		refresh,
 		authCheck,
 		getAuthHeaders,
 		getAccessToken,

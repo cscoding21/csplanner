@@ -1,6 +1,7 @@
 import { FindAllUsersDocument, UpdateUserDocument } from '$lib/graphql/generated/sdk';
 import type { CreateUserResult, UserResults, UpdateUser } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
+import { authService } from './auth';
 
 /**
  * return all users in the system
@@ -34,7 +35,10 @@ export const updateUser = async(input:UpdateUser):Promise<CreateUserResult> => {
 		.mutate({ mutation: UpdateUserDocument , variables: { input }  })
 		.then((userResults) => {
 			if (userResults) {
-				return userResults.data.updateUser;
+				const as = authService()
+				as.refresh()
+
+				return userResults.data.updateUser
 			}
 		})
 		.catch((err) => {
