@@ -31,6 +31,30 @@ var (
 	_roleCacheLock     sync.Mutex
 )
 
+func ExpireProjectCache() {
+	_projectCacheLock.Lock()
+	defer _projectCacheLock.Unlock()
+	_projectCache = nil
+}
+
+func ExpireResourceCache() {
+	_resourceCacheLock.Lock()
+	defer _resourceCacheLock.Unlock()
+	_resourceCache = nil
+}
+
+func ExpireUserCache() {
+	_userCacheLock.Lock()
+	defer _userCacheLock.Unlock()
+	_userCache = nil
+}
+
+func ExpireRoleCache() {
+	_roleCacheLock.Lock()
+	defer _roleCacheLock.Unlock()
+	_roleCache = nil
+}
+
 func getSkills() *[]list.ListItem {
 	if _skillCache != nil {
 		return _skillCache

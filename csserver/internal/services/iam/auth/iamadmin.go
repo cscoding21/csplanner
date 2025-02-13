@@ -248,13 +248,16 @@ func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults
 
 	out := []userService.User{}
 
-	for _, u := range users {
+	for i := range users {
 		user := userService.User{
-			FirstName:    *u.FirstName,
-			LastName:     *u.LastName,
-			Email:        *u.Email,
-			DBID:         getDBID(u.Attributes),
-			ProfileImage: getProfileImage(u.Attributes),
+			ControlFields: common.ControlFields{
+				ID: *users[i].ID,
+			},
+			FirstName:    *users[i].FirstName,
+			LastName:     *users[i].LastName,
+			Email:        *users[i].Email,
+			DBID:         getDBID(users[i].Attributes),
+			ProfileImage: getProfileImage(users[i].Attributes),
 		}
 
 		out = append(out, user)

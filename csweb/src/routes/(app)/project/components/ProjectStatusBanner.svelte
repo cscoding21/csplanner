@@ -7,9 +7,8 @@
     interface Props {
 		project: Project;
 		schedule?: Schedule;
-        update: Function;
 	}
-    let { project, schedule, update }: Props = $props();
+    let { project, schedule }: Props = $props();
 
 </script>
 

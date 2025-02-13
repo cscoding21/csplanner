@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
-    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, type Week } from ".";
+    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, ProjectStartDateSet, type Week } from ".";
 	import { calculateProjectSchedule } from "$lib/services/project";
     import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
@@ -17,13 +17,23 @@
 
     interface Props {
 		id: string;
-		startDate: Date;
         update: Function;
 	}
-    let { id, startDate, update }: Props = $props();
+    let { id, update }: Props = $props();
 
     let result:Schedule = $state({} as Schedule)
     let scheduleTable = $state({header: [] as string[], body:[] as ScheduleRow[]})
+    let startDate = $state(new Date()) 
+
+
+    function refresh() {
+		console.log('refreshing')
+		load().then(p => {
+			result = p
+
+			update();
+		})
+	}
 
 
     const getScheduleTableByResource = (r: Schedule) => {
@@ -148,12 +158,14 @@
             console.log("found schedule from portfolio")
 
             if (s.project) {
+                startDate = s.begin
                 return s
             }
 
             return calculateProjectSchedule(id, startDate)
                 .then((s) => {
                     console.log("found schedule from calculate")
+                    result = s.schedule
                     return s.schedule
                 })
                 .catch((err) => {
@@ -203,9 +215,12 @@
     Schedule: {result.project.projectBasics.name}
     <span class="float-right"><BadgeProjectStatus status={result.project.projectStatusBlock?.status} /></span>
 </SectionHeading>
-{/if}
 
-<ProjectStatusBanner project={result.project} schedule={result} update={() => console.log("update")} />
+<ProjectStatusBanner project={result.project} schedule={result} />
+
+<h3>{result.project.projectBasics.startDate}</h3>
+<ProjectStartDateSet project={result.project} update={() => refresh()} />
+{/if}
 
 {#if result.exceptions}
     <ul class="">

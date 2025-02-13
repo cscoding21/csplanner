@@ -6,7 +6,7 @@
         UserCard,
         SectionSubHeading
     } from "$lib/components";
-    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ProjectStatusUpdate } from ".";
+    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ProjectStatusUpdate, ProjectStatusBanner } from ".";
     import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover, Hr } from "flowbite-svelte";
     import { QuestionCircleSolid } from "flowbite-svelte-icons";
     import { 
@@ -59,6 +59,7 @@
     <span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
 </SectionHeading>
 </div>
+
 {/if}
 
 <div class="col-span-1">

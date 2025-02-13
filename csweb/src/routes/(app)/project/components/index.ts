@@ -21,6 +21,7 @@ export { default as ProjectSchedule } from './ProjectSchedule.svelte';
 export { default as ProjectScheduleCell } from './ProjectScheduleCell.svelte';
 export { default as ProjectSearchFilters } from './ProjectSearchFilters.svelte';
 export { default as ProjectSnapshot } from './ProjectSnapshot.svelte';
+export { default as ProjectStartDateSet } from './ProjectStartDateSet.svelte';
 export { default as ProjectStatusBanner } from './ProjectStatusBanner.svelte';
 export { default as ProjectStatusUpdate } from './ProjectStatusUpdate.svelte';
 export { default as ProjectTaskDisplay } from './ProjectTaskDisplay.svelte';
@@ -31,6 +32,8 @@ export { default as ProjectValueCategoryDistributionChart } from './ProjectValue
 export { default as ProjectValueChart } from './ProjectValueChart.svelte';
 export { default as ProjectValueLineForm } from './ProjectValueLineForm.svelte';
 export { default as ProjectValueLineFormModal } from './ProjectValueLineFormModal.svelte';
+
+export { default as ShowIfStatus } from './ShowIfStatus.svelte';
 
 
 export type { Week } from './ProjectScheduleCell.svelte';

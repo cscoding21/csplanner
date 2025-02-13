@@ -6,7 +6,7 @@
 	} from 'flowbite-svelte-icons';
 	import { SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/project';
-	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus, BadgeProjectStatus } from '.';
+	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus, BadgeProjectStatus, ShowIfStatus } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { getDefaultProject } from '$lib/forms/project.validation';
@@ -101,10 +101,11 @@
 									{/if}
 								{/each}
 							{/if}
-							<Hr />
-							<SectionHeading>Add New Task to Milestone {milestone.phase.name}</SectionHeading>
-							<ProjectTaskForm milestoneID={milestone.id} projectID={id} update={() => refresh()} />
-
+							<ShowIfStatus scope={["new", "draft"]} status={project.projectStatusBlock?.status}>
+								<Hr />
+								<SectionHeading>Add New Task to Milestone {milestone.phase.name}</SectionHeading>
+								<ProjectTaskForm milestoneID={milestone.id} projectID={id} update={() => refresh()} />
+							</ShowIfStatus>
 						</div>
 					  </TabItem>
 					{/each}

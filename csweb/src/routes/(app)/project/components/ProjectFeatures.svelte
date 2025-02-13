@@ -6,6 +6,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import type { Project } from '$lib/graphql/generated/sdk';
 	import { getDefaultProject } from '$lib/forms/project.validation';
+	import ShowIfStatus from './ShowIfStatus.svelte';
 
 	interface Props {
 		id: string;
@@ -74,7 +75,9 @@
 	{/if}
 </div>
 
-<ProjectFeatureForm projectID={id} feature={undefined} update={() => refresh()} />
+<ShowIfStatus scope={["new", "draft"]} status={project.projectStatusBlock?.status}>
+	<ProjectFeatureForm projectID={id} feature={undefined} update={() => refresh()} />
+</ShowIfStatus>
 
 {/if}
 {/await}

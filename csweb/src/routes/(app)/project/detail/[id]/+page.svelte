@@ -88,7 +88,7 @@
 		{:else if hash == '#costs'}
 			<ProjectCost {id} update={() => console.log("update")} />
 		{:else if hash == '#schedule'}
-			<ProjectSchedule {id} startDate={new Date()} update={() => console.log("update")} />
+			<ProjectSchedule {id} update={() => console.log("update")} />
 		{/if}
 	</CSSection>
 	</div>

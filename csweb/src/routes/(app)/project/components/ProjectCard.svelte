@@ -28,7 +28,9 @@
 	<P class="line-clamp-2 py-1 text-sm text-slate-600 dark:text-slate-400"
 		>{project.projectBasics?.description}</P
 	>
-	<span class="float-right">{formatDate(project.projectBasics?.startDate)}</span>
+	{#if project.projectBasics.startDate}
+	<span class="text-xs text-yellow-200">Start date: <b>{formatDate(project.projectBasics?.startDate)}</b></span>
+	{/if}
 	<Hr classHr="mt-2 mb-4" />
 	<div class="px-4">
 		<span>
