@@ -88,7 +88,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Proposed,
 		Description: "project details are complete and is ready for review",
 		//---states that can be entered from this state
-		NextValidStates: []projectstatus.ProjectState{projectstatus.Approved, projectstatus.Rejected, projectstatus.Abandoned},
+		NextValidStates: []projectstatus.ProjectState{projectstatus.Draft, projectstatus.Approved, projectstatus.Rejected, projectstatus.Abandoned},
 
 		Can: func(p *Project) validate.ValidationResult {
 			result := validate.NewSuccessValidationResult()

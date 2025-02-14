@@ -8,18 +8,20 @@
 	} from 'flowbite-svelte';
 	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
 	import type { ProjectFeature } from '$lib/graphql/generated/sdk';
-	import { DeleteProjectFeature, ProjectFeatureForm, BadgeFeaturePriority } from '.';
+	import { DeleteProjectFeature, ProjectFeatureForm, BadgeFeaturePriority, ShowIfStatus } from '.';
 	import { callIf } from '$lib/utils/helpers';
 
 	interface Props {
 		update?: Function
 		projectID: string
+		projectStatus: string
 		feature: ProjectFeature;
 	}
 	let { 
 		feature = $bindable(), 
 		update, 
-		projectID 
+		projectID, 
+		projectStatus
 	}: Props = $props();
 
 	let modalState:boolean = $state(false)
@@ -32,6 +34,7 @@
 	<span class="float-right">
 		<BadgeFeaturePriority priority={feature.priority} />
 
+		<ShowIfStatus scope={["new", "draft"]} status={projectStatus}>
 		<ButtonGroup>
 		<Button
 			color="dark"
@@ -52,6 +55,7 @@
 			<TrashBinOutline size="sm" class="" />
 		</DeleteProjectFeature>
 		</ButtonGroup>
+		</ShowIfStatus>
 	</span>
 </Heading>
 <div class="my-2 text-xs text-gray-100">Status: <b>{feature.status}</b></div>

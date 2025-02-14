@@ -8,6 +8,7 @@
     import { SectionHeading } from "$lib/components";
     import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
+	import ShowIfStatus from "./ShowIfStatus.svelte";
 
     interface ScheduleRow {
         label: string
@@ -218,8 +219,13 @@
 
 <ProjectStatusBanner project={result.project} schedule={result} />
 
-<h3>{result.project.projectBasics.startDate}</h3>
-<ProjectStartDateSet project={result.project} update={() => refresh()} />
+<ShowIfStatus scope={["approved", "scheduled", "inflight", "deferred", "abandoned"]} status={result.project.projectStatusBlock?.status}>
+    <ProjectStartDateSet project={result.project} update={() => refresh()} />
+
+    {#snippet elseRender()}
+        <h3>{result.project.projectBasics.startDate}</h3>
+	{/snippet}
+</ShowIfStatus>
 {/if}
 
 {#if result.exceptions}

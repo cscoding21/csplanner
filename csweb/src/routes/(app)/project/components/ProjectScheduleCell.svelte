@@ -11,6 +11,7 @@
     import { Popover, Button } from "flowbite-svelte";
     import { normalizeGUID } from "$lib/utils/id";
 	import { pluralize } from "$lib/utils/format";
+    import { ResourceList } from "$lib/components";
 
     interface Props {
         week: Week
@@ -34,8 +35,13 @@
         {/each}
         {:else}
         {#each week.activities as activity}
-        <li class="list-disc text-left ml-2">
-            {activity.resource?.name} ({activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)} out of {activity.resource?.availableHoursPerWeek})
+        <li class="text-left ml-2 p-2">
+            <span class="float-left mr-2">
+                <ResourceList resources={[activity.resource]} size="sm" maxSize={1} />
+            </span>
+            {activity.taskName}<br /> 
+            <small class="text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
+            <br class="clear-both" />
         </li>
         {/each}
         {/if}

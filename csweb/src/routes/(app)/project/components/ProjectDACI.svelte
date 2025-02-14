@@ -8,7 +8,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, safeArray } from '$lib/utils/helpers';
 	import type { UpdateProjectDaci, Project } from '$lib/graphql/generated/sdk';
-	import { BadgeProjectStatus } from '.';
+	import { BadgeProjectStatus, ShowIfStatus } from '.';
 
 	interface Props {
 		id: string;
@@ -169,11 +169,13 @@
 			update={() => callIf(update)}
 		/>
 
+		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.projectStatusBlock?.status}>
 		<div class="col-span-4">
 			<span class="float-right">
 				<Button on:click={updateDACI}>Update Team</Button>
 			</span>
 			<br class="clear-both" />
 		</div>
+		</ShowIfStatus>
 	{/if}
 {/await}

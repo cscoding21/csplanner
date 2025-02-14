@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
-    import { type Project } from "$lib/graphql/generated/sdk";
+    import type { Project } from "$lib/graphql/generated/sdk";
 	import { setProjectStatus, getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
     import { Button, Modal, Hr } from "flowbite-svelte";
@@ -16,7 +16,6 @@
 	}
 	let { id, update, children }: Props = $props();
     let popupModal = $state(false)
-    let content = $state({} as StatusPageContent)
 
     interface StatusPageContent {
         currentTitle: string;
@@ -45,6 +44,14 @@
 			});
 	};
 
+    const reloadPage = () => {
+        const thisPage = window.location.pathname;
+
+        console.log('goto ' + thisPage);
+
+        window.location.reload()
+    }
+
     const setStatus = async (status: string) => {
 		setProjectStatus(id, status).then((res) => {
 			if (res.status?.success) {
@@ -55,6 +62,7 @@
 				});
 
 				callIf(update);
+                reloadPage()
 			} else {
 				addToast({
 					message: 'Error setting project status: ' + res.status?.message,

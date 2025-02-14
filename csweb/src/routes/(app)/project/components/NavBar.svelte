@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import {
 		Sidebar,
@@ -38,7 +38,6 @@
 		'flex items-center p-2 text-base text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700';
 	let groupClass = 'pt-2 space-y-2';
 
-	$: mainSidebarUrl = $page.url.pathname;
 	let activeMainSidebar: string;
 
 	afterNavigate((navigation) => {
@@ -47,6 +46,8 @@
 		closeDrawer();
 
 		activeMainSidebar = navigation.to?.url.pathname ?? '';
+
+		console.log(page.url.pathname + "#" + page.url.hash)
 	});
 
 	let posts = [
@@ -96,7 +97,7 @@
 <!-- asideClass="fixed inset-0 z-30 flex-none h-full w-64 lg:h-auto border-e border-gray-200 dark:border-gray-600 lg:overflow-y-visible lg:pt-16 lg:block" -->
 <Sidebar
 	class="rounded-lg"
-	activeUrl={mainSidebarUrl}
+	activeUrl={activeMainSidebar}
 	activeClass="bg-gray-100 dark:bg-gray-700 rounded-lg"
 >
 	<h4 class="sr-only">Main menu</h4>
@@ -118,7 +119,6 @@
 									{href}
 									spanClass="ml-9"
 									class={itemClass}
-									active={activeMainSidebar === href}
 								/>
 							{/each}
 						</SidebarDropdownWrapper>
@@ -128,7 +128,6 @@
 							{href}
 							spanClass="ml-3"
 							class={itemClass}
-							active={activeMainSidebar === href}
 						>
 							<svelte:component this={icon} slot="icon" class={iconClass} />
 						</SidebarItem>
@@ -142,7 +141,6 @@
 						{href}
 						spanClass="ml-3"
 						class={itemClass}
-						active={activeMainSidebar === href}
 						target="_blank"
 					>
 						<svelte:component this={icon} slot="icon" class={iconClass} />

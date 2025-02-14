@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { P, Button, ButtonGroup, Modal } from "flowbite-svelte";
+    import { P, Button, ButtonGroup, Modal, Heading } from "flowbite-svelte";
     import { EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
     import type { ProjectMilestoneTask, Skill } from "$lib/graphql/generated/sdk";
-    import { DeleteProjectTask, ProjectTaskForm, BadgeMilestoneStatus } from ".";
+    import { DeleteProjectTask, ProjectTaskForm, BadgeMilestoneStatus, ShowIfStatus } from ".";
     import { ResourceList } from "$lib/components";
     import { callIf } from "$lib/utils/helpers";
     import { formatToCommaSepList, pluralize } from "$lib/utils/format";
@@ -11,6 +11,7 @@
         task: ProjectMilestoneTask
         update: Function
         editClick: Function
+        projectStatus: string
         milestoneID: string
         projectID: string
     }
@@ -18,6 +19,7 @@
         task = $bindable(), 
         update,
         editClick,
+        projectStatus,
         milestoneID,
         projectID
     }:Props = $props()
@@ -36,31 +38,33 @@
 
 
 <div>
-    <span class="text-gray-100">{task.name}</span>
+    <Heading tag="h5" class="text-lg dark:text-white">{task.name}</Heading>
     <small>({task.hourEstimate} {pluralize("hour", task.hourEstimate)})</small>
     <BadgeMilestoneStatus status={task.status} />
     <P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-100 float-right">
-        <ButtonGroup>
-        <Button
-            size="sm"
-            color="dark"
-            onclick={() => {
-                editClick()
-            }}
-        >
-            <EditOutline size="sm" class="" />
-        </Button>
-        <DeleteProjectTask
-            name={task.name}
-            size="sm"
-            projectID={projectID}
-            milestoneID={milestoneID}
-            update={() => callIf(update)}
-            id={task.id}
-        >
-            <TrashBinOutline size="sm" class="" />
-        </DeleteProjectTask>
-    </ButtonGroup>
+        <ShowIfStatus scope={["new", "draft"]} status={projectStatus}>
+            <ButtonGroup>
+            <Button
+                size="sm"
+                color="dark"
+                onclick={() => {
+                    editClick()
+                }}
+            >
+                <EditOutline size="sm" class="" />
+            </Button>
+            <DeleteProjectTask
+                name={task.name}
+                size="sm"
+                projectID={projectID}
+                milestoneID={milestoneID}
+                update={() => callIf(update)}
+                id={task.id}
+            >
+                <TrashBinOutline size="sm" class="" />
+            </DeleteProjectTask>
+        </ButtonGroup>
+    </ShowIfStatus>
     </P>
 </div>
 <div>

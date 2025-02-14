@@ -9,7 +9,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
 	import { findAllUsers } from '$lib/services/user';
-	import { BadgeProjectStatus } from '.';
+	import { BadgeProjectStatus, ShowIfStatus } from '.';
 
 	interface Props {
 		id: string;
@@ -132,11 +132,13 @@
 			fieldName="Executive Summary"
 		/>
 
+		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.projectStatusBlock?.status}>
 		<div class="col-span-4">
 			<span class="float-right">
 				<Button onclick={updateBasics}>Update Basics</Button>
 			</span>
 			<br class="clear-both" />
 		</div>
+		</ShowIfStatus>
 	{/if}
 {/await}

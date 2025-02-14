@@ -97,7 +97,7 @@
 									</div>
 										<Hr />
 									{:else}
-									<ProjectTaskDisplay projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} task={project.projectMilestones[index].tasks[tindex]} />
+									<ProjectTaskDisplay projectStatus={project.projectStatusBlock.status} projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} task={project.projectMilestones[index].tasks[tindex]} />
 									{/if}
 								{/each}
 							{/if}

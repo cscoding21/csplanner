@@ -119,13 +119,13 @@
 	{#if project.projectValue.projectValueLines}
 	<div class="flex mb-8">
 		<div class="flex-1 px-2">
-			{#if valueForm}
+		{#if valueForm}
 			<SectionSubHeading>Parameters</SectionSubHeading>
-		<PercentInput
-			bind:value={valueForm.discountRate}
-			fieldName="Discount rate percentage"
-			error={errors.discountRate}
-			update={() => callIf(update)}
+			<PercentInput
+				bind:value={valueForm.discountRate}
+				fieldName="Discount rate percentage"
+				error={errors.discountRate}
+				update={() => callIf(update)}
 		/>
 
 		<div class="pb-4 mb-2">

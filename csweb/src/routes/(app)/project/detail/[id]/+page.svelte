@@ -19,6 +19,7 @@
 	import type { Project } from '$lib/graphql/generated/sdk';
 	import { sineIn } from 'svelte/easing';
 	import { ProjectStatusUpdate } from '../../components';
+	import { goto } from '$app/navigation';
 
 	const id = $page.params.id;
 	let hash = $state($page.url.hash);
@@ -55,7 +56,7 @@
 {:then promiseData}
 	<ProjectActionBar pageDetail={project.projectBasics?.name}>
 		<ButtonGroup>
-			<ProjectStatusUpdate id={id}>
+			<ProjectStatusUpdate id={id} update={() => { goto("/project/detail/" + id + "#snapshot", { invalidateAll: true }) }}>
 				<ArrowRightToBracketOutline size="sm" class="mr-2"  />
 				Status
 			</ProjectStatusUpdate>

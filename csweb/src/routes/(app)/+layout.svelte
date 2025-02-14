@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import {
 		Navbar,
 		NavBrand,
@@ -71,7 +72,7 @@
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
 		>
-		<NavHamburger class1="w-full md:flex md:w-auto md:order-1" />
+		<NavHamburger class="w-full md:flex md:w-auto md:order-1" />
 	</div>
 	<Dropdown placement="bottom" triggeredBy="#avatar-menu">
 		<DropdownHeader>
@@ -105,12 +106,12 @@
 		</div>
 		<NavHamburger />
 	</div>
-	<NavUl>
-		<NavLi href="/home" active={true}>Home</NavLi>
+	<NavUl activeUrl={page.url.pathname}>
+		<NavLi href="/home">Home</NavLi>
 		<NavLi href="/project">Projects</NavLi>
 		<NavLi href="/resource">Resources</NavLi>
-		<NavLi href="/portfolio">Portfolio</NavLi>
-		<NavLi href="/report">Reports</NavLi>
+		<NavLi href="/roadmap">Roadmap</NavLi>
+		<NavLi href="/insight">Insights</NavLi>
 	</NavUl>
 </Navbar>
 

@@ -64,7 +64,7 @@
 	{#if project.projectFeatures && project.projectFeatures.length > 0}
 		{#each project.projectFeatures as feature (feature.id)}
 			{#if feature && feature.id}
-				<ProjectFeatureDisplay {feature} update={refresh} projectID={project.id as string} />
+				<ProjectFeatureDisplay {feature} update={refresh} projectStatus={project.projectStatusBlock.status} projectID={project.id as string} />
 				<Hr hrClass="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
 			{/if}
 		{/each}
