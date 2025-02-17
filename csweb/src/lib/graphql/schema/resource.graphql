@@ -21,6 +21,10 @@ fragment resourceFragment on Resource {
 		name
 		proficiency
 	}
+	calculated {
+		hourlyCost
+		hourlyCostMethod
+	}
 }
 
 fragment roleFragment on Role {

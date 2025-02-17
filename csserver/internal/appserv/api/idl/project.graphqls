@@ -24,12 +24,12 @@ type ProjectBasics {
   startDate: Time
   ownerID: String
   owner: User
+  isCapitalized: Boolean!
 }
 
 
 type ProjectValue {
   discountRate: Float
-  isCapitalized: Boolean!
   projectValueLines: [ProjectValueLine!]
   calculated: ProjectValueCalculatedData
 }
@@ -149,6 +149,8 @@ type ProjectValueCalculatedData {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
+
+  fiveYearGross: Float
 }
 
 type ProjectMilestoneCalculatedData {
@@ -197,12 +199,12 @@ input UpdateProjectBasics {
   description: String
   startDate: Time
   ownerID: String
+  isCapitalized: Boolean!
 }
 
 
 input UpdateProjectValue {
   discountRate: Float!
-  isCapitalized: Boolean!
 }
 
 input UpdateProjectValueLine {

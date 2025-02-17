@@ -13,6 +13,12 @@ type Resource {
   skills: [Skill!]
   createdAt: Time
   availableHoursPerWeek: Int
+  calculated: ResourceCalculatedData!
+}
+
+type ResourceCalculatedData {
+  hourlyCost: Float
+	hourlyCostMethod: String!
 }
 
 

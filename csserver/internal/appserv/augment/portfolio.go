@@ -51,9 +51,7 @@ func getWeekHourSummary(sch []idl.Schedule, week calendar.CSWeek) int {
 		for _, w := range s.ProjectActivityWeeks {
 			if w.End.Equal(week.End) {
 				for _, a := range w.Activities {
-					if a.HoursSpent != nil {
-						out += *a.HoursSpent
-					}
+					out += a.HoursSpent
 				}
 			}
 		}

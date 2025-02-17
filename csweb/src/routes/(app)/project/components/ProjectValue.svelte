@@ -1,22 +1,15 @@
 <script lang="ts">
-	import { Button, Table, TableBody, TableBodyRow, TableBodyCell, TableHead, TableHeadCell, ButtonGroup, Toggle, Hr  } from 'flowbite-svelte';
-	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
-	import { PercentInput, SectionHeading, SectionSubHeading } from '$lib/components';
-	import { getDefaultProject, valueSchema, valueDefaultForm } from '$lib/forms/project.validation';
-	import { getProject, updateProjectValue } from '$lib/services/project';
-	import {
-		parseErrors,
-		mergeErrors,
-		coalesceToType,
-	} from '$lib/forms/helpers';
+	import { Table, TableBody, TableBodyRow, TableBodyCell, TableHead, TableHeadCell, ButtonGroup, Hr  } from 'flowbite-svelte';
+	import { CheckCircleSolid, CircleMinusOutline, EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import { SectionHeading, SectionSubHeading, MoneyDisplay } from '$lib/components';
+	import { getDefaultProject } from '$lib/forms/project.validation';
+	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
-	import type { UpdateProjectValue, Project } from '$lib/graphql/generated/sdk';
+	import type { Project } from '$lib/graphql/generated/sdk';
 	import { BadgeProjectStatus, DeleteProjectValueLine, ProjectValueChart, ProjectValueCategoryDistributionChart } from '.';
-	import { formatCurrency } from '$lib/utils/format';
-	import ProjectValueLineFormModal from './ProjectValueLineFormModal.svelte';
-
-	let errors: any = $state({});
+	import { formatCurrency, formatPercent } from '$lib/utils/format';
+	import { ProjectValueLineFormModal } from '.';
 
 	interface Props {
 		id: string;
@@ -29,8 +22,6 @@
 	const load = async ():Promise<Project> => {
 		return await getProject(id)
 			.then((proj) => {
-				valueForm = coalesceToType<UpdateProjectValue>(proj.projectValue, valueSchema);
-
 				return proj
 			})
 			.catch((err) => {
@@ -45,7 +36,6 @@
 	};
 
 	function refresh() {
-		console.log('refreshing')
 		load().then(p => {
 			project = p
 
@@ -53,56 +43,11 @@
 		})
 	}
 
-	const updateValue = async () => {
-		errors = {};
-
-		const projectValueParsed = valueSchema.cast(valueForm);
-		valueSchema
-			.validate(projectValueParsed, { abortEarly: false })
-			.then(async () => {
-				await updateProjectValue(id, projectValueParsed)
-					.then((res) => {
-						if (res.status?.success) {
-							console.log('update success ', res.status);
-							load().then((p) => {
-								addToast({
-									message: 'Project value updated successfully',
-									dismissible: true,
-									type: 'success'
-								});
-
-								callIf(update);
-							});
-						} else {
-							addToast({
-								message: 'Error updating project value: ' + res.status?.message,
-								dismissible: true,
-								type: 'error'
-							});
-						}
-					})
-					.catch((err) => {
-						addToast({
-							message: 'Error updating project value: ' + err,
-							dismissible: true,
-							type: 'error'
-						});
-					});
-			})
-			.catch((err) => {
-				errors = mergeErrors(errors, parseErrors(err));
-
-				console.error(errors);
-			});
-	};
-
 	const loadPage = async () => {
 		load().then(p => {
 			project = p
 		});
 	};
-
-	let valueForm = $state(valueDefaultForm());
 </script>
 
 
@@ -118,27 +63,39 @@
 
 	{#if project.projectValue.projectValueLines}
 	<div class="flex mb-8">
-		<div class="flex-1 px-2">
-		{#if valueForm}
-			<SectionSubHeading>Parameters</SectionSubHeading>
-			<PercentInput
-				bind:value={valueForm.discountRate}
-				fieldName="Discount rate percentage"
-				error={errors.discountRate}
-				update={() => callIf(update)}
-		/>
+		<div class="flex-1 px-4">
+			<ul class="list mb-6 col-span-2 p-2 text-sm space-y-3">
+				<li>
+					<span>Five Year Gross</span>
+					<span class="float-right flex-auto font-semibold">
+						<MoneyDisplay amount={project.projectValue?.calculated?.fiveYearGross || 0} />
+					</span>
+				</li>
 
-		<div class="pb-4 mb-2">
-			<Toggle class="mt-3" bind:checked={valueForm.isCapitalized}>Capitalized</Toggle>
-		</div>
 
-		<Button
-			size="xs"
-			onclick={() => updateValue()}>
-			Update
-		</Button>
-		{/if}
+				<li>
+					<span>Net Present Value</span>
+					<span class="float-right flex-auto font-semibold">
+						<MoneyDisplay amount={project.projectValue?.calculated?.netPresentValue || 0} />
+					</span>
+				</li>
+		
+				<li>
+					<span>Internal Rate of Return</span>
+					<span class="float-right flex-auto font-semibold"
+						>{formatPercent.format(project.projectValue?.calculated?.internalRateOfReturn || 0)}</span
+					>
+				</li>
 
+				<li>
+					<span>Is Capitalized</span>
+					{#if project.projectBasics.isCapitalized}
+					<span class="float-right flex-auto font-semibold text-green-400"><CheckCircleSolid /></span>	
+					{:else}
+					<span class="float-right flex-auto font-semibold text-gray-400"><CircleMinusOutline /></span>	
+					{/if}
+				</li>
+			</ul>
 		</div>
 
 		<div class="flex-1 px-2">

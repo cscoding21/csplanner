@@ -385,9 +385,14 @@ func (r *mutationResolver) CreateResource(ctx context.Context, input idl.UpdateR
 
 	out := idl.CreateResourceResult{}
 	service := factory.GetResourceService()
+	org, err := factory.GetDefaultOrganization(ctx)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+		return &out, err
+	}
 	res := csmap.UpdateResourceIdlToResource(input)
 
-	result, err := service.CreateResource(ctx, &res)
+	result, err := service.SaveResource(ctx, res, *org)
 	if err != nil {
 		out.Status, _ = csmap.GetStatusFromError(err)
 	} else {
@@ -408,11 +413,13 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 	var result common.UpdateResult[resource.Resource]
 	var err error
 
-	if len(res.ID) > 0 {
-		result, err = service.PatchResource(ctx, res)
-	} else {
-		result, err = service.CreateResource(ctx, &res)
+	org, err := factory.GetDefaultOrganization(ctx)
+	if err != nil {
+		return nil, err
 	}
+
+	result, err = service.SaveResource(ctx, res, *org)
+
 	if err != nil {
 		out.Status, _ = csmap.GetStatusFromError(err)
 	} else {

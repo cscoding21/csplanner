@@ -15,8 +15,6 @@
 		//@ts-ignore
 		portfolioTable = buildPortfolioTable(res)
 
-		console.log(portfolioTable)
-
 		return res;
 	};
 

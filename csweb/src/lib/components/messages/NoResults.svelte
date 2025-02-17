@@ -5,14 +5,14 @@
 
 	interface Props {
 		title: string;
-		newUrl: string;
+		newUrl?: string;
 		children: Snippet;
 	}
 	let { title, newUrl, children = $bindable() }: Props = $props();
 </script>
 
 <Card class="w-full" size="xl">
-	<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h5>
+	<h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h5>
 	<p class="mb-3 font-normal leading-tight text-gray-700 dark:text-gray-400">
 		{@render children()}
 	</p>

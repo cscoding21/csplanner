@@ -21,10 +21,11 @@ fragment scheduleFragment on Schedule {
         taskName
         taskID
         resourceID
+        hoursSpent
+        requiredSkillID
         resource {
           ...resourceFragment
         }
-        hoursSpent
       }
     }
 }

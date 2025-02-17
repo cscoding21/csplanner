@@ -37,7 +37,6 @@ export const isFunction = (functionToCheck: any): boolean => {
  * @returns true if dates are equal
  */
 export const dateCompare = (d1:Date, d2:Date):boolean => {
-	//console.log(d1, d2)
 	if(	d1.getDate() == d2.getDate() 
 		&& d1.getFullYear() == d2.getFullYear() 
 		&& d1.getMonth() === d2.getMonth()) {

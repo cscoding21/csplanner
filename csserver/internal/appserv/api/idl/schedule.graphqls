@@ -27,7 +27,8 @@ type ProjectActivity {
 	taskName: String!
     resourceID: String!
     resource: Resource
-	hoursSpent: Int
+	hoursSpent: Int!
+    requiredSkillID: String!
 }
 
 type ScheduleException {

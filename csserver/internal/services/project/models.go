@@ -33,16 +33,16 @@ type Project struct {
 
 // ProjectBasics basic elements of a project
 type ProjectBasics struct {
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	StartDate   *time.Time `json:"start_time"`
-	OwnerID     string     `json:"owner_id"`
+	Name          string     `json:"name"`
+	Description   string     `json:"description"`
+	StartDate     *time.Time `json:"start_time"`
+	OwnerID       string     `json:"owner_id"`
+	IsCapitalized bool       `json:"is_capitalized"`
 }
 
 // ProjectValue properties used in calculating the value of a project
 type ProjectValue struct {
 	DiscountRate      float64                    `json:"discount_rate"`
-	IsCapitalized     bool                       `json:"is_capitalized"`
 	ProjectValueLines []*ProjectValueLine        `json:"project_value_lines"`
 	Calculated        ProjectValueCalculatedData `json:"calculated"`
 }
@@ -125,6 +125,7 @@ type ProjectValueCalculatedData struct {
 	YearThreeValue       float64 `json:"year_three_value"`
 	YearFourValue        float64 `json:"year_four_value"`
 	YearFiveValue        float64 `json:"year_five_value"`
+	FiveYearGross        float64 `json:"five_year_gross"`
 }
 
 type ProjectMilestoneCalculatedData struct {

@@ -451,11 +451,12 @@ export type Project = {
 
 export type ProjectActivity = {
   __typename?: 'ProjectActivity';
-  hoursSpent?: Maybe<Scalars['Int']['output']>;
+  hoursSpent: Scalars['Int']['output'];
   milestoneID: Scalars['String']['output'];
   milestoneName: Scalars['String']['output'];
   project?: Maybe<Project>;
   projectID: Scalars['String']['output'];
+  requiredSkillID: Scalars['String']['output'];
   resource?: Maybe<Resource>;
   resourceID: Scalars['String']['output'];
   taskID: Scalars['String']['output'];
@@ -475,6 +476,7 @@ export type ProjectActivityWeek = {
 export type ProjectBasics = {
   __typename?: 'ProjectBasics';
   description: Scalars['String']['output'];
+  isCapitalized: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   owner?: Maybe<User>;
   ownerID?: Maybe<Scalars['String']['output']>;
@@ -600,12 +602,12 @@ export type ProjectValue = {
   __typename?: 'ProjectValue';
   calculated?: Maybe<ProjectValueCalculatedData>;
   discountRate?: Maybe<Scalars['Float']['output']>;
-  isCapitalized: Scalars['Boolean']['output'];
   projectValueLines?: Maybe<Array<ProjectValueLine>>;
 };
 
 export type ProjectValueCalculatedData = {
   __typename?: 'ProjectValueCalculatedData';
+  fiveYearGross?: Maybe<Scalars['Float']['output']>;
   internalRateOfReturn?: Maybe<Scalars['Float']['output']>;
   netPresentValue?: Maybe<Scalars['Float']['output']>;
   yearFiveValue?: Maybe<Scalars['Float']['output']>;
@@ -746,6 +748,7 @@ export type Resource = {
   __typename?: 'Resource';
   annualizedCost?: Maybe<Scalars['Float']['output']>;
   availableHoursPerWeek?: Maybe<Scalars['Int']['output']>;
+  calculated: ResourceCalculatedData;
   createdAt?: Maybe<Scalars['Time']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   initialCost?: Maybe<Scalars['Float']['output']>;
@@ -763,6 +766,12 @@ export type Resource = {
 export type ResourceAllocationGrid = {
   __typename?: 'ResourceAllocationGrid';
   weekActivities?: Maybe<Array<Maybe<ProjectActivity>>>;
+};
+
+export type ResourceCalculatedData = {
+  __typename?: 'ResourceCalculatedData';
+  hourlyCost?: Maybe<Scalars['Float']['output']>;
+  hourlyCostMethod: Scalars['String']['output'];
 };
 
 export type ResourceResults = {
@@ -892,6 +901,7 @@ export type UpdateProject = {
 
 export type UpdateProjectBasics = {
   description?: InputMaybe<Scalars['String']['input']>;
+  isCapitalized: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   ownerID?: InputMaybe<Scalars['String']['input']>;
   startDate?: InputMaybe<Scalars['Time']['input']>;
@@ -950,7 +960,6 @@ export type UpdateProjectMilestoneTemplate = {
 
 export type UpdateProjectValue = {
   discountRate: Scalars['Float']['input'];
-  isCapitalized: Scalars['Boolean']['input'];
 };
 
 export type UpdateProjectValueLine = {
@@ -1193,6 +1202,10 @@ export const ResourceFragmentFragmentDoc = gql`
     name
     proficiency
   }
+  calculated {
+    hourlyCost
+    hourlyCostMethod
+  }
 }
     ${UserFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}`;
@@ -1208,6 +1221,7 @@ export const ProjectFragmentFragmentDoc = gql`
     description
     startDate
     ownerID
+    isCapitalized
     owner {
       ...userFragment
     }
@@ -1228,7 +1242,6 @@ export const ProjectFragmentFragmentDoc = gql`
   }
   projectValue {
     discountRate
-    isCapitalized
     projectValueLines {
       id
       fundingSource
@@ -1248,6 +1261,7 @@ export const ProjectFragmentFragmentDoc = gql`
       yearThreeValue
       yearFourValue
       yearFiveValue
+      fiveYearGross
     }
   }
   projectCost {
@@ -1350,10 +1364,11 @@ export const ScheduleFragmentFragmentDoc = gql`
       taskName
       taskID
       resourceID
+      hoursSpent
+      requiredSkillID
       resource {
         ...resourceFragment
       }
-      hoursSpent
     }
   }
 }

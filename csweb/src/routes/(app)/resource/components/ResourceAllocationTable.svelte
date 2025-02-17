@@ -4,6 +4,7 @@
     import { buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
     import { getID } from "$lib/utils/id";
     import { pluralize, formatDate } from "$lib/utils/format";
+	import { NoResults } from "$lib/components";
 
     interface Props {
 		portfolio: Portfolio;
@@ -17,8 +18,10 @@
     let portfolioTable:ScheduleTable = $state(buildPortfolioTable(portfolio, startDate, endDate))
 </script>
 
-<!--  border-separate [border-spacing:0.75rem] -->
-  <h3>{formatDate(portfolioTable.startDate)} - {formatDate(portfolioTable.endDate)}</h3>
+
+<h3 class="mb-2">{formatDate(portfolioTable.startDate)} - {formatDate(portfolioTable.endDate)}</h3>
+
+{#if portfolioTable.body.length > 0}
 <table class="w-full">
     <thead class="">
         <tr>
@@ -67,7 +70,9 @@
         {/each}
         </tbody>
     </table>
-
+{:else}
+    <NoResults title="Resource not allocated">This resource is not allocated to any projects</NoResults>
+{/if}
 
 <!--
 <table border=1>

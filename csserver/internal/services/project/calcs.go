@@ -43,6 +43,13 @@ func (p *Project) AggregateProjectValueLines() {
 		p.ProjectValue.Calculated.YearFourValue += l.YearFourValue
 		p.ProjectValue.Calculated.YearFiveValue += l.YearFiveValue
 	}
+
+	p.ProjectValue.Calculated.FiveYearGross =
+		p.ProjectValue.Calculated.YearOneValue +
+			p.ProjectValue.Calculated.YearTwoValue +
+			p.ProjectValue.Calculated.YearThreeValue +
+			p.ProjectValue.Calculated.YearFourValue +
+			p.ProjectValue.Calculated.YearFiveValue
 }
 
 // GetProjectNPV calclate the NPV for the project based on cost and value entries
@@ -271,7 +278,8 @@ func getAverageResourceChargePerHour(org organization.Organization, resources []
 	total := 0.0
 
 	for _, r := range resources {
-		total += r.GetHourlyRate(roleMap, float64(org.Defaults.GenericBlendedHourlyRate), org.Defaults.WorkingHoursPerYear)
+		tt, _ := r.GetHourlyRate(roleMap, float64(org.Defaults.GenericBlendedHourlyRate), org.Defaults.WorkingHoursPerYear)
+		tt += total
 	}
 
 	return total / rc

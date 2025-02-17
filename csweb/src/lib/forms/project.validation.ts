@@ -6,6 +6,7 @@ export const basicSchema = yup.object().shape({
 	description: yup.string().required('Description is required'),
 	ownerID: yup.string().required('Project owner is required'),
 	startDate: yup.date().optional(),
+	isCapitalized: yup.bool().required()
 });
 
 export const valueSchema = yup.object().shape({
@@ -13,8 +14,7 @@ export const valueSchema = yup.object().shape({
 		.number()
 		.min(0.0, 'Discount rate cannot be lower than zero')
 		.max(20.0, 'Discount rate cannot be higher than 20%')
-		.required(),
-	isCapitalized: yup.bool().required()
+		.required()
 });
 
 export const valueLineSchema = yup.object().shape({
@@ -70,9 +70,9 @@ export const getDefaultProject = (): UpdateProject => {
 			name: '',
 			description: '',
 			ownerID: '',
+			isCapitalized: false,
 		},
 		projectValue: {
-			isCapitalized: false,
 			discountRate: 7.0
 		},
 		projectCost: {
@@ -92,8 +92,7 @@ export const getDefaultProject = (): UpdateProject => {
 
 export const valueDefaultForm = () => {
 	return {
-		discountRate: 0.0,
-		isCapitalized: false
+		discountRate: 0.0
 	}
 } 
 

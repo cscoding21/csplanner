@@ -102,7 +102,6 @@ export const findScheduledWorkForResource = async(resourceID:string): Promise<Po
  * @returns the project activity week object relevant to the passed in week
  */
 export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):ProjectActivityWeek  => {
-    console.log("paWeeks", paWeeks)
     if (paWeeks && paWeeks.length > 0) {
         for (let i = 0; i < paWeeks.length; i++) {
             const paw = paWeeks[i]
@@ -123,8 +122,6 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
  */
 export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date):ScheduleTable => {
     let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: []} as ScheduleTable
-
-    console.log(res)
 
     if (!res || !res.weekSummary) {
         return portfolioTable
@@ -147,7 +144,7 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
         const thisHeaderWeek = res.weekSummary[i] 
         const thisHeaderWeekEnd = new Date(thisHeaderWeek?.end)
         const thisHeaderWeekStart = new Date(thisHeaderWeek?.begin)
-        
+
         if(thisHeaderWeekEnd < startDate || thisHeaderWeekStart > endDate)
             continue;
 
@@ -194,6 +191,48 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
     return portfolioTable
 }
 
+export const flattemPortfolio = (port:Portfolio, startDate:Date, endDate:Date):FlatPortfolioItem[] => {
+    let out:FlatPortfolioItem[] = []
+
+    for(let i = 0; i < port.schedule.length; i++) {
+        let thisItem:FlatPortfolioItem = {} as FlatPortfolioItem
+        let thisSchedule:Schedule = port.schedule[i]
+
+        thisItem.projectID = thisSchedule.projectID
+        thisItem.projectName = thisSchedule.projectName
+
+        if(!thisSchedule.projectActivityWeeks)
+            continue
+
+        for(let m = 0; m < thisSchedule.projectActivityWeeks?.length; m++) {
+            let thisWeek = thisSchedule.projectActivityWeeks[m]
+            thisItem.weekEnd = thisWeek.end
+
+            if (!thisWeek.activities)
+                continue
+            
+            for (let a = 0; a < thisWeek.activities?.length; a++) {
+                let thisActivity = thisWeek.activities[a]
+
+                thisItem.milestoneID = thisActivity.milestoneID
+                thisItem.milestoneName = thisActivity.milestoneName
+                thisItem.taskID = thisActivity.taskID
+                thisItem.taskName = thisActivity.taskName
+                thisItem.actualizedHours = thisActivity.hoursSpent as number
+                //thisItem.hourlyRate = thisActivity.resource.
+            }
+        }
+
+
+
+
+        out.push(thisItem)
+    }
+
+
+    return out
+}
+
 
 
 
@@ -203,7 +242,6 @@ export interface ScheduleTable {
     header: string[]
     body: ProjectRow[]
 }
-
 export interface ProjectRow {
     label: string
     project: Project
@@ -214,4 +252,20 @@ export interface ProjectRowCell {
     end: Date
     orgCapacity: number
     activities: ProjectActivity[]
+}
+export interface FlatPortfolioItem {
+    weekEnd: Date
+    projectID: string
+    projectName: string
+    resourceID: string
+    resourceName: string
+    requiredSkill: string
+    estimatedHours: number
+    actualizedHours: number
+    hourlyRate: number
+    costForLine: number
+    milestoneID: string
+    milestoneName: string
+    taskID: string
+    taskName: string
 }

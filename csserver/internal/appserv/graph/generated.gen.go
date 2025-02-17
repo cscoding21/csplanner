@@ -286,15 +286,16 @@ type ComplexityRoot struct {
 	}
 
 	ProjectActivity struct {
-		HoursSpent    func(childComplexity int) int
-		MilestoneID   func(childComplexity int) int
-		MilestoneName func(childComplexity int) int
-		Project       func(childComplexity int) int
-		ProjectID     func(childComplexity int) int
-		Resource      func(childComplexity int) int
-		ResourceID    func(childComplexity int) int
-		TaskID        func(childComplexity int) int
-		TaskName      func(childComplexity int) int
+		HoursSpent      func(childComplexity int) int
+		MilestoneID     func(childComplexity int) int
+		MilestoneName   func(childComplexity int) int
+		Project         func(childComplexity int) int
+		ProjectID       func(childComplexity int) int
+		RequiredSkillID func(childComplexity int) int
+		Resource        func(childComplexity int) int
+		ResourceID      func(childComplexity int) int
+		TaskID          func(childComplexity int) int
+		TaskName        func(childComplexity int) int
 	}
 
 	ProjectActivityWeek struct {
@@ -307,11 +308,12 @@ type ComplexityRoot struct {
 	}
 
 	ProjectBasics struct {
-		Description func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Owner       func(childComplexity int) int
-		OwnerID     func(childComplexity int) int
-		StartDate   func(childComplexity int) int
+		Description   func(childComplexity int) int
+		IsCapitalized func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Owner         func(childComplexity int) int
+		OwnerID       func(childComplexity int) int
+		StartDate     func(childComplexity int) int
 	}
 
 	ProjectCost struct {
@@ -418,11 +420,11 @@ type ComplexityRoot struct {
 	ProjectValue struct {
 		Calculated        func(childComplexity int) int
 		DiscountRate      func(childComplexity int) int
-		IsCapitalized     func(childComplexity int) int
 		ProjectValueLines func(childComplexity int) int
 	}
 
 	ProjectValueCalculatedData struct {
+		FiveYearGross        func(childComplexity int) int
 		InternalRateOfReturn func(childComplexity int) int
 		NetPresentValue      func(childComplexity int) int
 		YearFiveValue        func(childComplexity int) int
@@ -494,6 +496,7 @@ type ComplexityRoot struct {
 	Resource struct {
 		AnnualizedCost        func(childComplexity int) int
 		AvailableHoursPerWeek func(childComplexity int) int
+		Calculated            func(childComplexity int) int
 		CreatedAt             func(childComplexity int) int
 		ID                    func(childComplexity int) int
 		InitialCost           func(childComplexity int) int
@@ -510,6 +513,11 @@ type ComplexityRoot struct {
 
 	ResourceAllocationGrid struct {
 		WeekActivities func(childComplexity int) int
+	}
+
+	ResourceCalculatedData struct {
+		HourlyCost       func(childComplexity int) int
+		HourlyCostMethod func(childComplexity int) int
 	}
 
 	ResourceResults struct {
@@ -1911,6 +1919,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectActivity.ProjectID(childComplexity), true
 
+	case "ProjectActivity.requiredSkillID":
+		if e.complexity.ProjectActivity.RequiredSkillID == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.RequiredSkillID(childComplexity), true
+
 	case "ProjectActivity.resource":
 		if e.complexity.ProjectActivity.Resource == nil {
 			break
@@ -1987,6 +2002,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectBasics.Description(childComplexity), true
+
+	case "ProjectBasics.isCapitalized":
+		if e.complexity.ProjectBasics.IsCapitalized == nil {
+			break
+		}
+
+		return e.complexity.ProjectBasics.IsCapitalized(childComplexity), true
 
 	case "ProjectBasics.name":
 		if e.complexity.ProjectBasics.Name == nil {
@@ -2443,19 +2465,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectValue.DiscountRate(childComplexity), true
 
-	case "ProjectValue.isCapitalized":
-		if e.complexity.ProjectValue.IsCapitalized == nil {
-			break
-		}
-
-		return e.complexity.ProjectValue.IsCapitalized(childComplexity), true
-
 	case "ProjectValue.projectValueLines":
 		if e.complexity.ProjectValue.ProjectValueLines == nil {
 			break
 		}
 
 		return e.complexity.ProjectValue.ProjectValueLines(childComplexity), true
+
+	case "ProjectValueCalculatedData.fiveYearGross":
+		if e.complexity.ProjectValueCalculatedData.FiveYearGross == nil {
+			break
+		}
+
+		return e.complexity.ProjectValueCalculatedData.FiveYearGross(childComplexity), true
 
 	case "ProjectValueCalculatedData.internalRateOfReturn":
 		if e.complexity.ProjectValueCalculatedData.InternalRateOfReturn == nil {
@@ -2867,6 +2889,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.AvailableHoursPerWeek(childComplexity), true
 
+	case "Resource.calculated":
+		if e.complexity.Resource.Calculated == nil {
+			break
+		}
+
+		return e.complexity.Resource.Calculated(childComplexity), true
+
 	case "Resource.createdAt":
 		if e.complexity.Resource.CreatedAt == nil {
 			break
@@ -2957,6 +2986,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ResourceAllocationGrid.WeekActivities(childComplexity), true
+
+	case "ResourceCalculatedData.hourlyCost":
+		if e.complexity.ResourceCalculatedData.HourlyCost == nil {
+			break
+		}
+
+		return e.complexity.ResourceCalculatedData.HourlyCost(childComplexity), true
+
+	case "ResourceCalculatedData.hourlyCostMethod":
+		if e.complexity.ResourceCalculatedData.HourlyCostMethod == nil {
+			break
+		}
+
+		return e.complexity.ResourceCalculatedData.HourlyCostMethod(childComplexity), true
 
 	case "ResourceResults.filters":
 		if e.complexity.ResourceResults.Filters == nil {
@@ -3697,12 +3740,12 @@ type ProjectBasics {
   startDate: Time
   ownerID: String
   owner: User
+  isCapitalized: Boolean!
 }
 
 
 type ProjectValue {
   discountRate: Float
-  isCapitalized: Boolean!
   projectValueLines: [ProjectValueLine!]
   calculated: ProjectValueCalculatedData
 }
@@ -3822,6 +3865,8 @@ type ProjectValueCalculatedData {
   yearThreeValue: Float
   yearFourValue: Float
   yearFiveValue: Float
+
+  fiveYearGross: Float
 }
 
 type ProjectMilestoneCalculatedData {
@@ -3870,12 +3915,12 @@ input UpdateProjectBasics {
   description: String
   startDate: Time
   ownerID: String
+  isCapitalized: Boolean!
 }
 
 
 input UpdateProjectValue {
   discountRate: Float!
-  isCapitalized: Boolean!
 }
 
 input UpdateProjectValueLine {
@@ -3956,6 +4001,12 @@ input UpdateProjectMilestoneTask {
   skills: [Skill!]
   createdAt: Time
   availableHoursPerWeek: Int
+  calculated: ResourceCalculatedData!
+}
+
+type ResourceCalculatedData {
+  hourlyCost: Float
+	hourlyCostMethod: String!
 }
 
 
@@ -4052,7 +4103,8 @@ type ProjectActivity {
 	taskName: String!
     resourceID: String!
     resource: Resource
-	hoursSpent: Int
+	hoursSpent: Int!
+    requiredSkillID: String!
 }
 
 type ScheduleException {
@@ -5258,6 +5310,8 @@ func (ec *executionContext) fieldContext_Activity_resource(_ context.Context, fi
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -7560,6 +7614,8 @@ func (ec *executionContext) fieldContext_CreateResourceResult_resource(_ context
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -12212,6 +12268,8 @@ func (ec *executionContext) fieldContext_Project_projectBasics(_ context.Context
 				return ec.fieldContext_ProjectBasics_ownerID(ctx, field)
 			case "owner":
 				return ec.fieldContext_ProjectBasics_owner(ctx, field)
+			case "isCapitalized":
+				return ec.fieldContext_ProjectBasics_isCapitalized(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectBasics", field.Name)
 		},
@@ -12310,8 +12368,6 @@ func (ec *executionContext) fieldContext_Project_projectValue(_ context.Context,
 			switch field.Name {
 			case "discountRate":
 				return ec.fieldContext_ProjectValue_discountRate(ctx, field)
-			case "isCapitalized":
-				return ec.fieldContext_ProjectValue_isCapitalized(ctx, field)
 			case "projectValueLines":
 				return ec.fieldContext_ProjectValue_projectValueLines(ctx, field)
 			case "calculated":
@@ -12928,6 +12984,8 @@ func (ec *executionContext) fieldContext_ProjectActivity_resource(_ context.Cont
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -12956,11 +13014,14 @@ func (ec *executionContext) _ProjectActivity_hoursSpent(ctx context.Context, fie
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectActivity_hoursSpent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12971,6 +13032,50 @@ func (ec *executionContext) fieldContext_ProjectActivity_hoursSpent(_ context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectActivity_requiredSkillID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_requiredSkillID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RequiredSkillID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_requiredSkillID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13250,6 +13355,8 @@ func (ec *executionContext) fieldContext_ProjectActivityWeek_activities(_ contex
 				return ec.fieldContext_ProjectActivity_resource(ctx, field)
 			case "hoursSpent":
 				return ec.fieldContext_ProjectActivity_hoursSpent(ctx, field)
+			case "requiredSkillID":
+				return ec.fieldContext_ProjectActivity_requiredSkillID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectActivity", field.Name)
 		},
@@ -13475,6 +13582,50 @@ func (ec *executionContext) fieldContext_ProjectBasics_owner(_ context.Context, 
 				return ec.fieldContext_User_profileImage(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectBasics_isCapitalized(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectBasics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectBasics_isCapitalized(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsCapitalized, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectBasics_isCapitalized(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectBasics",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13804,6 +13955,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_driver(_ context.Context, f
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -13875,6 +14028,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_approver(_ context.Context,
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -13946,6 +14101,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_contributor(_ context.Conte
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -14017,6 +14174,8 @@ func (ec *executionContext) fieldContext_ProjectDaci_informed(_ context.Context,
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -15385,6 +15544,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_resources(_ contex
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -16319,50 +16480,6 @@ func (ec *executionContext) fieldContext_ProjectValue_discountRate(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectValue_isCapitalized(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectValue_isCapitalized(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsCapitalized, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ProjectValue_isCapitalized(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ProjectValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ProjectValue_projectValueLines(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValue) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectValue_projectValueLines(ctx, field)
 	if err != nil {
@@ -16474,6 +16591,8 @@ func (ec *executionContext) fieldContext_ProjectValue_calculated(_ context.Conte
 				return ec.fieldContext_ProjectValueCalculatedData_yearFourValue(ctx, field)
 			case "yearFiveValue":
 				return ec.fieldContext_ProjectValueCalculatedData_yearFiveValue(ctx, field)
+			case "fiveYearGross":
+				return ec.fieldContext_ProjectValueCalculatedData_fiveYearGross(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectValueCalculatedData", field.Name)
 		},
@@ -16756,6 +16875,47 @@ func (ec *executionContext) _ProjectValueCalculatedData_yearFiveValue(ctx contex
 }
 
 func (ec *executionContext) fieldContext_ProjectValueCalculatedData_yearFiveValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectValueCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectValueCalculatedData_fiveYearGross(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectValueCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectValueCalculatedData_fiveYearGross(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FiveYearGross, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectValueCalculatedData_fiveYearGross(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectValueCalculatedData",
 		Field:      field,
@@ -18714,6 +18874,8 @@ func (ec *executionContext) fieldContext_Query_getResource(ctx context.Context, 
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -19674,6 +19836,56 @@ func (ec *executionContext) fieldContext_Resource_availableHoursPerWeek(_ contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Resource_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.Resource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Resource_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ResourceCalculatedData)
+	fc.Result = res
+	return ec.marshalNResourceCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResourceCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Resource_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Resource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hourlyCost":
+				return ec.fieldContext_ResourceCalculatedData_hourlyCost(ctx, field)
+			case "hourlyCostMethod":
+				return ec.fieldContext_ResourceCalculatedData_hourlyCostMethod(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ResourceCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ResourceAllocationGrid_weekActivities(ctx context.Context, field graphql.CollectedField, obj *idl.ResourceAllocationGrid) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ResourceAllocationGrid_weekActivities(ctx, field)
 	if err != nil {
@@ -19728,8 +19940,95 @@ func (ec *executionContext) fieldContext_ResourceAllocationGrid_weekActivities(_
 				return ec.fieldContext_ProjectActivity_resource(ctx, field)
 			case "hoursSpent":
 				return ec.fieldContext_ProjectActivity_hoursSpent(ctx, field)
+			case "requiredSkillID":
+				return ec.fieldContext_ProjectActivity_requiredSkillID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectActivity", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ResourceCalculatedData_hourlyCost(ctx context.Context, field graphql.CollectedField, obj *idl.ResourceCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ResourceCalculatedData_hourlyCost(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HourlyCost, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ResourceCalculatedData_hourlyCost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ResourceCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ResourceCalculatedData_hourlyCostMethod(ctx context.Context, field graphql.CollectedField, obj *idl.ResourceCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ResourceCalculatedData_hourlyCostMethod(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HourlyCostMethod, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ResourceCalculatedData_hourlyCostMethod(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ResourceCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -19898,6 +20197,8 @@ func (ec *executionContext) fieldContext_ResourceResults_results(_ context.Conte
 				return ec.fieldContext_Resource_createdAt(ctx, field)
 			case "availableHoursPerWeek":
 				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
 		},
@@ -24051,7 +24352,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectBasics(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "startDate", "ownerID"}
+	fieldsInOrder := [...]string{"name", "description", "startDate", "ownerID", "isCapitalized"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -24086,6 +24387,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectBasics(ctx context.Contex
 				return it, err
 			}
 			it.OwnerID = data
+		case "isCapitalized":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isCapitalized"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsCapitalized = data
 		}
 	}
 
@@ -24449,7 +24757,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"discountRate", "isCapitalized"}
+	fieldsInOrder := [...]string{"discountRate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -24463,13 +24771,6 @@ func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context
 				return it, err
 			}
 			it.DiscountRate = data
-		case "isCapitalized":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isCapitalized"))
-			data, err := ec.unmarshalNBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsCapitalized = data
 		}
 	}
 
@@ -26500,6 +26801,14 @@ func (ec *executionContext) _ProjectActivity(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._ProjectActivity_resource(ctx, field, obj)
 		case "hoursSpent":
 			out.Values[i] = ec._ProjectActivity_hoursSpent(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "requiredSkillID":
+			out.Values[i] = ec._ProjectActivity_requiredSkillID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -26611,6 +26920,11 @@ func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._ProjectBasics_ownerID(ctx, field, obj)
 		case "owner":
 			out.Values[i] = ec._ProjectBasics_owner(ctx, field, obj)
+		case "isCapitalized":
+			out.Values[i] = ec._ProjectBasics_isCapitalized(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -27316,11 +27630,6 @@ func (ec *executionContext) _ProjectValue(ctx context.Context, sel ast.Selection
 			out.Values[i] = graphql.MarshalString("ProjectValue")
 		case "discountRate":
 			out.Values[i] = ec._ProjectValue_discountRate(ctx, field, obj)
-		case "isCapitalized":
-			out.Values[i] = ec._ProjectValue_isCapitalized(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "projectValueLines":
 			out.Values[i] = ec._ProjectValue_projectValueLines(ctx, field, obj)
 		case "calculated":
@@ -27373,6 +27682,8 @@ func (ec *executionContext) _ProjectValueCalculatedData(ctx context.Context, sel
 			out.Values[i] = ec._ProjectValueCalculatedData_yearFourValue(ctx, field, obj)
 		case "yearFiveValue":
 			out.Values[i] = ec._ProjectValueCalculatedData_yearFiveValue(ctx, field, obj)
+		case "fiveYearGross":
+			out.Values[i] = ec._ProjectValueCalculatedData_fiveYearGross(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28179,6 +28490,11 @@ func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Resource_createdAt(ctx, field, obj)
 		case "availableHoursPerWeek":
 			out.Values[i] = ec._Resource_availableHoursPerWeek(ctx, field, obj)
+		case "calculated":
+			out.Values[i] = ec._Resource_calculated(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -28215,6 +28531,47 @@ func (ec *executionContext) _ResourceAllocationGrid(ctx context.Context, sel ast
 			out.Values[i] = graphql.MarshalString("ResourceAllocationGrid")
 		case "weekActivities":
 			out.Values[i] = ec._ResourceAllocationGrid_weekActivities(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var resourceCalculatedDataImplementors = []string{"ResourceCalculatedData"}
+
+func (ec *executionContext) _ResourceCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.ResourceCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, resourceCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ResourceCalculatedData")
+		case "hourlyCost":
+			out.Values[i] = ec._ResourceCalculatedData_hourlyCost(ctx, field, obj)
+		case "hourlyCostMethod":
+			out.Values[i] = ec._ResourceCalculatedData_hourlyCostMethod(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -29907,6 +30264,16 @@ func (ec *executionContext) marshalNResource2ᚖcsserverᚋinternalᚋappservᚋ
 		return graphql.Null
 	}
 	return ec._Resource(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNResourceCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResourceCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ResourceCalculatedData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ResourceCalculatedData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNResourceResults2csserverᚋinternalᚋappservᚋgraphᚋidlᚐResourceResults(ctx context.Context, sel ast.SelectionSet, v idl.ResourceResults) graphql.Marshaler {

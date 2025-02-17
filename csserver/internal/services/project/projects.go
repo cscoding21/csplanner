@@ -39,7 +39,6 @@ func (s *ProjectService) SaveProject(
 	lastProject.ProjectDaci = pro.ProjectDaci
 
 	lastProject.ProjectValue.DiscountRate = pro.ProjectValue.DiscountRate
-	lastProject.ProjectValue.IsCapitalized = pro.ProjectValue.IsCapitalized
 
 	lastProject.PerformAllCalcs(org, resourceMap, roleMap)
 

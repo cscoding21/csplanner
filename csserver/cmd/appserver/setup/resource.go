@@ -17,6 +17,11 @@ import (
 func CreateTestResources(ctx context.Context) error {
 	//us := factory.GetIAMAdminService()
 	rs := factory.GetResourceService()
+	org, err := factory.GetDefaultOrganization(ctx)
+	if err != nil {
+		return err
+	}
+
 	exitingResources, _ := rs.FindAllResources(ctx)
 
 	if len(exitingResources.Results) > 0 {
@@ -277,7 +282,7 @@ func CreateTestResources(ctx context.Context) error {
 	}
 
 	for _, r := range newResources {
-		_, err := rs.CreateResource(ctx, &r)
+		_, err := rs.SaveResource(ctx, r, *org)
 		if err != nil {
 			log.Errorf("error creating resource: %v", err)
 		}

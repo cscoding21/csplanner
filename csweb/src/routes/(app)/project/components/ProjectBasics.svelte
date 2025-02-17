@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, type SelectOptionType } from 'flowbite-svelte';
+	import { Button, Toggle, type SelectOptionType } from 'flowbite-svelte';
 	import { SelectInput, TextInput, TextAreaInput, SectionHeading } from '$lib/components';
 	import { getProject, updateProjectBasics } from '$lib/services/project';
 	import { basicSchema, getDefaultProject } from '$lib/forms/project.validation';
@@ -131,6 +131,10 @@
 			placeholder="Executive summary"
 			fieldName="Executive Summary"
 		/>
+
+		<div class="pb-4 mb-2">
+			<Toggle class="mt-3" bind:checked={basicsForm.isCapitalized}>Capitalized</Toggle>
+		</div>
 
 		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.projectStatusBlock?.status}>
 		<div class="col-span-4">

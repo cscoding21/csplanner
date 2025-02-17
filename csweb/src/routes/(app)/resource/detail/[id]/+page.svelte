@@ -14,7 +14,7 @@
 		ButtonGroup
 	} from 'flowbite-svelte';
 	import { TrashBinOutline, PenOutline } from 'flowbite-svelte-icons';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import {
 		ResourceActionBar,
 		AddSkill,
@@ -23,14 +23,15 @@
 		ResourceAllocationTable
 	} from '../../components';
 	import { getResource, deleteResourceSkill } from '$lib/services/resource';
-	import { formatDate, formatCurrency, titleCase, pluralize } from '$lib/utils/format';
+	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import type { Resource, Portfolio } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { findScheduledWorkForResource } from '$lib/services/portfolio';
-	import SectionHeading from '$lib/components/formatting/SectionHeading.svelte';
+	import { SectionSubHeading, CSSection , PieChart, CSHR } from '$lib/components';
+	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
 
-	const id = $page.params.id;
+	const id = page.params.id;
 
 	const refresh = async ():Promise<Resource> => {
 		const res = getResource(id);
@@ -78,6 +79,9 @@
 
 
 	let resourcePromise:Resource = $state({} as Resource);
+	let projectPieData = $state([])
+	let skillPieData = $state([])
+
 	let portfolio:Portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
 		updateResource()
@@ -98,8 +102,8 @@
 			</ButtonGroup>
 		</ResourceActionBar>
 
-		<div class="grid grid-cols-2">
-			<div class="mr-4">
+		<div class="grid grid-cols-3 w-full">
+			<div class="mr-4 col-span-1">
 				<Card padding="sm" size="xl">
 					<div class="flex justify-end">
 						<ButtonGroup>
@@ -118,7 +122,7 @@
 						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.role?.name}</span>
 					</div>
 					<hr class="mb-4 mt-2" />
-					<div>
+					<div class="mb-6">
 						<ul class="list">
 							<li>
 								<span>Type</span>
@@ -141,7 +145,7 @@
 								{/if}
 							</li>
 							<li>
-								<span>Initial Cost</span>
+								<span>Onboarding Cost</span>
 								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.initialCost as number)}</span>
 							</li>
 							<li>
@@ -154,19 +158,32 @@
 									>{formatDate(resourcePromise.createdAt)}</span
 								>
 							</li>
+
+							<CSHR />
+
+							<li>
+								<span>Hourly Rate</span>
+								<span class="float-right flex-auto font-semibold"
+									>{formatCurrency.format(resourcePromise.calculated?.hourlyCost as number)}</span
+								>
+							</li>
+							<li>
+								<span>Rate Determination Method</span>
+								<span class="float-right flex-auto font-semibold"
+									>{resourcePromise.calculated?.hourlyCostMethod}</span
+								>
+							</li>
 						</ul>
 					</div>
 
 					{#if resourcePromise.type === "human"}
-					<caption
-						class="mt-4 bg-white text-left text-lg font-semibold text-gray-900 dark:bg-gray-800 dark:text-white"
-					>
+					<SectionSubHeading>
 						User skills
-						<p class="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+						<!-- <p class="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
 							Identifying user skills allows <b>csPlanner</b> to properly estimate and propose project
 							resourcing strategies.
-						</p>
-					</caption>
+						</p> -->
+					</SectionSubHeading>
 
 					{#if resourcePromise.skills && resourcePromise.skills.length > 0}
 						<Table>
@@ -203,38 +220,31 @@
 				</Card>
 			</div>
 
-			<div>
-				<Card size="lg">
-					<SectionHeading>Project Allocation</SectionHeading>
+			<div class="col-span-2">
+				<CSSection>
+					<SectionSubHeading>Project Allocation</SectionSubHeading>
 
 					{#if portfolio && portfolio.schedule}
-					<div class="my-16">
+					<div class="mb-2">
 						<ResourceAllocationTable portfolio={portfolio}></ResourceAllocationTable>
 					</div>
-
-					<!--
-					<ul>
-					{#each portfolio.schedule as schedule}
-						<li>
-							<div class="text-lg">{schedule.project.projectBasics.name}</div>
-							{#if schedule.projectActivityWeeks}
-							{#each schedule.projectActivityWeeks as week} 
-								<div class="text-sm text-red-500">{formatDate(week.end)}</div>
-								{#if week.activities}
-									<ul class="list-disc">
-										{#each week.activities as activity}
-											<li class="text-yellow-200 ml-3 text-xs">{activity.taskName} ({activity.hoursSpent} {pluralize("hour", activity.hoursSpent || 0)})</li>
-										{/each}
-									</ul>
-								{/if}
-							{/each}
-							{/if}
-						</li>
-					{/each}
-				</ul>
-				-->
 					{/if}
-				</Card>
+
+				<div class="mt-8 grid grid-cols-2">
+					<div class="p-4">
+						<SectionSubHeading>Project Distribution</SectionSubHeading>
+						{#if projectPieData}
+							<PieChart labels={Object.keys(projectPieData)} values={Object.values(projectPieData)} />
+						{/if}
+					</div>
+
+
+					<div class="p-4">
+						<SectionSubHeading>Skills Distribution</SectionSubHeading>
+
+					</div>
+				</div>
+				</CSSection>
 			</div>
 		</div>
 	{/if}

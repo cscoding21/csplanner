@@ -98,12 +98,12 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 					}
 
 					resourceToAllocate := ram.GetResource(currentWeek, projectID, resourceID)
+					res := ram.ResourceMap[resourceID]
 					if resourceToAllocate == nil {
 						//---TODO: handle this
 						//err := fmt.Errorf("resource not found for %v, %s, %s", currentWeek, projectID, resourceID)
 						// return schedule, err
 
-						res := ram.ResourceMap[resourceID]
 						resourceToAllocate = &ResourceProjectHourAllocation{
 							ResourceID:               resourceID,
 							ResourceName:             res.Name,
@@ -141,6 +141,7 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 						MilestoneID:   task.MilestoneID,
 						MilestoneName: task.MilestoneName,
 						HoursSpent:    hoursToAllocate,
+						RequiredSkill: task.RequiredSkillID,
 					}
 
 					activities = append(activities, activity)
@@ -212,6 +213,7 @@ func GetScheduleItems(p *project.Project) []ScheduleBatch {
 				ResourceIDs:     t.ResourceIDs,
 				HoursToSchedule: hoursToSchedule,
 				HoursScheduled:  0,
+				RequiredSkillID: t.RequiredSkillID,
 			}
 
 			hoursToComplete += t.Calculated.ActualizedHoursToComplete

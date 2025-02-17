@@ -235,15 +235,16 @@ type Project struct {
 }
 
 type ProjectActivity struct {
-	ProjectID     string    `json:"projectID"`
-	Project       *Project  `json:"project,omitempty"`
-	MilestoneID   string    `json:"milestoneID"`
-	MilestoneName string    `json:"milestoneName"`
-	TaskID        string    `json:"taskID"`
-	TaskName      string    `json:"taskName"`
-	ResourceID    string    `json:"resourceID"`
-	Resource      *Resource `json:"resource,omitempty"`
-	HoursSpent    *int      `json:"hoursSpent,omitempty"`
+	ProjectID       string    `json:"projectID"`
+	Project         *Project  `json:"project,omitempty"`
+	MilestoneID     string    `json:"milestoneID"`
+	MilestoneName   string    `json:"milestoneName"`
+	TaskID          string    `json:"taskID"`
+	TaskName        string    `json:"taskName"`
+	ResourceID      string    `json:"resourceID"`
+	Resource        *Resource `json:"resource,omitempty"`
+	HoursSpent      int       `json:"hoursSpent"`
+	RequiredSkillID string    `json:"requiredSkillID"`
 }
 
 type ProjectActivityWeek struct {
@@ -256,11 +257,12 @@ type ProjectActivityWeek struct {
 }
 
 type ProjectBasics struct {
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	StartDate   *time.Time `json:"startDate,omitempty"`
-	OwnerID     *string    `json:"ownerID,omitempty"`
-	Owner       *User      `json:"owner,omitempty"`
+	Name          string     `json:"name"`
+	Description   string     `json:"description"`
+	StartDate     *time.Time `json:"startDate,omitempty"`
+	OwnerID       *string    `json:"ownerID,omitempty"`
+	Owner         *User      `json:"owner,omitempty"`
+	IsCapitalized bool       `json:"isCapitalized"`
 }
 
 type ProjectCost struct {
@@ -366,7 +368,6 @@ type ProjectTaskCalculatedData struct {
 
 type ProjectValue struct {
 	DiscountRate      *float64                    `json:"discountRate,omitempty"`
-	IsCapitalized     bool                        `json:"isCapitalized"`
 	ProjectValueLines []*ProjectValueLine         `json:"projectValueLines,omitempty"`
 	Calculated        *ProjectValueCalculatedData `json:"calculated,omitempty"`
 }
@@ -379,6 +380,7 @@ type ProjectValueCalculatedData struct {
 	YearThreeValue       *float64 `json:"yearThreeValue,omitempty"`
 	YearFourValue        *float64 `json:"yearFourValue,omitempty"`
 	YearFiveValue        *float64 `json:"yearFiveValue,omitempty"`
+	FiveYearGross        *float64 `json:"fiveYearGross,omitempty"`
 }
 
 type ProjectValueLine struct {
@@ -421,24 +423,30 @@ type RelateArtifact struct {
 }
 
 type Resource struct {
-	ID                    *string    `json:"id,omitempty"`
-	Type                  string     `json:"type"`
-	Status                string     `json:"status"`
-	Name                  string     `json:"name"`
-	RoleID                *string    `json:"roleID,omitempty"`
-	Role                  *Role      `json:"role,omitempty"`
-	UserEmail             *string    `json:"userEmail,omitempty"`
-	User                  *User      `json:"user,omitempty"`
-	ProfileImage          *string    `json:"profileImage,omitempty"`
-	InitialCost           *float64   `json:"initialCost,omitempty"`
-	AnnualizedCost        *float64   `json:"annualizedCost,omitempty"`
-	Skills                []*Skill   `json:"skills,omitempty"`
-	CreatedAt             *time.Time `json:"createdAt,omitempty"`
-	AvailableHoursPerWeek *int       `json:"availableHoursPerWeek,omitempty"`
+	ID                    *string                 `json:"id,omitempty"`
+	Type                  string                  `json:"type"`
+	Status                string                  `json:"status"`
+	Name                  string                  `json:"name"`
+	RoleID                *string                 `json:"roleID,omitempty"`
+	Role                  *Role                   `json:"role,omitempty"`
+	UserEmail             *string                 `json:"userEmail,omitempty"`
+	User                  *User                   `json:"user,omitempty"`
+	ProfileImage          *string                 `json:"profileImage,omitempty"`
+	InitialCost           *float64                `json:"initialCost,omitempty"`
+	AnnualizedCost        *float64                `json:"annualizedCost,omitempty"`
+	Skills                []*Skill                `json:"skills,omitempty"`
+	CreatedAt             *time.Time              `json:"createdAt,omitempty"`
+	AvailableHoursPerWeek *int                    `json:"availableHoursPerWeek,omitempty"`
+	Calculated            *ResourceCalculatedData `json:"calculated"`
 }
 
 type ResourceAllocationGrid struct {
 	WeekActivities []*ProjectActivity `json:"weekActivities,omitempty"`
+}
+
+type ResourceCalculatedData struct {
+	HourlyCost       *float64 `json:"hourlyCost,omitempty"`
+	HourlyCostMethod string   `json:"hourlyCostMethod"`
 }
 
 type ResourceResults struct {
@@ -553,10 +561,11 @@ type UpdateProject struct {
 }
 
 type UpdateProjectBasics struct {
-	Name        string     `json:"name"`
-	Description *string    `json:"description,omitempty"`
-	StartDate   *time.Time `json:"startDate,omitempty"`
-	OwnerID     *string    `json:"ownerID,omitempty"`
+	Name          string     `json:"name"`
+	Description   *string    `json:"description,omitempty"`
+	StartDate     *time.Time `json:"startDate,omitempty"`
+	OwnerID       *string    `json:"ownerID,omitempty"`
+	IsCapitalized bool       `json:"isCapitalized"`
 }
 
 type UpdateProjectCost struct {
@@ -611,8 +620,7 @@ type UpdateProjectMilestoneTemplate struct {
 }
 
 type UpdateProjectValue struct {
-	DiscountRate  float64 `json:"discountRate"`
-	IsCapitalized bool    `json:"isCapitalized"`
+	DiscountRate float64 `json:"discountRate"`
 }
 
 type UpdateProjectValueLine struct {

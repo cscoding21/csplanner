@@ -3,6 +3,7 @@ package resource
 import (
 	"context"
 	"csserver/internal/common"
+	"csserver/internal/services/organization"
 	"slices"
 
 	"github.com/cscoding21/csval/validate"
@@ -15,8 +16,25 @@ var (
 	roleMap     map[string]Role
 )
 
+// SaveResource upserts a resource and updates calculated fields
+func (s *ResourceService) SaveResource(ctx context.Context, res Resource, org organization.Organization) (common.UpdateResult[Resource], error) {
+	s.CalculateResourceInfo(ctx, &res, org)
+
+	if len(res.ID) == 0 {
+		return s.CreateResource(ctx, &res)
+	}
+
+	_, err := s.GetResourceByID(ctx, res.ID)
+	if err != nil {
+		//---there's an ID, but no existing record.  this is a new resource
+		return s.CreateResource(ctx, &res)
+	}
+
+	return s.PatchResource(ctx, res, org)
+}
+
 // PatchResource performs a surgical update of a resource, specially handing certain fields
-func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) (common.UpdateResult[Resource], error) {
+func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, org organization.Organization) (common.UpdateResult[Resource], error) {
 	val := validate.NewSuccessValidationResult()
 
 	res, err := s.GetResourceByID(ctx, resource.ID)
@@ -33,6 +51,8 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) 
 	res.Type = resource.Type
 	res.Status = resource.Status
 
+	s.CalculateResourceInfo(ctx, res, org)
+
 	out, err := s.UpdateResource(ctx, res)
 	if err != nil {
 		log.Error(err)
@@ -40,6 +60,15 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource) 
 	}
 
 	return out, nil
+}
+
+func (s *ResourceService) CalculateResourceInfo(ctx context.Context, res *Resource, org organization.Organization) {
+	rm, err := s.GetRoleMap(ctx, true)
+	if err != nil {
+		return
+	}
+
+	res.Calculated.HourlyCost, res.Calculated.HourlyCostMethod = res.GetHourlyRate(rm, float64(org.Defaults.GenericBlendedHourlyRate), org.Defaults.WorkingHoursPerYear)
 }
 
 // UpdateSkillForResource add or update a skill to s resource

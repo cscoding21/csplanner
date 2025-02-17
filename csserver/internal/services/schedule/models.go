@@ -49,6 +49,8 @@ type ProjectActivity struct {
 	ResourceID    string
 	ResourceName  string
 	HoursSpent    int
+	HourlyRate    float64
+	RequiredSkill string
 }
 
 type ScheduleBatch struct {
@@ -63,6 +65,7 @@ type ScheduleWorkspace struct {
 	MilestoneName   string
 	TaskID          string
 	TaskName        string
+	RequiredSkillID string
 	ResourceIDs     []string
 	HoursToSchedule int
 	HoursScheduled  int

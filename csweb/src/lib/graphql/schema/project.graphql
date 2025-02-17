@@ -9,6 +9,7 @@ fragment projectFragment on Project {
 		description
 		startDate
 		ownerID
+		isCapitalized
 		owner {
 			...userFragment
 		}
@@ -29,7 +30,6 @@ fragment projectFragment on Project {
 	}
 	projectValue {
 		discountRate
-		isCapitalized
 		projectValueLines {
 			id
 			fundingSource
@@ -49,6 +49,7 @@ fragment projectFragment on Project {
 			yearThreeValue
 			yearFourValue
 			yearFiveValue
+			fiveYearGross
 		}
 	}
 	projectCost {
