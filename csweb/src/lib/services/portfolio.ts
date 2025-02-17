@@ -1,7 +1,9 @@
 import { GetPortfolioDocument} from "$lib/graphql/generated/sdk";
-import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, ProjectActivity } from "$lib/graphql/generated/sdk";
+import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, ProjectActivity, Project} from "$lib/graphql/generated/sdk";
 import { getApolloClient } from "$lib/graphql/gqlclient";
 import { deepCopy } from "$lib/utils/helpers";
+import { dateCompare } from "$lib/utils/check";
+import { formatDate, formatDateNoYear } from "$lib/utils/format";
 
 
 /**
@@ -52,7 +54,7 @@ export const getScheduledProjectFromPortfolio = async(projectID: string): Promis
 export const findScheduledWorkForResource = async(resourceID:string): Promise<Portfolio> => {
     return getPortfolio()
         .then(res => {
-            let portfolio:Portfolio = { weekSummary: [] as PortfolioWeekSummary[], schedule: [] as Schedule[] }
+            let portfolio:Portfolio = { weekSummary: res.weekSummary as PortfolioWeekSummary[], schedule: [] as Schedule[] }
 
             for (let i = 0; i < res.schedule.length; i++) {
                 const sch = res.schedule[i]
@@ -90,4 +92,126 @@ export const findScheduledWorkForResource = async(resourceID:string): Promise<Po
         .catch(err => {
             return err
         })
+}
+
+
+/**
+ * extract a single week from an array based on the end date
+ * @param paWeeks an array of project activity weeks
+ * @param week the week end of the date to extract
+ * @returns the project activity week object relevant to the passed in week
+ */
+export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):ProjectActivityWeek  => {
+    console.log("paWeeks", paWeeks)
+    if (paWeeks && paWeeks.length > 0) {
+        for (let i = 0; i < paWeeks.length; i++) {
+            const paw = paWeeks[i]
+
+            if(dateCompare(new Date(paw.end), week)) {
+                return paw as ProjectActivityWeek
+            }
+        }
+    }
+
+    return {} as ProjectActivityWeek
+}
+
+/**
+ * 
+ * @param res the portfolio to transform
+ * @returns a portfolio table
+ */
+export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date):ScheduleTable => {
+    let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: []} as ScheduleTable
+
+    console.log(res)
+
+    if (!res || !res.weekSummary) {
+        return portfolioTable
+    }
+
+    if(!startDate) {
+        startDate = new Date(res.weekSummary[0]?.begin)
+    }
+
+    if(!endDate) {
+        endDate = new Date(res.weekSummary[res.weekSummary.length-1]?.end)
+    }
+
+    portfolioTable.startDate = startDate
+    portfolioTable.endDate = endDate
+
+    let headerNames = []
+
+    for(let i = 0; i < res.weekSummary.length; i++) {
+        const thisHeaderWeek = res.weekSummary[i] 
+        const thisHeaderWeekEnd = new Date(thisHeaderWeek?.end)
+        const thisHeaderWeekStart = new Date(thisHeaderWeek?.begin)
+        
+        if(thisHeaderWeekEnd < startDate || thisHeaderWeekStart > endDate)
+            continue;
+
+        headerNames.push(formatDateNoYear(thisHeaderWeekEnd))
+    }
+
+    portfolioTable.header = ["Project", ...headerNames]
+
+    for(let i = 0; i < res.schedule.length; i++) {
+        let schedule = res.schedule[i]
+        let row = {weeks: [] as ProjectRowCell[]} as ProjectRow
+        let rowHasActivity = false
+
+        row.label = schedule.project.projectBasics.name
+        row.project = schedule.project
+
+        for (let j = 0; j < res.weekSummary.length; j++) {
+            const thisWeek = res.weekSummary[j] 
+            const thisWeekEnd = new Date(thisWeek?.end)
+            const thisWeekStart = new Date(thisWeek?.begin)
+
+            if(thisWeekEnd < startDate || thisWeekStart > endDate)
+                continue;
+
+            let cell = {active:false, activities:[], end: thisWeek?.end, orgCapacity: thisWeek?.orgCapacity } as ProjectRowCell
+
+            const paw = getWeekActivities(schedule.projectActivityWeeks as ProjectActivityWeek[], thisWeekEnd)
+            cell.orgCapacity = paw.orgCapacity
+
+            if (paw.activities && paw.activities.length > 0) {
+                rowHasActivity = true
+                cell.active = true
+                cell.activities = paw.activities as ProjectActivity[]
+            }
+
+            row.weeks.push(cell)
+        }
+
+        if(rowHasActivity) {
+            portfolioTable.body.push(row)
+        }
+    }
+
+    return portfolioTable
+}
+
+
+
+
+export interface ScheduleTable {
+    startDate: Date
+    endDate: Date
+    header: string[]
+    body: ProjectRow[]
+}
+
+export interface ProjectRow {
+    label: string
+    project: Project
+    weeks: ProjectRowCell[]
+}
+export interface ProjectRowCell {
+    active: boolean
+    end: Date
+    orgCapacity: number
+    activities: ProjectActivity[]
 }

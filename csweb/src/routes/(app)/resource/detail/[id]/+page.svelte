@@ -19,7 +19,8 @@
 		ResourceActionBar,
 		AddSkill,
 		DeleteResource,
-		UpdateResourceModal
+		UpdateResourceModal,
+		ResourceAllocationTable
 	} from '../../components';
 	import { getResource, deleteResourceSkill } from '$lib/services/resource';
 	import { formatDate, formatCurrency, titleCase, pluralize } from '$lib/utils/format';
@@ -181,7 +182,7 @@
 									<TableBodyRow>
 										<TableBodyCell>{s.name}</TableBodyCell>
 										<TableBodyCell
-											><Rating rating={s.proficiency?.valueOf()} total={3} /></TableBodyCell
+											><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
 										>
 										<TableBodyCell tdClass="float-right pt-2">
 											<Button outline color="dark" on:click={() => deleteSkill(s.id)}>
@@ -205,7 +206,13 @@
 			<div>
 				<Card size="lg">
 					<SectionHeading>Project Allocation</SectionHeading>
+
 					{#if portfolio && portfolio.schedule}
+					<div class="my-16">
+						<ResourceAllocationTable portfolio={portfolio}></ResourceAllocationTable>
+					</div>
+
+					<!--
 					<ul>
 					{#each portfolio.schedule as schedule}
 						<li>
@@ -225,6 +232,7 @@
 						</li>
 					{/each}
 				</ul>
+				-->
 					{/if}
 				</Card>
 			</div>

@@ -1,81 +1,24 @@
 <script lang="ts">
-    import type { ProjectActivity, ProjectActivityWeek, Portfolio, Project } from "$lib/graphql/generated/sdk";
-	import { getPortfolio } from "$lib/services/portfolio";
+    import type { Portfolio } from "$lib/graphql/generated/sdk";
+	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
+	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
     import { NoResults, CSSection, SectionHeading, ResourceList } from "$lib/components";
-    import { formatDate, formatDateNoYear, pluralize, formatPercent } from "$lib/utils/format";
-	import { dateCompare } from "$lib/utils/check";
+    import { formatDate, pluralize, formatPercent } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
 
-	let portfolioTable = $state({header: [] as string[], body:[] as ProjectRow[] })
-
-	interface ProjectRow {
-        label: string
-        project: Project
-        weeks: ProjectRowCell[]
-    }
-	interface ProjectRowCell {
-		active: boolean
-		end: Date
-		orgCapacity: number
-		activities: ProjectActivity[]
-	}
-
-	let orgCapacity = $state(0)
+	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
 
 	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
 
+		//@ts-ignore
 		portfolioTable = buildPortfolioTable(res)
+
+		console.log(portfolioTable)
 
 		return res;
 	};
-
-	const buildPortfolioTable = (res:Portfolio):any => {
-		portfolioTable.header = ["Project", ...res.weekSummary.map(w => formatDateNoYear(w?.end))]
-
-		for(let i = 0; i < res.schedule.length; i++) {
-			let schedule = res.schedule[i]
-			let row = {weeks: [] as ProjectRowCell[]} as ProjectRow
-
-			row.label = schedule.project.projectBasics.name
-			row.project = schedule.project
-
-			for (let j = 0; j < res.weekSummary.length; j++) {
-				const thisWeek = res.weekSummary[j] 
-				let cell = {active:false, activities:[], end: thisWeek?.end, orgCapacity: thisWeek?.orgCapacity } as ProjectRowCell
-
-				const paw = getWeekActivities(schedule.projectActivityWeeks as ProjectActivityWeek[], new Date(thisWeek?.end))
-				cell.orgCapacity = paw.orgCapacity
-				orgCapacity = paw.orgCapacity
-
-				if (paw.activities && paw.activities.length > 0) {
-					cell.active = true
-					cell.activities = paw.activities as ProjectActivity[]
-				}
-
-				row.weeks.push(cell)
-			}
-
-			portfolioTable.body.push(row)
-		}
-
-		return portfolioTable
-	}
-
-	const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):ProjectActivityWeek  => {
-		if (paWeeks && paWeeks.length > 0) {
-			for (let i = 0; i < paWeeks.length; i++) {
-				const paw = paWeeks[i]
-
-				if(dateCompare(new Date(paw.end), week)) {
-					return paw as ProjectActivityWeek
-				}
-			}
-		}
-
-		return {} as ProjectActivityWeek
-	}
 
 	let portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
