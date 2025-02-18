@@ -191,42 +191,46 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
     return portfolioTable
 }
 
-export const flattemPortfolio = (port:Portfolio, startDate:Date, endDate:Date):FlatPortfolioItem[] => {
+export const flattenPortfolio = (port:Portfolio, startDate:Date, endDate:Date):FlatPortfolioItem[] => {
     let out:FlatPortfolioItem[] = []
 
     for(let i = 0; i < port.schedule.length; i++) {
-        let thisItem:FlatPortfolioItem = {} as FlatPortfolioItem
         let thisSchedule:Schedule = port.schedule[i]
-
-        thisItem.projectID = thisSchedule.projectID
-        thisItem.projectName = thisSchedule.projectName
 
         if(!thisSchedule.projectActivityWeeks)
             continue
 
         for(let m = 0; m < thisSchedule.projectActivityWeeks?.length; m++) {
             let thisWeek = thisSchedule.projectActivityWeeks[m]
-            thisItem.weekEnd = thisWeek.end
+            let thisWeekStart = new Date(thisWeek?.begin)
+            let thisWeekEnd = new Date(thisWeek?.end)
 
             if (!thisWeek.activities)
                 continue
             
             for (let a = 0; a < thisWeek.activities?.length; a++) {
+                if(thisWeekEnd < startDate || thisWeekStart > endDate)
+                    continue;
+
                 let thisActivity = thisWeek.activities[a]
+                let thisItem:FlatPortfolioItem = {} as FlatPortfolioItem
+
+                thisItem.projectID = thisSchedule.projectID
+                thisItem.projectName = thisSchedule.project.projectBasics.name
+                thisItem.weekEnd = thisWeek.end
 
                 thisItem.milestoneID = thisActivity.milestoneID
                 thisItem.milestoneName = thisActivity.milestoneName
                 thisItem.taskID = thisActivity.taskID
                 thisItem.taskName = thisActivity.taskName
                 thisItem.actualizedHours = thisActivity.hoursSpent as number
-                //thisItem.hourlyRate = thisActivity.resource.
+                thisItem.hourlyRate = thisActivity.resource?.calculated.hourlyCost as number
+                thisItem.costForLine = thisItem.actualizedHours * thisItem.hourlyRate
+                thisItem.requiredSkill = thisActivity.requiredSkillID
+
+                out.push(thisItem)
             }
         }
-
-
-
-
-        out.push(thisItem)
     }
 
 

@@ -167,7 +167,7 @@
 
 	<MoneyInput
 		bind:value={rf.initialCost}
-		fieldName="Initial Cost"
+		fieldName="Onboarding Cost"
 		error={errors.initialCost}
 	/>
 

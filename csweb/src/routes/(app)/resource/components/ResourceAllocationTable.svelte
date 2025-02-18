@@ -8,13 +8,11 @@
 
     interface Props {
 		portfolio: Portfolio;
+        startDate: Date;
+        endDate: Date;
 	}
-	let { portfolio }: Props = $props();
+	let { portfolio, startDate, endDate }: Props = $props();
 
-    const startDate = new Date()    
-    const endDate = new Date(new Date().setDate(new Date().getDate() + 7 * 12));
-
-    //@ts-ignore
     let portfolioTable:ScheduleTable = $state(buildPortfolioTable(portfolio, startDate, endDate))
 </script>
 

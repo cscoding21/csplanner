@@ -107,6 +107,7 @@
 	{/if}
 
 	{#if of}	
+	<div class="max-w-lg">
 		<NumberInput
 			bind:value={of.discountRate}
 			fieldName="Discount rate"
@@ -163,5 +164,6 @@
 			</span>
 			<br class="clear-both" />
 		</div>
+	</div>
 	{/if}
 {/await}

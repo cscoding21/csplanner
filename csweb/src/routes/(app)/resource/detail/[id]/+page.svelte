@@ -27,11 +27,14 @@
 	import { getInitialsFromName } from '$lib/utils/format';
 	import type { Resource, Portfolio } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
-	import { findScheduledWorkForResource } from '$lib/services/portfolio';
+	import { findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
 	import { SectionSubHeading, CSSection , PieChart, CSHR } from '$lib/components';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
 
 	const id = page.params.id;
+
+	const startDate = new Date()    
+    const endDate = new Date(new Date().setDate(new Date().getDate() + 7 * 12));
 
 	const refresh = async ():Promise<Resource> => {
 		const res = getResource(id);
@@ -55,8 +58,6 @@
 					dismissible: true,
 					type: 'success'
 				});
-
-				//resourcePromise = refresh();
 			} else {
 				addToast({
 					message: 'Error updating resource: ' + res.message,
@@ -73,14 +74,18 @@
 		}).then(p => {
 			 refreshWork().then(p => {
 				portfolio = p
+
+				flatData = flattenPortfolio(p, startDate, endDate)
+				console.log("flatdata", flatData)
 			 })
 		});
 	}
 
-
+	let flatData = $state([] as FlatPortfolioItem[])
 	let resourcePromise:Resource = $state({} as Resource);
-	let projectPieData = $state([])
-	let skillPieData = $state([])
+	let projectPieData = $derived(csGroupBy(deepCopy(flatData), "projectName", "actualizedHours"))
+	let skillPieData = $derived(csGroupBy(deepCopy(flatData), "requiredSkill", "actualizedHours"))
+
 
 	let portfolio:Portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
@@ -143,6 +148,10 @@
 								{:else}
 									<span class="float-right flex-auto font-semibold">No User Account</span>
 								{/if}
+							</li>
+							<li>
+								<span>Hours per Week</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.availableHoursPerWeek}</span>
 							</li>
 							<li>
 								<span>Onboarding Cost</span>
@@ -226,7 +235,7 @@
 
 					{#if portfolio && portfolio.schedule}
 					<div class="mb-2">
-						<ResourceAllocationTable portfolio={portfolio}></ResourceAllocationTable>
+						<ResourceAllocationTable {portfolio} {startDate} {endDate}></ResourceAllocationTable>
 					</div>
 					{/if}
 
@@ -241,7 +250,9 @@
 
 					<div class="p-4">
 						<SectionSubHeading>Skills Distribution</SectionSubHeading>
-
+						{#if projectPieData}
+							<PieChart labels={Object.keys(skillPieData)} values={Object.values(skillPieData)} />
+						{/if}
 					</div>
 				</div>
 				</CSSection>

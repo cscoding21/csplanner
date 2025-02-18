@@ -132,16 +132,16 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 					ram.ReduceResourceProjectHours(currentWeek, projectID, resourceID, hoursToAllocate)
 
 					activity := ProjectActivity{
-						ProjectID:     p.ID,
-						ProjectName:   p.ProjectBasics.Name,
-						ResourceID:    resourceID,
-						ResourceName:  resourceToAllocate.ResourceName,
-						TaskID:        task.TaskID,
-						TaskName:      task.TaskName,
-						MilestoneID:   task.MilestoneID,
-						MilestoneName: task.MilestoneName,
-						HoursSpent:    hoursToAllocate,
-						RequiredSkill: task.RequiredSkillID,
+						ProjectID:       p.ID,
+						ProjectName:     p.ProjectBasics.Name,
+						ResourceID:      resourceID,
+						ResourceName:    resourceToAllocate.ResourceName,
+						TaskID:          task.TaskID,
+						TaskName:        task.TaskName,
+						MilestoneID:     task.MilestoneID,
+						MilestoneName:   task.MilestoneName,
+						HoursSpent:      hoursToAllocate,
+						RequiredSkillID: task.RequiredSkillID,
 					}
 
 					activities = append(activities, activity)

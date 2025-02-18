@@ -40,17 +40,17 @@ type ProjectActivityWeek struct {
 }
 
 type ProjectActivity struct {
-	ProjectID     string
-	ProjectName   string
-	MilestoneID   string
-	MilestoneName string
-	TaskID        string
-	TaskName      string
-	ResourceID    string
-	ResourceName  string
-	HoursSpent    int
-	HourlyRate    float64
-	RequiredSkill string
+	ProjectID       string
+	ProjectName     string
+	MilestoneID     string
+	MilestoneName   string
+	TaskID          string
+	TaskName        string
+	ResourceID      string
+	ResourceName    string
+	HoursSpent      int
+	HourlyRate      float64
+	RequiredSkillID string
 }
 
 type ScheduleBatch struct {
