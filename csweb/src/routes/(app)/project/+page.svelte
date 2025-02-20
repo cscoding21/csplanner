@@ -4,14 +4,15 @@
 	import { NewspaperOutline } from 'flowbite-svelte-icons';
 	import { findProjects } from '$lib/services/project';
 	import { ProjectActionBar, ProjectCard, ProjectSearchFilters } from './components';
-	import { NoResults } from '$lib/components';
-	import type { PageAndFilter, ProjectResults, InputFilters } from '$lib/graphql/generated/sdk';
+	import { NoResults, CSPaging } from '$lib/components';
+	import type { PageAndFilter, ProjectResults, InputFilters, Pagination, Filters } from '$lib/graphql/generated/sdk';
 
 	let filters:InputFilters = $state({}) as InputFilters;
+	let paging:Pagination = $state({ pageNumber: 1, resultsPerPage: 10 }) as Pagination;
 
 	const getFilters = ():PageAndFilter => {
 		let pageAndFilter: PageAndFilter = {
-			paging: { pageNumber: 1, resultsPerPage: 20 },
+			paging: paging,
 		};
 
 		pageAndFilter.filters = filters
@@ -30,6 +31,19 @@
 
 		refresh().then((p) => {
 			projects = p as ProjectResults;
+			pagingDisplay = p.paging as Pagination
+			filterDisplay = p.filters
+		});
+	}
+
+	const pagingChange = (np:Pagination) => {
+		console.log(np)
+		paging = np
+
+		refresh().then((p) => {
+			projects = p as ProjectResults;
+			pagingDisplay = p.paging as Pagination
+			filterDisplay = p.filters
 		});
 	}
 
@@ -37,8 +51,13 @@
 	const loadPage = async () => {
 		refresh().then((p) => {
 			projects = p as ProjectResults;
+			pagingDisplay = p.paging as Pagination
+			filterDisplay = p.filters
 		});
 	};
+
+	let pagingDisplay:Pagination = $state({}) as Pagination
+	let filterDisplay:Filters = $state({}) as Filters
 </script>
 
 <ProjectActionBar pageDetail="">
@@ -56,13 +75,15 @@
 </TableHeader>
 </div>
 
-<div class="p-4">
+<div class="px-4 mt-2">
 {#await loadPage()}
 	<CardPlaceholder />
 	<CardPlaceholder />
 	<CardPlaceholder />
 {:then promiseData}
 	{#if projects.results != null}
+		<CSPaging paging={pagingDisplay} change={pagingChange} />
+
 		<div class="grid grid-cols-3 gap-3">
 			{#each projects.results as p}
 				<ProjectCard project={p} />

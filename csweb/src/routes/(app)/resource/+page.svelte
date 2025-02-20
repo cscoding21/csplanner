@@ -4,10 +4,12 @@
 	import { UserAddOutline } from 'flowbite-svelte-icons';
 	import { findResources } from '$lib/services/resource';
 	import { ResourceActionBar, ResourceCard, UpdateResourceModal, ResourceSearchFilters } from './components';
-	import { NoResults } from '$lib/components';
-	import type { ResourceResults, PageAndFilter, InputFilters } from '$lib/graphql/generated/sdk';
+	import { CSPaging, NoResults } from '$lib/components';
+	import type { ResourceResults, PageAndFilter, InputFilters, Pagination, Filters } from '$lib/graphql/generated/sdk';
 
 	let filters:InputFilters = $state({}) as InputFilters;
+	let paging:Pagination = $state({ pageNumber: 1, resultsPerPage: 10 }) as Pagination;
+
 	const refresh = async (): Promise<ResourceResults> => {
 		const res = await findResources(getFilters());
 
@@ -16,7 +18,7 @@
 
 	const getFilters = ():PageAndFilter => {
 		let pageAndFilter: PageAndFilter = {
-			paging: { pageNumber: 1, resultsPerPage: 20 },
+			paging: paging,
 		};
 
 		pageAndFilter.filters = filters
@@ -29,6 +31,18 @@
 
 		refresh().then(r => {
 			resources = r as ResourceResults;
+			pagingDisplay = r.paging as Pagination
+			filterDisplay = r.filters
+		});
+	}
+
+	const pagingChange = (np:Pagination) => {
+		paging = np
+
+		refresh().then((r) => {
+			resources = r as ResourceResults;
+			pagingDisplay = r.paging as Pagination
+			filterDisplay = r.filters
 		});
 	}
 
@@ -36,8 +50,13 @@
 	const loadPage = async () => {
 		refresh().then((r) => {
 			resources = r as ResourceResults;
+			pagingDisplay = r.paging as Pagination
+			filterDisplay = r.filters
 		});
 	};
+
+	let pagingDisplay:Pagination = $state({}) as Pagination
+	let filterDisplay:Filters = $state({}) as Filters
 </script>
 
 <ResourceActionBar pageDetail="">
@@ -60,6 +79,8 @@
 	<div>Loading...</div>
 {:then promiseData}
 	{#if resources.results != null}
+		<CSPaging paging={pagingDisplay} change={pagingChange} />
+
 		<div class="grid grid-cols-3 gap-3">
 			{#each resources.results as r(r.id)}
 				<ResourceCard resource={r} />
