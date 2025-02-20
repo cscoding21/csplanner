@@ -78,7 +78,7 @@
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
-	{#if resources.results != null}
+	{#if resources.results != null && resources.results.length}
 		<CSPaging paging={pagingDisplay} change={pagingChange} />
 
 		<div class="grid grid-cols-3 gap-3">

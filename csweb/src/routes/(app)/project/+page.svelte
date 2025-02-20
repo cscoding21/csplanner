@@ -37,7 +37,6 @@
 	}
 
 	const pagingChange = (np:Pagination) => {
-		console.log(np)
 		paging = np
 
 		refresh().then((p) => {
@@ -81,7 +80,7 @@
 	<CardPlaceholder />
 	<CardPlaceholder />
 {:then promiseData}
-	{#if projects.results != null}
+	{#if projects.results != null && projects.results.length > 0}
 		<CSPaging paging={pagingDisplay} change={pagingChange} />
 
 		<div class="grid grid-cols-3 gap-3">

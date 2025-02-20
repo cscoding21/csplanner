@@ -2,7 +2,7 @@
     import { Search, Select } from 'flowbite-svelte';
     import type { SelectOptionType } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
-    import { CheckBoxFilter } from '$lib/components';
+    import { CheckBoxFilter, CSMultiFilter } from '$lib/components';
     import { findAllResources } from '$lib/services/resource';
 
     let searchInput:string = $state("")
@@ -28,16 +28,14 @@
     let resourceOpts:SelectOptionType<string>[] = $state([])
 
     const statusChange = (e:any) => {
-        if (e.target.checked) {
-            status = [...status, e.target.value]
-        } else {
-            status = status.filter(el => el !== e.target.value)
-        }
+        status = e
 
         change(getFilters())
     }
 
     const resourceChange = (e:any) => {
+        resourceID = e.join("")
+
         change(getFilters())
     }
 
@@ -82,7 +80,6 @@
     const loadPage = async () => {
 		findAllResources()
 			.then((r) => {
-                resourceOpts.push({name: "All", value: ""})
 				resourceOpts = [...resourceOpts, ...r.results?.map((r) => ({
 					name: r.name,
 					value: r.id as string
@@ -97,15 +94,14 @@
     </div>
 
     <div class="mr-2">
-        <CheckBoxFilter name="Status" bind:group={status} change={statusChange} opts={statusOpts} />
+        <CSMultiFilter filterOpts={statusOpts} change={statusChange} filterValue={status} filterName="Status" isMulti={true} />
     </div>
 
     {#await loadPage()}
         ...
     {:then}
     <div class="mr-2">
-        <!-- <SelectInput name="Status" bind:group={status} change={statusChange} opts={statusOpts} /> -->
-        <Select items={resourceOpts} bind:value={resourceID} placeholder="Assigned Resource" on:change={resourceChange} />
+        <CSMultiFilter filterOpts={resourceOpts} change={resourceChange} filterValue={[resourceID]} filterName="Assigned Resource" isMulti={false} />
     </div>
     {/await}
 </div>

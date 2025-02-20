@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Search, type SelectOptionType, Select } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
-	import { CheckBoxFilter } from '$lib/components';
+	import { CSMultiFilter } from '$lib/components';
     import { getList } from '$lib/services/list';
     import { findSelectOptsFromList } from '$lib/forms/helpers';
 
@@ -26,26 +26,20 @@
     let skillsOpts:SelectOptionType<string>[] = $state([])
 
     const statusChange = (e:any) => {
-        if (e.target.checked) {
-            status = [...status, e.target.value]
-        } else {
-            status = status.filter(el => el !== e.target.value)
-        }
+        status = e
 
         change(getFilters())
     }
 
     const typeChange = (e:any) => {
-        if (e.target.checked) {
-            type = [...type, e.target.value]
-        } else {
-            type = type.filter(el => el !== e.target.value)
-        }
+        type = e
 
         change(getFilters())
     }
 
     const skillsChange = (e:any) => {
+        skills = e.join("")
+
         change(getFilters())
     }
 
@@ -109,18 +103,18 @@
     </div>
 
     <div class="mr-2">
-        <CheckBoxFilter name="Status" bind:group={status} change={statusChange} opts={statusOpts} />
+        <CSMultiFilter filterOpts={statusOpts} change={statusChange} filterValue={status} filterName="Status" isMulti={true} />
     </div>  
 
     <div class="mr-2">
-        <CheckBoxFilter name="Type" bind:group={type} change={typeChange} opts={typeOpts} />
+        <CSMultiFilter filterOpts={typeOpts} change={typeChange} filterValue={type} filterName="Type" isMulti={true} />
     </div>
 
     {#await loadPage()}
         ...
     {:then}
     <div class="mr-2">
-        <Select items={skillsOpts} bind:value={skills} on:change={skillsChange} />
+        <CSMultiFilter filterOpts={skillsOpts} change={skillsChange} filterValue={[skills]} filterName="Skills" isMulti={false} />
     </div>
     {/await}
 </div>
