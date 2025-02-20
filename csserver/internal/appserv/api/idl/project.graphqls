@@ -270,3 +270,11 @@ input UpdateProjectMilestoneTask {
   projectID: String!
   milestoneID: String!
 }
+
+input UpdateNewProject {
+  name: String!
+  description: String!
+  ownerID: String!
+  templateID: String!
+  isCapitalized: Boolean!
+}

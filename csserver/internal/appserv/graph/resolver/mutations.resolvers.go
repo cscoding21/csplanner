@@ -19,11 +19,6 @@ import (
 	"csserver/internal/utils"
 )
 
-// CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
-	panic("cannot create user from app UI")
-}
-
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
 	out := idl.CreateUserResult{}
@@ -42,9 +37,51 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser)
 }
 
 // CreateProject is the resolver for the createProject field.
-func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error) {
-	//---create vs update is handled at the service level
-	return r.UpdateProject(ctx, input)
+func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNewProject) (*idl.CreateProjectResult, error) {
+	defer augment.ExpireProjectCache()
+
+	service := factory.GetProjectService()
+	rs := factory.GetResourceService()
+	ts := factory.GetProjectTemplateService()
+	org, _ := factory.GetDefaultOrganization(ctx)
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	basics := project.ProjectBasics{
+		Name:        input.Name,
+		Description: input.Description,
+		OwnerID:     input.OwnerID,
+	}
+
+	template, err := ts.GetProjecttemplateByID(ctx, input.TemplateID)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := service.CreateNewProject(ctx, basics, *template, resourceMap, roleMap, *org)
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+	}
+
+	return &out, nil
 }
 
 // UpdateProject is the resolver for the updateProject field.

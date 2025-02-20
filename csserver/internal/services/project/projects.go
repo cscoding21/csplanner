@@ -5,6 +5,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/projectstatus"
+	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
 	"fmt"
 
@@ -64,6 +65,49 @@ func (s *ProjectService) newProject(
 	pro.PerformAllCalcs(org, resourceMap, roleMap)
 
 	return s.UpdateProject(ctx, &pro)
+}
+
+// CreateNewProject adds a new project to the portfolio
+func (s *ProjectService) CreateNewProject(
+	ctx context.Context,
+	basics ProjectBasics,
+	template projecttemplate.Projecttemplate,
+	rm map[string]resource.Resource,
+	roleMap map[string]resource.Role,
+	org organization.Organization) (common.UpdateResult[Project], error) {
+	newProj := Project{
+		ProjectBasics: &basics,
+		ProjectStatusBlock: &ProjectStatusBlock{
+			Status: projectstatus.NewProject,
+		},
+		ProjectValue: &ProjectValue{
+			DiscountRate: org.Defaults.DiscountRate,
+			Calculated:   ProjectValueCalculatedData{},
+		},
+		ProjectCost: &ProjectCost{
+			Calculated: ProjectCostCalculatedData{},
+		},
+		ProjectDaci: &ProjectDaci{
+			DriverIDs:      []*string{},
+			ApproverIDs:    []*string{},
+			ContributorIDs: []*string{},
+			InformedIDs:    []*string{},
+		},
+		ProjectFeatures: []*ProjectFeature{},
+		Calculated:      ProjectCalculatedData{},
+	}
+
+	proj, err := s.CreateProject(ctx, &newProj)
+	if err != nil {
+		return proj, err
+	}
+
+	projWithMS, err := s.SetProjectMilestonesFromTemplate(ctx, proj.Object.ID, template)
+	if err != nil {
+		return *projWithMS, err
+	}
+
+	return s.SaveProject(ctx, *projWithMS.Object, rm, roleMap, org)
 }
 
 // SetProjectStatus update the status of a project by adhering to the rules of the state machine

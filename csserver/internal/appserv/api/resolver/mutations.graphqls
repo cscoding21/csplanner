@@ -1,8 +1,7 @@
 type Mutation {
-    createUser(input: UpdateUser!): CreateUserResult!
     updateUser(input: UpdateUser!): CreateUserResult!
 
-    createProject(input: UpdateProject!): CreateProjectResult!
+    createProject(input: UpdateNewProject!): CreateProjectResult!
     updateProject(input: UpdateProject!): CreateProjectResult!
     deleteProject(id: String!): Status!
     updateProjectTask(input: UpdateProjectMilestoneTask!): CreateProjectResult!

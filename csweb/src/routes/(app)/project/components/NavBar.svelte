@@ -46,8 +46,6 @@
 		closeDrawer();
 
 		activeMainSidebar = navigation.to?.url.pathname ?? '';
-
-		console.log(page.url.pathname + "#" + page.url.hash)
 	});
 
 	let posts = [

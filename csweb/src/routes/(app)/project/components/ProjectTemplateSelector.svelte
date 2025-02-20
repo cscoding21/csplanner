@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { SelectInput } from '$lib/components';
 	import type { Projecttemplate } from '$lib/graphql/generated/sdk';
-	import { SectionHeading } from '$lib/components';
+	import { SectionSubHeading, SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates, setProjectMilestonesFromTemplate } from '$lib/services/project';
-	import { CardPlaceholder, Button, P, type SelectOptionType } from 'flowbite-svelte';
+	import { CardPlaceholder, Button, P, type SelectOptionType, Alert } from 'flowbite-svelte';
 	import { callIf } from '$lib/utils/helpers';
+	import { InfoCircleSolid } from 'flowbite-svelte-icons';
 
 	interface Props {
-		id: string;
+		id?: string;
 		update?: Function;
 	}
 	let { id, update }: Props = $props();
@@ -30,6 +31,10 @@
 	};
 
 	const selectTemplate = async () => {
+		if(!id) {
+			return
+		}
+
 		setProjectMilestonesFromTemplate({ projectId: id, templateId: templateID }).then((td) => {
 			console.log('template details set');
 
@@ -68,14 +73,29 @@
 	/>
 
 	{#if currentTemplate !== undefined}
-		<SectionHeading>Milestones for {showTemplateDetails.name} Template</SectionHeading>
+		<SectionHeading>Milestones for '{currentTemplate.name}' template</SectionHeading>
+		{#if currentTemplate.description}
+		<P class="text-sm mb-6">{currentTemplate.description}</P>
+		{/if}
 
 		{#if currentTemplate.phases && currentTemplate.phases.length > 0}
 			{#each currentTemplate.phases as phase (phase)}
-				<SectionHeading>{phase.name}</SectionHeading>
-				<P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-400"
-					>{phase.description}</P
-				>
+				<SectionSubHeading>Milestone: {phase.name}</SectionSubHeading>
+				<div class="mb-6 text-sm">{phase.description}</div>
+				{#if phase.tasks && phase.tasks.length > 0}
+					<div class="text-sm text-gray-200 mb-1">Prefilled tasks</div>
+					<ul class="list-disc ml-3 space-y-2 mb-4 text-sm">
+						{#each phase.tasks as task}
+						<li><b>{task.name} ({task.requiredSkillID})</b>: {task.description}</li>
+						{/each}
+					</ul>
+				{:else}
+					<Alert border color="blue" class="mt-2 mb-6">
+						<InfoCircleSolid slot="icon" class="w-5 h-5" />
+						<span class="font-medium">No tasks</span>
+						No tasks will be created for this milestone
+					</Alert>
+				{/if}
 			{/each}
 		{/if}
 

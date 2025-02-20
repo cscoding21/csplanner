@@ -366,6 +366,12 @@ type ProjectTaskCalculatedData struct {
 	Exceptions                []string `json:"exceptions,omitempty"`
 }
 
+type ProjectTemplateTask struct {
+	Name            string  `json:"name"`
+	Description     *string `json:"description,omitempty"`
+	RequiredSkillID *string `json:"requiredSkillID,omitempty"`
+}
+
 type ProjectValue struct {
 	DiscountRate      *float64                    `json:"discountRate,omitempty"`
 	ProjectValueLines []*ProjectValueLine         `json:"projectValueLines,omitempty"`
@@ -396,16 +402,18 @@ type ProjectValueLine struct {
 }
 
 type Projecttemplate struct {
-	ID     string                  `json:"id"`
-	Name   string                  `json:"name"`
-	Phases []*ProjecttemplatePhase `json:"phases"`
+	ID          string                  `json:"id"`
+	Description string                  `json:"description"`
+	Name        string                  `json:"name"`
+	Phases      []*ProjecttemplatePhase `json:"phases"`
 }
 
 type ProjecttemplatePhase struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Order       int    `json:"order"`
-	Description string `json:"description"`
+	ID          string                 `json:"id"`
+	Name        string                 `json:"name"`
+	Order       int                    `json:"order"`
+	Description string                 `json:"description"`
+	Tasks       []*ProjectTemplateTask `json:"tasks,omitempty"`
 }
 
 type ProjecttemplateResults struct {
@@ -533,6 +541,14 @@ type UpdateListItem struct {
 	Value     string `json:"value"`
 	Name      string `json:"name"`
 	SortOrder *int   `json:"sortOrder,omitempty"`
+}
+
+type UpdateNewProject struct {
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	OwnerID       string `json:"ownerID"`
+	TemplateID    string `json:"templateID"`
+	IsCapitalized bool   `json:"isCapitalized"`
 }
 
 type UpdateOrganization struct {

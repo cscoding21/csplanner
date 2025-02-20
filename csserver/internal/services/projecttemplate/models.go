@@ -7,7 +7,6 @@ package projecttemplate
 
 import (
 	"csserver/internal/common"
-	"csserver/internal/services/project/ptypes/milestonestatus"
 )
 
 type Projecttemplate struct {
@@ -15,21 +14,21 @@ type Projecttemplate struct {
 	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
-	Name   string                 `json:"name"`
-	Phases []ProjecttemplatePhase `json:"phases"`
+	Name        string                 `json:"name"`
+	Description string                 `json:"description"`
+	Phases      []ProjecttemplatePhase `json:"phases"`
 }
 
 type ProjecttemplatePhase struct {
-	ID          string                 `json:"id,omitempty"`
-	PhaseOrder  byte                   `json:"phase_order"`
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Tasks       []ProjectTemplateTasks `json:"tasks"`
+	ID          string                `json:"id,omitempty"`
+	PhaseOrder  byte                  `json:"phase_order"`
+	Name        string                `json:"name"`
+	Description string                `json:"description"`
+	Tasks       []ProjectTemplateTask `json:"tasks"`
 }
 
-type ProjectTemplateTasks struct {
-	Name            string                          `json:"name"`
-	Description     string                          `json:"description"`
-	Status          milestonestatus.MilestoneStatus `json:"status"`
-	RequiredSkillID string                          `json:"required_skill_id"`
+type ProjectTemplateTask struct {
+	Name            string `json:"name"`
+	Description     string `json:"description"`
+	RequiredSkillID string `json:"required_skill_id"`
 }

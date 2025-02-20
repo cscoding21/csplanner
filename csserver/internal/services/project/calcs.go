@@ -166,6 +166,12 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 		}
 	}
 
+	if p.ProjectCost == nil {
+		p.ProjectCost = &ProjectCost{
+			Calculated: ProjectCostCalculatedData{},
+		}
+	}
+
 	p.ProjectCost.Calculated.HourEstimate = hours
 	p.ProjectCost.Calculated.HoursActualized = actualizedHours
 	p.ProjectCost.Calculated.InitialCost = cost

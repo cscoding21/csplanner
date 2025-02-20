@@ -1,5 +1,6 @@
 type Projecttemplate {
   id: String!
+  description: String!
   name: String!
   phases: [ProjecttemplatePhase!]!
 }
@@ -9,7 +10,14 @@ type ProjecttemplatePhase {
   name: String!
   order: Int!
   description: String!
+  tasks: [ProjectTemplateTask!]
 }
+
+type ProjectTemplateTask {
+  name: String!
+  description: String
+  requiredSkillID: String
+} 
 
 type ProjecttemplateResults {
   paging: Pagination

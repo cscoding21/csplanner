@@ -188,7 +188,6 @@ export type Mutation = {
   createProjectComment: CreateProjectCommentResult;
   createProjectCommentReply: CreateProjectCommentResult;
   createResource: CreateResourceResult;
-  createUser: CreateUserResult;
   deleteProject: Status;
   deleteProjectComment: Status;
   deleteProjectFeature: CreateProjectResult;
@@ -217,7 +216,7 @@ export type Mutation = {
 
 
 export type MutationCreateProjectArgs = {
-  input: UpdateProject;
+  input: UpdateNewProject;
 };
 
 
@@ -233,11 +232,6 @@ export type MutationCreateProjectCommentReplyArgs = {
 
 export type MutationCreateResourceArgs = {
   input: UpdateResource;
-};
-
-
-export type MutationCreateUserArgs = {
-  input: UpdateUser;
 };
 
 
@@ -598,6 +592,13 @@ export type ProjectTaskCalculatedData = {
   skillsHourAdjustment?: Maybe<Scalars['Int']['output']>;
 };
 
+export type ProjectTemplateTask = {
+  __typename?: 'ProjectTemplateTask';
+  description?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  requiredSkillID?: Maybe<Scalars['String']['output']>;
+};
+
 export type ProjectValue = {
   __typename?: 'ProjectValue';
   calculated?: Maybe<ProjectValueCalculatedData>;
@@ -632,6 +633,7 @@ export type ProjectValueLine = {
 
 export type Projecttemplate = {
   __typename?: 'Projecttemplate';
+  description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   phases: Array<ProjecttemplatePhase>;
@@ -643,6 +645,7 @@ export type ProjecttemplatePhase = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   order: Scalars['Int']['output'];
+  tasks?: Maybe<Array<ProjectTemplateTask>>;
 };
 
 export type ProjecttemplateResults = {
@@ -872,6 +875,14 @@ export type UpdateListItem = {
   name: Scalars['String']['input'];
   sortOrder?: InputMaybe<Scalars['Int']['input']>;
   value: Scalars['String']['input'];
+};
+
+export type UpdateNewProject = {
+  description: Scalars['String']['input'];
+  isCapitalized: Scalars['Boolean']['input'];
+  name: Scalars['String']['input'];
+  ownerID: Scalars['String']['input'];
+  templateID: Scalars['String']['input'];
 };
 
 export type UpdateOrganization = {
@@ -1597,19 +1608,25 @@ export const FindAllProjectTemplatesDocument = gql`
   findAllProjectTemplates {
     results {
       name
+      description
       id
       phases {
         id
         name
         order
         description
+        tasks {
+          name
+          description
+          requiredSkillID
+        }
       }
     }
   }
 }
     `;
 export const CreateProjectDocument = gql`
-    mutation createProject($project: UpdateProject!) {
+    mutation createProject($project: UpdateNewProject!) {
   createProject(input: $project) {
     status {
       ...statusFragment
@@ -1756,16 +1773,6 @@ export const SetProjectStatusDocument = gql`
 }
     ${StatusFragmentFragmentDoc}
 ${ProjectFragmentFragmentDoc}`;
-export const CreateUserDocument = gql`
-    mutation createUser($info: UpdateUser!) {
-  createUser(input: $info) {
-    status {
-      success
-      message
-    }
-  }
-}
-    `;
 export const UpdateResourceSkillDocument = gql`
     mutation updateResourceSkill($input: UpdateSkill!) {
   updateResourceSkill(input: $input) {
@@ -2018,9 +2025,6 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     setProjectStatus(variables: SetProjectStatusMutationVariables, options?: C): Promise<SetProjectStatusMutation> {
       return requester<SetProjectStatusMutation, SetProjectStatusMutationVariables>(SetProjectStatusDocument, variables, options) as Promise<SetProjectStatusMutation>;
-    },
-    createUser(variables: CreateUserMutationVariables, options?: C): Promise<CreateUserMutation> {
-      return requester<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, variables, options) as Promise<CreateUserMutation>;
     },
     updateResourceSkill(variables: UpdateResourceSkillMutationVariables, options?: C): Promise<UpdateResourceSkillMutation> {
       return requester<UpdateResourceSkillMutation, UpdateResourceSkillMutationVariables>(UpdateResourceSkillDocument, variables, options) as Promise<UpdateResourceSkillMutation>;

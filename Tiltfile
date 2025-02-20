@@ -13,7 +13,7 @@ load('./tilt_lib/keycloak/Tiltfile', 'setup_keycloak')
 #---- Third party
 setup_surrealdb()
 setup_postgres()
-# setup_ollama()
+setup_ollama()
 setup_keycloak()
 setup_nats()
 

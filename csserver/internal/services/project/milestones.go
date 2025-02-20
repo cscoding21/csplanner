@@ -130,6 +130,7 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 
 		for _, t := range p.Tasks {
 			task := ProjectMilestoneTask{
+				ID:              utils.ValToRef(uuid.New().String()),
 				Name:            t.Name,
 				Description:     t.Description,
 				Status:          milestonestatus.New,

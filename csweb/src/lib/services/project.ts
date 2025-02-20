@@ -16,7 +16,8 @@ import type {
 	CreateProjectResult,
 	ProjecttemplateResults,
 	ProjectScheduleResult,
-	ValidationResult
+	ValidationResult,
+	UpdateNewProject
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import {
@@ -113,7 +114,7 @@ export const checkProjectStatus = async (projectID: string, newStatus: string): 
  * @param input a project graph
  * @returns a result with the created project and operation status
  */
-export const createProject = async (input: UpdateProject): Promise<CreateProjectResult> => {
+export const createProject = async (input: UpdateNewProject): Promise<CreateProjectResult> => {
 	const client = getApolloClient();
 
 	return client

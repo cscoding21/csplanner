@@ -9,6 +9,14 @@ export const basicSchema = yup.object().shape({
 	isCapitalized: yup.bool().required()
 });
 
+export const newProjectSchema = yup.object().shape({
+	name: yup.string().required('Project name is required'),
+	description: yup.string().required('Description is required'),
+	ownerID: yup.string().required('Project owner is required'),
+	templateID: yup.string().required('A project milestone template is required'),
+	isCapitalized: yup.bool().required()
+});
+
 export const valueSchema = yup.object().shape({
 	discountRate: yup
 		.number()
