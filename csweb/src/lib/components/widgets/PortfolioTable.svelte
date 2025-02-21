@@ -1,23 +1,19 @@
 <script lang="ts">
-    import { Popover } from "flowbite-svelte";
+    import { Heading, Popover } from "flowbite-svelte";
 	import type { Portfolio } from "$lib/graphql/generated/sdk";
     import { buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
     import { getID } from "$lib/utils/id";
     import { pluralize, formatDate, formatPercent } from "$lib/utils/format";
-	import { NoResults } from "$lib/components";
 
     interface Props {
 		portfolio: Portfolio;
-        startDate: Date;
-        endDate: Date;
+        startDate?: Date;
+        endDate?: Date;
 	}
 	let { portfolio, startDate, endDate }: Props = $props();
 
     let portfolioTable:ScheduleTable = $state(buildPortfolioTable(portfolio, startDate, endDate))
 </script>
-
-
-<h3 class="mb-2">{formatDate(portfolioTable.startDate)} - {formatDate(portfolioTable.endDate)}</h3>
 
 {#if portfolioTable.body.length > 0}
 <table class="w-full">
@@ -39,8 +35,9 @@
             <td class="text-xs whitespace-nowrap py-2"><a href="/project/detail/{row.project.id}#schedule">{row.label}</a></td>
 
             {#each row.weeks as week}
+                {@const cellColor = week.risks.length > 0 ? "bg-yellow-400" : "bg-green-600 " }
                 {#if week.active}
-                <td class="text-center text-xs bg-green-600 p-1 text-gray-100">
+                <td class="text-center text-xs p-1 text-gray-100 {cellColor}">
                 <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}
                 <Popover class="w-64 text-sm font-light " title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
                     <div class="">
@@ -69,52 +66,16 @@
         <tfoot>
             <tr class="font-semibold text-sm text-gray-900 dark:text-white">
             <th scope="row" class="py-3 px-6 text-sm">Capacity</th>
-            {#each portfolioTable.footer as week}
-            {#if week}
-            <td class="py-3 px-6 text-center">{formatPercent.format(week.allocatedHours / week.orgCapacity)} <br />
-                <small class="whitespace-nowrap">{week.allocatedHours} / {week.orgCapacity}</small>
+            {#each portfolioTable.footer as sum}
+            {#if sum && sum.orgCapacity > 0}
+            <td class="py-3 px-6 text-center" title={sum.allocatedHours + " / " + sum.orgCapacity}>
+                {formatPercent.format(sum.allocatedHours / sum.orgCapacity)}
             </td>
+            {:else}
+                <td class="py-3 px-6 text-center text-gray-500" title={sum.allocatedHours + " / " + sum.orgCapacity}>n/a</td>
             {/if}
             {/each} 
             </tr>
         </tfoot>
     </table>
-{:else}
-    <NoResults title="Resource not allocated">This resource is not allocated to any projects</NoResults>
 {/if}
-
-<!--
-<table border=1>
-    <thead>
-        <tr>
-            {#each portfolio.weekSummary as week, x}
-            <th class="bg-blue-300">{formatDateNoYear(week?.end)}</th>
-            {/each}
-        </tr>
-    </thead>
-    <tbody>
-        {#each portfolio.schedule as sch, y}
-            {#if sch.projectActivityWeeks}
-            <tr>
-                {#each sch.projectActivityWeeks as week, x}
-                    {@const paw = getWeekActivities(sch.projectActivityWeeks, week.end)}
-                    {#if paw.activities}
-                    <td><div class="bg-green-200 p-1"></div></td>
-                    {:else}
-                    <td><div class="bg-yellow-200 p-1">{x},{y}</div></td>
-                    {/if}
-                {/each}
-            </tr>
-            {/if}
-        {/each}
-        
-    </tbody>
-    <tfoot>
-        <tr>
-            {#each Array.from({ length: cols }) as _, x}
-            <th></th>
-            {/each}
-        </tr>
-    </tfoot>
-</table>
--->

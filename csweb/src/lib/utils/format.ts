@@ -92,7 +92,7 @@ export const formatCurrency = new Intl.NumberFormat('en-US', {
  */
 export const formatPercent = new Intl.NumberFormat('default', {
 	style: 'percent',
-	minimumFractionDigits: 2,
+	minimumFractionDigits: 0,
 	maximumFractionDigits: 2
 });
 

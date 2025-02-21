@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Portfolio } from "$lib/graphql/generated/sdk";
+    import type { Portfolio, PortfolioWeekSummary } from "$lib/graphql/generated/sdk";
 	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
 	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
     import { NoResults, CSSection, SectionHeading, ResourceList } from "$lib/components";
@@ -12,8 +12,7 @@
 	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
 
-		//@ts-ignore
-		portfolioTable = buildPortfolioTable(res)
+		portfolioTable = buildPortfolioTable(res, undefined, undefined)
 
 		return res;
 	};
@@ -57,7 +56,7 @@
 					
 					<TableBodyCell tdClass="text-center">
 						{#if week.active}
-						<Button  size="xs" color="green" pill id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
+						<Button  size="xs" color="green" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
 						<Popover class="w-64 text-sm font-light " title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
 							<div class="p-2">
 							<ul class="">

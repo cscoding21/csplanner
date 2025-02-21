@@ -91,7 +91,7 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
  * @param res the portfolio to transform
  * @returns a portfolio table
  */
-export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date):ScheduleTable => {
+export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, endDate: Date|undefined):ScheduleTable => {
     let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: [], footer: []} as ScheduleTable
 
     if (!res || !res.weekSummary) {
@@ -143,7 +143,7 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
             if(thisWeekEnd < startDate || thisWeekStart > endDate)
                 continue;
 
-            let cell = {active:false, activities:[], end: thisWeek?.end, orgCapacity: thisWeek?.orgCapacity } as ProjectRowCell
+            let cell = {active:false, activities:[], end: thisWeek?.end, orgCapacity: thisWeek?.orgCapacity, risks: [] as string[] } as ProjectRowCell
 
             const paw = getWeekActivities(schedule.projectActivityWeeks as ProjectActivityWeek[], thisWeekEnd)
             cell.orgCapacity = paw.orgCapacity
@@ -154,6 +154,8 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
                 cell.activities = paw.activities as ProjectActivity[]
             }
 
+            cell.risks = findWeekRisks(paw.activities as ProjectActivity[], undefined)
+
             row.weeks.push(cell)
         }
 
@@ -163,6 +165,26 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
     }
 
     return portfolioTable
+}
+
+export const findWeekRisks = (activities:ProjectActivity[], resourceID: string|undefined):string[] => {
+    let out = [] as string[]
+    if (!activities || !activities.length) {
+        return out
+    }
+
+    for(let i = 0; i < activities.length; i++) {
+        const res = activities[i].resource
+
+        if(resourceID && resourceID != res?.id)
+            continue
+
+        if(res?.status != "inhouse") {
+            out.push(res?.name + " is not currently in house and may not be available for this week")
+        }
+    }
+
+    return out
 }
 
 export const flattenPortfolio = (port:Portfolio, startDate:Date, endDate:Date):FlatPortfolioItem[] => {
@@ -228,6 +250,7 @@ export interface ProjectRow {
 }
 export interface ProjectRowCell {
     active: boolean
+    risks: string[]
     end: Date
     orgCapacity: number
     activities: ProjectActivity[]

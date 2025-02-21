@@ -3,6 +3,7 @@
         showTasks: boolean
         weekEnding: string
         activities: ProjectActivity[]
+        risks: string[]
     }
 </script>
 
@@ -23,7 +24,8 @@
 
 
 {#if week.activities.length > 0}
-<Button  size="xs" color="green" pill id={"id_" + uuid}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
+{@const cellColor = week.risks.length > 0 ? "yellow" : "green" }
+<Button  size="xs" color={cellColor} pill id={"id_" + uuid}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
 <Popover class="w-64 text-sm font-light " title={"Week ending " + week.weekEnding} triggeredBy={"#id_" + uuid}>
     <div class="p-2">
     <ul class="">

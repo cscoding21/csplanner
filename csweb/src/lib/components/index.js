@@ -50,6 +50,7 @@ export { default as CheckBoxFilter } from './widgets/CheckBoxFilter.svelte';
 export { default as CSMultiFilter } from './widgets/CSMultiFilter.svelte';
 export { default as CSPaging } from './widgets/CSPaging.svelte';
 export { default as MoneyDisplay } from './widgets/MoneyDisplay.svelte';
+export { default as PortfolioTable } from './widgets/PortfolioTable.svelte';
 export { default as ResourceCard } from './widgets/ResourceCard.svelte';
 export { default as ResourceSkillsList } from './widgets/ResourceSkillsList.svelte';
 export { default as UserCard } from './widgets/UserCard.svelte';

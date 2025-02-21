@@ -24,7 +24,9 @@ func AugmentPortfolio(port *idl.Portfolio, resourceID *string) {
 			continue
 		}
 
-		if r.Type == resourcetype.Human && r.Status == resourcestatus.Inhouse {
+		if resourceID != nil && r.Type == resourcetype.Human {
+			orgCapacity += r.AvailableHoursPerWeek
+		} else if r.Type == resourcetype.Human && r.Status == resourcestatus.Inhouse {
 			orgCapacity += r.AvailableHoursPerWeek
 		}
 	}

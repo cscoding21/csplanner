@@ -19,8 +19,7 @@
 		ResourceActionBar,
 		AddSkill,
 		DeleteResource,
-		UpdateResourceModal,
-		ResourceAllocationTable
+		UpdateResourceModal
 	} from '../../components';
 	import { getResource, deleteResourceSkill } from '$lib/services/resource';
 	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
@@ -28,7 +27,7 @@
 	import type { Resource, Portfolio } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
-	import { SectionSubHeading, CSSection , PieChart, CSHR } from '$lib/components';
+	import { SectionSubHeading, CSSection , PieChart, CSHR, PortfolioTable } from '$lib/components';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
 
 	const id = page.params.id;
@@ -100,6 +99,9 @@
 	{#if resourcePromise}
 		<ResourceActionBar pageDetail={resourcePromise.name}>
 			<ButtonGroup>
+				<UpdateResourceModal {id} update={updateResource}
+								><PenOutline class="mr-2 h-3 w-3" /> Edit</UpdateResourceModal
+							>
 				<DeleteResource id={resourcePromise.id || ''} name={resourcePromise.name}>
 					<TrashBinOutline class="mr-2 h-3 w-3" />
 					Delete
@@ -110,13 +112,6 @@
 		<div class="grid grid-cols-3 w-full">
 			<div class="mr-4 col-span-1">
 				<Card padding="sm" size="xl">
-					<div class="flex justify-end">
-						<ButtonGroup>
-							<UpdateResourceModal {id} update={updateResource}
-								><PenOutline /></UpdateResourceModal
-							>
-						</ButtonGroup>
-					</div>
 					<div class="flex flex-col items-center pb-4">
 						<Avatar size="lg" src={resourcePromise.profileImage as string} rounded
 							>{getInitialsFromName(resourcePromise.name)}</Avatar
@@ -186,13 +181,7 @@
 					</div>
 
 					{#if resourcePromise.type === "human"}
-					<SectionSubHeading>
-						User skills
-						<!-- <p class="mb-4 mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-							Identifying user skills allows <b>csPlanner</b> to properly estimate and propose project
-							resourcing strategies.
-						</p> -->
-					</SectionSubHeading>
+					<SectionSubHeading>User skills</SectionSubHeading>
 
 					{#if resourcePromise.skills && resourcePromise.skills.length > 0}
 						<Table>
@@ -231,11 +220,11 @@
 
 			<div class="col-span-2">
 				<CSSection>
-					<SectionSubHeading>Project Allocation</SectionSubHeading>
+					<SectionSubHeading>Project Allocation: {formatDate(startDate)} - {formatDate(endDate)}</SectionSubHeading>
 
 					{#if portfolio && portfolio.schedule}
 					<div class="mb-2">
-						<ResourceAllocationTable {portfolio} {startDate} {endDate}></ResourceAllocationTable>
+						<PortfolioTable {portfolio} {startDate} {endDate}></PortfolioTable>
 					</div>
 					{/if}
 

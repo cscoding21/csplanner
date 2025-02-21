@@ -2,7 +2,7 @@
 	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
     import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, ProjectStartDateSet, type Week } from ".";
 	import { calculateProjectSchedule } from "$lib/services/project";
-    import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
+    import { findWeekRisks, getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
 	import { formatDate, formatDateNoYear, pluralize } from "$lib/utils/format";
     import { SectionHeading } from "$lib/components";
@@ -73,7 +73,8 @@
                 let weeksActivities = { 
                     showTasks: true,
                     weekEnding: formatDate(week.end),
-                    activities: [] as ProjectActivity[] 
+                    activities: [] as ProjectActivity[], 
+                    risks: [] as string[]
                 }
 
                 if (week.activities) {
@@ -82,6 +83,7 @@
                     
                         if (thisResource.name == activity.resource?.name) {
                             weeksActivities.activities.push(activity)
+                            weeksActivities.risks = findWeekRisks(week.activities, activity.resourceID)
                         }
                     }
                 }
@@ -130,7 +132,8 @@
                 let weeksActivities = { 
                     showTasks: false,
                     weekEnding: formatDate(week.end), 
-                    activities: [] as ProjectActivity[] 
+                    activities: [] as ProjectActivity[],
+                    risks: [] as string[]
                 }
 
                 if (week.activities) {
@@ -141,6 +144,8 @@
                             weeksActivities.activities.push(activity)
                         }
                     }
+
+                    weeksActivities.risks = findWeekRisks(weeksActivities.activities, undefined)
                 }
             
                 row.weeks.push(weeksActivities)
@@ -266,13 +271,14 @@
                 <TableBodyRow>
                 <TableBodyCell>
                     <div>
-                        <span class="float-left mr-2">
-
                     {#if row.resource}
-                    <ResourceList resources={[row.resource]} size="sm" maxSize={1} />
+                    <span class="float-left mr-2">
+                            <ResourceList resources={[row.resource]} size="sm" maxSize={1} />
+                    </span>      
+                    <a href="/resource/detail/{row.resource.id}">{row.label}</a>
+                    {:else}
+                        {row.label} 
                     {/if}
-                </span>
-                    {row.label}
                 </div>
                 </TableBodyCell>
                 {#each row.weeks as week}
