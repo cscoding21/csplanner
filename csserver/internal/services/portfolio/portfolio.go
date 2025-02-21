@@ -10,6 +10,7 @@ import (
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
+	"csserver/internal/utils"
 	"fmt"
 	"sort"
 	"time"
@@ -138,4 +139,57 @@ func (ps *PortfolioService) BalancePortfolio(ctx context.Context, port *Portfoli
 	port.Validator = &comparer
 
 	return nil
+}
+
+// GetPortfolioForResource retrieve a portfolio only containing tasks relative to a user
+func (ps *PortfolioService) GetPortfolioForResource(ctx context.Context, port *Portfolio, resourceID string) (*Portfolio, error) {
+	outPort := Portfolio{
+		ResourceMap: make(map[string]resource.Resource),
+		ProjectMap:  port.ProjectMap,
+		Schedule:    []schedule.Schedule{},
+	}
+
+	//---copy only the in-scope resource to the map
+	outPort.ResourceMap[resourceID] = port.ResourceMap[resourceID]
+
+	for _, sch := range port.Schedule {
+		addSchedule := false
+
+		newSch := schedule.Schedule{
+			ProjectID:            sch.ProjectID,
+			ProjectName:          sch.ProjectName,
+			Begin:                sch.Begin,
+			End:                  sch.End,
+			ProjectActivityWeeks: []*schedule.ProjectActivityWeek{},
+		}
+		for _, week := range sch.ProjectActivityWeeks {
+			newWeek := schedule.ProjectActivityWeek{
+				Begin:      week.Begin,
+				End:        week.End,
+				WeekNumber: week.WeekNumber,
+				Year:       week.Year,
+				Activities: []schedule.ProjectActivity{},
+			}
+
+			newSch.ProjectActivityWeeks = append(newSch.ProjectActivityWeeks, &newWeek)
+			for _, act := range week.Activities {
+				if act.ResourceID == resourceID {
+					addSchedule = true
+
+					newAct, err := utils.DeepCopy(act)
+					if err != nil {
+						return nil, err
+					}
+
+					newWeek.Activities = append(newWeek.Activities, *newAct)
+				}
+			}
+		}
+
+		if addSchedule {
+			outPort.Schedule = append(outPort.Schedule, newSch)
+		}
+	}
+
+	return &outPort, nil
 }

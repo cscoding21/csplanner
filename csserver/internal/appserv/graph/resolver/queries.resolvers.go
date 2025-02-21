@@ -240,7 +240,38 @@ func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error
 		augment.AugmentSchedule(out.Schedule[i])
 	}
 
-	augment.AugmentPortfolio(&out)
+	augment.AugmentPortfolio(&out, nil)
+
+	return &out, nil
+}
+
+// GetPortfolioForResource is the resolver for the getPortfolioForResource field.
+func (r *queryResolver) GetPortfolioForResource(ctx context.Context, resourceID string) (*idl.Portfolio, error) {
+	portfolioService := factory.GetPortfolioService()
+
+	port, err := portfolioService.GetBalancedPortfolio(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	outPort, err := portfolioService.GetPortfolioForResource(ctx, port, resourceID)
+	if err != nil {
+		return nil, err
+	}
+
+	start, end := port.GetDateRange()
+
+	out := idl.Portfolio{
+		Begin:    start,
+		End:      end,
+		Schedule: csmap.ScheduleScheduleToIdlSlice(common.ValToRefSlice(outPort.Schedule)),
+	}
+
+	for i := range out.Schedule {
+		augment.AugmentSchedule(out.Schedule[i])
+	}
+
+	augment.AugmentPortfolio(&out, &resourceID)
 
 	return &out, nil
 }

@@ -98,22 +98,22 @@
 </script>
 
 <div class="flex">
-    <div class="mr-2">
-        <Search slot="search" size="md" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
+    <div class="mr-4">
+        <Search slot="search" size="sm" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
     </div>
 
-    <div class="mr-2">
+    <div class="mr-4">
         <CSMultiFilter filterOpts={statusOpts} change={statusChange} filterValue={status} filterName="Status" isMulti={true} />
     </div>  
 
-    <div class="mr-2">
+    <div class="mr-4">
         <CSMultiFilter filterOpts={typeOpts} change={typeChange} filterValue={type} filterName="Type" isMulti={true} />
     </div>
 
     {#await loadPage()}
         ...
     {:then}
-    <div class="mr-2">
+    <div class="mr-4">
         <CSMultiFilter filterOpts={skillsOpts} change={skillsChange} filterValue={[skills]} filterName="Skills" isMulti={false} />
     </div>
     {/await}

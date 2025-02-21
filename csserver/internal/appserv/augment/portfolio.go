@@ -9,7 +9,7 @@ import (
 )
 
 // AugmentPortfolio enhance calculate and caches properties of a portfolio
-func AugmentPortfolio(port *idl.Portfolio) {
+func AugmentPortfolio(port *idl.Portfolio, resourceID *string) {
 	//---exit conditions
 	if port.Begin == nil || port.End == nil {
 		return
@@ -20,6 +20,10 @@ func AugmentPortfolio(port *idl.Portfolio) {
 	orgCapacity := 0
 
 	for _, r := range *resourceList {
+		if resourceID != nil && r.ID != *resourceID {
+			continue
+		}
+
 		if r.Type == resourcetype.Human && r.Status == resourcestatus.Inhouse {
 			orgCapacity += r.AvailableHoursPerWeek
 		}

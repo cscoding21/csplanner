@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { ButtonGroup, Button, CardPlaceholder } from 'flowbite-svelte';
-	import { TableHeader } from 'flowbite-svelte-blocks'
 	import { NewspaperOutline } from 'flowbite-svelte-icons';
 	import { findProjects } from '$lib/services/project';
 	import { ProjectActionBar, ProjectCard, ProjectSearchFilters } from './components';
-	import { NoResults, CSPaging } from '$lib/components';
+	import { NoResults, CSPaging, CSSection } from '$lib/components';
 	import type { PageAndFilter, ProjectResults, InputFilters, Pagination, Filters } from '$lib/graphql/generated/sdk';
 
 	let filters:InputFilters = $state({}) as InputFilters;
@@ -69,9 +68,9 @@
 </ProjectActionBar>
 
 <div class="px-4">
-<TableHeader headerType="search">
+<CSSection>
 	<ProjectSearchFilters change={filterChange} />
-</TableHeader>
+</CSSection>
 </div>
 
 <div class="px-4 mt-2">

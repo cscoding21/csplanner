@@ -4,7 +4,7 @@
 	import { UserAddOutline } from 'flowbite-svelte-icons';
 	import { findResources } from '$lib/services/resource';
 	import { ResourceActionBar, ResourceCard, UpdateResourceModal, ResourceSearchFilters } from './components';
-	import { CSPaging, NoResults } from '$lib/components';
+	import { CSPaging, CSSection, NoResults } from '$lib/components';
 	import type { ResourceResults, PageAndFilter, InputFilters, Pagination, Filters } from '$lib/graphql/generated/sdk';
 
 	let filters:InputFilters = $state({}) as InputFilters;
@@ -69,9 +69,9 @@
 </ResourceActionBar>
 
 <div class="px-4">
-	<TableHeader headerType="search">
+	<CSSection>
 		<ResourceSearchFilters change={filterChange} />
-	</TableHeader>
+	</CSSection>
 </div>
 
 <div class="p-4">

@@ -674,6 +674,7 @@ export type Query = {
   getList?: Maybe<List>;
   getOrganization: Organization;
   getPortfolio: Portfolio;
+  getPortfolioForResource: Portfolio;
   getProject: Project;
   getResource: Resource;
   getUser: User;
@@ -724,6 +725,11 @@ export type QueryGetCommentThreadArgs = {
 
 export type QueryGetListArgs = {
   nameOrID: Scalars['String']['input'];
+};
+
+
+export type QueryGetPortfolioForResourceArgs = {
+  resourceID: Scalars['String']['input'];
 };
 
 
@@ -1385,6 +1391,23 @@ export const ScheduleFragmentFragmentDoc = gql`
 }
     ${ProjectFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
+export const PortfolioFragmentFragmentDoc = gql`
+    fragment portfolioFragment on Portfolio {
+  begin
+  end
+  weekSummary {
+    weekNumber
+    year
+    begin
+    end
+    orgCapacity
+    allocatedHours
+  }
+  schedule {
+    ...scheduleFragment
+  }
+}
+    ${ScheduleFragmentFragmentDoc}`;
 export const ScheduleResultFragmentFragmentDoc = gql`
     fragment scheduleResultFragment on ProjectScheduleResult {
   schedule {
@@ -1560,22 +1583,17 @@ ${OrganizationFragmentFragmentDoc}`;
 export const GetPortfolioDocument = gql`
     query getPortfolio {
   getPortfolio {
-    begin
-    end
-    weekSummary {
-      weekNumber
-      year
-      begin
-      end
-      orgCapacity
-      allocatedHours
-    }
-    schedule {
-      ...scheduleFragment
-    }
+    ...portfolioFragment
   }
 }
-    ${ScheduleFragmentFragmentDoc}`;
+    ${PortfolioFragmentFragmentDoc}`;
+export const GetPortfolioForResourceDocument = gql`
+    query getPortfolioForResource($resourceID: String!) {
+  getPortfolioForResource(resourceID: $resourceID) {
+    ...portfolioFragment
+  }
+}
+    ${PortfolioFragmentFragmentDoc}`;
 export const FindProjectsDocument = gql`
     query findProjects($input: PageAndFilter!) {
   findProjects(pageAndFilter: $input) {
@@ -1977,6 +1995,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     getPortfolio(variables?: GetPortfolioQueryVariables, options?: C): Promise<GetPortfolioQuery> {
       return requester<GetPortfolioQuery, GetPortfolioQueryVariables>(GetPortfolioDocument, variables, options) as Promise<GetPortfolioQuery>;
+    },
+    getPortfolioForResource(variables: GetPortfolioForResourceQueryVariables, options?: C): Promise<GetPortfolioForResourceQuery> {
+      return requester<GetPortfolioForResourceQuery, GetPortfolioForResourceQueryVariables>(GetPortfolioForResourceDocument, variables, options) as Promise<GetPortfolioForResourceQuery>;
     },
     findProjects(variables: FindProjectsQueryVariables, options?: C): Promise<FindProjectsQuery> {
       return requester<FindProjectsQuery, FindProjectsQueryVariables>(FindProjectsDocument, variables, options) as Promise<FindProjectsQuery>;

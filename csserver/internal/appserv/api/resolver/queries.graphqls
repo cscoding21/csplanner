@@ -16,6 +16,7 @@ type Query {
     getOrganization: Organization!
 
     getPortfolio: Portfolio!
+    getPortfolioForResource(resourceID: String!): Portfolio!
 
     findAllUsers: UserResults!
     findAllResources: ResourceResults!

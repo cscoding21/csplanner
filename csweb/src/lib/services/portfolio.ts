@@ -1,4 +1,4 @@
-import { GetPortfolioDocument} from "$lib/graphql/generated/sdk";
+import { GetPortfolioDocument, GetPortfolioForResourceDocument} from "$lib/graphql/generated/sdk";
 import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, ProjectActivity, Project} from "$lib/graphql/generated/sdk";
 import { getApolloClient } from "$lib/graphql/gqlclient";
 import { deepCopy } from "$lib/utils/helpers";
@@ -52,46 +52,17 @@ export const getScheduledProjectFromPortfolio = async(projectID: string): Promis
  * @returns a portfolio object with only work for the specified resource
  */
 export const findScheduledWorkForResource = async(resourceID:string): Promise<Portfolio> => {
-    return getPortfolio()
-        .then(res => {
-            let portfolio:Portfolio = { weekSummary: res.weekSummary as PortfolioWeekSummary[], schedule: [] as Schedule[] }
-
-            for (let i = 0; i < res.schedule.length; i++) {
-                const sch = res.schedule[i]
-                let tasks = [] as ProjectActivity[]
-                let weeks = [] as ProjectActivityWeek[]
-                if(!sch.projectActivityWeeks)
-                    continue
-
-                for (let j = 0; j < sch.projectActivityWeeks?.length; j++) {
-                    const paw = sch.projectActivityWeeks[j] as ProjectActivityWeek
-
-                    if (!paw.activities) 
-                        continue
-
-                    let newWeek = deepCopy(paw)
-                    tasks = paw.activities.filter(t => t.resourceID === resourceID)
-
-                    if (tasks.length > 0) {
-                        newWeek.activities = tasks
-
-                        weeks.push(newWeek)
-                    }
-                }
-
-                if(weeks.length > 0) {
-                    let newSched = deepCopy(sch)
-                    newSched.projectActivityWeeks = weeks
-
-                    portfolio.schedule.push(newSched)
-                }
+    const client = getApolloClient();
+    return client
+        .query({ query: GetPortfolioForResourceDocument, variables: { resourceID } })
+        .then((res) => {
+            if (res) {
+                return res.data.getPortfolioForResource;
             }
-
-            return portfolio
         })
         .catch(err => {
-            return err
-        })
+            return err;
+        });
 }
 
 
@@ -121,7 +92,7 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
  * @returns a portfolio table
  */
 export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date):ScheduleTable => {
-    let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: []} as ScheduleTable
+    let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: [], footer: []} as ScheduleTable
 
     if (!res || !res.weekSummary) {
         return portfolioTable
@@ -139,6 +110,7 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
     portfolioTable.endDate = endDate
 
     let headerNames = []
+    let footerObjs = []
 
     for(let i = 0; i < res.weekSummary.length; i++) {
         const thisHeaderWeek = res.weekSummary[i] 
@@ -149,9 +121,11 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date, endDate: Date
             continue;
 
         headerNames.push(formatDateNoYear(thisHeaderWeekEnd))
+        footerObjs.push(thisHeaderWeek)
     }
 
     portfolioTable.header = ["Project", ...headerNames]
+    portfolioTable.footer = footerObjs as PortfolioWeekSummary[]
 
     for(let i = 0; i < res.schedule.length; i++) {
         let schedule = res.schedule[i]
@@ -245,6 +219,7 @@ export interface ScheduleTable {
     endDate: Date
     header: string[]
     body: ProjectRow[]
+    footer: PortfolioWeekSummary[]
 }
 export interface ProjectRow {
     label: string

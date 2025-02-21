@@ -85,6 +85,23 @@ func TestBalancePortfolio(t *testing.T) {
 	drawResourceSummary(port.Schedule)
 }
 
+func TestGetPortfolioForResource(t *testing.T) {
+	ctx := getTestContext()
+	ps := factory.GetPortfolioService()
+
+	port, err := ps.GetBalancedPortfolio(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+
+	resPort, err := ps.GetPortfolioForResource(ctx, port, "resource:barret")
+	if err != nil {
+		t.Error(err)
+	}
+
+	drawPortfolio(*resPort)
+}
+
 func drawPortfolio(port portfolio.Portfolio) {
 
 	fmt.Printf("------ Portfolio info ------\n")

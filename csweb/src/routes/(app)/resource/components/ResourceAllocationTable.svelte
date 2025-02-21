@@ -3,7 +3,7 @@
 	import type { Portfolio } from "$lib/graphql/generated/sdk";
     import { buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
     import { getID } from "$lib/utils/id";
-    import { pluralize, formatDate } from "$lib/utils/format";
+    import { pluralize, formatDate, formatPercent } from "$lib/utils/format";
 	import { NoResults } from "$lib/components";
 
     interface Props {
@@ -39,7 +39,6 @@
             <td class="text-xs whitespace-nowrap py-2"><a href="/project/detail/{row.project.id}#schedule">{row.label}</a></td>
 
             {#each row.weeks as week}
-            
                 {#if week.active}
                 <td class="text-center text-xs bg-green-600 p-1 text-gray-100">
                 <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}
@@ -67,6 +66,18 @@
         </tr>
         {/each}
         </tbody>
+        <tfoot>
+            <tr class="font-semibold text-sm text-gray-900 dark:text-white">
+            <th scope="row" class="py-3 px-6 text-sm">Capacity</th>
+            {#each portfolioTable.footer as week}
+            {#if week}
+            <td class="py-3 px-6 text-center">{formatPercent.format(week.allocatedHours / week.orgCapacity)} <br />
+                <small class="whitespace-nowrap">{week.allocatedHours} / {week.orgCapacity}</small>
+            </td>
+            {/if}
+            {/each} 
+            </tr>
+        </tfoot>
     </table>
 {:else}
     <NoResults title="Resource not allocated">This resource is not allocated to any projects</NoResults>

@@ -1,5 +1,4 @@
-query getPortfolio {
-	getPortfolio {
+fragment portfolioFragment on Portfolio {
     begin
     end
     weekSummary {
@@ -13,24 +12,17 @@ query getPortfolio {
 		schedule {
       ...scheduleFragment
     }
+}
+
+query getPortfolio {
+	getPortfolio {
+    ...portfolioFragment
   }
 }
 
-# query resourceSnapshot {
-# 	resourceSnapshot {
-# 		scheduledResources {
-# 			projectId
-# 			projectName
-# 			projectStatus
-# 			milestoneName
-# 			milestoneStartDate
-# 			milestoneEndDate
-# 			taskName
-# 			taskStartDate
-# 			taskEndDate
-# 			taskHourEstimate
-# 			resourceId
-# 			resourceName
-# 		}
-# 	}
-# }
+query getPortfolioForResource($resourceID: String!) {
+	getPortfolioForResource(resourceID: $resourceID) {
+    ...portfolioFragment
+  }
+}
+
