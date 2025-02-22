@@ -33,6 +33,8 @@ export { default as ProjectValueChart } from './ProjectValueChart.svelte';
 export { default as ProjectValueLineForm } from './ProjectValueLineForm.svelte';
 export { default as ProjectValueLineFormModal } from './ProjectValueLineFormModal.svelte';
 
+export { default as RiskLegend } from './RiskLegend.svelte';
+
 export { default as ShowIfStatus } from './ShowIfStatus.svelte';
 
 

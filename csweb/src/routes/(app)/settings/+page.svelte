@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { CSSection } from "$lib/components";
-    import { OrgSettings, Lists, Roles, MyInfo } from "./components";
+    import { OrgSettings, Lists, Roles, MyInfo, Templates } from "./components";
 
     let hash = $state($page.url.hash);
 </script>
@@ -21,6 +21,8 @@
 			<Lists />	
 		{:else if hash == '#roles'}
 			<Roles />	
+		{:else if hash == '#templates'}
+			<Templates />
 		{:else if hash == '#my-info' || hash == ''}
 			<MyInfo />
 		{/if}

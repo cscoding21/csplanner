@@ -37,6 +37,7 @@ type ProjectActivityWeek struct {
 	WeekNumber int
 	Year       int
 	Activities []ProjectActivity
+	Risks      []ScheduleException
 }
 
 type ProjectActivity struct {

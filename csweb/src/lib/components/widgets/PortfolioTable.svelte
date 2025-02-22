@@ -4,6 +4,7 @@
     import { buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
     import { getID } from "$lib/utils/id";
     import { pluralize, formatDate, formatPercent } from "$lib/utils/format";
+	import { RiskLegend } from "../../../routes/(app)/project/components";
 
     interface Props {
 		portfolio: Portfolio;
@@ -78,4 +79,8 @@
             </tr>
         </tfoot>
     </table>
+
+    <div class="mt-4">
+        <RiskLegend />
+    </div>
 {/if}

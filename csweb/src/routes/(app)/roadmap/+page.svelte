@@ -5,7 +5,8 @@
     import { NoResults, CSSection, SectionHeading, ResourceList } from "$lib/components";
     import { formatDate, pluralize, formatPercent } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
+	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Badge } from "flowbite-svelte";
+	import { RiskLegend } from "../project/components";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
 
@@ -56,7 +57,8 @@
 					
 					<TableBodyCell tdClass="text-center">
 						{#if week.active}
-						<Button  size="xs" color="green" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
+						{@const cellColor = week.risks.length > 0 ? "yellow" : "green" }
+						<Button  size="xs" color={cellColor} id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
 						<Popover class="w-64 text-sm font-light " title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
 							<div class="p-2">
 							<ul class="">
@@ -93,6 +95,10 @@
 				</tr>
 			  </tfoot>
 		</Table>
+
+		<div class="mt-4">
+			<RiskLegend />
+		</div>
 
 	{:else}
 		<NoResults title="No Projects" newUrl="">

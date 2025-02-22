@@ -6,6 +6,7 @@ import (
 	"csserver/internal/hashstructure"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/milestonestatus"
+	"csserver/internal/services/resource/rtypes/resourcestatus"
 	"fmt"
 	"time"
 
@@ -24,12 +25,28 @@ func (service *ScheduleService) CalculateProjectSchedule(ctx context.Context, p 
 	}
 
 	exceptions := validateProjectForScheduling(*p, ram)
-	if len(exceptions) > 0 {
-		ps.Exceptions = append(ps.Exceptions, exceptions...)
+	ps.Exceptions = append(ps.Exceptions, exceptions...)
+
+	if exceptionHasErrors(exceptions) {
 		return ps, nil
 	}
 
 	return ScheduleProjectAlgo(p, startDate, ram)
+}
+
+func exceptionHasErrors(ex []ScheduleException) bool {
+	if len(ex) == 0 {
+		return false
+	}
+
+	out := false
+	for _, e := range ex {
+		if e.Level == ScheduleError {
+			return true
+		}
+	}
+
+	return out
 }
 
 // ScheduleProjectAlgo the scheduling algorithm separated from the service implementation
@@ -42,6 +59,9 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 	if len(p.ProjectMilestones) == 0 {
 		return schedule, nil
 	}
+
+	exceptions := validateProjectForScheduling(*p, ram)
+	schedule.Exceptions = append(schedule.Exceptions, exceptions...)
 
 	p.ProjectBasics.StartDate = &startDate
 
@@ -275,6 +295,14 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 						fmt.Sprintf("Task '%s' resoure, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID),
 						TaskAssignedResourceMissingSkill,
 						ScheduleError))
+				}
+
+				if resource.Status != resourcestatus.Inhouse {
+					out = append(out, newScheduleException(
+						*t.ID,
+						fmt.Sprintf("Task '%s' resoure, %s, is not currently on staff", t.Name, resource.Name),
+						AssignedResourceNotOnStaff,
+						ScheduleWarning))
 				}
 			}
 		}

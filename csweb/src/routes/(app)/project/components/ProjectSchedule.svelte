@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
-    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, ProjectStartDateSet, type Week } from ".";
+    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, ProjectStartDateSet, ShowIfStatus, type Week, RiskLegend } from ".";
 	import { calculateProjectSchedule } from "$lib/services/project";
     import { findWeekRisks, getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
 	import { formatDate, formatDateNoYear, pluralize } from "$lib/utils/format";
-    import { SectionHeading } from "$lib/components";
+    import { SectionHeading, SectionSubHeading } from "$lib/components";
     import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
-	import ShowIfStatus from "./ShowIfStatus.svelte";
+	import { InfoCircleSolid } from "flowbite-svelte-icons";
 
     interface ScheduleRow {
         label: string
@@ -234,15 +234,23 @@
 {/if}
 
 {#if result.exceptions}
-    <ul class="">
-    {#each result.exceptions as ex}
-        <li class="list-disc text-left ml-4">{ex.message}</li>
-    {/each}
-    </ul>
+    <Alert class="items-start!" color="yellow">
+        <span slot="icon">
+          <InfoCircleSolid class="w-5 h-5" />
+          <span class="sr-only">Warning</span>
+        </span>
+        <p class="font-medium">The following issues were found and could affect execution:</p>
+        <ul class="mt-1.5 ms-4 list-disc list-inside">
+            {#each result.exceptions as ex}
+                <li>{ex.message}</li>
+            {/each}
+        </ul>
+      </Alert> 
 {/if}
+
 {#if result.projectActivityWeeks && result.projectActivityWeeks.length > 0}
     {#if result.end}
-    <h1>{formatDate(result.begin)} - {formatDate(result.end)}</h1>
+    <SectionSubHeading>{formatDate(result.begin)} - {formatDate(result.end)}</SectionSubHeading>
     {#if result.project.projectBasics.startDate}
     <h2>Scheduled length: {result.projectActivityWeeks.length + " " + pluralize("week", result.projectActivityWeeks.length)}</h2>
     {:else}
@@ -290,6 +298,10 @@
             {/each}
         </TableBody>
     </Table>
+
+    <div class="mt-4">
+        <RiskLegend />
+    </div>
 {/if}
 {/if}
 

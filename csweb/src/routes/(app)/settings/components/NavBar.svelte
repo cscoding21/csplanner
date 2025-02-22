@@ -60,6 +60,7 @@
 		{ name: 'Org Settings', icon: AdjustmentsVerticalOutline, href: '#org-settings' },
 		{ name: 'Lists', icon: ListOutline, href: '#lists' },
 		{ name: 'Roles', icon: RectangleListOutline, href: '#roles' },
+		{ name: 'Templates', icon: RectangleListOutline, href: '#templates' },
 	];
 
 	let links = [
@@ -90,7 +91,6 @@
 					{href}
 					spanClass="ml-3"
 					class={itemClass}
-					active={activeMainSidebar === href}
 				>
 					<svelte:component this={icon} slot="icon" class={iconClass} />
 				</SidebarItem>
@@ -103,7 +103,6 @@
 						{href}
 						spanClass="ml-3"
 						class={itemClass}
-						active={activeMainSidebar === href}
 						target="_blank"
 					>
 						<svelte:component this={icon} slot="icon" class={iconClass} />

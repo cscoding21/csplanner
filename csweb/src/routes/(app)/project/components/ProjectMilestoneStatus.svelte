@@ -12,7 +12,7 @@
         milestone = $bindable() 
     }:Props = $props()
 
-    let percentDone = $derived(Math.round((safeInt(milestone.calculated?.totalHours) - safeInt(milestone.calculated?.hoursRemaining)) / safeInt(milestone.calculated?.totalHours)*100.0))
+    let percentDone = $derived(safeInt(milestone.calculated?.totalHours) == 0 ? 0 : Math.round((safeInt(milestone.calculated?.totalHours) - safeInt(milestone.calculated?.hoursRemaining)) / safeInt(milestone.calculated?.totalHours)*100.0))
 
     const getID = (prefix:string):string => {
         return prefix + normalizeGUID(milestone.id)

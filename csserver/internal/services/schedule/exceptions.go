@@ -7,6 +7,7 @@ const (
 	ScheduleCannotComplete           = ScheduleExceptionType("ScheduleCannotComplete")
 	TaskLacksAssignedResource        = ScheduleExceptionType("TaskLacksAssignedResource")
 	TaskAssignedResourceMissingSkill = ScheduleExceptionType("TaskAssignedResourceMissingSkill")
+	AssignedResourceNotOnStaff       = ScheduleExceptionType("AssignedResourceNotOnStaff")
 )
 
 const (
