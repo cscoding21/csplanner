@@ -5,12 +5,13 @@
     import { findAllUsers } from '$lib/services/user';
 	import { ProjectActionBar } from '../components';
     import { authService } from '$lib/services/auth';
-	import { createProject, findAllProjectTemplates } from '$lib/services/project';
+	import { createProject } from '$lib/services/project';
 	import { InfoCircleSolid } from 'flowbite-svelte-icons';
     import { newProjectSchema } from '$lib/forms/project.validation';
 	import { addToast } from '$lib/stores/toasts';
 	import { goto } from '$app/navigation';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
+	import { findAllProjectTemplates } from '$lib/services/template';
 
     let errors: any = $state({ name: '', ownerID: '', description: '', isCapitalized: false, templateID: '' });
 	let userOpts = $state([] as SelectOptionType<string>[]);

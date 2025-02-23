@@ -1,0 +1,44 @@
+fragment projectTemplateFragment on Projecttemplate {
+    name
+    description
+    id
+    phases {
+        id
+        name
+        order
+        description
+        tasks {
+            name
+            description
+            requiredSkillID
+        }
+    }
+}
+
+
+query findAllProjectTemplates {
+	findAllProjectTemplates {
+		results {
+			...projectTemplateFragment
+		}
+	}
+}
+
+
+mutation updateProjectTemplate($input: UpdateProjecttemplate!) {
+	updateProjectTemplate(input: $input) {
+		status {
+			...statusFragment
+		}
+		template {
+			...projectTemplateFragment
+		}
+	}
+}
+
+
+mutation deleteProjectTemplate($id: String!) {
+	deleteProjectTemplate(id: $id) {
+		...statusFragment
+	}
+}

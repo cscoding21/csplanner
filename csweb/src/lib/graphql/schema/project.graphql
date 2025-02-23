@@ -153,27 +153,6 @@ query checkProjectStatus ($projectID: String!, $newStatus: String!) {
 	}
 }
 
-query findAllProjectTemplates {
-	findAllProjectTemplates {
-		results {
-			name
-			description
-			id
-			phases {
-				id
-				name
-				order
-				description
-				tasks {
-					name
-					description
-					requiredSkillID
-				}
-			}
-		}
-	}
-}
-
 mutation createProject($project: UpdateNewProject!) {
 	createProject(input: $project) {
 		status {

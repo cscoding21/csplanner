@@ -72,7 +72,6 @@
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
 		>
-		<NavHamburger class="w-full md:flex md:w-auto md:order-1" />
 	</div>
 	<Dropdown placement="bottom" triggeredBy="#avatar-menu">
 		<DropdownHeader>
@@ -104,7 +103,6 @@
 			</div>
 			<Input id="search-navbar" class="pl-10" placeholder="Search..." />
 		</div>
-		<NavHamburger />
 	</div>
 	<NavUl activeUrl={page.url.pathname}>
 		<NavLi href="/home">Home</NavLi>

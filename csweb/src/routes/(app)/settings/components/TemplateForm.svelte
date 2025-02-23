@@ -1,13 +1,20 @@
 <script lang="ts">
-	import { CSSection, TextAreaInput } from "$lib/components";
+	import { ClientErrorSummary, CSSection, SelectInput, TextAreaInput } from "$lib/components";
 	import { TextInput } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
-	import type { Projecttemplate } from "$lib/graphql/generated/sdk";
-	import { Accordion, AccordionItem, Button } from "flowbite-svelte";
+	import { findSelectOptsFromList, mergeErrors, parseErrors } from "$lib/forms/helpers";
+	import { templateSchema } from "$lib/forms/template.validation";
+	import type { Projecttemplate, UpdateProjecttemplate } from "$lib/graphql/generated/sdk";
+	import { getList } from "$lib/services/list";
+	import { updateProjectTemplate } from "$lib/services/template";
+	import { addToast } from "$lib/stores/toasts";
+	import { callIf } from "$lib/utils/helpers";
+	import { Accordion, AccordionItem, Button, type SelectOptionType } from "flowbite-svelte";
+    import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling'
 
     interface Props {
 		id?: string;
-		template: Projecttemplate | undefined;
+		template: UpdateProjecttemplate | undefined;
 		update?: Function;
 	}
 	let { 
@@ -16,81 +23,167 @@
 		update 
 	}: Props = $props();
 
+
+    let errors = $state({ name: '', description: '', phases: [], foo: '' })	
+
+    const saveTemplate = async () => {
+        //@ts-expect-error
+        errors = null
+        
+        templateSchema
+            .validate(template, { abortEarly: false })
+            .then( async () => {
+                updateProjectTemplate(template as UpdateProjecttemplate)
+					.then((res) => {
+						if (res.status?.success) {
+                            addToast({
+                                message: 'Project basics updated successfully',
+                                dismissible: true,
+                                type: 'success'
+                            });
+
+                            callIf(update);
+						} else {
+							addToast({
+								message: 'Error updating project basics: ' + res,
+								dismissible: true,
+								type: 'error'
+							});
+
+                            scrollTop()
+						}
+					})
+					.catch((err) => {
+						addToast({
+							message: 'Error updating project basics: ' + err,
+							dismissible: true,
+							type: 'error'
+						});
+
+                        scrollTop()
+					});
+			})
+			.catch((err) => {
+                console.log(err.inner)
+				// errors = mergeErrors(errors, parseErrors(err));
+                errors = err
+                
+                addToast({
+                    message: 'Error updating project basics: ' + err,
+                    dismissible: true,
+                    type: 'error'
+                });
+
+                scrollTop()
+			});
+	}
+
+    const loadPage = async () => {
+        getList('Skills')
+			.then((skillList: any) => {
+				skillsOpts = findSelectOptsFromList(skillList);
+			});
+    }
+
+
+    let skillsOpts = $state([] as SelectOptionType<string>[]);
     let templateForm = $derived(template) as Projecttemplate
-
-    let errors = $state({name: '', description: ''})
-
 </script>
 
 <CSSection>
-    <TextInput
-        bind:value={templateForm.name}
-        placeholder="Template name"
-        fieldName="Template Name"
-        error={errors.name}
-    />
-    <TextAreaInput
-        bind:value={templateForm.description}
-        rows={4}
-        fieldName="Description"
-        placeholder="Description"
-        error={errors.description}
-    />
 
-    <SectionSubHeading>
-        Milestone Phases
-        <span class="float-right">
-            <button onclick={() => templateForm.phases.push({name: 'New Phase', description: '', id: '', order: 100})}>Add Phase</button>
-        </span>
-    </SectionSubHeading>
-    {#each templateForm.phases as phase, i}
-    <Accordion>
-        <AccordionItem>
-            <span slot="header">Milestone Phase: {phase.name}</span>
-            <TextInput
-                bind:value={templateForm.phases[i].name}
-                placeholder="Phase name"
-                fieldName="Phase Name"
-                error={errors.name}
-            />
-            <TextAreaInput
-                bind:value={templateForm.phases[i].description}
-                rows={2}
-                fieldName="Description"
-                placeholder="Description"
-                error={errors.description}
-            />
-            <SectionSubHeading>
-                Phase Tasks
-                <span class="float-right">
-                    <button onclick={() => templateForm.phases[i].tasks?.push({ name: 'New Task', description: '', requiredSkillID: '' })}>Add Task</button>
-                </span>
-            </SectionSubHeading>
-            {#if templateForm.phases[i].tasks && templateForm.phases[i].tasks.length > 0}
-            <Accordion flush>
-            {#each templateForm.phases[i].tasks as task, j}
-                <AccordionItem>
-                <span slot="header">{task.name}</span>
-                    <TextInput
-                        bind:value={templateForm.phases[i].tasks[j].name}
-                        placeholder="Task name"
-                        fieldName="Task Name"
-                        error={errors.name}
-                    />
-                    <TextAreaInput
-                        bind:value={templateForm.phases[i].tasks[j].description as string}
-                        rows={2}
-                        fieldName="Description"
-                        placeholder="Description"
-                        error={errors.description}
-                    />
-                </AccordionItem>
-                {/each}
-            </Accordion>
-            {/if}
-        </AccordionItem>
-      </Accordion>
-    {/each}
+<ClientErrorSummary {errors} />
+
+
+{#await loadPage()}
+    Loading...
+{:then promiseData} 
+
+<TextInput
+    bind:value={templateForm.name}
+    placeholder="Template name"
+    fieldName="Template Name"
+    error={errors.name}
+/>
+<TextAreaInput
+    bind:value={templateForm.description}
+    rows={4}
+    fieldName="Template Description"
+    placeholder="Template Description"
+    error={errors.description}
+/>
+
+<SectionSubHeading>
+    Milestone Phases
+    <span class="float-right">
+        <button onclick={() => templateForm.phases.push({name: 'New Phase', description: '', id: '', order: 100, tasks: []})}>Add Phase</button>
+    </span>
+</SectionSubHeading>
+{#each templateForm.phases as phase, i}
+<Accordion>
+    <AccordionItem>
+        <span slot="header">Milestone Phase: {phase.name}</span>
+        <TextInput
+            bind:value={templateForm.phases[i].name}
+            placeholder="Phase name"
+            fieldName="Phase Name"
+            error={errors.foo}
+        />
+        <TextAreaInput
+            bind:value={templateForm.phases[i].description}
+            rows={2}
+            fieldName="Phase Description"
+            placeholder="Phase Description"
+            error={errors.foo}
+        />
+        <SectionSubHeading>
+            Phase Tasks
+            <span class="float-right">
+                <button onclick={() => templateForm.phases[i].tasks?.push({ name: 'New Task', description: '', requiredSkillID: '' })}>Add Task</button>
+            </span>
+        </SectionSubHeading>
+        {#if templateForm.phases[i].tasks && templateForm.phases[i].tasks.length > 0}
+        <Accordion flush>
+        {#each templateForm.phases[i].tasks as task, j}
+            <AccordionItem>
+            <span slot="header">{task.name}</span>
+                <TextInput
+                    bind:value={templateForm.phases[i].tasks[j].name}
+                    placeholder="Task name"
+                    fieldName="Task Name"
+                    error={errors.foo}
+                />
+                <TextAreaInput
+                    bind:value={templateForm.phases[i].tasks[j].description as string}
+                    rows={2}
+                    fieldName="Task Description"
+                    placeholder="TaskDescription"
+                    error={errors.foo}
+                />
+
+                <SelectInput
+                    bind:value={templateForm.phases[i].tasks[j].requiredSkillID as string}
+                    fieldName="Required Skills"
+                    bind:options={skillsOpts}
+                    error={errors.foo}
+                />
+            </AccordionItem>
+            {/each}
+        </Accordion>
+        {/if}
+    </AccordionItem>
+    </Accordion>
+{/each}
+
+<div class="mt-4">
+<span class="float-right">
+<Button onclick={saveTemplate}>Save Template</Button>
+</span> 
+</div>  
+    
+{/await}
+
+    
 </CSSection>
 
 

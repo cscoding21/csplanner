@@ -166,6 +166,18 @@ maps:
     imports: 
     - "csserver/internal/common"
     - "csserver/internal/services/projecttemplate"
+  - name: "projecttemplate_source"
+    source_path: "internal/appserv/graph/idl/models.gen.go"
+    target_path: "internal/services/projecttemplate/models.go"
+    imports: 
+    - "csserver/internal/common"
+    map_overrides:
+    - source_name: "UpdateProjecttemplate"
+      target_name: "Projecttemplate"
+    - source_name: "UpdateProjecttemplatePhase"
+      target_name: "ProjecttemplatePhase"
+    - source_name: "UpdateProjectTemplateTask"
+      target_name: "ProjectTemplateTask"
 
 
   - name: "user_target"

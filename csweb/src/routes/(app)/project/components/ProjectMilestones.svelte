@@ -5,7 +5,7 @@
 		ChevronRightOutline,
 	} from 'flowbite-svelte-icons';
 	import { SectionHeading } from '$lib/components';
-	import { findAllProjectTemplates } from '$lib/services/project';
+	import { findAllProjectTemplates } from '$lib/services/template';
 	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus, BadgeProjectStatus, ShowIfStatus } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';

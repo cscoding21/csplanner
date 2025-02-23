@@ -14,21 +14,21 @@ type Projecttemplate struct {
 	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Phases      []ProjecttemplatePhase `json:"phases"`
+	Name        string                  `json:"name" csval:"req"`
+	Description string                  `json:"description" csval:"req"`
+	Phases      []*ProjecttemplatePhase `json:"phases"`
 }
 
 type ProjecttemplatePhase struct {
-	ID          string                `json:"id,omitempty"`
-	PhaseOrder  byte                  `json:"phase_order"`
-	Name        string                `json:"name"`
-	Description string                `json:"description"`
-	Tasks       []ProjectTemplateTask `json:"tasks"`
+	ID          string                 `json:"id,omitempty"`
+	PhaseOrder  byte                   `json:"phase_order"`
+	Name        string                 `json:"name" csval:"req"`
+	Description string                 `json:"description" csval:"req"`
+	Tasks       []*ProjectTemplateTask `json:"tasks"`
 }
 
 type ProjectTemplateTask struct {
-	Name            string `json:"name"`
-	Description     string `json:"description"`
-	RequiredSkillID string `json:"required_skill_id"`
+	Name            string `json:"name" csval:"req"`
+	Description     string `json:"description" csval:"req"`
+	RequiredSkillID string `json:"required_skill_id" csval:"req"`
 }

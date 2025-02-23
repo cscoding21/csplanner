@@ -31,6 +31,8 @@ type Mutation {
 
     updateList(input: UpdateList!) : CreateListResult!
 
+    updateProjectTemplate(input: UpdateProjecttemplate) : CreateProjectTemplateResult!
+    deleteProjectTemplate(id: String!) : Status!
     setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate): CreateProjectResult!
 
     setNotificationsRead(input: [String!]!) : Status!

@@ -511,7 +511,8 @@ func (r *mutationResolver) UpdateRole(ctx context.Context, input idl.UpdateRole)
 	role := csmap.UpdateRoleIdlToResource(input)
 	result, err := service.UpsertRole(ctx, role)
 	if err != nil {
-		return nil, err
+		out.Status, _ = csmap.GetStatusFromError(err)
+		return &out, err
 	}
 
 	out.Status, _ = csmap.GetStatusFromUpdateResult(*result)
@@ -567,6 +568,32 @@ func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList)
 	out.List = utils.ValToRef(csmap.ListListToIdl(*result.Object))
 
 	return &out, nil
+}
+
+// UpdateProjectTemplate is the resolver for the updateProjectTemplate field.
+func (r *mutationResolver) UpdateProjectTemplate(ctx context.Context, input *idl.UpdateProjecttemplate) (*idl.CreateProjectTemplateResult, error) {
+	service := factory.GetProjectTemplateService()
+	out := idl.CreateProjectTemplateResult{}
+
+	model := csmap.UpdateProjecttemplateIdlToProjecttemplate(*input)
+	result, err := service.SaveTemplate(ctx, model)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+		return &out, err
+	}
+
+	out.Status, _ = csmap.GetStatusFromUpdateResult(*result)
+	out.Template = utils.ValToRef(csmap.ProjecttemplateProjecttemplateToIdl(*result.Object))
+
+	return &out, nil
+}
+
+// DeleteProjectTemplate is the resolver for the deleteProjectTemplate field.
+func (r *mutationResolver) DeleteProjectTemplate(ctx context.Context, id string) (*idl.Status, error) {
+	service := factory.GetProjectTemplateService()
+
+	err := service.DeleteProjecttemplate(ctx, id)
+	return csmap.GetStatusFromError(err)
 }
 
 // SetProjectMilestonesFromTemplate is the resolver for the setProjectMilestonesFromTemplate field.

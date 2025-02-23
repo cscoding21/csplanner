@@ -132,6 +132,9 @@ importers:
       svelte-multiselect:
         specifier: ^10.3.0
         version: 10.3.0
+      svelte-scrolling:
+        specifier: ^1.5.1
+        version: 1.5.1(svelte@5.19.10)
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -2974,6 +2977,11 @@ packages:
     engines: {node: '>=0.14'}
     peerDependencies:
       svelte: ^3.48.0 || ^4.0.0 || ^5.0.0-next.0
+
+  svelte-scrolling@1.5.1:
+    resolution: {integrity: sha512-aG4kS0a2mefNvemepBEjY6F2gxnXheHoasUdMNApVY4A31mmt/0NzSgJa25RPqUugHDeBdm2vpdHZT9R+ZfhfA==}
+    peerDependencies:
+      svelte: ^4 || ^5
 
   svelte@4.2.12:
     resolution: {integrity: sha512-d8+wsh5TfPwqVzbm4/HCXC783/KPHV60NvwitJnyTA5lWn1elhXMNWhXGCJ7PwPa8qFUnyJNIyuIRt2mT0WMug==}
@@ -6410,6 +6418,10 @@ snapshots:
       svelte: 4.2.12
 
   svelte-persisted-store@0.11.0(svelte@5.19.10):
+    dependencies:
+      svelte: 5.19.10
+
+  svelte-scrolling@1.5.1(svelte@5.19.10):
     dependencies:
       svelte: 5.19.10
 

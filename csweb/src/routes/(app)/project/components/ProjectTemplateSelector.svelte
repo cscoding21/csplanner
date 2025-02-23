@@ -2,10 +2,11 @@
 	import { SelectInput } from '$lib/components';
 	import type { Projecttemplate } from '$lib/graphql/generated/sdk';
 	import { SectionSubHeading, SectionHeading } from '$lib/components';
-	import { findAllProjectTemplates, setProjectMilestonesFromTemplate } from '$lib/services/project';
+	import { setProjectMilestonesFromTemplate } from '$lib/services/project';
 	import { CardPlaceholder, Button, P, type SelectOptionType, Alert } from 'flowbite-svelte';
 	import { callIf } from '$lib/utils/helpers';
 	import { InfoCircleSolid } from 'flowbite-svelte-icons';
+	import { findAllProjectTemplates } from '$lib/services/template';
 
 	interface Props {
 		id?: string;

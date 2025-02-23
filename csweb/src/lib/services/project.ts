@@ -263,25 +263,6 @@ export const updateProjectDaci = async (
 };
 
 /**
- * returns a list of all available project milestone templates
- * @returns a list of all project templates
- */
-export const findAllProjectTemplates = async (): Promise<ProjecttemplateResults> => {
-	const client = getApolloClient();
-
-	return client
-		.query({ query: FindAllProjectTemplatesDocument })
-		.then((pro) => {
-			if (pro) {
-				return pro.data.findAllProjectTemplates;
-			}
-		})
-		.catch((err) => {
-			return err;
-		});
-};
-
-/**
  * Copies the items from the selected template into the target project
  * @param input The project id and template ID
  * @returns a status of the operation and the updated project entity

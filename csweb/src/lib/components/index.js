@@ -23,6 +23,7 @@ export { default as SectionHeading } from './formatting/SectionHeading.svelte';
 export { default as SectionSubHeading } from './formatting/SectionSubHeading.svelte';
 
 //---Forms
+export { default as ClientErrorSummary } from './forms/ClientErrorSummary.svelte';
 export { default as DateInput } from './forms/DateInput.svelte';
 export { default as EmailInput } from './forms/EmailInput.svelte';
 export { default as FormErrorMessage } from './forms/FormErrorMessage.svelte';

@@ -30,3 +30,31 @@ input UpdateProjectMilestoneTemplate {
   projectId: String!
   templateId: String!
 }
+
+
+input UpdateProjecttemplate {
+  id: String
+  description: String!
+  name: String!
+  phases: [UpdateProjecttemplatePhase!]!
+}
+
+input UpdateProjecttemplatePhase {
+  id: String
+  name: String!
+  order: Int!
+  description: String!
+  tasks: [UpdateProjectTemplateTask!]
+}
+
+input UpdateProjectTemplateTask {
+  id: String
+  name: String!
+  description: String
+  requiredSkillID: String
+} 
+
+type CreateProjectTemplateResult {
+  status: Status!
+  template: Projecttemplate
+}

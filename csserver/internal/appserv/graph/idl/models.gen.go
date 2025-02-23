@@ -91,6 +91,11 @@ type CreateProjectResult struct {
 	Project *Project `json:"project,omitempty"`
 }
 
+type CreateProjectTemplateResult struct {
+	Status   *Status          `json:"status"`
+	Template *Projecttemplate `json:"template,omitempty"`
+}
+
 type CreateResourceResult struct {
 	Status   *Status   `json:"status"`
 	Resource *Resource `json:"resource,omitempty"`
@@ -635,6 +640,13 @@ type UpdateProjectMilestoneTemplate struct {
 	TemplateID string `json:"templateId"`
 }
 
+type UpdateProjectTemplateTask struct {
+	ID              *string `json:"id,omitempty"`
+	Name            string  `json:"name"`
+	Description     *string `json:"description,omitempty"`
+	RequiredSkillID *string `json:"requiredSkillID,omitempty"`
+}
+
 type UpdateProjectValue struct {
 	DiscountRate float64 `json:"discountRate"`
 }
@@ -650,6 +662,21 @@ type UpdateProjectValueLine struct {
 	YearFourValue  *float64 `json:"yearFourValue,omitempty"`
 	YearFiveValue  *float64 `json:"yearFiveValue,omitempty"`
 	Description    *string  `json:"description,omitempty"`
+}
+
+type UpdateProjecttemplate struct {
+	ID          *string                       `json:"id,omitempty"`
+	Description string                        `json:"description"`
+	Name        string                        `json:"name"`
+	Phases      []*UpdateProjecttemplatePhase `json:"phases"`
+}
+
+type UpdateProjecttemplatePhase struct {
+	ID          *string                      `json:"id,omitempty"`
+	Name        string                       `json:"name"`
+	Order       int                          `json:"order"`
+	Description string                       `json:"description"`
+	Tasks       []*UpdateProjectTemplateTask `json:"tasks,omitempty"`
 }
 
 type UpdateResource struct {

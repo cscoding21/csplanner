@@ -134,6 +134,11 @@ type ComplexityRoot struct {
 		Status  func(childComplexity int) int
 	}
 
+	CreateProjectTemplateResult struct {
+		Status   func(childComplexity int) int
+		Template func(childComplexity int) int
+	}
+
 	CreateResourceResult struct {
 		Resource func(childComplexity int) int
 		Status   func(childComplexity int) int
@@ -187,6 +192,7 @@ type ComplexityRoot struct {
 		DeleteProjectComment             func(childComplexity int, id string) int
 		DeleteProjectFeature             func(childComplexity int, projectID string, featureID string) int
 		DeleteProjectTask                func(childComplexity int, projectID string, milestoneID string, taskID string) int
+		DeleteProjectTemplate            func(childComplexity int, id string) int
 		DeleteProjectValueLine           func(childComplexity int, projectID string, valueLineID string) int
 		DeleteResource                   func(childComplexity int, id string) int
 		DeleteResourceSkill              func(childComplexity int, resourceID string, skillID string) int
@@ -202,6 +208,7 @@ type ComplexityRoot struct {
 		UpdateProjectComment             func(childComplexity int, input idl.UpdateComment) int
 		UpdateProjectFeature             func(childComplexity int, input idl.UpdateProjectFeature) int
 		UpdateProjectTask                func(childComplexity int, input idl.UpdateProjectMilestoneTask) int
+		UpdateProjectTemplate            func(childComplexity int, input *idl.UpdateProjecttemplate) int
 		UpdateProjectValueLine           func(childComplexity int, input idl.UpdateProjectValueLine) int
 		UpdateResource                   func(childComplexity int, input idl.UpdateResource) int
 		UpdateResourceSkill              func(childComplexity int, input idl.UpdateSkill) int
@@ -638,6 +645,8 @@ type MutationResolver interface {
 	DeleteRole(ctx context.Context, id string) (*idl.Status, error)
 	UpdateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error)
 	UpdateList(ctx context.Context, input idl.UpdateList) (*idl.CreateListResult, error)
+	UpdateProjectTemplate(ctx context.Context, input *idl.UpdateProjecttemplate) (*idl.CreateProjectTemplateResult, error)
+	DeleteProjectTemplate(ctx context.Context, id string) (*idl.Status, error)
 	SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.CreateProjectResult, error)
 	SetNotificationsRead(ctx context.Context, input []string) (*idl.Status, error)
 }
@@ -1052,6 +1061,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CreateProjectResult.Status(childComplexity), true
 
+	case "CreateProjectTemplateResult.status":
+		if e.complexity.CreateProjectTemplateResult.Status == nil {
+			break
+		}
+
+		return e.complexity.CreateProjectTemplateResult.Status(childComplexity), true
+
+	case "CreateProjectTemplateResult.template":
+		if e.complexity.CreateProjectTemplateResult.Template == nil {
+			break
+		}
+
+		return e.complexity.CreateProjectTemplateResult.Template(childComplexity), true
+
 	case "CreateResourceResult.resource":
 		if e.complexity.CreateResourceResult.Resource == nil {
 			break
@@ -1288,6 +1311,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteProjectTask(childComplexity, args["projectID"].(string), args["milestoneID"].(string), args["taskID"].(string)), true
 
+	case "Mutation.deleteProjectTemplate":
+		if e.complexity.Mutation.DeleteProjectTemplate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteProjectTemplate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteProjectTemplate(childComplexity, args["id"].(string)), true
+
 	case "Mutation.deleteProjectValueLine":
 		if e.complexity.Mutation.DeleteProjectValueLine == nil {
 			break
@@ -1462,6 +1497,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateProjectTask(childComplexity, args["input"].(idl.UpdateProjectMilestoneTask)), true
+
+	case "Mutation.updateProjectTemplate":
+		if e.complexity.Mutation.UpdateProjectTemplate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProjectTemplate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProjectTemplate(childComplexity, args["input"].(*idl.UpdateProjecttemplate)), true
 
 	case "Mutation.updateProjectValueLine":
 		if e.complexity.Mutation.UpdateProjectValueLine == nil {
@@ -3374,8 +3421,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateProjectMilestonePhase,
 		ec.unmarshalInputUpdateProjectMilestoneTask,
 		ec.unmarshalInputUpdateProjectMilestoneTemplate,
+		ec.unmarshalInputUpdateProjectTemplateTask,
 		ec.unmarshalInputUpdateProjectValue,
 		ec.unmarshalInputUpdateProjectValueLine,
+		ec.unmarshalInputUpdateProjecttemplate,
+		ec.unmarshalInputUpdateProjecttemplatePhase,
 		ec.unmarshalInputUpdateResource,
 		ec.unmarshalInputUpdateRole,
 		ec.unmarshalInputUpdateSkill,
@@ -4206,6 +4256,34 @@ type ProjecttemplateResults {
 input UpdateProjectMilestoneTemplate {
   projectId: String!
   templateId: String!
+}
+
+
+input UpdateProjecttemplate {
+  id: String
+  description: String!
+  name: String!
+  phases: [UpdateProjecttemplatePhase!]!
+}
+
+input UpdateProjecttemplatePhase {
+  id: String
+  name: String!
+  order: Int!
+  description: String!
+  tasks: [UpdateProjectTemplateTask!]
+}
+
+input UpdateProjectTemplateTask {
+  id: String
+  name: String!
+  description: String
+  requiredSkillID: String
+} 
+
+type CreateProjectTemplateResult {
+  status: Status!
+  template: Projecttemplate
 }`, BuiltIn: false},
 	{Name: "../api/idl/user.graphqls", Input: `
 type User {
@@ -4269,6 +4347,8 @@ input UpdateUser {
 
     updateList(input: UpdateList!) : CreateListResult!
 
+    updateProjectTemplate(input: UpdateProjecttemplate) : CreateProjectTemplateResult!
+    deleteProjectTemplate(id: String!) : Status!
     setProjectMilestonesFromTemplate(input: UpdateProjectMilestoneTemplate): CreateProjectResult!
 
     setNotificationsRead(input: [String!]!) : Status!
@@ -4452,6 +4532,21 @@ func (ec *executionContext) field_Mutation_deleteProjectTask_args(ctx context.Co
 		}
 	}
 	args["taskID"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteProjectTemplate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -4684,6 +4779,21 @@ func (ec *executionContext) field_Mutation_updateProjectTask_args(ctx context.Co
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateProjectMilestoneTask2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectMilestoneTask(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectTemplate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *idl.UpdateProjecttemplate
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOUpdateProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjecttemplate(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7558,6 +7668,109 @@ func (ec *executionContext) fieldContext_CreateProjectResult_project(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _CreateProjectTemplateResult_status(ctx context.Context, field graphql.CollectedField, obj *idl.CreateProjectTemplateResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateProjectTemplateResult_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateProjectTemplateResult_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateProjectTemplateResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_Status_success(ctx, field)
+			case "message":
+				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateProjectTemplateResult_template(ctx context.Context, field graphql.CollectedField, obj *idl.CreateProjectTemplateResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateProjectTemplateResult_template(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Template, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Projecttemplate)
+	fc.Result = res
+	return ec.marshalOProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplate(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateProjectTemplateResult_template(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateProjectTemplateResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Projecttemplate_id(ctx, field)
+			case "description":
+				return ec.fieldContext_Projecttemplate_description(ctx, field)
+			case "name":
+				return ec.fieldContext_Projecttemplate_name(ctx, field)
+			case "phases":
+				return ec.fieldContext_Projecttemplate_phases(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Projecttemplate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CreateResourceResult_status(ctx context.Context, field graphql.CollectedField, obj *idl.CreateResourceResult) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CreateResourceResult_status(ctx, field)
 	if err != nil {
@@ -10117,6 +10330,130 @@ func (ec *executionContext) fieldContext_Mutation_updateList(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateList_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateProjectTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateProjectTemplate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateProjectTemplate(rctx, fc.Args["input"].(*idl.UpdateProjecttemplate))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.CreateProjectTemplateResult)
+	fc.Result = res
+	return ec.marshalNCreateProjectTemplateResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectTemplateResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateProjectTemplate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_CreateProjectTemplateResult_status(ctx, field)
+			case "template":
+				return ec.fieldContext_CreateProjectTemplateResult_template(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateProjectTemplateResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateProjectTemplate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteProjectTemplate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteProjectTemplate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteProjectTemplate(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.Status)
+	fc.Result = res
+	return ec.marshalNStatus2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteProjectTemplate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "success":
+				return ec.fieldContext_Status_success(ctx, field)
+			case "message":
+				return ec.fieldContext_Status_message(ctx, field)
+			case "validationResult":
+				return ec.fieldContext_Status_validationResult(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Status", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteProjectTemplate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -25092,6 +25429,54 @@ func (ec *executionContext) unmarshalInputUpdateProjectMilestoneTemplate(ctx con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateProjectTemplateTask(ctx context.Context, obj interface{}) (idl.UpdateProjectTemplateTask, error) {
+	var it idl.UpdateProjectTemplateTask
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "description", "requiredSkillID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "requiredSkillID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requiredSkillID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RequiredSkillID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateProjectValue(ctx context.Context, obj interface{}) (idl.UpdateProjectValue, error) {
 	var it idl.UpdateProjectValue
 	asMap := map[string]interface{}{}
@@ -25203,6 +25588,109 @@ func (ec *executionContext) unmarshalInputUpdateProjectValueLine(ctx context.Con
 				return it, err
 			}
 			it.Description = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateProjecttemplate(ctx context.Context, obj interface{}) (idl.UpdateProjecttemplate, error) {
+	var it idl.UpdateProjecttemplate
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "description", "name", "phases"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "phases":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phases"))
+			data, err := ec.unmarshalNUpdateProjecttemplatePhase2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjecttemplatePhaseᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Phases = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateProjecttemplatePhase(ctx context.Context, obj interface{}) (idl.UpdateProjecttemplatePhase, error) {
+	var it idl.UpdateProjecttemplatePhase
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "order", "description", "tasks"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "order":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Order = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "tasks":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tasks"))
+			data, err := ec.unmarshalOUpdateProjectTemplateTask2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectTemplateTaskᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tasks = data
 		}
 	}
 
@@ -26033,6 +26521,47 @@ func (ec *executionContext) _CreateProjectResult(ctx context.Context, sel ast.Se
 	return out
 }
 
+var createProjectTemplateResultImplementors = []string{"CreateProjectTemplateResult"}
+
+func (ec *executionContext) _CreateProjectTemplateResult(ctx context.Context, sel ast.SelectionSet, obj *idl.CreateProjectTemplateResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createProjectTemplateResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateProjectTemplateResult")
+		case "status":
+			out.Values[i] = ec._CreateProjectTemplateResult_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "template":
+			out.Values[i] = ec._CreateProjectTemplateResult_template(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var createResourceResultImplementors = []string{"CreateResourceResult"}
 
 func (ec *executionContext) _CreateResourceResult(ctx context.Context, sel ast.SelectionSet, obj *idl.CreateResourceResult) graphql.Marshaler {
@@ -26578,6 +27107,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateList":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateList(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateProjectTemplate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateProjectTemplate(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteProjectTemplate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteProjectTemplate(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -30031,6 +30574,20 @@ func (ec *executionContext) marshalNCreateProjectResult2ᚖcsserverᚋinternal�
 	return ec._CreateProjectResult(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNCreateProjectTemplateResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectTemplateResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateProjectTemplateResult) graphql.Marshaler {
+	return ec._CreateProjectTemplateResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateProjectTemplateResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectTemplateResult(ctx context.Context, sel ast.SelectionSet, v *idl.CreateProjectTemplateResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateProjectTemplateResult(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCreateResourceResult2csserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateResourceResult(ctx context.Context, sel ast.SelectionSet, v idl.CreateResourceResult) graphql.Marshaler {
 	return ec._CreateResourceResult(ctx, sel, &v)
 }
@@ -30977,9 +31534,36 @@ func (ec *executionContext) unmarshalNUpdateProjectMilestoneTask2ᚖcsserverᚋi
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateProjectTemplateTask2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectTemplateTask(ctx context.Context, v interface{}) (*idl.UpdateProjectTemplateTask, error) {
+	res, err := ec.unmarshalInputUpdateProjectTemplateTask(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdateProjectValueLine2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectValueLine(ctx context.Context, v interface{}) (idl.UpdateProjectValueLine, error) {
 	res, err := ec.unmarshalInputUpdateProjectValueLine(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateProjecttemplatePhase2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjecttemplatePhaseᚄ(ctx context.Context, v interface{}) ([]*idl.UpdateProjecttemplatePhase, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*idl.UpdateProjecttemplatePhase, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUpdateProjecttemplatePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjecttemplatePhase(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNUpdateProjecttemplatePhase2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjecttemplatePhase(ctx context.Context, v interface{}) (*idl.UpdateProjecttemplatePhase, error) {
+	res, err := ec.unmarshalInputUpdateProjecttemplatePhase(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateResource2csserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateResource(ctx context.Context, v interface{}) (idl.UpdateResource, error) {
@@ -32184,6 +32768,13 @@ func (ec *executionContext) marshalOProjecttemplate2ᚕᚖcsserverᚋinternalᚋ
 	return ret
 }
 
+func (ec *executionContext) marshalOProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjecttemplate(ctx context.Context, sel ast.SelectionSet, v *idl.Projecttemplate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Projecttemplate(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx context.Context, sel ast.SelectionSet, v []*idl.Resource) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -32644,11 +33235,39 @@ func (ec *executionContext) unmarshalOUpdateProjectMilestoneTemplate2ᚖcsserver
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOUpdateProjectTemplateTask2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectTemplateTaskᚄ(ctx context.Context, v interface{}) ([]*idl.UpdateProjectTemplateTask, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*idl.UpdateProjectTemplateTask, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUpdateProjectTemplateTask2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectTemplateTask(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOUpdateProjectValue2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjectValue(ctx context.Context, v interface{}) (*idl.UpdateProjectValue, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputUpdateProjectValue(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOUpdateProjecttemplate2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateProjecttemplate(ctx context.Context, v interface{}) (*idl.UpdateProjecttemplate, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpdateProjecttemplate(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
