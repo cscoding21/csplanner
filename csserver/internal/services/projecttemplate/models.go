@@ -20,7 +20,7 @@ type Projecttemplate struct {
 }
 
 type ProjecttemplatePhase struct {
-	ID          string                 `json:"id,omitempty"`
+	ID          string                 `json:"id"`
 	PhaseOrder  byte                   `json:"phase_order"`
 	Name        string                 `json:"name" csval:"req"`
 	Description string                 `json:"description" csval:"req"`
@@ -28,6 +28,7 @@ type ProjecttemplatePhase struct {
 }
 
 type ProjectTemplateTask struct {
+	ID              string `json:"id"`
 	Name            string `json:"name" csval:"req"`
 	Description     string `json:"description" csval:"req"`
 	RequiredSkillID string `json:"required_skill_id" csval:"req"`

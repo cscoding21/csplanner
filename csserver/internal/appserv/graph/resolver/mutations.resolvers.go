@@ -582,7 +582,7 @@ func (r *mutationResolver) UpdateProjectTemplate(ctx context.Context, input *idl
 		return &out, err
 	}
 
-	out.Status, _ = csmap.GetStatusFromUpdateResult(*result)
+	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
 	out.Template = utils.ValToRef(csmap.ProjecttemplateProjecttemplateToIdl(*result.Object))
 
 	return &out, nil

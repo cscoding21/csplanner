@@ -2,7 +2,7 @@
 	import { ClientErrorSummary, CSSection, SelectInput, TextAreaInput } from "$lib/components";
 	import { TextInput } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
-	import { findSelectOptsFromList, mergeErrors, parseErrors } from "$lib/forms/helpers";
+	import { findSelectOptsFromList } from "$lib/forms/helpers";
 	import { templateSchema } from "$lib/forms/template.validation";
 	import type { Projecttemplate, UpdateProjecttemplate } from "$lib/graphql/generated/sdk";
 	import { getList } from "$lib/services/list";
@@ -10,15 +10,14 @@
 	import { addToast } from "$lib/stores/toasts";
 	import { callIf } from "$lib/utils/helpers";
 	import { Accordion, AccordionItem, Button, type SelectOptionType } from "flowbite-svelte";
+	import { ToolsOutline } from "flowbite-svelte-icons";
     import { scrollTop } from 'svelte-scrolling'
 
     interface Props {
-		id?: string;
 		template: UpdateProjecttemplate | undefined;
 		update?: Function;
 	}
 	let { 
-		id, 
 		template = $bindable(), 
 		update 
 	}: Props = $props();
@@ -63,7 +62,6 @@
 					});
 			})
 			.catch((err) => {
-                console.log(err.inner)
                 errors = err
                 
                 addToast({
@@ -77,12 +75,19 @@
 	}
 
     const delMilestone = (index:number) => {
-        delete template?.phases[index]
+        if (!template?.phases || template.phases.length === 0) {
+            return
+        }
+
+        template?.phases.splice(index, 1)
     }
 
     const delTask = (mindex: number, tindex:number) => {
-        //@ts-expect-error
-        delete template?.phases[mindex]?.tasks[tindex]
+        if (!template?.phases || template.phases.length === 0 || !template.phases[mindex].tasks) {
+            return
+        }
+        
+        template?.phases[mindex]?.tasks.splice(tindex, 1)
     }
 
     const loadPage = async () => {
@@ -157,7 +162,7 @@
         <Accordion flush>
         {#each templateForm.phases[i].tasks as task, j}
             <AccordionItem>
-            <span slot="header">{task.name}</span>
+            <span slot="header" ><ToolsOutline size="sm" class="float-left mr-3" /> {task.name}</span>
                 <TextInput
                     bind:value={templateForm.phases[i].tasks[j].name}
                     placeholder="Task name"
@@ -186,6 +191,8 @@
             </AccordionItem>
             {/each}
         </Accordion>
+        {:else}
+            <div class="text-center p-6">No Tasks</div>
         {/if}
     </AccordionItem>
     </Accordion>

@@ -56,7 +56,7 @@ func CreateTestTemplates(ctx context.Context) error {
 			},
 		},
 	}
-	result, err := ts.CreateProjecttemplate(ctx, template)
+	result, err := ts.SaveTemplate(ctx, *template)
 	if err != nil {
 		fmt.Printf("CreateTestTemplate Primary Error: %s\n", err)
 	} else {
@@ -82,7 +82,7 @@ func CreateTestTemplates(ctx context.Context) error {
 			},
 		},
 	}
-	result, err = ts.CreateProjecttemplate(ctx, simpleTemplate)
+	result, err = ts.SaveTemplate(ctx, *simpleTemplate)
 	if err != nil {
 		fmt.Printf("CreateTestTemplate Simple Error: %s\n", err)
 	} else {
