@@ -7,7 +7,7 @@
 		fieldName: string;
 		placeholder?: string;
 		children?: Snippet;
-		error: string;
+		error?: string;
 		value: string;
 		update?: Function;
 	}

@@ -10,7 +10,7 @@
 	import { addToast } from "$lib/stores/toasts";
 	import { callIf } from "$lib/utils/helpers";
 	import { Accordion, AccordionItem, Button, type SelectOptionType } from "flowbite-svelte";
-    import { scrollTo, scrollRef, scrollTop } from 'svelte-scrolling'
+    import { scrollTop } from 'svelte-scrolling'
 
     interface Props {
 		id?: string;
@@ -24,10 +24,9 @@
 	}: Props = $props();
 
 
-    let errors = $state({ name: '', description: '', phases: [], foo: '' })	
+    let errors = $state(null)	
 
     const saveTemplate = async () => {
-        //@ts-expect-error
         errors = null
         
         templateSchema
@@ -65,7 +64,6 @@
 			})
 			.catch((err) => {
                 console.log(err.inner)
-				// errors = mergeErrors(errors, parseErrors(err));
                 errors = err
                 
                 addToast({
@@ -77,6 +75,15 @@
                 scrollTop()
 			});
 	}
+
+    const delMilestone = (index:number) => {
+        delete template?.phases[index]
+    }
+
+    const delTask = (mindex: number, tindex:number) => {
+        //@ts-expect-error
+        delete template?.phases[mindex]?.tasks[tindex]
+    }
 
     const loadPage = async () => {
         getList('Skills')
@@ -103,14 +110,12 @@
     bind:value={templateForm.name}
     placeholder="Template name"
     fieldName="Template Name"
-    error={errors.name}
 />
 <TextAreaInput
     bind:value={templateForm.description}
     rows={4}
     fieldName="Template Description"
     placeholder="Template Description"
-    error={errors.description}
 />
 
 <SectionSubHeading>
@@ -127,15 +132,21 @@
             bind:value={templateForm.phases[i].name}
             placeholder="Phase name"
             fieldName="Phase Name"
-            error={errors.foo}
         />
         <TextAreaInput
             bind:value={templateForm.phases[i].description}
             rows={2}
             fieldName="Phase Description"
             placeholder="Phase Description"
-            error={errors.foo}
         />
+
+        <div class="mb-8">
+            <span class="float-right">
+                <Button color="red" onclick={() => delMilestone(i)}>Delete Milestone</Button>
+            </span>
+            <br class="clear-both" />
+        </div>
+
         <SectionSubHeading>
             Phase Tasks
             <span class="float-right">
@@ -151,22 +162,27 @@
                     bind:value={templateForm.phases[i].tasks[j].name}
                     placeholder="Task name"
                     fieldName="Task Name"
-                    error={errors.foo}
                 />
                 <TextAreaInput
                     bind:value={templateForm.phases[i].tasks[j].description as string}
                     rows={2}
                     fieldName="Task Description"
                     placeholder="TaskDescription"
-                    error={errors.foo}
                 />
 
                 <SelectInput
                     bind:value={templateForm.phases[i].tasks[j].requiredSkillID as string}
                     fieldName="Required Skills"
                     bind:options={skillsOpts}
-                    error={errors.foo}
                 />
+
+                
+                <div class="mb-8">
+                    <span class="float-right">
+                        <Button pill color="red" onclick={() => delTask(i, j)}>Delete Task</Button>
+                    </span>
+                    <br class="clear-both" />
+                </div>
             </AccordionItem>
             {/each}
         </Accordion>

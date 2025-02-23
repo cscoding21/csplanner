@@ -2,13 +2,12 @@
 	import { Alert } from "flowbite-svelte";
 	import { InfoCircleSolid } from "flowbite-svelte-icons";
 
-
-interface Props {
-    errors?: any;
-}
-let { 
-    errors, 
-}: Props = $props();
+    interface Props {
+        errors?: any;
+    }
+    let { 
+        errors, 
+    }: Props = $props();
 </script>
 
 

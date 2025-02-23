@@ -6,7 +6,7 @@
 
 	interface Props {
 		fieldName: string;
-		error: string;
+		error?: string;
 		value: string[];
 		update?: Function;
 		children?: Snippet;

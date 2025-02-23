@@ -4,7 +4,7 @@
 
 	interface Props {
 		fieldName: string;
-		error: string;
+		error?: string;
 		value: string;
 		placeholder?: string;
 		update: Function;

@@ -111,7 +111,7 @@
 		findAllResources()
 			.then((r) => r)
 			.then((r) => {
-				resourceOpts = r.results?.map((r) => ({
+				resourceOpts = r.results?.filter(r => r.type === "human").map((r) => ({
 					name: r.name,
 					value: r.id as string
 				})) as SelectOptionType<string>[];

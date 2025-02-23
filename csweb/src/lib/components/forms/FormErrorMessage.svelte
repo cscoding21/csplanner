@@ -1,6 +1,6 @@
 <script lang="ts">
 	interface Props {
-		message: string;
+		message?: string;
 	}
 	let { message = $bindable() }: Props = $props();
 </script>

@@ -3,7 +3,7 @@ load('ext://namespace', 'namespace_create')
 
 NAMESPACE = 'ollama'
 
-# https://github.com/nats-io/k8s/blob/main/helm/charts/nats/values.yaml
+# https://github.com/otwld/ollama-helm
 
 def setup_ollama():
     namespace_create(NAMESPACE, allow_duplicates=True)
@@ -18,6 +18,6 @@ def setup_ollama():
         'ollama', 
         'ollama-helm/ollama', 
         namespace = NAMESPACE, 
-        flags=['--values=tilt_lib/ollama/values.local.yaml'],
+        flags=['--values=tilt_lib/ollama/values.local.yaml', '--version=1.6.0'],
         labels=["Ollama"]
     )

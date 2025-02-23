@@ -137,7 +137,7 @@
 		</div>
 
 		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.projectStatusBlock?.status}>
-		<div class="col-span-4">
+		<div class="">
 			<span class="float-right">
 				<Button onclick={updateBasics}>Update Basics</Button>
 			</span>

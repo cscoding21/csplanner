@@ -8,7 +8,7 @@
     
 	interface Props {
 		fieldName?: string;
-		error: string;
+		error?: string;
 		value: Date|null;
 		children?: Snippet;
 		update?: Function;

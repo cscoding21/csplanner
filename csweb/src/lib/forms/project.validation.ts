@@ -5,7 +5,7 @@ export const basicSchema = yup.object().shape({
 	name: yup.string().required('Project name is required'),
 	description: yup.string().required('Description is required'),
 	ownerID: yup.string().required('Project owner is required'),
-	startDate: yup.date().optional(),
+	startDate: yup.date().nullable(),
 	isCapitalized: yup.bool().required()
 });
 

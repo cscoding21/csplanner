@@ -71,7 +71,7 @@
 			.catch((err) => {
 				errors = mergeErrors(errors, parseErrors(err));
 
-				console.error(errors);
+				console.log(errors);
 			});
 	};
 

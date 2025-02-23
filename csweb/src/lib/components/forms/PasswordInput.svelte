@@ -9,7 +9,7 @@
 
 	interface Props {
 		fieldName: string;
-		error: string;
+		error?: string;
 		children?: Snippet;
 		value: string;
 		update?: Function;
