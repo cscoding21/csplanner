@@ -166,9 +166,10 @@ type ComplexityRoot struct {
 	}
 
 	List struct {
-		ID     func(childComplexity int) int
-		Name   func(childComplexity int) int
-		Values func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Values      func(childComplexity int) int
 	}
 
 	ListItem struct {
@@ -1162,6 +1163,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Filters.Filters(childComplexity), true
+
+	case "List.description":
+		if e.complexity.List.Description == nil {
+			break
+		}
+
+		return e.complexity.List.Description(childComplexity), true
 
 	case "List.id":
 		if e.complexity.List.ID == nil {
@@ -3767,6 +3775,7 @@ input InputFilters {
 	{Name: "../api/idl/list.graphqls", Input: `type List {
     id: String!
     name: String!
+    description: String!
     values: [ListItem!]!
 }
 
@@ -3785,6 +3794,7 @@ type ListResults {
 
 input UpdateList {
     id: String!
+    description: String!
     values: [UpdateListItem!]!
 }
 
@@ -7400,6 +7410,8 @@ func (ec *executionContext) fieldContext_CreateListResult_list(_ context.Context
 				return ec.fieldContext_List_id(ctx, field)
 			case "name":
 				return ec.fieldContext_List_name(ctx, field)
+			case "description":
+				return ec.fieldContext_List_description(ctx, field)
 			case "values":
 				return ec.fieldContext_List_values(ctx, field)
 			}
@@ -8491,6 +8503,50 @@ func (ec *executionContext) fieldContext_List_name(_ context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _List_description(ctx context.Context, field graphql.CollectedField, obj *idl.List) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_List_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_List_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "List",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _List_values(ctx context.Context, field graphql.CollectedField, obj *idl.List) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_List_values(ctx, field)
 	if err != nil {
@@ -8814,6 +8870,8 @@ func (ec *executionContext) fieldContext_ListResults_results(_ context.Context, 
 				return ec.fieldContext_List_id(ctx, field)
 			case "name":
 				return ec.fieldContext_List_name(ctx, field)
+			case "description":
+				return ec.fieldContext_List_description(ctx, field)
 			case "values":
 				return ec.fieldContext_List_values(ctx, field)
 			}
@@ -20060,6 +20118,8 @@ func (ec *executionContext) fieldContext_Query_getList(ctx context.Context, fiel
 				return ec.fieldContext_List_id(ctx, field)
 			case "name":
 				return ec.fieldContext_List_name(ctx, field)
+			case "description":
+				return ec.fieldContext_List_description(ctx, field)
 			case "values":
 				return ec.fieldContext_List_values(ctx, field)
 			}
@@ -25179,7 +25239,7 @@ func (ec *executionContext) unmarshalInputUpdateList(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "values"}
+	fieldsInOrder := [...]string{"id", "description", "values"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -25193,6 +25253,13 @@ func (ec *executionContext) unmarshalInputUpdateList(ctx context.Context, obj in
 				return it, err
 			}
 			it.ID = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
 		case "values":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("values"))
 			data, err := ec.unmarshalNUpdateListItem2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateListItemᚄ(ctx, v)
@@ -27237,6 +27304,11 @@ func (ec *executionContext) _List(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "name":
 			out.Values[i] = ec._List_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "description":
+			out.Values[i] = ec._List_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

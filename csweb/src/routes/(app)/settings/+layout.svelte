@@ -1,12 +1,12 @@
 <script lang="ts">
-	import NavBar from "./components/NavBar.svelte";
+	import { SettingsNavBar } from "./components";
 
 
 </script>
 
 <div class="flex w-full">
 	<div class="">
-        <NavBar />
+        <SettingsNavBar />
     </div>
     <div class="w-full p-4">
         <slot />

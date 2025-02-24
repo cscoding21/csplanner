@@ -169,6 +169,7 @@ export type InputPagination = {
 
 export type List = {
   __typename?: 'List';
+  description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   values: Array<ListItem>;
@@ -903,6 +904,7 @@ export type UpdateCommentReply = {
 };
 
 export type UpdateList = {
+  description: Scalars['String']['input'];
   id: Scalars['String']['input'];
   values: Array<UpdateListItem>;
 };
@@ -1202,6 +1204,7 @@ export const ListFragmentFragmentDoc = gql`
     fragment listFragment on List {
   id
   name
+  description
   values {
     value
     name

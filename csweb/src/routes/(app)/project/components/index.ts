@@ -6,7 +6,7 @@ export { default as DeleteProject } from './DeleteProject.svelte';
 export { default as DeleteProjectFeature } from './DeleteProjectFeature.svelte';
 export { default as DeleteProjectTask } from './DeleteProjectTask.svelte';
 export { default as DeleteProjectValueLine } from './DeleteProjectValueLine.svelte';
-export { default as NavBar } from './NavBar.svelte';
+export { default as ProjectNavBar } from './ProjectNavBar.svelte';
 export { default as ProjectActionBar } from './ProjectActionBar.svelte';
 export { default as ProjectBasics } from './ProjectBasics.svelte';
 export { default as ProjectCard } from './ProjectCard.svelte';

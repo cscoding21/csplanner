@@ -3,7 +3,7 @@
     import type { List, ListItem, ListResults, UpdateList } from "$lib/graphql/generated/sdk";
     import { addToast } from "$lib/stores/toasts";
 	import { Sidebar, SidebarWrapper, SidebarGroup, SidebarItem, Button } from "flowbite-svelte";
-	import { SectionSubHeading } from "$lib/components";
+	import { CSSidebar, CSSidebarItem, SectionSubHeading } from "$lib/components";
 	import { Input, ButtonGroup } from "flowbite-svelte";
 	import { PlusOutline } from "flowbite-svelte-icons";
 	import { deepCopy } from "$lib/utils/helpers";
@@ -88,19 +88,19 @@
 <div class="flex">
 	<div class="flex-none px-2">
 		<SectionSubHeading>List</SectionSubHeading>
-		<Sidebar>
-			<SidebarWrapper>
-			  <SidebarGroup>
-				{#each lists as list, index}
-					<SidebarItem onclick={() => setList(index)} label={list.name}></SidebarItem>
-				{/each}
-			  </SidebarGroup>
-			</SidebarWrapper>
-		</Sidebar>
+		<div class="gap-8 lg:flex">
+		<CSSidebar>
+			{#each lists as list, index}
+				<CSSidebarItem onclick={() => setList(index)} label={list.name} active={currentListName === list.name} />
+			{/each}
+		</CSSidebar>
+		</div>
 	</div>
 
 	<div class="flex-1 px-2">
 		<SectionSubHeading>List Items: {currentListName}</SectionSubHeading>
+		<div class="text-sm mb-4">{currentList.description}</div>
+
 		<ul class="mb-2">
 			{#each currentList.values as val, index}
 				<ul class="mb-4">

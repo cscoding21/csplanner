@@ -14,7 +14,7 @@
 
 <div class="grid grid-cols-5">
 	<div class="flex w-full col-span-5">
-		<CSSection>
+	<CSSection>
 		{#if hash == "#org-settings"}
 			<OrgSettings  />
 		{:else if hash == '#lists'}

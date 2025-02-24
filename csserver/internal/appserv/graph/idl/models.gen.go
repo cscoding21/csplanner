@@ -139,9 +139,10 @@ type InputPagination struct {
 }
 
 type List struct {
-	ID     string      `json:"id"`
-	Name   string      `json:"name"`
-	Values []*ListItem `json:"values"`
+	ID          string      `json:"id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Values      []*ListItem `json:"values"`
 }
 
 type ListItem struct {
@@ -549,8 +550,9 @@ type UpdateCommentReply struct {
 }
 
 type UpdateList struct {
-	ID     string            `json:"id"`
-	Values []*UpdateListItem `json:"values"`
+	ID          string            `json:"id"`
+	Description string            `json:"description"`
+	Values      []*UpdateListItem `json:"values"`
 }
 
 type UpdateListItem struct {

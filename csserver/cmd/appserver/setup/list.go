@@ -13,7 +13,8 @@ func CreateTestLists(ctx context.Context) error {
 	service := factory.GetListService()
 	//uuid.New().String()
 	skillsList := list.List{
-		Name: "Skills",
+		Name:        "Skills",
+		Description: "Skills are assigned to a resource.  This assignment allows for accurate project task assignment.",
 		Values: []*list.ListItem{
 			{Value: "backend", Name: "Backend Development"},
 			{Value: "frontend", Name: "Frontend Development"},
@@ -39,7 +40,8 @@ func CreateTestLists(ctx context.Context) error {
 	}
 
 	fundingSourceList := list.List{
-		Name: "Funding Source",
+		Name:        "Funding Source",
+		Description: "Funding sources are used to identify where a projects value comes from.  This list appears when assigning a projects value.",
 		Values: []*list.ListItem{
 			{Value: "internal", Name: "Internal"},
 			{Value: "external", Name: "External"},
@@ -47,7 +49,8 @@ func CreateTestLists(ctx context.Context) error {
 	}
 
 	valueCategoryList := list.List{
-		Name: "Value Catetgory",
+		Name:        "Value Catetgory",
+		Description: "Value categories are used to characterize the nature of a projects value.  This information informs decisions about priority.",
 		Values: []*list.ListItem{
 			{Value: "revenue", Name: "Revenue increase"},
 			{Value: "tax-benefit", Name: "Tax write-off"},

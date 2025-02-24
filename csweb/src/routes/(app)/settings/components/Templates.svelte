@@ -1,12 +1,11 @@
 <script lang="ts">
     import { type UpdateProjecttemplate, type Projecttemplate, type ProjecttemplateResults, DeleteProjectTemplateDocument } from "$lib/graphql/generated/sdk";
     import { addToast } from "$lib/stores/toasts";
-	import { Sidebar, SidebarWrapper, SidebarGroup, SidebarItem, Button } from "flowbite-svelte";
-	import { SectionSubHeading } from "$lib/components";
+	import { CSSidebar, CSSidebarItem, SectionSubHeading } from "$lib/components";
 	import { deepCopy } from "$lib/utils/helpers";
     import { TemplateForm } from ".";
 	import { deleteProjectTemplate, findAllProjectTemplates } from "$lib/services/template";
-	import { DeleteTableOutline, PlusOutline, TrashBinOutline } from "flowbite-svelte-icons";
+	import { PlusOutline, TrashBinOutline } from "flowbite-svelte-icons";
 
     let templates = $state([] as Projecttemplate[])
 	let currentTemplate = $state({} as UpdateProjecttemplate)
@@ -95,16 +94,20 @@
                 </button>
             </span>
         </SectionSubHeading>
-		<Sidebar {activeUrl}>
-			<SidebarWrapper>
-			  <SidebarGroup>
-				{#each templates as template, index}
-					<SidebarItem onclick={() => setTemplate(index)} label={template.name}>
-                    </SidebarItem>
-				{/each}
-			  </SidebarGroup>
-			</SidebarWrapper>
-		</Sidebar>
+
+        <div class="gap-8 lg:flex">
+        <CSSidebar>
+            {#each templates as template, index}
+            <CSSidebarItem label={template.name} onclick={() => setTemplate(index)} active={currentTemplate.name === template.name}>
+                <!-- {#snippet icon()}
+                <svg class="h-6 w-6 text-gray-400 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h6l2 4m-8-4v8m0-8V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v9h2m8 0H9m4 0h2m4 0h2v-4m0 0h-5m3.5 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-10 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
+                  </svg>    
+                {/snippet} -->
+            </CSSidebarItem>
+            {/each}
+        </CSSidebar>
+        </div>
 	</div>
 
 	<div class="flex-1 px-2">

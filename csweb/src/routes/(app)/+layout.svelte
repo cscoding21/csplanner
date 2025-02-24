@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
+
 	import {
 		Navbar,
 		NavBrand,
-		NavLi,
-		NavUl,
-		NavHamburger,
 		Avatar,
 		Dropdown,
 		DropdownItem,
@@ -20,12 +18,14 @@
 	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import { PageMessages, NotificationList } from '$lib/components';
+	import { PageMessages, NotificationList, CSSidebarItem, CSNavItem } from '$lib/components';
 
 	const as = authService();
 	const cu = as.currentUser();
 
 	let { children } = $props();
+
+	let pageCat = $derived(page.url.pathname)
 
 	const logoutUser = () => {
 		as.signout().then((r) => {
@@ -34,6 +34,10 @@
 			}
 		});
 	};
+
+	const isTLPage = (token:string):boolean => {
+		return pageCat.indexOf(token) > -1
+	}
 
 	onMount(async () => {
 		console.log('layout onMount');
@@ -104,13 +108,16 @@
 			<Input id="search-navbar" class="pl-10" placeholder="Search..." />
 		</div>
 	</div>
-	<NavUl activeUrl={page.url.pathname}>
-		<NavLi href="/home">Home</NavLi>
-		<NavLi href="/project">Projects</NavLi>
-		<NavLi href="/resource">Resources</NavLi>
-		<NavLi href="/roadmap">Roadmap</NavLi>
-		<NavLi href="/insight">Insights</NavLi>
-	</NavUl>
+
+	<div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1">
+		<ul class="flex flex-col mt-4 space-x-6 font-medium lg:flex-row xl:space-x-8 lg:mt-0">
+			<CSNavItem   href="/home" active={isTLPage("/home")}>Home</CSNavItem>	
+			<CSNavItem   href="/project" active={isTLPage("/project")}>Projects</CSNavItem>	
+			<CSNavItem   href="/resource" active={isTLPage("/resource")}>Resources</CSNavItem>	
+			<CSNavItem   href="/roadmap" active={isTLPage("/roadmap")}>Roadmap</CSNavItem>	
+			<CSNavItem   href="/insight" active={isTLPage("/insight")}>Insights</CSNavItem>	
+		</ul>
+	</div>	
 </Navbar>
 
 <div>

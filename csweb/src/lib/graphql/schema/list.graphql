@@ -1,6 +1,7 @@
 fragment listFragment on List {
 	id
 	name
+	description
 	values {
 		value
 		name
