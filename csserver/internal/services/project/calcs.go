@@ -284,8 +284,14 @@ func getAverageResourceChargePerHour(org organization.Organization, resources []
 	total := 0.0
 
 	for _, r := range resources {
-		tt, _ := r.GetHourlyRate(roleMap, float64(org.Defaults.GenericBlendedHourlyRate), org.Defaults.WorkingHoursPerYear)
-		tt += total
+		var tt float64
+		if r.Calculated.HourlyCost > 0 {
+			tt += r.Calculated.HourlyCost
+		} else {
+			tt, _ = r.GetHourlyRate(roleMap, float64(org.Defaults.GenericBlendedHourlyRate), org.Defaults.WorkingHoursPerYear)
+		}
+
+		total += tt
 	}
 
 	return total / rc

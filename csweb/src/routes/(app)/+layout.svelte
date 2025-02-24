@@ -113,7 +113,6 @@
 	</NavUl>
 </Navbar>
 
-<!-- py-2 px-2 -->
 <div>
 	{@render children()}
 </div>
