@@ -262,9 +262,20 @@ type ComplexityRoot struct {
 
 	Portfolio struct {
 		Begin       func(childComplexity int) int
+		Calculated  func(childComplexity int) int
 		End         func(childComplexity int) int
 		Schedule    func(childComplexity int) int
 		WeekSummary func(childComplexity int) int
+	}
+
+	PortfolioCalculatedData struct {
+		CountInFlight  func(childComplexity int) int
+		CountScheduled func(childComplexity int) int
+		TotalCount     func(childComplexity int) int
+		TotalInFlight  func(childComplexity int) int
+		TotalValue     func(childComplexity int) int
+		ValueInFlight  func(childComplexity int) int
+		ValueScheduled func(childComplexity int) int
 	}
 
 	PortfolioWeekSummary struct {
@@ -1780,6 +1791,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Portfolio.Begin(childComplexity), true
 
+	case "Portfolio.calculated":
+		if e.complexity.Portfolio.Calculated == nil {
+			break
+		}
+
+		return e.complexity.Portfolio.Calculated(childComplexity), true
+
 	case "Portfolio.end":
 		if e.complexity.Portfolio.End == nil {
 			break
@@ -1800,6 +1818,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Portfolio.WeekSummary(childComplexity), true
+
+	case "PortfolioCalculatedData.countInFlight":
+		if e.complexity.PortfolioCalculatedData.CountInFlight == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.CountInFlight(childComplexity), true
+
+	case "PortfolioCalculatedData.countScheduled":
+		if e.complexity.PortfolioCalculatedData.CountScheduled == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.CountScheduled(childComplexity), true
+
+	case "PortfolioCalculatedData.totalCount":
+		if e.complexity.PortfolioCalculatedData.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.TotalCount(childComplexity), true
+
+	case "PortfolioCalculatedData.totalInFlight":
+		if e.complexity.PortfolioCalculatedData.TotalInFlight == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.TotalInFlight(childComplexity), true
+
+	case "PortfolioCalculatedData.totalValue":
+		if e.complexity.PortfolioCalculatedData.TotalValue == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.TotalValue(childComplexity), true
+
+	case "PortfolioCalculatedData.valueInFlight":
+		if e.complexity.PortfolioCalculatedData.ValueInFlight == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.ValueInFlight(childComplexity), true
+
+	case "PortfolioCalculatedData.valueScheduled":
+		if e.complexity.PortfolioCalculatedData.ValueScheduled == nil {
+			break
+		}
+
+		return e.complexity.PortfolioCalculatedData.ValueScheduled(childComplexity), true
 
 	case "PortfolioWeekSummary.allocatedHours":
 		if e.complexity.PortfolioWeekSummary.AllocatedHours == nil {
@@ -3795,6 +3862,7 @@ type Portfolio {
   end: Time
   weekSummary: [PortfolioWeekSummary]!
   schedule: [Schedule!]!
+  calculated: PortfolioCalculatedData!
 }
 
 
@@ -3805,6 +3873,16 @@ type PortfolioWeekSummary {
   end: Time!
   orgCapacity: Int!
   allocatedHours: Int!
+}
+
+type PortfolioCalculatedData {
+  countInFlight: Int!
+  countScheduled: Int!
+  valueInFlight: Float!
+  valueScheduled: Float!
+  totalInFlight: Int!
+  totalValue: Float!
+  totalCount: Int!
 }
 
 `, BuiltIn: false},
@@ -12086,6 +12164,374 @@ func (ec *executionContext) fieldContext_Portfolio_schedule(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Portfolio_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.Portfolio) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Portfolio_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.PortfolioCalculatedData)
+	fc.Result = res
+	return ec.marshalNPortfolioCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Portfolio_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Portfolio",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "countInFlight":
+				return ec.fieldContext_PortfolioCalculatedData_countInFlight(ctx, field)
+			case "countScheduled":
+				return ec.fieldContext_PortfolioCalculatedData_countScheduled(ctx, field)
+			case "valueInFlight":
+				return ec.fieldContext_PortfolioCalculatedData_valueInFlight(ctx, field)
+			case "valueScheduled":
+				return ec.fieldContext_PortfolioCalculatedData_valueScheduled(ctx, field)
+			case "totalInFlight":
+				return ec.fieldContext_PortfolioCalculatedData_totalInFlight(ctx, field)
+			case "totalValue":
+				return ec.fieldContext_PortfolioCalculatedData_totalValue(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_PortfolioCalculatedData_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PortfolioCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_countInFlight(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_countInFlight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CountInFlight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_countInFlight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_countScheduled(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_countScheduled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CountScheduled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_countScheduled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_valueInFlight(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_valueInFlight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ValueInFlight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_valueInFlight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_valueScheduled(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_valueScheduled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ValueScheduled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_valueScheduled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_totalInFlight(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_totalInFlight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalInFlight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_totalInFlight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_totalValue(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_totalValue(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalValue, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_totalValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PortfolioCalculatedData_totalCount(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PortfolioCalculatedData_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PortfolioCalculatedData_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PortfolioCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PortfolioWeekSummary_weekNumber(ctx context.Context, field graphql.CollectedField, obj *idl.PortfolioWeekSummary) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PortfolioWeekSummary_weekNumber(ctx, field)
 	if err != nil {
@@ -19077,6 +19523,8 @@ func (ec *executionContext) fieldContext_Query_getPortfolio(_ context.Context, f
 				return ec.fieldContext_Portfolio_weekSummary(ctx, field)
 			case "schedule":
 				return ec.fieldContext_Portfolio_schedule(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Portfolio_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Portfolio", field.Name)
 		},
@@ -19131,6 +19579,8 @@ func (ec *executionContext) fieldContext_Query_getPortfolioForResource(ctx conte
 				return ec.fieldContext_Portfolio_weekSummary(ctx, field)
 			case "schedule":
 				return ec.fieldContext_Portfolio_schedule(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Portfolio_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Portfolio", field.Name)
 		},
@@ -27472,6 +27922,80 @@ func (ec *executionContext) _Portfolio(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "calculated":
+			out.Values[i] = ec._Portfolio_calculated(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var portfolioCalculatedDataImplementors = []string{"PortfolioCalculatedData"}
+
+func (ec *executionContext) _PortfolioCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.PortfolioCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, portfolioCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PortfolioCalculatedData")
+		case "countInFlight":
+			out.Values[i] = ec._PortfolioCalculatedData_countInFlight(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "countScheduled":
+			out.Values[i] = ec._PortfolioCalculatedData_countScheduled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "valueInFlight":
+			out.Values[i] = ec._PortfolioCalculatedData_valueInFlight(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "valueScheduled":
+			out.Values[i] = ec._PortfolioCalculatedData_valueScheduled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalInFlight":
+			out.Values[i] = ec._PortfolioCalculatedData_totalInFlight(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalValue":
+			out.Values[i] = ec._PortfolioCalculatedData_totalValue(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._PortfolioCalculatedData_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -30882,6 +31406,16 @@ func (ec *executionContext) marshalNPortfolio2ᚖcsserverᚋinternalᚋappserv�
 		return graphql.Null
 	}
 	return ec._Portfolio(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPortfolioCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.PortfolioCalculatedData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PortfolioCalculatedData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPortfolioWeekSummary2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐPortfolioWeekSummary(ctx context.Context, sel ast.SelectionSet, v []*idl.PortfolioWeekSummary) graphql.Marshaler {

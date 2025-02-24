@@ -4,6 +4,7 @@ type Portfolio {
   end: Time
   weekSummary: [PortfolioWeekSummary]!
   schedule: [Schedule!]!
+  calculated: PortfolioCalculatedData!
 }
 
 
@@ -14,5 +15,15 @@ type PortfolioWeekSummary {
   end: Time!
   orgCapacity: Int!
   allocatedHours: Int!
+}
+
+type PortfolioCalculatedData {
+  countInFlight: Int!
+  countScheduled: Int!
+  valueInFlight: Float!
+  valueScheduled: Float!
+  totalInFlight: Int!
+  totalValue: Float!
+  totalCount: Int!
 }
 

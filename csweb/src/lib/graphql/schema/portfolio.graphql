@@ -12,6 +12,14 @@ fragment portfolioFragment on Portfolio {
 		schedule {
       ...scheduleFragment
     }
+    calculated {
+      countInFlight
+      countScheduled
+      totalCount
+      valueInFlight
+      valueScheduled
+      totalValue
+    }
 }
 
 query getPortfolio {

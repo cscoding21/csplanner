@@ -129,7 +129,7 @@
 	{/if}
 
 	<div class="flex mb-8">
-		<div class="flex-1 px-2">
+		<div class="flex-1 px-r">
 	<DataCard dataPoint={formatCurrency.format(project.projectCost.calculated?.initialCost as number)} indicatorClass="text-green-500 dark:text-green-500">
 		{#snippet description()}
 			Implementation costs
@@ -151,7 +151,7 @@
 </DataCard>
 </div>
 
-	<div class="flex-1 px-2">
+	<div class="flex-1 pl-2">
 <DataCard dataPoint={project.projectCost.calculated?.hoursActualized+ ""} indicatorClass="text-orange-500 dark:text-orange-500">
 	{#snippet description()}
 		Adjusted hours

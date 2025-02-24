@@ -49,6 +49,9 @@ func AugmentPortfolio(port *idl.Portfolio, resourceID *string) {
 	}
 
 	port.WeekSummary = portWeeks
+	calculated := getPortfolioCalculatedData(port)
+
+	port.Calculated = &calculated
 }
 
 func getWeekHourSummary(sch []idl.Schedule, week calendar.CSWeek) int {
@@ -60,6 +63,31 @@ func getWeekHourSummary(sch []idl.Schedule, week calendar.CSWeek) int {
 					out += a.HoursSpent
 				}
 			}
+		}
+	}
+
+	return out
+}
+
+func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData {
+	out := idl.PortfolioCalculatedData{
+		ValueInFlight:  0.0,
+		ValueScheduled: 0.0,
+		TotalValue:     0.0,
+		CountInFlight:  0,
+		CountScheduled: 0,
+		TotalCount:     0,
+	}
+
+	for _, s := range port.Schedule {
+		out.TotalCount++
+		out.TotalValue += *s.Project.ProjectValue.Calculated.NetPresentValue
+		if s.Project.ProjectStatusBlock.Status == "inflight" {
+			out.CountInFlight++
+			out.ValueInFlight += *s.Project.ProjectValue.Calculated.NetPresentValue
+		} else if s.Project.ProjectStatusBlock.Status == "scheduled" {
+			out.CountScheduled++
+			out.ValueScheduled += *s.Project.ProjectValue.Calculated.NetPresentValue
 		}
 	}
 

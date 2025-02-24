@@ -430,9 +430,21 @@ export type Pagination = {
 export type Portfolio = {
   __typename?: 'Portfolio';
   begin?: Maybe<Scalars['Time']['output']>;
+  calculated: PortfolioCalculatedData;
   end?: Maybe<Scalars['Time']['output']>;
   schedule: Array<Schedule>;
   weekSummary: Array<Maybe<PortfolioWeekSummary>>;
+};
+
+export type PortfolioCalculatedData = {
+  __typename?: 'PortfolioCalculatedData';
+  countInFlight: Scalars['Int']['output'];
+  countScheduled: Scalars['Int']['output'];
+  totalCount: Scalars['Int']['output'];
+  totalInFlight: Scalars['Int']['output'];
+  totalValue: Scalars['Float']['output'];
+  valueInFlight: Scalars['Float']['output'];
+  valueScheduled: Scalars['Float']['output'];
 };
 
 export type PortfolioWeekSummary = {
@@ -1445,6 +1457,14 @@ export const PortfolioFragmentFragmentDoc = gql`
   }
   schedule {
     ...scheduleFragment
+  }
+  calculated {
+    countInFlight
+    countScheduled
+    totalCount
+    valueInFlight
+    valueScheduled
+    totalValue
   }
 }
     ${ScheduleFragmentFragmentDoc}`;

@@ -234,7 +234,8 @@
 {/if}
 
 {#if result.exceptions}
-    <Alert class="items-start!" color="yellow">
+    <div class="my-4">
+    <Alert class="items-start!" color="yellow" border>
         <span slot="icon">
           <InfoCircleSolid class="w-5 h-5" />
           <span class="sr-only">Warning</span>
@@ -246,6 +247,7 @@
             {/each}
         </ul>
       </Alert> 
+    </div>
 {/if}
 
 {#if result.projectActivityWeeks && result.projectActivityWeeks.length > 0}

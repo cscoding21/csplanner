@@ -209,10 +209,21 @@ type Pagination struct {
 }
 
 type Portfolio struct {
-	Begin       *time.Time              `json:"begin,omitempty"`
-	End         *time.Time              `json:"end,omitempty"`
-	WeekSummary []*PortfolioWeekSummary `json:"weekSummary"`
-	Schedule    []*Schedule             `json:"schedule"`
+	Begin       *time.Time               `json:"begin,omitempty"`
+	End         *time.Time               `json:"end,omitempty"`
+	WeekSummary []*PortfolioWeekSummary  `json:"weekSummary"`
+	Schedule    []*Schedule              `json:"schedule"`
+	Calculated  *PortfolioCalculatedData `json:"calculated"`
+}
+
+type PortfolioCalculatedData struct {
+	CountInFlight  int     `json:"countInFlight"`
+	CountScheduled int     `json:"countScheduled"`
+	ValueInFlight  float64 `json:"valueInFlight"`
+	ValueScheduled float64 `json:"valueScheduled"`
+	TotalInFlight  int     `json:"totalInFlight"`
+	TotalValue     float64 `json:"totalValue"`
+	TotalCount     int     `json:"totalCount"`
 }
 
 type PortfolioWeekSummary struct {

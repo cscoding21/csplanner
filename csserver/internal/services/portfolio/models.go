@@ -82,15 +82,6 @@ type Portfolio struct {
 	Validator   *PortfolioComparer
 }
 
-type PortfolioCalculatedData struct {
-	CountInFlight  int
-	ValueInFlight  float64
-	CountScheduled int
-	ValueScheduled float64
-
-	AggregatedNPV float64
-}
-
 func (p *Portfolio) GetDateRange() (*time.Time, *time.Time) {
 	start := time.Now().AddDate(10, 0, 0)
 	end := start.AddDate(-10, 0, 0)

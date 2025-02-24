@@ -2,11 +2,13 @@
     import type { Portfolio, PortfolioWeekSummary } from "$lib/graphql/generated/sdk";
 	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
 	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
-    import { NoResults, CSSection, SectionHeading, ResourceList } from "$lib/components";
-    import { formatDate, pluralize, formatPercent } from "$lib/utils/format";
+    import { NoResults, CSSection, SectionHeading, ResourceList, DataCard } from "$lib/components";
+    import { formatDate, pluralize, formatPercent, formatCurrency } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Badge } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
+	import { DollarOutline } from "flowbite-svelte-icons";
+	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
 
@@ -27,14 +29,50 @@
 </script>
 
 <div class="p-4">
-<CSSection>
+
 
 	<SectionHeading>Current Roadmap</SectionHeading>
 
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
+	<CSSection>
+		<div class="flex mb-4">
+			<div class="flex-1 pr-2">
+				<DataCard dataPoint={formatCurrency.format(portfolio.calculated?.totalValue as number)} indicatorClass="text-green-500 dark:text-green-500">
+					{#snippet description()}
+						Total portfolio value
+					{/snippet}
+					{#snippet indicator()}
+						<DollarOutline />
+					{/snippet}
+				</DataCard>
+			</div>	
+			<div class="flex-1  px-2">
+				<DataCard dataPoint={formatCurrency.format(portfolio.calculated?.valueInFlight as number)} indicatorClass="text-green-500 dark:text-green-500">
+					{#snippet description()}
+						Value in flight
+					{/snippet}
+					{#snippet indicator()}
+						<DollarOutline />
+					{/snippet}
+				</DataCard>
+			</div>
+			<div class="flex-1  pl-2">
+				<DataCard dataPoint={formatCurrency.format(portfolio.calculated?.valueScheduled as number)} indicatorClass="text-green-500 dark:text-green-500">
+					{#snippet description()}
+						Value scheduled
+					{/snippet}
+					{#snippet indicator()}
+						<DollarOutline />
+					{/snippet}
+				</DataCard>
+			</div>
+		</div>
+
 	{#if portfolio.schedule != null}
+
+	<SectionSubHeading>Project Schedule</SectionSubHeading>
 		<Table divClass="h-full">
 			<TableHead>
 				{#each portfolioTable.header as head, index}
@@ -99,13 +137,13 @@
 		<div class="mt-4">
 			<RiskLegend />
 		</div>
-
 	{:else}
 		<NoResults title="No Projects" newUrl="">
 			No projects have been scheduled.  
 		</NoResults>
 	{/if}
+
+	</CSSection>
 {/await}
 
-</CSSection>
 </div>
