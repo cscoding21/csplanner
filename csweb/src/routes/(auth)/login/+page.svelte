@@ -22,7 +22,7 @@
 						console.log(r);
 						if (r) {
 							loginFailed = false;
-							goto('/resource');
+							goto('/home');
 						} else {
 							loginFailed = true;
 						}

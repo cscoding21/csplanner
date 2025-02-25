@@ -18,7 +18,7 @@
 	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import { PageMessages, NotificationList, CSSidebarItem, CSNavItem } from '$lib/components';
+	import { PageMessages, CSNavItem } from '$lib/components';
 
 	const as = authService();
 	const cu = as.currentUser();

@@ -13,7 +13,7 @@
 	}
 	let { label, active, onclick, href, icon, tail } : Props = $props();
 
-    let classAugment = $derived(active ? " bg-gray-100 dark:text-white dark:bg-gray-700" : " hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700")
+  let classAugment = $derived(active ? " bg-gray-100 dark:text-white dark:bg-gray-700" : " hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700")
 </script>
 
 <li>

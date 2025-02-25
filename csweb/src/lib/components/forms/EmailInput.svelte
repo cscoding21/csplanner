@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
+	import { callIf } from '$lib/utils/helpers';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -7,7 +8,7 @@
 		error?: string;
 		value: string;
 		placeholder?: string;
-		update: Function;
+		update?: Function;
 		children?: Snippet;
 	}
 	let {
@@ -31,7 +32,7 @@
 		{placeholder}
 		required
 		bind:value
-		onchange={() => update()}
+		onchange={() => callIf(update)}
 	/>
 
 	<FormErrorMessage message={error} />
