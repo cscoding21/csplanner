@@ -83,7 +83,8 @@ type Role struct {
 	//---common for all DB objects
 	common.ControlFields `csval:"validate"`
 
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	HourlyRate  *float64 `json:"hourly_rate"`
+	Name          string   `json:"name"`
+	Description   string   `json:"description"`
+	HourlyRate    *float64 `json:"hourly_rate"`
+	DefaultSkills []*Skill `json:"default_skills"`
 }

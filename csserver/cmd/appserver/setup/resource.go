@@ -5,7 +5,6 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/utils"
-	"math/rand"
 
 	"csserver/internal/services/resource"
 	"csserver/internal/services/resource/rtypes/resourcestatus"
@@ -41,10 +40,6 @@ func CreateTestResources(ctx context.Context) error {
 			InitialCost:           0.0,
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 32,
-			Skills: []*resource.Skill{
-				{ID: "devops", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
-				{ID: "security", Proficiency: utils.ValToRef(1.0 + float64(rand.Intn(3)))},
-			},
 		},
 		{
 			ControlFields: common.ControlFields{

@@ -5,6 +5,7 @@ import (
 )
 
 type UpdateResult[T any] struct {
+	Success          bool
 	ValidationResult *validate.ValidationResult
 	Object           *T
 }
@@ -19,5 +20,17 @@ func NewUpdateResult[T any](val *validate.ValidationResult, obj *T) UpdateResult
 		ur.Object = obj
 	}
 
+	ur.Success = val.Pass
+
 	return ur
+}
+
+// NewFailingUpdateResult return a failing update result and error
+func NewFailingUpdateResult[T any](obj *T, err error) (UpdateResult[T], error) {
+	return UpdateResult[T]{
+		ValidationResult: &validate.ValidationResult{},
+		Success:          false,
+		Object:           obj,
+	}, err
+
 }

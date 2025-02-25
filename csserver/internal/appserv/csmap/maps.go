@@ -76,7 +76,7 @@ func GetStatusFromError(err error) (*idl.Status, error) {
 func GetStatusFromUpdateResult[T any](result common.UpdateResult[T]) (*idl.Status, error) {
 	status := idl.Status{}
 
-	if result.ValidationResult.Pass {
+	if result.ValidationResult.Pass && result.Success {
 		status.Success = true
 
 		return &status, nil

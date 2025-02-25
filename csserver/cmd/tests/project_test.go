@@ -46,3 +46,18 @@ func TestSaveProject(t *testing.T) {
 
 	fmt.Println(result.Object.ID)
 }
+
+func TestGetProject(t *testing.T) {
+	projectUnderTest := "project:1"
+
+	ctx := getTestContext()
+
+	service := factory.GetProjectService()
+
+	pro, err := service.GetProjectByID(ctx, projectUnderTest)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(pro.ProjectBasics.Name)
+}

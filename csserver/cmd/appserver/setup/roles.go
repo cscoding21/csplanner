@@ -19,6 +19,10 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Frontend Engineer",
 			Description: "Creates delightful interfaces",
 			HourlyRate:  utils.ValToRef(150.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "frontend", Proficiency: utils.ValToRef(2.0)},
+				{ID: "ui", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -27,6 +31,11 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Backend Engineer",
 			Description: "Creates bug-free backends",
 			HourlyRate:  utils.ValToRef(200.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "backend", Proficiency: utils.ValToRef(2.0)},
+				{ID: "database", Proficiency: utils.ValToRef(1.0)},
+				{ID: "technical-writing", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -35,6 +44,11 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "UI/UX",
 			Description: "Imagines the user experience and interface",
 			HourlyRate:  utils.ValToRef(150.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "ux", Proficiency: utils.ValToRef(2.0)},
+				{ID: "ui", Proficiency: utils.ValToRef(1.0)},
+				{ID: "content-writing", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -43,6 +57,10 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Project Manager",
 			Description: "Manages the project",
 			HourlyRate:  utils.ValToRef(160.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "project-management", Proficiency: utils.ValToRef(2.0)},
+				{ID: "business-analysis", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -51,6 +69,10 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Product Manager",
 			Description: "Manages the product",
 			HourlyRate:  utils.ValToRef(170.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "product-management", Proficiency: utils.ValToRef(2.0)},
+				{ID: "requirements-gathering", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -59,6 +81,12 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Software Architect",
 			Description: "Drives software design",
 			HourlyRate:  utils.ValToRef(250.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "security", Proficiency: utils.ValToRef(2.0)},
+				{ID: "technical-architecture", Proficiency: utils.ValToRef(1.0)},
+				{ID: "database", Proficiency: utils.ValToRef(1.0)},
+				{ID: "devops", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -67,6 +95,10 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Testing Engineer",
 			Description: "Ensures product quality",
 			HourlyRate:  utils.ValToRef(120.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "testing", Proficiency: utils.ValToRef(2.0)},
+				{ID: "ui", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 		{
 			ControlFields: common.ControlFields{
@@ -75,6 +107,10 @@ func CreateTestRoles(ctx context.Context) error {
 			Name:        "Marketing",
 			Description: "Tells theh world",
 			HourlyRate:  utils.ValToRef(150.0),
+			DefaultSkills: []*resource.Skill{
+				{ID: "marketing", Proficiency: utils.ValToRef(2.0)},
+				{ID: "content-writing", Proficiency: utils.ValToRef(1.0)},
+			},
 		},
 	}
 

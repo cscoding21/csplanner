@@ -4,6 +4,7 @@ import (
 	"context"
 	"csserver/internal/common"
 	"csserver/internal/services/organization"
+	"csserver/internal/services/resource/rtypes/resourcetype"
 	"slices"
 
 	"github.com/cscoding21/csval/validate"
@@ -21,16 +22,34 @@ func (s *ResourceService) SaveResource(ctx context.Context, res Resource, org or
 	s.CalculateResourceInfo(ctx, &res, org)
 
 	if len(res.ID) == 0 {
-		return s.CreateResource(ctx, &res)
+		return s.addNewResource(ctx, res)
 	}
 
 	_, err := s.GetResourceByID(ctx, res.ID)
 	if err != nil {
 		//---there's an ID, but no existing record.  this is a new resource
-		return s.CreateResource(ctx, &res)
+		return s.addNewResource(ctx, res)
 	}
 
 	return s.PatchResource(ctx, res, org)
+}
+
+func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (common.UpdateResult[Resource], error) {
+	if res.Type == resourcetype.Human {
+		if len(res.Skills) == 0 {
+			roleMap, err := s.GetRoleMap(ctx, true)
+			if err != nil {
+				return common.NewFailingUpdateResult(&res, err)
+			}
+
+			role, ok := roleMap[*res.RoleID]
+			if ok {
+				res.Skills = append(res.Skills, role.DefaultSkills...)
+			}
+		}
+	}
+
+	return s.CreateResource(ctx, &res)
 }
 
 // PatchResource performs a surgical update of a resource, specially handing certain fields
