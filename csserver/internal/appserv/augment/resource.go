@@ -32,3 +32,24 @@ func AugmentResource(res *idl.Resource) {
 		}
 	}
 }
+
+// AugmentRole ensure the the skill name is inluded in the role's default skills
+func AugmentRole(roles []*idl.Role) {
+	if len(roles) == 0 {
+		return
+	}
+
+	skills := getSkills()
+
+	for i, r := range roles {
+		if len(r.DefaultSkills) == 0 {
+			continue
+		}
+
+		for j, sk := range r.DefaultSkills {
+			skill := getSkillById(*skills, sk.ID)
+
+			roles[i].DefaultSkills[j].Name = skill.Name
+		}
+	}
+}

@@ -554,10 +554,11 @@ type ComplexityRoot struct {
 	}
 
 	Role struct {
-		Description func(childComplexity int) int
-		HourlyRate  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
+		DefaultSkills func(childComplexity int) int
+		Description   func(childComplexity int) int
+		HourlyRate    func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Name          func(childComplexity int) int
 	}
 
 	RoleResults struct {
@@ -3187,6 +3188,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ResourceResults.Results(childComplexity), true
 
+	case "Role.defaultSkills":
+		if e.complexity.Role.DefaultSkills == nil {
+			break
+		}
+
+		return e.complexity.Role.DefaultSkills(childComplexity), true
+
 	case "Role.description":
 		if e.complexity.Role.Description == nil {
 			break
@@ -4211,6 +4219,7 @@ type Role {
   name: String!
   description: String!
   hourlyRate: Float
+  defaultSkills: [Skill!]
 }
 
 
@@ -4240,6 +4249,7 @@ input UpdateRole {
   name: String!
   description: String!
   hourlyRate: Float
+  defaultSkills: [UpdateSkill!]
 }
 
 
@@ -8082,6 +8092,8 @@ func (ec *executionContext) fieldContext_CreateRoleResult_role(_ context.Context
 				return ec.fieldContext_Role_description(ctx, field)
 			case "hourlyRate":
 				return ec.fieldContext_Role_hourlyRate(ctx, field)
+			case "defaultSkills":
+				return ec.fieldContext_Role_defaultSkills(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
 		},
@@ -20615,6 +20627,8 @@ func (ec *executionContext) fieldContext_Resource_role(_ context.Context, field 
 				return ec.fieldContext_Role_description(ctx, field)
 			case "hourlyRate":
 				return ec.fieldContext_Role_hourlyRate(ctx, field)
+			case "defaultSkills":
+				return ec.fieldContext_Role_defaultSkills(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
 		},
@@ -21513,6 +21527,55 @@ func (ec *executionContext) fieldContext_Role_hourlyRate(_ context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Role_defaultSkills(ctx context.Context, field graphql.CollectedField, obj *idl.Role) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Role_defaultSkills(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DefaultSkills, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.Skill)
+	fc.Result = res
+	return ec.marshalOSkill2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐSkillᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Role_defaultSkills(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Role",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Skill_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Skill_name(ctx, field)
+			case "proficiency":
+				return ec.fieldContext_Skill_proficiency(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Skill", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _RoleResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.RoleResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_RoleResults_paging(ctx, field)
 	if err != nil {
@@ -21656,6 +21719,8 @@ func (ec *executionContext) fieldContext_RoleResults_results(_ context.Context, 
 				return ec.fieldContext_Role_description(ctx, field)
 			case "hourlyRate":
 				return ec.fieldContext_Role_hourlyRate(ctx, field)
+			case "defaultSkills":
+				return ec.fieldContext_Role_defaultSkills(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Role", field.Name)
 		},
@@ -26325,7 +26390,7 @@ func (ec *executionContext) unmarshalInputUpdateRole(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "name", "description", "hourlyRate"}
+	fieldsInOrder := [...]string{"id", "name", "description", "hourlyRate", "defaultSkills"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -26360,6 +26425,13 @@ func (ec *executionContext) unmarshalInputUpdateRole(ctx context.Context, obj in
 				return it, err
 			}
 			it.HourlyRate = data
+		case "defaultSkills":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultSkills"))
+			data, err := ec.unmarshalOUpdateSkill2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐUpdateSkillᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DefaultSkills = data
 		}
 	}
 
@@ -30212,6 +30284,8 @@ func (ec *executionContext) _Role(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "hourlyRate":
 			out.Values[i] = ec._Role_hourlyRate(ctx, field, obj)
+		case "defaultSkills":
+			out.Values[i] = ec._Role_defaultSkills(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

@@ -17,9 +17,7 @@ fragment resourceFragment on Resource {
 	createdAt
 	availableHoursPerWeek
 	skills {
-		id
-		name
-		proficiency
+		...skillFragment
 	}
 	calculated {
 		hourlyCost
@@ -27,10 +25,20 @@ fragment resourceFragment on Resource {
 	}
 }
 
+fragment skillFragment on Skill {
+	id
+	name
+	proficiency
+}
+
 fragment roleFragment on Role {
+	id
 	name
 	description
 	hourlyRate
+	defaultSkills {
+		...skillFragment
+	}
 }
 
 mutation updateResourceSkill($input: UpdateSkill!) {
@@ -110,10 +118,7 @@ query findAllRoles {
 			...pagingFragment
 		}
 		results {
-			id
-			name
-			description
-			hourlyRate
+			...roleFragment
 		}
 	}
 }

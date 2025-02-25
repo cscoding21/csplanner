@@ -33,6 +33,7 @@ type Role {
   name: String!
   description: String!
   hourlyRate: Float
+  defaultSkills: [Skill!]
 }
 
 
@@ -62,6 +63,7 @@ input UpdateRole {
   name: String!
   description: String!
   hourlyRate: Float
+  defaultSkills: [UpdateSkill!]
 }
 
 

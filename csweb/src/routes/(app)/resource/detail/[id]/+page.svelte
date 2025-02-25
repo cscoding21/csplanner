@@ -57,6 +57,10 @@
 					dismissible: true,
 					type: 'success'
 				});
+
+				refresh().then((r) => {
+					resourcePromise = r as Resource;
+				})
 			} else {
 				addToast({
 					message: 'Error updating resource: ' + res.message,
@@ -75,7 +79,6 @@
 				portfolio = p
 
 				flatData = flattenPortfolio(p, startDate, endDate)
-				console.log("flatdata", flatData)
 			 })
 		});
 	}
@@ -200,8 +203,8 @@
 											><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
 										>
 										<TableBodyCell tdClass="float-right pt-2">
-											<Button outline color="dark" on:click={() => deleteSkill(s.id)}>
-												<TrashBinOutline size="xs" />
+											<Button color="dark" onclick={() => deleteSkill(s.id)}>
+												<TrashBinOutline size="sm" />
 											</Button>
 										</TableBodyCell>
 									</TableBodyRow>

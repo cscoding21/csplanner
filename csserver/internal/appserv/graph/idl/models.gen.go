@@ -481,10 +481,11 @@ type ResourceResults struct {
 }
 
 type Role struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	HourlyRate  *float64 `json:"hourlyRate,omitempty"`
+	ID            string   `json:"id"`
+	Name          string   `json:"name"`
+	Description   string   `json:"description"`
+	HourlyRate    *float64 `json:"hourlyRate,omitempty"`
+	DefaultSkills []*Skill `json:"defaultSkills,omitempty"`
 }
 
 type RoleResults struct {
@@ -708,10 +709,11 @@ type UpdateResource struct {
 }
 
 type UpdateRole struct {
-	ID          *string  `json:"id,omitempty"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	HourlyRate  *float64 `json:"hourlyRate,omitempty"`
+	ID            *string        `json:"id,omitempty"`
+	Name          string         `json:"name"`
+	Description   string         `json:"description"`
+	HourlyRate    *float64       `json:"hourlyRate,omitempty"`
+	DefaultSkills []*UpdateSkill `json:"defaultSkills,omitempty"`
 }
 
 type UpdateSkill struct {

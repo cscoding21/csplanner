@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { SectionHeading, TextInput, NumberInput } from '$lib/components';
-	import { Button } from 'flowbite-svelte';
+	import { SectionHeading, TextInput, NumberInput, SectionSubHeading } from '$lib/components';
+	import { Alert, Button, Rating, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
 	import { roleSchema, roleForm } from '$lib/forms/resource.validation';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { onMount } from 'svelte';
@@ -9,6 +9,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, deepCopy } from '$lib/utils/helpers';
 	import { updateRole } from '$lib/services/resource';
+	import { TrashBinOutline } from 'flowbite-svelte-icons';
 
 	onMount(async () => {
 		if (role && role.id) {
@@ -29,6 +30,10 @@
 	}: Props = $props();
 
 	let errors: any = $state({});
+
+	const delSkill = (id:string) => {
+		rf.defaultSkills = rf.defaultSkills?.filter(s => s.id != id)
+	}
 
 	const submitForm = () => {
 		errors = {};
@@ -99,6 +104,43 @@
 				error={errors.description}
 			/>
 		</div>
+
+
+		<div class="col-span-4">
+		<SectionSubHeading>Default Skills</SectionSubHeading>
+
+		{#if rf?.defaultSkills && rf?.defaultSkills.length > 0}
+			<Table>
+				<TableHead>
+					<TableHeadCell>Skill</TableHeadCell>
+					<TableHeadCell>Proficienty</TableHeadCell>
+					<TableHeadCell>
+						<span class="sr-only">Action</span>
+					</TableHeadCell>
+				</TableHead>
+				<TableBody>
+					{#each rf.defaultSkills as s, index}
+						<TableBodyRow>
+							<TableBodyCell>{s.id}</TableBodyCell>
+							<TableBodyCell
+								><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
+							>
+							<TableBodyCell tdClass="float-right pt-2">
+								<Button color="dark" onclick={() => delSkill(s.id)}>
+									<TrashBinOutline size="sm" />
+								</Button>
+							</TableBodyCell>
+						</TableBodyRow>
+					{/each}
+				</TableBody>
+			</Table>
+		{:else}
+			<Alert>No default skills have been added for this role.</Alert>
+		{/if}
+		</div>
+
+
+
 		<div class="col-span-4">
 			<span class="float-right">
 				<Button onclick={submitForm}>

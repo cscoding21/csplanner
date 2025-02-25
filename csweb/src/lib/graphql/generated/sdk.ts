@@ -823,6 +823,7 @@ export type ResourceResults = {
 
 export type Role = {
   __typename?: 'Role';
+  defaultSkills?: Maybe<Array<Skill>>;
   description: Scalars['String']['output'];
   hourlyRate?: Maybe<Scalars['Float']['output']>;
   id: Scalars['String']['output'];
@@ -1062,6 +1063,7 @@ export type UpdateResource = {
 };
 
 export type UpdateRole = {
+  defaultSkills?: InputMaybe<Array<UpdateSkill>>;
   description: Scalars['String']['input'];
   hourlyRate?: InputMaybe<Scalars['Float']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -1243,13 +1245,24 @@ export const OrganizationFragmentFragmentDoc = gql`
   }
 }
     `;
+export const SkillFragmentFragmentDoc = gql`
+    fragment skillFragment on Skill {
+  id
+  name
+  proficiency
+}
+    `;
 export const RoleFragmentFragmentDoc = gql`
     fragment roleFragment on Role {
+  id
   name
   description
   hourlyRate
+  defaultSkills {
+    ...skillFragment
+  }
 }
-    `;
+    ${SkillFragmentFragmentDoc}`;
 export const ResourceFragmentFragmentDoc = gql`
     fragment resourceFragment on Resource {
   name
@@ -1270,9 +1283,7 @@ export const ResourceFragmentFragmentDoc = gql`
   createdAt
   availableHoursPerWeek
   skills {
-    id
-    name
-    proficiency
+    ...skillFragment
   }
   calculated {
     hourlyCost
@@ -1280,7 +1291,8 @@ export const ResourceFragmentFragmentDoc = gql`
   }
 }
     ${UserFragmentFragmentDoc}
-${RoleFragmentFragmentDoc}`;
+${RoleFragmentFragmentDoc}
+${SkillFragmentFragmentDoc}`;
 export const ProjectFragmentFragmentDoc = gql`
     fragment projectFragment on Project {
   id
@@ -1939,14 +1951,12 @@ export const FindAllRolesDocument = gql`
       ...pagingFragment
     }
     results {
-      id
-      name
-      description
-      hourlyRate
+      ...roleFragment
     }
   }
 }
-    ${PagingFragmentFragmentDoc}`;
+    ${PagingFragmentFragmentDoc}
+${RoleFragmentFragmentDoc}`;
 export const UpdateRoleDocument = gql`
     mutation updateRole($input: UpdateRole!) {
   updateRole(input: $input) {
