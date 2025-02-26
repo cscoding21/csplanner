@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import { RoleForm } from '.';
 	import type { Role } from '$lib/graphql/generated/sdk';
+	import { callIf } from '$lib/utils/helpers';
 
 	let popupModal = $state(false);
 
@@ -13,12 +14,18 @@
 		update?: Function;
 	}
 	let { role, size, update = $bindable(), children }: Props = $props();
+
+	let formUpdated = () => {
+		popupModal = false
+
+		callIf(update)
+	}
 </script>
 
 <Button {size} color="dark" onclick={() => (popupModal = true)}>
 	{@render children()}
 </Button>
 
-<Modal bind:open={popupModal} size="sm" autoclose>
-	<RoleForm role={role} update={update} />
+<Modal bind:open={popupModal} size="sm">
+	<RoleForm role={role} update={formUpdated} />
 </Modal>

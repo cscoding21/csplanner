@@ -47,12 +47,18 @@ export const roleForm: any = {
 	id: '',
 	name: '',
 	description: '',
-	hourlyRate: 0.0
+	hourlyRate: 0.0,
+	defaultSkills: []
 };
 
 export const roleSchema = yup.object().shape({
 	id: yup.string(),
 	name: yup.string().required(),
 	description: yup.string().required(),
-	hourlyRate: yup.number()
+	hourlyRate: yup.number(),
+	defaultSkills: yup.array().of(yup.object({
+		resourceID: yup.string(),
+		id: yup.string().required(),
+		proficiency: yup.number().required()
+	}))
 });
