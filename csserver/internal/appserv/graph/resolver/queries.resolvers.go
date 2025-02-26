@@ -216,6 +216,7 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 	}
 
 	out := csmap.OrganizationOrganizationToIdl(*org)
+	augment.AugmentOrganization(&out)
 	return &out, nil
 }
 

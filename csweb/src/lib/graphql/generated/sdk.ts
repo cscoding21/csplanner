@@ -403,6 +403,7 @@ export type Organization = {
   defaults: OrganizationDefaults;
   id?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  setup: OrganizationSetup;
 };
 
 export type OrganizationDefaults = {
@@ -413,6 +414,18 @@ export type OrganizationDefaults = {
   genericBlendedHourlyRate: Scalars['Float']['output'];
   hoursPerWeek: Scalars['Int']['output'];
   workingHoursPerYear: Scalars['Float']['output'];
+};
+
+export type OrganizationSetup = {
+  __typename?: 'OrganizationSetup';
+  hasFundingSources: Scalars['Boolean']['output'];
+  hasResources: Scalars['Boolean']['output'];
+  hasReviewedOrgSettings: Scalars['Boolean']['output'];
+  hasRoles: Scalars['Boolean']['output'];
+  hasSkills: Scalars['Boolean']['output'];
+  hasTemplates: Scalars['Boolean']['output'];
+  hasValueCategories: Scalars['Boolean']['output'];
+  isReadyForProjects: Scalars['Boolean']['output'];
 };
 
 export type PageAndFilter = {
@@ -1242,6 +1255,16 @@ export const OrganizationFragmentFragmentDoc = gql`
     hoursPerWeek
     workingHoursPerYear
     genericBlendedHourlyRate
+  }
+  setup {
+    hasSkills
+    hasFundingSources
+    hasValueCategories
+    hasRoles
+    hasTemplates
+    hasResources
+    hasReviewedOrgSettings
+    isReadyForProjects
   }
 }
     `;

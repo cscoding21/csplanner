@@ -2,6 +2,7 @@ type Organization {
   id: String
   name: String!
   defaults: OrganizationDefaults!
+  setup: OrganizationSetup!
 }
 
 type OrganizationDefaults {
@@ -13,6 +14,16 @@ type OrganizationDefaults {
   workingHoursPerYear: Float!
 }
 
+type OrganizationSetup {
+  hasSkills: Boolean!
+	hasFundingSources: Boolean!
+	hasValueCategories: Boolean!
+	hasRoles: Boolean!
+	hasTemplates: Boolean!
+	hasResources: Boolean!
+	hasReviewedOrgSettings: Boolean!
+  isReadyForProjects: Boolean!
+}
 
 input UpdateOrganization {
   id: String

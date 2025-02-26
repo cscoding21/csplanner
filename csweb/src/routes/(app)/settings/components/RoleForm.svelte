@@ -9,7 +9,7 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, deepCopy } from '$lib/utils/helpers';
 	import { updateRole } from '$lib/services/resource';
-	import { TrashBinOutline } from 'flowbite-svelte-icons';
+	import { CirclePauseOutline, TrashBinOutline } from 'flowbite-svelte-icons';
 	import { skillForm, skillSchema } from '$lib/forms/skill.validation';
 	import { getList } from '$lib/services/list';
 

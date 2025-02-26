@@ -55,6 +55,7 @@ export { default as CSSidebar } from './widgets/CSSidebar.svelte';
 export { default as CSSidebarItem } from './widgets/CSSidebarItem.svelte';
 export { default as CSPageSidebar } from './widgets/CSPageSidebar.svelte';
 export { default as MoneyDisplay } from './widgets/MoneyDisplay.svelte';
+export { default as OrgStateChecker } from './widgets/OrgStateChecker.svelte';
 export { default as PortfolioTable } from './widgets/PortfolioTable.svelte';
 export { default as ResourceCard } from './widgets/ResourceCard.svelte';
 export { default as ResourceSkillsList } from './widgets/ResourceSkillsList.svelte';

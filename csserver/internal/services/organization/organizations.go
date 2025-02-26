@@ -8,7 +8,8 @@ import (
 )
 
 // GetDefaultOrganization return the default organization
-func (s *OrganizationService) GetDefaultOrganization(ctx context.Context) (*Organization, error) {
+func (s *OrganizationService) GetDefaultOrganization(
+	ctx context.Context) (*Organization, error) {
 	org, err := s.GetOrganizationByID(ctx, "organization:default")
 	if err != nil {
 		return nil, err

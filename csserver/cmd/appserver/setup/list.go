@@ -11,9 +11,8 @@ import (
 
 func CreateTestLists(ctx context.Context) error {
 	service := factory.GetListService()
-	//uuid.New().String()
 	skillsList := list.List{
-		Name:        "Skills",
+		Name:        list.ListNameSkills,
 		Description: "Skills are assigned to a resource.  This assignment allows for accurate project task assignment.",
 		Values: []*list.ListItem{
 			{Value: "backend", Name: "Backend Development"},
@@ -41,7 +40,7 @@ func CreateTestLists(ctx context.Context) error {
 	}
 
 	fundingSourceList := list.List{
-		Name:        "Funding Source",
+		Name:        list.ListNameFundingSource,
 		Description: "Funding sources are used to identify where a projects value comes from.  This list appears when assigning a projects value.",
 		Values: []*list.ListItem{
 			{Value: "internal", Name: "Internal"},
@@ -50,7 +49,7 @@ func CreateTestLists(ctx context.Context) error {
 	}
 
 	valueCategoryList := list.List{
-		Name:        "Value Catetgory",
+		Name:        list.ListNameValueCategory,
 		Description: "Value categories are used to characterize the nature of a projects value.  This information informs decisions about priority.",
 		Values: []*list.ListItem{
 			{Value: "revenue", Name: "Revenue increase"},
@@ -60,7 +59,7 @@ func CreateTestLists(ctx context.Context) error {
 		},
 	}
 
-	_, err := service.GetList(ctx, "Skills")
+	_, err := service.GetList(ctx, list.ListNameSkills)
 	if err != nil {
 		log.Errorf("Error getting skills list: %v", err)
 
@@ -74,7 +73,7 @@ func CreateTestLists(ctx context.Context) error {
 		}
 	}
 
-	_, err = service.GetList(ctx, "Funding Source")
+	_, err = service.GetList(ctx, list.ListNameFundingSource)
 	if err != nil {
 		log.Errorf("Error getting funding source list: %v", err)
 
@@ -88,7 +87,7 @@ func CreateTestLists(ctx context.Context) error {
 		}
 	}
 
-	_, err = service.GetList(ctx, "Value Catetgory")
+	_, err = service.GetList(ctx, list.ListNameValueCategory)
 	if err != nil {
 		log.Errorf("Error getting value category list: %v", err)
 

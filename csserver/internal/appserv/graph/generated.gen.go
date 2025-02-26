@@ -243,6 +243,7 @@ type ComplexityRoot struct {
 		Defaults func(childComplexity int) int
 		ID       func(childComplexity int) int
 		Name     func(childComplexity int) int
+		Setup    func(childComplexity int) int
 	}
 
 	OrganizationDefaults struct {
@@ -252,6 +253,17 @@ type ComplexityRoot struct {
 		GenericBlendedHourlyRate func(childComplexity int) int
 		HoursPerWeek             func(childComplexity int) int
 		WorkingHoursPerYear      func(childComplexity int) int
+	}
+
+	OrganizationSetup struct {
+		HasFundingSources      func(childComplexity int) int
+		HasResources           func(childComplexity int) int
+		HasReviewedOrgSettings func(childComplexity int) int
+		HasRoles               func(childComplexity int) int
+		HasSkills              func(childComplexity int) int
+		HasTemplates           func(childComplexity int) int
+		HasValueCategories     func(childComplexity int) int
+		IsReadyForProjects     func(childComplexity int) int
 	}
 
 	Pagination struct {
@@ -1723,6 +1735,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organization.Name(childComplexity), true
 
+	case "Organization.setup":
+		if e.complexity.Organization.Setup == nil {
+			break
+		}
+
+		return e.complexity.Organization.Setup(childComplexity), true
+
 	case "OrganizationDefaults.commsCoefficient":
 		if e.complexity.OrganizationDefaults.CommsCoefficient == nil {
 			break
@@ -1764,6 +1783,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationDefaults.WorkingHoursPerYear(childComplexity), true
+
+	case "OrganizationSetup.hasFundingSources":
+		if e.complexity.OrganizationSetup.HasFundingSources == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasFundingSources(childComplexity), true
+
+	case "OrganizationSetup.hasResources":
+		if e.complexity.OrganizationSetup.HasResources == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasResources(childComplexity), true
+
+	case "OrganizationSetup.hasReviewedOrgSettings":
+		if e.complexity.OrganizationSetup.HasReviewedOrgSettings == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasReviewedOrgSettings(childComplexity), true
+
+	case "OrganizationSetup.hasRoles":
+		if e.complexity.OrganizationSetup.HasRoles == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasRoles(childComplexity), true
+
+	case "OrganizationSetup.hasSkills":
+		if e.complexity.OrganizationSetup.HasSkills == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasSkills(childComplexity), true
+
+	case "OrganizationSetup.hasTemplates":
+		if e.complexity.OrganizationSetup.HasTemplates == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasTemplates(childComplexity), true
+
+	case "OrganizationSetup.hasValueCategories":
+		if e.complexity.OrganizationSetup.HasValueCategories == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.HasValueCategories(childComplexity), true
+
+	case "OrganizationSetup.isReadyForProjects":
+		if e.complexity.OrganizationSetup.IsReadyForProjects == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetup.IsReadyForProjects(childComplexity), true
 
 	case "Pagination.after":
 		if e.complexity.Pagination.After == nil {
@@ -3842,6 +3917,7 @@ type NotificationResults {
   id: String
   name: String!
   defaults: OrganizationDefaults!
+  setup: OrganizationSetup!
 }
 
 type OrganizationDefaults {
@@ -3853,6 +3929,16 @@ type OrganizationDefaults {
   workingHoursPerYear: Float!
 }
 
+type OrganizationSetup {
+  hasSkills: Boolean!
+	hasFundingSources: Boolean!
+	hasValueCategories: Boolean!
+	hasRoles: Boolean!
+	hasTemplates: Boolean!
+	hasResources: Boolean!
+	hasReviewedOrgSettings: Boolean!
+  isReadyForProjects: Boolean!
+}
 
 input UpdateOrganization {
   id: String
@@ -7525,6 +7611,8 @@ func (ec *executionContext) fieldContext_CreateOrganizationResult_organization(_
 				return ec.fieldContext_Organization_name(ctx, field)
 			case "defaults":
 				return ec.fieldContext_Organization_defaults(ctx, field)
+			case "setup":
+				return ec.fieldContext_Organization_setup(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -11606,6 +11694,68 @@ func (ec *executionContext) fieldContext_Organization_defaults(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_setup(ctx context.Context, field graphql.CollectedField, obj *idl.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_setup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Setup, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.OrganizationSetup)
+	fc.Result = res
+	return ec.marshalNOrganizationSetup2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐOrganizationSetup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_setup(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasSkills":
+				return ec.fieldContext_OrganizationSetup_hasSkills(ctx, field)
+			case "hasFundingSources":
+				return ec.fieldContext_OrganizationSetup_hasFundingSources(ctx, field)
+			case "hasValueCategories":
+				return ec.fieldContext_OrganizationSetup_hasValueCategories(ctx, field)
+			case "hasRoles":
+				return ec.fieldContext_OrganizationSetup_hasRoles(ctx, field)
+			case "hasTemplates":
+				return ec.fieldContext_OrganizationSetup_hasTemplates(ctx, field)
+			case "hasResources":
+				return ec.fieldContext_OrganizationSetup_hasResources(ctx, field)
+			case "hasReviewedOrgSettings":
+				return ec.fieldContext_OrganizationSetup_hasReviewedOrgSettings(ctx, field)
+			case "isReadyForProjects":
+				return ec.fieldContext_OrganizationSetup_isReadyForProjects(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationDefaults_discountRate(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationDefaults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationDefaults_discountRate(ctx, field)
 	if err != nil {
@@ -11865,6 +12015,358 @@ func (ec *executionContext) fieldContext_OrganizationDefaults_workingHoursPerYea
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasSkills(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasSkills(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasSkills, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasSkills(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasFundingSources(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasFundingSources(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasFundingSources, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasFundingSources(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasValueCategories(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasValueCategories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasValueCategories, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasValueCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasRoles(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasRoles(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasRoles, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasRoles(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasTemplates(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasTemplates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasTemplates, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasTemplates(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasResources(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasResources(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasResources, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasResources(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_hasReviewedOrgSettings(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_hasReviewedOrgSettings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasReviewedOrgSettings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_hasReviewedOrgSettings(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetup_isReadyForProjects(ctx context.Context, field graphql.CollectedField, obj *idl.OrganizationSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetup_isReadyForProjects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsReadyForProjects, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetup_isReadyForProjects(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -19539,6 +20041,8 @@ func (ec *executionContext) fieldContext_Query_getOrganization(_ context.Context
 				return ec.fieldContext_Organization_name(ctx, field)
 			case "defaults":
 				return ec.fieldContext_Organization_defaults(ctx, field)
+			case "setup":
+				return ec.fieldContext_Organization_setup(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -27912,6 +28416,11 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "setup":
+			out.Values[i] = ec._Organization_setup(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -27973,6 +28482,80 @@ func (ec *executionContext) _OrganizationDefaults(ctx context.Context, sel ast.S
 			}
 		case "workingHoursPerYear":
 			out.Values[i] = ec._OrganizationDefaults_workingHoursPerYear(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationSetupImplementors = []string{"OrganizationSetup"}
+
+func (ec *executionContext) _OrganizationSetup(ctx context.Context, sel ast.SelectionSet, obj *idl.OrganizationSetup) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSetupImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationSetup")
+		case "hasSkills":
+			out.Values[i] = ec._OrganizationSetup_hasSkills(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hasFundingSources":
+			out.Values[i] = ec._OrganizationSetup_hasFundingSources(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hasValueCategories":
+			out.Values[i] = ec._OrganizationSetup_hasValueCategories(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hasRoles":
+			out.Values[i] = ec._OrganizationSetup_hasRoles(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hasTemplates":
+			out.Values[i] = ec._OrganizationSetup_hasTemplates(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hasResources":
+			out.Values[i] = ec._OrganizationSetup_hasResources(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hasReviewedOrgSettings":
+			out.Values[i] = ec._OrganizationSetup_hasReviewedOrgSettings(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isReadyForProjects":
+			out.Values[i] = ec._OrganizationSetup_isReadyForProjects(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -31523,6 +32106,16 @@ func (ec *executionContext) marshalNOrganizationDefaults2ᚖcsserverᚋinternal�
 		return graphql.Null
 	}
 	return ec._OrganizationDefaults(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNOrganizationSetup2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐOrganizationSetup(ctx context.Context, sel ast.SelectionSet, v *idl.OrganizationSetup) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSetup(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNPageAndFilter2csserverᚋinternalᚋappservᚋgraphᚋidlᚐPageAndFilter(ctx context.Context, v interface{}) (idl.PageAndFilter, error) {

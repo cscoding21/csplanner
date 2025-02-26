@@ -9,6 +9,16 @@ fragment organizationFragment on Organization {
       workingHoursPerYear
       genericBlendedHourlyRate
     }
+    setup {
+      hasSkills
+      hasFundingSources
+      hasValueCategories
+      hasRoles
+      hasTemplates
+      hasResources
+      hasReviewedOrgSettings
+      isReadyForProjects
+    }
 }
 
 

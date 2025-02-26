@@ -186,6 +186,7 @@ type Organization struct {
 	ID       *string               `json:"id,omitempty"`
 	Name     string                `json:"name"`
 	Defaults *OrganizationDefaults `json:"defaults"`
+	Setup    *OrganizationSetup    `json:"setup"`
 }
 
 type OrganizationDefaults struct {
@@ -195,6 +196,17 @@ type OrganizationDefaults struct {
 	CommsCoefficient         float64 `json:"commsCoefficient"`
 	GenericBlendedHourlyRate float64 `json:"genericBlendedHourlyRate"`
 	WorkingHoursPerYear      float64 `json:"workingHoursPerYear"`
+}
+
+type OrganizationSetup struct {
+	HasSkills              bool `json:"hasSkills"`
+	HasFundingSources      bool `json:"hasFundingSources"`
+	HasValueCategories     bool `json:"hasValueCategories"`
+	HasRoles               bool `json:"hasRoles"`
+	HasTemplates           bool `json:"hasTemplates"`
+	HasResources           bool `json:"hasResources"`
+	HasReviewedOrgSettings bool `json:"hasReviewedOrgSettings"`
+	IsReadyForProjects     bool `json:"isReadyForProjects"`
 }
 
 type PageAndFilter struct {

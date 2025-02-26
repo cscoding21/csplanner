@@ -11,6 +11,12 @@ import (
 	"github.com/cscoding21/csmap/utils"
 )
 
+const (
+	ListNameSkills        = "Skills"
+	ListNameFundingSource = "Funding Source"
+	ListNameValueCategory = "Value Catetgory"
+)
+
 // GetList get a list based on the passed in email
 func (s *ListService) GetList(ctx context.Context, idOrName string) (*List, error) {
 	listRaw, err := s.DBClient.GetObject(

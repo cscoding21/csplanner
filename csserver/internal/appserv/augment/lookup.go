@@ -8,6 +8,7 @@ import (
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
 	"csserver/internal/services/project"
+	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
 	"csserver/internal/utils"
 	"strings"
@@ -23,12 +24,16 @@ var (
 	_userCache     *[]user.User
 	_projectCache  *[]project.Project
 	_roleCache     *[]resource.Role
+	_templateCache *[]projecttemplate.Projecttemplate
+	_listCache     *[]list.List
 
 	_skillCacheLock    sync.Mutex
 	_resourceCacheLock sync.Mutex
 	_userCacheLock     sync.Mutex
 	_projectCacheLock  sync.Mutex
 	_roleCacheLock     sync.Mutex
+	_templateCacheLock sync.Mutex
+	_listCacheLock     sync.Mutex
 )
 
 func ExpireProjectCache() {
@@ -55,6 +60,18 @@ func ExpireRoleCache() {
 	_roleCache = nil
 }
 
+func ExpireTemplateCache() {
+	_templateCacheLock.Lock()
+	defer _templateCacheLock.Unlock()
+	_templateCache = nil
+}
+
+func ExpireListCache() {
+	_listCacheLock.Lock()
+	defer _listCacheLock.Unlock()
+	_listCache = nil
+}
+
 func getSkills() *[]list.ListItem {
 	if _skillCache != nil {
 		return _skillCache
@@ -66,7 +83,7 @@ func getSkills() *[]list.ListItem {
 	ctx := context.Background()
 	ss := factory.GetListService()
 
-	skillList, err := ss.GetList(ctx, "Skills")
+	skillList, err := ss.GetList(ctx, list.ListNameSkills)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -82,6 +99,16 @@ func getSkillById(items []list.ListItem, id string) *list.ListItem {
 	for _, item := range items {
 		if strings.EqualFold(item.Value, id) {
 			return &item
+		}
+	}
+
+	return nil
+}
+
+func getListById(lists []list.List, name string) *list.List {
+	for _, l := range lists {
+		if strings.EqualFold(l.Name, name) {
+			return &l
 		}
 	}
 
@@ -194,6 +221,28 @@ func findUsers() *[]user.User {
 	return _userCache
 }
 
+func findLists() *[]list.List {
+	if _listCache != nil {
+		return _listCache
+	}
+
+	_listCacheLock.Lock()
+	defer _listCacheLock.Unlock()
+
+	ctx := context.Background()
+	us := factory.GetListService()
+
+	lists, err := us.FindAllLists(ctx)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	_listCache = &lists.Results
+
+	return _listCache
+}
+
 func findRoles() *[]resource.Role {
 	if _roleCache != nil {
 		return _roleCache
@@ -214,6 +263,28 @@ func findRoles() *[]resource.Role {
 	_roleCache = &roles.Results
 
 	return _roleCache
+}
+
+func findTemplates() *[]projecttemplate.Projecttemplate {
+	if _templateCache != nil {
+		return _templateCache
+	}
+
+	_templateCacheLock.Lock()
+	defer _templateCacheLock.Unlock()
+
+	ctx := context.Background()
+	us := factory.GetProjectTemplateService()
+
+	templates, err := us.FindAllProjecttemplates(ctx)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	_templateCache = &templates.Results
+
+	return _templateCache
 }
 
 func getUserByEmail(email string) *idl.User {
