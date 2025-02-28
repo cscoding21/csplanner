@@ -16,9 +16,10 @@ func CreateDefaultOrganization(ctx context.Context) error {
 	ts := factory.GetOrganizationService()
 	org := &organization.Organization{
 		ControlFields: common.ControlFields{
-			ID: "organization:default",
+			ID: organization.DefaultOrganizationID,
 		},
-		Name: "Default",
+		Name: "Jeph Heavy",
+		URL:  "jeph",
 		Defaults: organization.OrganizationDefaults{
 			FocusFactor:              utils.ValToRef(5.0),
 			HoursPerWeek:             40,

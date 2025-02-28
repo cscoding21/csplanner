@@ -244,6 +244,7 @@ type ComplexityRoot struct {
 		ID       func(childComplexity int) int
 		Name     func(childComplexity int) int
 		Setup    func(childComplexity int) int
+		URL      func(childComplexity int) int
 	}
 
 	OrganizationDefaults struct {
@@ -1741,6 +1742,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organization.Setup(childComplexity), true
+
+	case "Organization.url":
+		if e.complexity.Organization.URL == nil {
+			break
+		}
+
+		return e.complexity.Organization.URL(childComplexity), true
 
 	case "OrganizationDefaults.commsCoefficient":
 		if e.complexity.OrganizationDefaults.CommsCoefficient == nil {
@@ -3916,6 +3924,7 @@ type NotificationResults {
 	{Name: "../api/idl/organization.graphqls", Input: `type Organization {
   id: String
   name: String!
+  url: String!
   defaults: OrganizationDefaults!
   setup: OrganizationSetup!
 }
@@ -7609,6 +7618,8 @@ func (ec *executionContext) fieldContext_CreateOrganizationResult_organization(_
 				return ec.fieldContext_Organization_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "url":
+				return ec.fieldContext_Organization_url(ctx, field)
 			case "defaults":
 				return ec.fieldContext_Organization_defaults(ctx, field)
 			case "setup":
@@ -11624,6 +11635,50 @@ func (ec *executionContext) _Organization_name(ctx context.Context, field graphq
 }
 
 func (ec *executionContext) fieldContext_Organization_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Organization_url(ctx context.Context, field graphql.CollectedField, obj *idl.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Organization",
 		Field:      field,
@@ -20039,6 +20094,8 @@ func (ec *executionContext) fieldContext_Query_getOrganization(_ context.Context
 				return ec.fieldContext_Organization_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "url":
+				return ec.fieldContext_Organization_url(ctx, field)
 			case "defaults":
 				return ec.fieldContext_Organization_defaults(ctx, field)
 			case "setup":
@@ -28408,6 +28465,11 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._Organization_id(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._Organization_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "url":
+			out.Values[i] = ec._Organization_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -1,6 +1,7 @@
 type Organization {
   id: String
   name: String!
+  url: String!
   defaults: OrganizationDefaults!
   setup: OrganizationSetup!
 }

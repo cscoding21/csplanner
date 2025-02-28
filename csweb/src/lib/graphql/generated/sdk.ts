@@ -404,6 +404,7 @@ export type Organization = {
   id?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   setup: OrganizationSetup;
+  url: Scalars['String']['output'];
 };
 
 export type OrganizationDefaults = {
@@ -1248,6 +1249,7 @@ export const OrganizationFragmentFragmentDoc = gql`
     fragment organizationFragment on Organization {
   name
   id
+  url
   defaults {
     discountRate
     commsCoefficient

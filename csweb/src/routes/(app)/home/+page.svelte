@@ -40,26 +40,27 @@
 <PageHeading title={"Welcome " + user?.firstName} />
 
 <CSSection>
-    <OrgStateChecker invert={false} stateToCheck="hasSkills">
-        I has skills
+    
+
+
+    {#await loadPage()}
+        Loading...
+    {:then promiseData} 
+    <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
+        {#if myProjects && myProjects.results && myProjects.results?.length > 0}
+            <ul>
+            {#each myProjects.results as project}
+                <li>{project?.projectBasics.name}</li>
+            {/each}
+            </ul>
+        {/if}
 
         {#snippet elseRender()}
             <p>I have no skills</p>
         {/snippet}
     </OrgStateChecker>
 
-
-    {#await loadPage()}
-        Loading...
-    {:then promiseData} 
-
-        {#if myProjects && myProjects.results && myProjects.results?.length > 0}
-            <ul>
-            {#each myProjects.results as project}
-                <li>{project?.projectBasics.name}</li>
-            {/each}
-        </ul>
-        {/if}
+        
     {/await}
 
 </CSSection>

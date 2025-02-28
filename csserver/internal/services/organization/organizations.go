@@ -7,10 +7,14 @@ import (
 	"github.com/cscoding21/csval/validate"
 )
 
+const (
+	DefaultOrganizationID = "organization:default"
+)
+
 // GetDefaultOrganization return the default organization
 func (s *OrganizationService) GetDefaultOrganization(
 	ctx context.Context) (*Organization, error) {
-	org, err := s.GetOrganizationByID(ctx, "organization:default")
+	org, err := s.GetOrganizationByID(ctx, DefaultOrganizationID)
 	if err != nil {
 		return nil, err
 	}

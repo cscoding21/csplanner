@@ -86,8 +86,8 @@
 				return r;
 			})
 			.then(() => {
-				load().then(p => {
-
+				load().then(o => {
+					org = o
 				});
 			});
 	};
@@ -95,6 +95,7 @@
 	let errors: any = $state({ name: '', ownerID: '', description: '' });
 	let userOpts = $state([] as SelectOptionType<string>[]);
 	let of = $state({} as typeof orgForm);
+	let org = $state({} as Organization)
 </script>
 
 {#await loadPage()}
@@ -102,7 +103,7 @@
 {:then promiseData}
 	{#if of}
 		<SectionHeading>
-			Organization Settings
+			Organization Settings: {org.name} ({org.url}.csplanner.io)
 		</SectionHeading>
 	{/if}
 

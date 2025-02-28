@@ -15,6 +15,7 @@ type Organization struct {
 
 	//---TODO: add fields here
 	Name     string               `json:"name"`
+	URL      string               `json:"url"`
 	Defaults OrganizationDefaults `json:"organization_defaults"`
 }
 

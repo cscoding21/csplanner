@@ -1,6 +1,7 @@
 fragment organizationFragment on Organization {
     name
     id
+    url
     defaults {
       discountRate
       commsCoefficient
