@@ -1,0 +1,23 @@
+# -*- mode: Python -*-
+
+load('ext://namespace', 'namespace_create')
+load('ext://helm_resource', 'helm_resource')
+
+NAMESPACE = 'app'
+
+def setup_cssaas():
+    namespace_create(NAMESPACE, allow_duplicates=True)
+
+    docker_build(
+        'csplanner-cssaas', 
+        './cssaas', 
+        dockerfile = 'cssaas/Dockerfile'
+    )
+
+    k8s_yaml(
+        helm(
+            './deploy/helm/cssaas',
+            name = 'cssaas',
+            namespace = NAMESPACE
+        )
+    )

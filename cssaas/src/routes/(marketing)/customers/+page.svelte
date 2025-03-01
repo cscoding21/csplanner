@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import CTA from "../home/components/CTA.svelte";
-
-
-
+	import { particles } from "$lib/assets/js/jscript";
+	
+    onMount(() => {
+		particles()
+	})
 </script>
 
 

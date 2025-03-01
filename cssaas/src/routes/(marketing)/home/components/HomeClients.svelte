@@ -16,7 +16,6 @@
 
         <div class="py-12 md:py-16">
             <div class="overflow-hidden">
-
                 <div class="inline-flex w-full flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
                     <ul class="flex animate-infinite-scroll items-center justify-center md:justify-start [&_img]:max-w-none [&_li]:mx-8">
                         <li>
@@ -77,7 +76,6 @@
                         </li>
                     </ul>
                 </div>
-
             </div>
         </div>
     </div>

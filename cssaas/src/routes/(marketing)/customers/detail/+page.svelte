@@ -1,5 +1,11 @@
 <script lang="ts">
+	import { particles } from "$lib/assets/js/jscript";
+	import { onMount } from "svelte";
 
+
+    onMount(() => {
+		particles()
+	})
 </script>
 
     <section class="relative">

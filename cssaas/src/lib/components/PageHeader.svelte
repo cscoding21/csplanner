@@ -1,5 +1,5 @@
 <script lang="ts">
-
+    import logoImage from '$lib/assets/images/csplanner-logo-white.png?enhanced'
 </script>
 
 
@@ -11,8 +11,8 @@
             <!-- Site branding -->
             <div class="flex-1">
                 <!-- Logo -->
-                <a class="inline-flex" href="/home" aria-label="Cruip">
-                    <img class="max-w-none" src="/src/lib/assets/images/logo.svg" width="38" height="38" alt="Stellar">
+                <a class="inline-flex" href="/home" aria-label="csPlanner">
+                    <enhanced:img class="max-w-none" width="141" src={logoImage} alt="csPlanner">
                 </a>
             </div>
 
@@ -45,10 +45,10 @@
             <!-- Desktop sign in links -->
             <ul class="flex-1 flex justify-end items-center">
                 <li>
-                    <a class="font-medium text-sm text-slate-300 hover:text-white whitespace-nowrap transition duration-150 ease-in-out" href="signin.html">Sign in</a>
+                    <a class="font-medium text-sm text-slate-300 hover:text-white whitespace-nowrap transition duration-150 ease-in-out" href="/login">Sign in</a>
                 </li>
                 <li class="ml-6">
-                    <a class="btn-sm text-slate-300 hover:text-white transition duration-150 ease-in-out w-full group [background:linear-gradient(var(--color-slate-900),var(--color-slate-900))_padding-box,conic-gradient(var(--color-slate-400),var(--color-slate-700)_25%,var(--color-slate-700)_75%,var(--color-slate-400)_100%)_border-box] relative before:absolute before:inset-0 before:bg-slate-800/30 before:rounded-full before:pointer-events-none" href="signup.html">
+                    <a class="btn-sm text-slate-300 hover:text-white transition duration-150 ease-in-out w-full group [background:linear-gradient(var(--color-slate-900),var(--color-slate-900))_padding-box,conic-gradient(var(--color-slate-400),var(--color-slate-700)_25%,var(--color-slate-700)_75%,var(--color-slate-400)_100%)_border-box] relative before:absolute before:inset-0 before:bg-slate-800/30 before:rounded-full before:pointer-events-none" href="/signup">
                         <span class="relative inline-flex items-center">
                             Sign up <span class="tracking-normal text-purple-500 group-hover:translate-x-0.5 transition-transform duration-150 ease-in-out ml-1">-&gt;</span>
                         </span>
