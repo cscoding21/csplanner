@@ -1,5 +1,7 @@
 <script lang="ts">
-
+    import testImage1 from '$lib/assets/images/testimonial-01.png?enhanced'
+    import testImage2 from '$lib/assets/images/testimonial-02.png?enhanced'
+    import testImage3 from '$lib/assets/images/testimonial-03.png?enhanced'
 </script>
 
 
@@ -24,7 +26,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0" src="/src/lib/assets/images/testimonial-01.png" width="44" height="44" alt="Testimonial 01" />
+                            <enhanced:img class="shrink-0" src={testImage1} width="44" height="44" alt="Testimonial 01" />
                             <div class="grow">
                                 <div class="font-bold text-slate-100">Mary Janiczak</div>
                                 <div class="text-sm text-purple-500 font-medium">Data Engineer</div>
@@ -42,7 +44,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0" src="/src/lib/assets/images/testimonial-02.png" width="44" height="44" alt="Testimonial 02" />
+                            <enhanced:img class="shrink-0" src={testImage2} width="44" height="44" alt="Testimonial 02" />
                             <div class="grow">
                                 <div class="font-bold text-slate-100">Jack Smith</div>
                                 <div class="text-sm text-purple-500 font-medium">Software Engineer</div>
@@ -60,7 +62,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0" src="/src/lib/assets/images/testimonial-03.png" width="44" height="44" alt="Testimonial 03" />
+                            <enhanced:img class="shrink-0" src={testImage3} width="44" height="44" alt="Testimonial 03" />
                             <div class="grow">
                                 <div class="font-bold text-slate-100">Anna Johnson</div>
                                 <div class="text-sm text-purple-500 font-medium">Product Designer</div>

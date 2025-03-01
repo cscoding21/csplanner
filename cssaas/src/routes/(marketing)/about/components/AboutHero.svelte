@@ -1,4 +1,7 @@
 <script lang="ts">
+    import pageIllustration from '$lib/assets/images/page-illustration.svg'
+    import aboutIllustration from '$lib/assets/images/about-illustration.svg'
+    import aboutIcon from '$lib/assets/images/about-icon.svg'
 
 </script>
 
@@ -19,7 +22,7 @@
 
     <!-- Illustration -->
     <div class="md:block absolute left-1/2 -translate-x-1/2 -mt-16 blur-2xl opacity-90 pointer-events-none -z-10" aria-hidden="true">
-        <img src="/src/lib/assets/images/page-illustration.svg" class="max-w-none" width="1440" height="427" alt="Page Illustration">
+        <img src={pageIllustration} class="max-w-none" width="1440" height="427" alt="Page Illustration">
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -36,9 +39,9 @@
                         <canvas data-particle-animation data-particle-quantity="10"></canvas>
                     </div>
                     <div class="inline-flex [mask-image:_radial-gradient(circle_at_bottom,transparent_15%,black_70%)]">
-                        <img src="/src/lib/assets/images/about-illustration.svg" width="446" height="446" alt="About illustration" />
+                        <img src={aboutIllustration} width="446" height="446" alt="About illustration" />
                     </div>
-                    <img class="absolute mt-[30%] drop-shadow-lg animate-float" src="/src/lib/assets/images/about-icon.svg" width="72" height="72" alt="About icon" />
+                    <img class="absolute mt-[30%] drop-shadow-lg animate-float" src={aboutIcon} width="72" height="72" alt="About icon" />
                 </div>
             </div>
 

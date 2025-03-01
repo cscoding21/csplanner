@@ -1,5 +1,5 @@
 <script lang="ts">
-    
+    import glowBottom from '$lib/assets/images/glow-bottom.svg'
 </script>
 
 <!-- Hero -->
@@ -14,7 +14,7 @@
         <!-- Illustration -->
         <div class="absolute inset-0 -z-10 -mx-28 rounded-b-[3rem] pointer-events-none overflow-hidden" aria-hidden="true">
             <div class="absolute left-1/2 -translate-x-1/2 bottom-0 -z-10">
-                <img src="/src/lib/assets/images/glow-bottom.svg" class="max-w-none" width="2146" height="774" alt="Hero Illustration">
+                <img src={glowBottom} class="max-w-none" width="2146" height="774" alt="Hero Illustration">
             </div>
         </div>
 

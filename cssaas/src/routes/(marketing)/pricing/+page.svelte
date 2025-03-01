@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { particles } from "$lib/assets/js/jscript";
+	import { particles } from "$lib/assets/js/main";
 	import Pricing from "$lib/components/Pricing.svelte";
 	import { onMount } from "svelte";
 	import CTA from "../home/components/CTA.svelte";

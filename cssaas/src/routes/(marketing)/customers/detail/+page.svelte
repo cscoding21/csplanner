@@ -1,5 +1,20 @@
 <script lang="ts">
-	import { particles } from "$lib/assets/js/jscript";
+    import pill from '$lib/assets/images/page-illustration.svg'
+
+    import c6 from '$lib/assets/images/customer-06.svg'
+    import c3 from '$lib/assets/images/customer-03.svg'
+    import c2 from '$lib/assets/images/customer-02.svg'
+    import cb from '$lib/assets/images/customer-badge.svg'
+    
+    import ca3 from '$lib/assets/images/customer-avatar-03.jpg?enhanced'
+
+    import cbg6 from '$lib/assets/images/customer-bg-06.png?enhanced'
+    import cbg3 from '$lib/assets/images/customer-bg-03.png?enhanced'
+    import cbg2 from '$lib/assets/images/customer-bg-02.png?enhanced'
+
+
+
+	import { particles } from "$lib/assets/js/main";
 	import { onMount } from "svelte";
 
 
@@ -23,7 +38,7 @@
 
         <!-- Illustration -->
         <div class="md:block absolute left-1/2 -translate-x-1/2 -mt-16 blur-2xl opacity-90 pointer-events-none -z-10" aria-hidden="true">
-            <img src="/src/lib/assets/images/page-illustration.svg" class="max-w-none" width="1440" height="427" alt="Page Illustration">
+            <img src={pill} class="max-w-none" width="1440" height="427" alt="Page Illustration">
         </div>
 
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -44,7 +59,7 @@
                                 <header>
                                     <h1 class="h2 inline-flex bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 pb-4">How Airbnb leverages Stellar X to onboard new hosts</h1>
                                     <div class="text-sm flex items-center space-x-4 mb-8">
-                                        <img class="rounded-full" src="/src/lib/assets/images/customer-avatar-03.jpg" width="32" height="32" alt="Customer Avatar 03" />
+                                        <enhanced:img class="rounded-full" src={ca3} width="32" height="32" alt="Customer Avatar 03" />
                                         <div>
                                             <div class="text-slate-300 font-medium">Becky Taylor</div>
                                             <div class="text-slate-500">Product Marketing Manager</div>
@@ -115,8 +130,8 @@
                                                             <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                                         </div>
                                                         <div class="flex items-center justify-center h-32 lg:h-36">
-                                                            <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-06.png" width="352" height="198" alt="Customer Background 06" aria-hidden="true" />
-                                                            <img class="absolute" src="/src/lib/assets/images/customer-06.svg" width="110" height="21" alt="Customer 06" />
+                                                            <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg6} width="352" height="198" alt="Customer Background 06" aria-hidden="true" />
+                                                            <img class="absolute" src={c6} width="110" height="21" alt="Customer 06" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -132,8 +147,8 @@
                                                             <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                                         </div>
                                                         <div class="flex items-center justify-center h-32 lg:h-36">
-                                                            <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-03.png" width="352" height="198" alt="Customer Background 03" aria-hidden="true" />
-                                                            <img class="absolute" src="/src/lib/assets/images/customer-03.svg" width="107" height="33" alt="Customer 03" />
+                                                            <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg3} width="352" height="198" alt="Customer Background 03" aria-hidden="true" />
+                                                            <img class="absolute" src={c3} width="107" height="33" alt="Customer 03" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -149,8 +164,8 @@
                                                             <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                                         </div>
                                                         <div class="flex items-center justify-center h-32 lg:h-36">
-                                                            <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-02.png" width="352" height="198" alt="Customer Background 02" aria-hidden="true" />
-                                                            <img class="absolute" src="/src/lib/assets/images/customer-02.svg" width="70" height="25" alt="Customer 02" />
+                                                            <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg2} width="352" height="198" alt="Customer Background 02" aria-hidden="true" />
+                                                            <img class="absolute" src={c2} width="70" height="25" alt="Customer 02" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -175,7 +190,7 @@
                                     <div class="px-5 py-6">
                                         <div class="mb-5">
                                             <div class="flex items-center space-x-4">
-                                                <img src="/src/lib/assets/images/customer-badge.svg" width="64" height="64" alt="Customer badge" />
+                                                <img src={cb} width="64" height="64" alt="Customer badge" />
                                                 <div class="text-lg font-semibold text-slate-100">Airbnb Inc.</div>
                                             </div>
                                         </div>

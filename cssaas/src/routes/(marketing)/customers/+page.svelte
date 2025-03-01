@@ -1,7 +1,35 @@
 <script lang="ts">
+    import pill from '$lib/assets/images/page-illustration.svg'
+
+    import c1 from '$lib/assets/images/customer-01.svg'
+    import c2 from '$lib/assets/images/customer-02.svg'
+    import c3 from '$lib/assets/images/customer-03.svg'
+    import c4 from '$lib/assets/images/customer-04.svg'
+    import c5 from '$lib/assets/images/customer-05.svg'
+    import c6 from '$lib/assets/images/customer-06.svg'
+    import c7 from '$lib/assets/images/customer-07.svg'
+    import c8 from '$lib/assets/images/customer-08.svg'
+    import c9 from '$lib/assets/images/customer-09.svg'
+    import c10 from '$lib/assets/images/customer-10.svg'
+
+    import cbg1 from '$lib/assets/images/customer-bg-01.png?enhanced'
+    import cbg2 from '$lib/assets/images/customer-bg-02.png?enhanced'
+    import cbg3 from '$lib/assets/images/customer-bg-03.png?enhanced'
+    import cbg4 from '$lib/assets/images/customer-bg-04.png?enhanced'
+    import cbg5 from '$lib/assets/images/customer-bg-05.png?enhanced'
+    import cbg6 from '$lib/assets/images/customer-bg-06.png?enhanced'
+    import cbg7 from '$lib/assets/images/customer-bg-07.png?enhanced'
+    import cbg8 from '$lib/assets/images/customer-bg-08.png?enhanced'
+    import cbg9 from '$lib/assets/images/customer-bg-09.png?enhanced'
+    import cbg10 from '$lib/assets/images/customer-bg-10.png?enhanced'
+
+    import cav from '$lib/assets/images/customer-avatar-01.jpg?enhanced'
+    import ca2 from '$lib/assets/images/customer-avatar-02.jpg?enhanced'
+
+
 	import { onMount } from "svelte";
 	import CTA from "../home/components/CTA.svelte";
-	import { particles } from "$lib/assets/js/jscript";
+	import { particles } from "$lib/assets/js/main";
 	
     onMount(() => {
 		particles()
@@ -25,7 +53,7 @@
 
     <!-- Illustration -->
     <div class="md:block absolute left-1/2 -translate-x-1/2 -mt-16 blur-2xl opacity-90 pointer-events-none -z-10" aria-hidden="true">
-        <img src="/src/lib/assets/images/page-illustration.svg" class="max-w-none" width="1440" height="427" alt="Page Illustration">
+        <img src={pill} class="max-w-none" width="1440" height="427" alt="Page Illustration">
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -53,8 +81,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-01.png" width="352" height="198" alt="Customer Background 01" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-01.svg" width="78" height="34" alt="Customer 01" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg1} width="352" height="198" alt="Customer Background 01" aria-hidden="true" />
+                                        <img class="absolute" src={c1} width="78" height="34" alt="Customer 01" />
                                     </div>
                                 </div>
                             </div>
@@ -70,8 +98,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-02.png" width="352" height="198" alt="Customer Background 02" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-02.svg" width="70" height="25" alt="Customer 02" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg2} width="352" height="198" alt="Customer Background 02" aria-hidden="true" />
+                                        <img class="absolute" src={c2} width="70" height="25" alt="Customer 02" />
                                     </div>
                                 </div>
                             </div>
@@ -87,8 +115,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-03.png" width="352" height="198" alt="Customer Background 03" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-03.svg" width="107" height="33" alt="Customer 03" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg3} width="352" height="198" alt="Customer Background 03" aria-hidden="true" />
+                                        <img class="absolute" src={c3} width="107" height="33" alt="Customer 03" />
                                     </div>
                                 </div>
                             </div>
@@ -104,8 +132,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-04.png" width="352" height="198" alt="Customer Background 04" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-04.svg" width="85" height="36" alt="Customer 04" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg4} width="352" height="198" alt="Customer Background 04" aria-hidden="true" />
+                                        <img class="absolute" src={c4} width="85" height="36" alt="Customer 04" />
                                     </div>
                                 </div>
                             </div>
@@ -121,8 +149,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-05.png" width="352" height="198" alt="Customer Background 05" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-05.svg" width="86" height="18" alt="Customer 05" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg5} width="352" height="198" alt="Customer Background 05" aria-hidden="true" />
+                                        <img class="absolute" src={c5} width="86" height="18" alt="Customer 05" />
                                     </div>
                                 </div>
                             </div>
@@ -138,8 +166,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-06.png" width="352" height="198" alt="Customer Background 06" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-06.svg" width="110" height="21" alt="Customer 06" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg6} width="352" height="198" alt="Customer Background 06" aria-hidden="true" />
+                                        <img class="absolute" src={c6} width="110" height="21" alt="Customer 06" />
                                     </div>
                                 </div>
                             </div>
@@ -155,8 +183,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-07.png" width="352" height="198" alt="Customer Background 07" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-07.svg" width="83" height="23" alt="Customer 07" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg7} width="352" height="198" alt="Customer Background 07" aria-hidden="true" />
+                                        <img class="absolute" src={c7} width="83" height="23" alt="Customer 07" />
                                     </div>
                                 </div>
                             </div>
@@ -172,8 +200,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-08.png" width="352" height="198" alt="Customer Background 08" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-08.svg" width="98" height="40" alt="Customer 08" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg8} width="352" height="198" alt="Customer Background 08" aria-hidden="true" />
+                                        <img class="absolute" src={c8} width="98" height="40" alt="Customer 08" />
                                     </div>
                                 </div>
                             </div>
@@ -189,8 +217,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-09.png" width="352" height="198" alt="Customer Background 09" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-09.svg" width="106" height="35" alt="Customer 09" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg9} width="352" height="198" alt="Customer Background 09" aria-hidden="true" />
+                                        <img class="absolute" src={c9} width="106" height="35" alt="Customer 09" />
                                     </div>
                                 </div>
                             </div>
@@ -206,8 +234,8 @@
                                         <canvas data-particle-animation data-particle-quantity="3"></canvas>
                                     </div>
                                     <div class="flex items-center justify-center">
-                                        <img class="w-full h-full aspect-video object-cover" src="/src/lib/assets/images/customer-bg-10.png" width="352" height="198" alt="Customer Background 10" aria-hidden="true" />
-                                        <img class="absolute" src="/src/lib/assets/images/customer-10.svg" width="132" height="22" alt="Customer 10" />
+                                        <enhanced:img class="w-full h-full aspect-video object-cover" src={cbg10} width="352" height="198" alt="Customer Background 10" aria-hidden="true" />
+                                        <img class="absolute" src={c10} width="132" height="22" alt="Customer 10" />
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +249,7 @@
                             </span>
                         </p>
                         <div class="inline-flex mb-2">
-                            <img class="rounded-full" src="/src/lib/assets/images/customer-avatar-01.jpg" width="32" height="32" alt="Customer Avatar 01" />
+                            <enhanced:img class="rounded-full" src={cav} width="32" height="32" alt="Customer Avatar 01" />
                         </div>
                         <div class="text-sm font-medium text-slate-300">
                             Mike Hunt <span class="text-slate-700">-</span> <a class="text-purple-500 hover:underline" href="#0">Thunderbolt</a>
@@ -235,7 +263,7 @@
                             </span>
                         </p>
                         <div class="inline-flex mb-2">
-                            <img class="rounded-full" src="/src/lib/assets/images/customer-avatar-02.jpg" width="32" height="32" alt="Customer Avatar 02" />
+                            <enhanced:img class="rounded-full" src={ca2} width="32" height="32" alt="Customer Avatar 02" />
                         </div>
                         <div class="text-sm font-medium text-slate-300">
                             Mirko Mitt <span class="text-slate-700">-</span> <a class="text-purple-500 hover:underline" href="#0">Mildrink</a>

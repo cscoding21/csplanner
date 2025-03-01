@@ -1,4 +1,30 @@
 <script lang="ts">
+    import starImage from '$lib/assets/images/star.svg'
+
+    import int1 from '$lib/assets/images/integrations-01.svg'
+    import int2 from '$lib/assets/images/integrations-02.svg'
+    import int3 from '$lib/assets/images/integrations-03.svg'
+    import int4 from '$lib/assets/images/integrations-04.svg'
+    import int5 from '$lib/assets/images/integrations-05.svg'
+    import int6 from '$lib/assets/images/integrations-06.svg'
+    import int7 from '$lib/assets/images/integrations-07.svg'
+    import int8 from '$lib/assets/images/integrations-08.svg'
+    import int9 from '$lib/assets/images/integrations-09.svg'
+    import int10 from '$lib/assets/images/integrations-10.svg'
+    import int11 from '$lib/assets/images/integrations-11.svg'
+    import int12 from '$lib/assets/images/integrations-12.svg'
+    import int13 from '$lib/assets/images/integrations-13.svg'
+    import int14 from '$lib/assets/images/integrations-14.svg'
+    import int15 from '$lib/assets/images/integrations-15.svg'
+    import int16 from '$lib/assets/images/integrations-16.svg'
+    import int17 from '$lib/assets/images/integrations-17.svg'
+    import int18 from '$lib/assets/images/integrations-18.svg'
+    import int19 from '$lib/assets/images/integrations-19.svg'
+    import int20 from '$lib/assets/images/integrations-20.svg'
+    import int21 from '$lib/assets/images/integrations-21.svg'
+    import int22 from '$lib/assets/images/integrations-22.svg'
+    import int23 from '$lib/assets/images/integrations-23.svg'
+    import int24 from '$lib/assets/images/integrations-24.svg'
 
 </script>
 
@@ -46,16 +72,6 @@
                         </a>
                     </li>
                 </ul>
-                <div>
-                    <!-- <form class="relative flex items-center">
-                        <input class="form-input pl-10 bg-transparent rounded-none focus:border-transparent focus:border-b-slate-700 lg:w-9 lg:focus:w-[200px] transition-[width]" type="text" id="search" aria-label="Search…" placeholder="Search…" autocomplete="off">
-                        <div class="absolute inset-0 w-9 flex items-center justify-center pointer-events-none">
-                            <svg class="absolute fill-slate-50 mx-3" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
-                                <path d="M7 14c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7ZM7 2C4.243 2 2 4.243 2 7s2.243 5 5 5 5-2.243 5-5-2.243-5-5-5Zm8.707 12.293a.999.999 0 1 1-1.414 1.414L11.9 13.314a8.019 8.019 0 0 0 1.414-1.414l2.393 2.393Z" />
-                            </svg>
-                        </div>
-                    </form> -->
-                </div>
             </div>
 
             <!-- Cards -->
@@ -69,8 +85,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-06.svg" width="40" height="40" alt="Icon 06">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int6} width="40" height="40" alt="Icon 06">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Vercel</a>
                                 </div>
@@ -84,7 +100,7 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-07.svg" width="40" height="40" alt="Icon 07">
+                                        <img src={int7} width="40" height="40" alt="Icon 07">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Sentry</a>
                                 </div>
@@ -98,8 +114,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-04.svg" width="40" height="40" alt="Icon 04">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int4} width="40" height="40" alt="Icon 04">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Jira</a>
                                 </div>
@@ -113,8 +129,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-08.svg" width="40" height="40" alt="Icon 08">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int8} width="40" height="40" alt="Icon 08">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">GitHub</a>
                                 </div>
@@ -128,8 +144,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-05.svg" width="40" height="40" alt="Icon 05">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int5} width="40" height="40" alt="Icon 05">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">GitLab</a>
                                 </div>
@@ -143,8 +159,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-01.svg" width="40" height="40" alt="Icon 01">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int1} width="40" height="40" alt="Icon 01">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Retool</a>
                                 </div>
@@ -164,8 +180,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-02.svg" width="40" height="40" alt="Icon 02">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int2} width="40" height="40" alt="Icon 02">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Zapier</a>
                                 </div>
@@ -179,8 +195,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-03.svg" width="40" height="40" alt="Icon 03">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int3} width="40" height="40" alt="Icon 03">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Airtable</a>
                                 </div>
@@ -194,8 +210,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-09.svg" width="40" height="40" alt="Icon 09">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int9} width="40" height="40" alt="Icon 09">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Framer</a>
                                 </div>
@@ -209,7 +225,7 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-10.svg" width="40" height="40" alt="Icon 10">
+                                        <img src={int10} width="40" height="40" alt="Icon 10">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Jotform</a>
                                 </div>
@@ -223,8 +239,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-11.svg" width="40" height="40" alt="Icon 11">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int11} width="40" height="40" alt="Icon 11">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Webflow</a>
                                 </div>
@@ -238,7 +254,7 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-12.svg" width="40" height="40" alt="Icon 12">
+                                        <img src={int12} width="40" height="40" alt="Icon 12">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Coda</a>
                                 </div>
@@ -258,8 +274,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-13.svg" width="40" height="40" alt="Icon 13">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int13} width="40" height="40" alt="Icon 13">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Asana</a>
                                 </div>
@@ -273,8 +289,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-14.svg" width="40" height="40" alt="Icon 14">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int14} width="40" height="40" alt="Icon 14">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Myngo</a>
                                 </div>
@@ -288,8 +304,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-15.svg" width="40" height="40" alt="Icon 15">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int15} width="40" height="40" alt="Icon 15">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Bonsai</a>
                                 </div>
@@ -303,8 +319,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-16.svg" width="40" height="40" alt="Icon 16">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int16} width="40" height="40" alt="Icon 16">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Decipad</a>
                                 </div>
@@ -318,8 +334,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-17.svg" width="40" height="40" alt="Icon 17">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int17} width="40" height="40" alt="Icon 17">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Miro</a>
                                 </div>
@@ -333,7 +349,7 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-18.svg" width="40" height="40" alt="Icon 18">
+                                        <img src={int18} width="40" height="40" alt="Icon 18">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Popform</a>
                                 </div>
@@ -353,8 +369,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-19.svg" width="40" height="40" alt="Icon 19">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int19} width="40" height="40" alt="Icon 19">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Linear</a>
                                 </div>
@@ -368,8 +384,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-20.svg" width="40" height="40" alt="Icon 20">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int20} width="40" height="40" alt="Icon 20">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Microsoft</a>
                                 </div>
@@ -383,8 +399,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-21.svg" width="40" height="40" alt="Icon 21">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int21} width="40" height="40" alt="Icon 21">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Google Drive</a>
                                 </div>
@@ -398,8 +414,8 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-22.svg" width="40" height="40" alt="Icon 22">
-                                        <img class="absolute top-0 -right-1" src="/src/lib/assets/images/star.svg" width="16" height="16" alt="Star" aria-hidden="true">
+                                        <img src={int22} width="40" height="40" alt="Icon 22">
+                                        <img class="absolute top-0 -right-1" src={starImage} width="16" height="16" alt="Star" aria-hidden="true">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">InVision</a>
                                 </div>
@@ -413,7 +429,7 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-23.svg" width="40" height="40" alt="Icon 23">
+                                        <img src={int23} width="40" height="40" alt="Icon 23">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">WeTransfer</a>
                                 </div>
@@ -427,7 +443,7 @@
                             <div class="flex flex-col p-5 h-full">
                                 <div class="flex items-center space-x-3 mb-3">
                                     <div class="relative">
-                                        <img src="/src/lib/assets/images/integrations-24.svg" width="40" height="40" alt="Icon 24">
+                                        <img src={int24} width="40" height="40" alt="Icon 24">
                                     </div>
                                     <a class="font-semibold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 group-hover:before:absolute group-hover:before:inset-0" href="/integrations/single">Hotjar</a>
                                 </div>

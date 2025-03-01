@@ -1,5 +1,5 @@
 <script lang="ts">
-
+    import teamImage from '$lib/assets/images/team.jpg?enhanced'
 
 </script>
 
@@ -31,7 +31,7 @@
             
                 <div class="md:flex justify-between space-x-6 md:space-x-8 lg:space-x-14">
                     <figure class="min-w-[240px]">
-                        <img class="sticky top-8 mx-auto mb-12 md:mb-0 rounded-lg -rotate-[4deg]" src="/src/lib/assets/images/team.jpg" width="420" height="280" alt="Team" />
+                        <enhanced:img class="sticky top-8 mx-auto mb-12 md:mb-0 rounded-lg -rotate-[4deg]" src={teamImage} width="420" height="280" alt="Team" />
                     </figure>
                     <div class="max-w-[548px] mx-auto">
                         <div class="text-slate-400 space-y-6">

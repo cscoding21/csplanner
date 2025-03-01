@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { highlighter } from "$lib/assets/js/jscript";
+	import { highlighter } from "$lib/assets/js/main";
 	import { onMount } from "svelte";
 
     onMount(() => {

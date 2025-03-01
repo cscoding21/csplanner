@@ -1,12 +1,14 @@
 
-// import AOS from 'aos';
+// const initAOS = () => {
+//   AOS.init({
+//     once: true,
+//     disable: 'phone',
+//     duration: 1000,
+//     easing: 'ease-out-cubic',
+//   });
+// }
 
-AOS.init({
-  once: true,
-  disable: 'phone',
-  duration: 1000,
-  easing: 'ease-out-cubic',
-});
+// initAOS()
 
 
 // Particle animation
@@ -208,4 +210,26 @@ class Highlighter {
     window.addEventListener('resize', this.initContainer);
     window.addEventListener('mousemove', this.onMouseMove);
   }  
+}
+
+export const particles = () => {
+  const canvasElements = document.querySelectorAll('[data-particle-animation]');
+  canvasElements.forEach(canvas => {
+      const options = {
+          //@ts-expect-error
+          quantity: canvas.dataset.particleQuantity,
+          //@ts-expect-error
+          staticity: canvas.dataset.particleStaticity,
+          //@ts-expect-error
+          ease: canvas.dataset.particleEase,
+      };
+      new ParticleAnimation(canvas, options);
+  });
+}
+
+export const highlighter = () => {
+  const highlighters = document.querySelectorAll('[data-highlighter]');
+  highlighters.forEach((highlighter) => {
+      new Highlighter(highlighter);
+  });
 }

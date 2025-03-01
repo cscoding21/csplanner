@@ -1,5 +1,13 @@
 <script lang="ts">
-
+    import clImage1 from '$lib/assets/images/customer-01.jpg?enhanced'
+    import clImage2 from '$lib/assets/images/customer-02.jpg?enhanced'
+    import clImage3 from '$lib/assets/images/customer-03.jpg?enhanced'
+    import clImage4 from '$lib/assets/images/customer-04.jpg?enhanced'
+    import clImage5 from '$lib/assets/images/customer-05.jpg?enhanced'
+    import clImage6 from '$lib/assets/images/customer-06.jpg?enhanced'
+    import clImage7 from '$lib/assets/images/customer-07.jpg?enhanced'
+    import clImage8 from '$lib/assets/images/customer-08.jpg?enhanced'
+    import clImage9 from '$lib/assets/images/customer-09.jpg?enhanced'
 </script>
 
 
@@ -24,7 +32,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-01.jpg" width="44" height="44" alt="Customer 01" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage1} width="44" height="44" alt="Customer 01" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Mike Smets</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@MikeSmets</a>
@@ -40,7 +48,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-02.jpg" width="44" height="44" alt="Customer 02" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage2} width="44" height="44" alt="Customer 02" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Mike Bryan</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@mike0point7 </a>
@@ -56,7 +64,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-03.jpg" width="44" height="44" alt="Customer 03" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage3} width="44" height="44" alt="Customer 03" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Liz Park</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@liz-park82</a>
@@ -72,7 +80,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-04.jpg" width="44" height="44" alt="Customer 04" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage4} width="44" height="44" alt="Customer 04" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Jessie Maison</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@jessiem9</a>
@@ -88,7 +96,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-05.jpg" width="44" height="44" alt="Customer 05" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage5} width="44" height="44" alt="Customer 05" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Devani Janssen</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@deva07p</a>
@@ -104,7 +112,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-06.jpg" width="44" height="44" alt="Customer 06" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage6} width="44" height="44" alt="Customer 06" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Mark Gerkules</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@mark-gerk</a>
@@ -120,7 +128,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-07.jpg" width="44" height="44" alt="Customer 07" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage7} width="44" height="44" alt="Customer 07" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Andrey Propenk</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@andrey-prok</a>
@@ -136,7 +144,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-08.jpg" width="44" height="44" alt="Customer 08" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage8} width="44" height="44" alt="Customer 08" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Jay Master</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@masterpro</a>
@@ -152,7 +160,7 @@
                 <div class="relative p-5 before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-10 before:rounded-xl">
                     <div class="flex items-center justify-between space-x-2 mb-4">
                         <div class="flex items-center space-x-4">
-                            <img class="shrink-0 rounded-full" src="/src/lib/assets/images/customer-09.jpg" width="44" height="44" alt="Customer 09" />
+                            <enhanced:img class="shrink-0 rounded-full" src={clImage9} width="44" height="44" alt="Customer 09" />
                             <div class="grow truncate">
                                 <div class="font-bold text-slate-100 truncate">Steve Wolf</div>
                                 <a class="text-sm text-slate-500 hover:text-slate-300 font-medium truncate transition-colors" href="#0">@imsteve</a>

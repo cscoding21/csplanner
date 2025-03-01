@@ -1,5 +1,5 @@
 <script lang="ts">
-
+    import featureImage4 from '$lib/assets/images/feature-image-04.png?enhanced'
 </script>
 
 
@@ -40,7 +40,7 @@
                                 <div class="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 pointer-events-none -z-10 w-1/2 aspect-square" aria-hidden="true">
                                     <div class="absolute inset-0 translate-z-0 bg-purple-500 rounded-full blur-[120px]"></div>
                                 </div>
-                                <img src="/src/lib/assets/images/feature-image-04.png" width="768" height="400" alt="Feature 04">
+                                <enhanced:img src={featureImage4} width="768" height="400" alt="Feature 04">
                             </div>
                         </div>
                     </div>

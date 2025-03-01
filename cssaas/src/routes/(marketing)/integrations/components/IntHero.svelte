@@ -1,4 +1,7 @@
 <script lang="ts">
+    import pi2 from '$lib/assets/images/page-illustration-02.svg'
+    import pill from '$lib/assets/images/page-illustration.svg'
+
 	import { onMount } from "svelte";
 
     onMount(() => {
@@ -12,7 +15,7 @@
 
     <!-- Illustration 02 -->
     <div class="md:block absolute left-1/2 -translate-x-1/2 bottom-0 -mb-16 blur-2xl opacity-90 pointer-events-none -z-10" aria-hidden="true">
-        <img src="/src/lib/assets/images/page-illustration-02.svg" class="max-w-none" width="1440" height="427" alt="Page Illustration 02">
+        <img src={pi2} class="max-w-none" width="1440" height="427" alt="Page Illustration 02">
     </div>
     
     <!-- Opacity layer -->
@@ -31,7 +34,7 @@
 
     <!-- Illustration -->
     <div class="md:block absolute left-1/2 -translate-x-1/2 -mt-16 blur-2xl opacity-90 pointer-events-none -z-10" aria-hidden="true">
-        <img src="/src/lib/assets/images/page-illustration.svg" class="max-w-none" width="1440" height="427" alt="Page Illustration">
+        <img src={pill} class="max-w-none" width="1440" height="427" alt="Page Illustration">
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6">

@@ -1,5 +1,24 @@
 <script lang="ts">
-
+    import teamImage1 from '$lib/assets/images/team-01.png?enhanced'
+    import teamImage2 from '$lib/assets/images/team-02.png?enhanced'
+    import teamImage3 from '$lib/assets/images/team-03.png?enhanced'
+    import teamImage4 from '$lib/assets/images/team-04.png?enhanced'
+    import teamImage5 from '$lib/assets/images/team-05.png?enhanced'
+    import teamImage6 from '$lib/assets/images/team-06.png?enhanced'
+    import teamImage7 from '$lib/assets/images/team-07.png?enhanced'
+    import teamImage8 from '$lib/assets/images/team-08.png?enhanced'
+    import teamImage9 from '$lib/assets/images/team-09.png?enhanced'
+    import teamImage10 from '$lib/assets/images/team-10.png?enhanced'
+    import teamImage11 from '$lib/assets/images/team-11.png?enhanced'
+    import teamImage12 from '$lib/assets/images/team-12.png?enhanced'
+    import teamImage13 from '$lib/assets/images/team-13.png?enhanced'
+    import teamImage14 from '$lib/assets/images/team-14.png?enhanced'
+    import teamImage15 from '$lib/assets/images/team-15.png?enhanced'
+    import teamImage16 from '$lib/assets/images/team-16.png?enhanced'
+    import teamImage17 from '$lib/assets/images/team-17.png?enhanced'
+    import teamImage18 from '$lib/assets/images/team-18.png?enhanced'
+    import teamImage19 from '$lib/assets/images/team-19.png?enhanced'
+    import teamImage20 from '$lib/assets/images/team-20.png?enhanced'
 
 </script>
 
@@ -24,7 +43,7 @@
                 <!-- Member #01 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-01.png" width="48" height="48" alt="Team 01" />
+                        <enhanced:img class="shrink-0" src={teamImage1} width="48" height="48" alt="Team 01" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Sarah Barnekow</div>
                             <div class="text-sm text-purple-500 font-medium">CEO & Co-founder</div>
@@ -39,7 +58,7 @@
                 <!-- Member #02 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-02.png" width="48" height="48" alt="Team 02" />
+                        <enhanced:img class="shrink-0" src={teamImage2} width="48" height="48" alt="Team 02" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Alex Suevalov</div>
                             <div class="text-sm text-purple-500 font-medium">Tech Lead</div>
@@ -54,7 +73,7 @@
                 <!-- Member #03 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-03.png" width="48" height="48" alt="Team 03" />
+                        <enhanced:img class="shrink-0" src={teamImage3} width="48" height="48" alt="Team 03" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Mark Lamprecht</div>
                             <div class="text-sm text-purple-500 font-medium">Software Engineer</div>
@@ -69,7 +88,7 @@
                 <!-- Member #04 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-04.png" width="48" height="48" alt="Team 04" />
+                        <enhanced:img class="shrink-0" src={teamImage4} width="48" height="48" alt="Team 04" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Scott Bailey</div>
                             <div class="text-sm text-purple-500 font-medium">Software Engineer</div>
@@ -84,7 +103,7 @@
                 <!-- Member #05 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-05.png" width="48" height="48" alt="Team 05" />
+                        <enhanced:img class="shrink-0" src={teamImage5} width="48" height="48" alt="Team 05" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Vedant Hegde</div>
                             <div class="text-sm text-purple-500 font-medium">Customer Experience</div>
@@ -99,7 +118,7 @@
                 <!-- Member #06 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-06.png" width="48" height="48" alt="Team 06" />
+                        <enhanced:img class="shrink-0" src={teamImage6} width="48" height="48" alt="Team 06" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Lucy Radux</div>
                             <div class="text-sm text-purple-500 font-medium">Marketing Manager</div>
@@ -114,7 +133,7 @@
                 <!-- Member #07 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-07.png" width="48" height="48" alt="Team 07" />
+                        <enhanced:img class="shrink-0" src={teamImage7} width="48" height="48" alt="Team 07" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Devani Janssen</div>
                             <div class="text-sm text-purple-500 font-medium">Product Design</div>
@@ -129,7 +148,7 @@
                 <!-- Member #08 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-08.png" width="48" height="48" alt="Team 08" />
+                        <enhanced:img class="shrink-0" src={teamImage8} width="48" height="48" alt="Team 08" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Dima Trystram</div>
                             <div class="text-sm text-purple-500 font-medium">Customer Success</div>
@@ -144,7 +163,7 @@
                 <!-- Member #09 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-09.png" width="48" height="48" alt="Team 09" />
+                        <enhanced:img class="shrink-0" src={teamImage9} width="48" height="48" alt="Team 09" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Fraser Davidson</div>
                             <div class="text-sm text-purple-500 font-medium">Customer Success</div>
@@ -159,7 +178,7 @@
                 <!-- Member #10 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-10.png" width="48" height="48" alt="Team 10" />
+                        <enhanced:img class="shrink-0" src={teamImage10} width="48" height="48" alt="Team 10" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">William Adkins</div>
                             <div class="text-sm text-purple-500 font-medium">Customer Experience</div>
@@ -174,7 +193,7 @@
                 <!-- Member #11 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-11.png" width="48" height="48" alt="Team 11" />
+                        <enhanced:img class="shrink-0" src={teamImage11} width="48" height="48" alt="Team 11" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Debbie Poulin</div>
                             <div class="text-sm text-purple-500 font-medium">Head of Talent</div>
@@ -189,7 +208,7 @@
                 <!-- Member #12 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-12.png" width="48" height="48" alt="Team 12" />
+                        <enhanced:img class="shrink-0" src={teamImage12} width="48" height="48" alt="Team 12" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">James Kudinov</div>
                             <div class="text-sm text-purple-500 font-medium">Product Design</div>
@@ -204,7 +223,7 @@
                 <!-- Member #13 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-13.png" width="48" height="48" alt="Team 13" />
+                        <enhanced:img class="shrink-0" src={teamImage13} width="48" height="48" alt="Team 13" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Zhenya Rynzhuk</div>
                             <div class="text-sm text-purple-500 font-medium">Software Engineer</div>
@@ -219,7 +238,7 @@
                 <!-- Member #14 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-14.png" width="48" height="48" alt="Team 14" />
+                        <enhanced:img class="shrink-0" src={teamImage14} width="48" height="48" alt="Team 14" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Mary Maka</div>
                             <div class="text-sm text-purple-500 font-medium">Enterprise Architect</div>
@@ -234,7 +253,7 @@
                 <!-- Member #15 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-15.png" width="48" height="48" alt="Team 15" />
+                        <enhanced:img class="shrink-0" src={teamImage15} width="48" height="48" alt="Team 15" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Monty Hayton</div>
                             <div class="text-sm text-purple-500 font-medium">Video Producer</div>
@@ -249,7 +268,7 @@
                 <!-- Member #16 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-16.png" width="48" height="48" alt="Team 16" />
+                        <enhanced:img class="shrink-0" src={teamImage16} width="48" height="48" alt="Team 16" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Srdjan Vidakovic</div>
                             <div class="text-sm text-purple-500 font-medium">Operations Manager</div>
@@ -264,7 +283,7 @@
                 <!-- Member #17 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-17.png" width="48" height="48" alt="Team 17" />
+                        <enhanced:img class="shrink-0" src={teamImage17} width="48" height="48" alt="Team 17" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">David Cran</div>
                             <div class="text-sm text-purple-500 font-medium">Financial Analyst</div>
@@ -279,7 +298,7 @@
                 <!-- Member #18 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-18.png" width="48" height="48" alt="Team 18" />
+                        <enhanced:img class="shrink-0" src={teamImage18} width="48" height="48" alt="Team 18" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Jacek Janiczak</div>
                             <div class="text-sm text-purple-500 font-medium">Data Engineer</div>
@@ -294,7 +313,7 @@
                 <!-- Member #19 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-19.png" width="48" height="48" alt="Team 19" />
+                        <enhanced:img class="shrink-0" src={teamImage19} width="48" height="48" alt="Team 19" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Tommy Chandra</div>
                             <div class="text-sm text-purple-500 font-medium">Head of Design</div>
@@ -309,7 +328,7 @@
                 <!-- Member #20 -->
                 <div class="relative flex items-center justify-between py-4 pl-4 pr-3 group before:absolute before:inset-0 before:-z-10 before:border before:border-slate-300 before:bg-slate-700 before:opacity-0 hover:before:opacity-10 focus-within:before:opacity-10 before:rounded-xl before:transition-opacity">
                     <div class="flex items-center space-x-4">
-                        <img class="shrink-0" src="/src/lib/assets/images/team-20.png" width="48" height="48" alt="Team 20" />
+                        <enhanced:img class="shrink-0" src={teamImage20} width="48" height="48" alt="Team 20" />
                         <div class="grow">
                             <div class="font-bold text-slate-100 mb-0.5">Ally Golovko</div>
                             <div class="text-sm text-purple-500 font-medium">Software Engineer</div>

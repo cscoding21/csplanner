@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { particles } from "$lib/assets/js/jscript";
+    import changeLog from '$lib/assets/images/page-illustration.svg'
+    import clImage1 from '$lib/assets/images/changelog-01.png?enhanced'
+    import clImage2 from '$lib/assets/images/changelog-02.png?enhanced'
+    import clImage3 from '$lib/assets/images/changelog-03.png?enhanced'
+    import clImage4 from '$lib/assets/images/changelog-04.png?enhanced'
+
+	import { particles } from "$lib/assets/js/main";
 	import { onMount } from "svelte";
 	import CTA from "../home/components/CTA.svelte";
 
@@ -25,7 +31,7 @@
 
     <!-- Illustration -->
     <div class="md:block absolute left-1/2 -translate-x-1/2 -mt-16 blur-2xl opacity-90 pointer-events-none -z-10" aria-hidden="true">
-        <img src="/src/lib/assets/images/page-illustration.svg" class="max-w-none" width="1440" height="427" alt="Page Illustration">
+        <img src={changeLog} class="max-w-none" width="1440" height="427" alt="Page Illustration">
     </div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -56,7 +62,7 @@
                                     <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 leading-8 pb-6">Weekly Update: Stellar X</h2>
                                 </header>
                                 <figure class="bg-linear-to-b from-slate-300/20 to-transparent rounded-3xl p-px mb-8">
-                                    <img class="w-full rounded-[inherit]" src="/src/lib/assets/images/changelog-01.png" width="574" height="326" alt="Changelog 01">
+                                    <enhanced:img class="w-full rounded-[inherit]" src={clImage1} width="574" height="326" alt="Changelog 01">
                                 </figure>
                                 <div class="prose max-w-none text-slate-400 prose-p:leading-relaxed prose-a:text-purple-500 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-50 prose-strong:font-medium">
                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
@@ -78,7 +84,7 @@
                                     <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 leading-8 pb-6">Refreshed main menu navigation</h2>
                                 </header>
                                 <figure class="bg-linear-to-b from-slate-300/20 to-transparent rounded-3xl p-px mb-8">
-                                    <img class="w-full rounded-[inherit]" src="/src/lib/assets/images/changelog-02.png" width="574" height="326" alt="Changelog 02">
+                                    <enhanced:img class="w-full rounded-[inherit]" src={clImage2} width="574" height="326" alt="Changelog 02">
                                 </figure>
                                 <div class="prose max-w-none text-slate-400 prose-p:leading-relaxed prose-a:text-purple-500 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-50 prose-strong:font-medium">
                                     <p>Better align your teams and partners around standardized product principles and consistent implementation standards using the latest architecture shape pack.</p>
@@ -105,7 +111,7 @@
                                     <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 leading-8 pb-6">New cloud architecture</h2>
                                 </header>
                                 <figure class="bg-linear-to-b from-slate-300/20 to-transparent rounded-3xl p-px mb-8">
-                                    <img class="w-full rounded-[inherit]" src="/src/lib/assets/images/changelog-03.png" width="574" height="326" alt="Changelog 03">
+                                    <enhanced:img class="w-full rounded-[inherit]" src={clImage3} width="574" height="326" alt="Changelog 03">
                                 </figure>
                                 <div class="prose max-w-none text-slate-400 prose-p:leading-relaxed prose-a:text-purple-500 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-50 prose-strong:font-medium">
                                     <p>Newly created diagrams are now editable, full screen mode for more editing real estate, and both apps are updated to the latest version supporting new diagram types (eg. C4 architecture).</p>
@@ -127,7 +133,7 @@
                                     <h2 class="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-200/60 via-slate-200 to-slate-200/60 leading-8 pb-6">Updates to the Filtering API</h2>
                                 </header>
                                 <figure class="bg-linear-to-b from-slate-300/20 to-transparent rounded-3xl p-px mb-8">
-                                    <img class="w-full rounded-[inherit]" src="/src/lib/assets/images/changelog-04.png" width="574" height="326" alt="Changelog 04">
+                                    <enhanced:img class="w-full rounded-[inherit]" src={clImage4} width="574" height="326" alt="Changelog 04">
                                 </figure>
                                 <div class="prose max-w-none text-slate-400 prose-p:leading-relaxed prose-a:text-purple-500 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-50 prose-strong:font-medium">
                                     <p>We understand that who you've worked with in the past is often who you'll work with in the future, and are now placing a higher emphasis on making your past mentions more accessible. This means your previous collaborators will be front and center, ready for future collaboration.</p>

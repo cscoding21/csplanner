@@ -7,11 +7,19 @@
 	import Pricing from "$lib/components/Pricing.svelte";
     import CTA from "./components/CTA.svelte";
 	import { onMount } from "svelte";
-	import { particles } from "$lib/assets/js/jscript";
+	import { particles } from "$lib/assets/js/main";
 
 
 	onMount(() => {
 		particles()
+		
+        //@ts-expect-error
+        AOS.init({
+            once: true,
+            disable: 'phone',
+            duration: 1000,
+            easing: 'ease-out-cubic',
+        });
 	})
 </script>
    
@@ -20,13 +28,9 @@
 
 <HomeClients />
 
-<!-- HomeFeatures  -->
-
 <HomeFeatures2 />
 
 <HomeFeatures3 />
-
-<!-- HomeTestimonials  -->
 
 <HomeFeatures4 />
 
