@@ -2,7 +2,7 @@
     import type { Portfolio, PortfolioWeekSummary } from "$lib/graphql/generated/sdk";
 	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
 	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
-    import { NoResults, CSSection, SectionHeading, ResourceList, DataCard } from "$lib/components";
+    import { NoResults, CSSection, SectionHeading, ResourceList, DataCard, WeekPopupSummary } from "$lib/components";
     import { formatDate, pluralize, formatPercent, formatCurrency } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Badge, Alert } from "flowbite-svelte";
@@ -99,37 +99,7 @@
 						{@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
 						<Button  size="xs" color={cellColor} id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
 						<Popover class=" text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
-							<div class="p-2 flex">
-								<div class="flex-none">
-								<ul class="">
-									{#each week.activities as activity}
-									<li class="text-left ml-2 p-2">
-										<span class="float-left mr-2">
-											<ResourceList resources={[activity.resource]} size="sm" maxSize={1} />
-										</span>
-										{activity.taskName}<br /> 
-										<small class="text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
-										<br class="clear-both" />
-									</li>
-									{/each}
-								</ul>
-								</div>
-								{#if week.risks.length > 0}
-								<div class="flex-1 ml-8">
-								<Alert class="items-start! text-left" color="yellow" border>
-									<span slot="icon">
-									<InfoCircleSolid class="w-5 h-5" />
-									<span class="sr-only">Warning</span>
-									</span>
-									<ul class="mt-1.5 ms-4 list-disc list-inside">
-										{#each week.risks as ex}
-											<li>{ex}</li>
-										{/each}
-									</ul>
-								</Alert> 
-								</div>
-								{/if}
-						</div>
+							<WeekPopupSummary activities={week.activities} risks={week.risks} />
 						</Popover>
 						
 						{/if}

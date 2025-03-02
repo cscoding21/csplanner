@@ -15,7 +15,7 @@ type ContentfulProvider struct {
 
 const DefaultLanguage = "en-US"
 
-func (c *ContentfulProvider) GetContent(ctx context.Context, id string) (*string, error) {
+func (c *ContentfulProvider) GetContent(ctx context.Context, id string) (interface{}, error) {
 	cma := contentful.NewCMA(c.PAT)
 
 	cma.SetOrganization(c.OrgID)

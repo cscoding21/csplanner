@@ -8,6 +8,7 @@ import (
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/activity"
 	"csserver/internal/services/comment"
+	"csserver/internal/services/content"
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
@@ -94,7 +95,7 @@ func GetPubSubClient() (nats.PubSubProvider, error) {
 	return ps, nil
 }
 
-func GetContentfulClient() (*contentful.ContentfulProvider, error) {
+func GetContentfulProvider() (*contentful.ContentfulProvider, error) {
 	cp := &contentful.ContentfulProvider{
 		OrgID:   config.Config.CMS.OrgID,
 		SpaceID: config.Config.CMS.SpaceID,
@@ -161,6 +162,17 @@ func GetListService() *list.ListService {
 	}
 
 	return list.NewListService(*surrealClient, config.ContextHelper{}, pubsub)
+}
+
+// GetListService get list service instance
+func GetContentService() *content.ContentService {
+	cms, err := GetContentfulProvider()
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return content.NewContentService(*cms)
 }
 
 // GetNotificationService get notification service instance

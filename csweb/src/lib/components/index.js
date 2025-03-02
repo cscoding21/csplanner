@@ -62,3 +62,4 @@ export { default as ResourceSkillsList } from './widgets/ResourceSkillsList.svel
 export { default as UserCard } from './widgets/UserCard.svelte';
 export { default as UserDisplay } from './widgets/UserDisplay.svelte';
 export { default as ResourceList } from './widgets/ResourceList.svelte';
+export { default as WeekPopupSummary } from './widgets/WeekPopupSummary.svelte';

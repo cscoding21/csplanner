@@ -13,24 +13,23 @@ func init() {
 }
 
 func TestGetContent(t *testing.T) {
-	cf, err := factory.GetContentfulClient()
-	if err != nil {
-		t.Error(err)
-	}
+	cf := factory.GetContentService()
 
 	ctx := getTestContext()
 
 	expectedValue := "Organization Settings"
 	contentID := "1TlbGHQaDfbZ1boVEOs4zi"
 
-	name, err := cf.GetContent(ctx, contentID)
+	con, err := cf.GetContent(ctx, contentID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if name == nil {
+	if con == nil {
 		t.Error("name returned as nil value")
 	} else {
+		name := con.(*string)
+
 		if !strings.EqualFold(*name, expectedValue) {
 			t.Errorf("unexpected value returned: expected '%s' - got '%s'", expectedValue, *name)
 		}

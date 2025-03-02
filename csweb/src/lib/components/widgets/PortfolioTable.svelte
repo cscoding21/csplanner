@@ -5,6 +5,7 @@
     import { getID } from "$lib/utils/id";
     import { pluralize, formatDate, formatPercent } from "$lib/utils/format";
 	import { RiskLegend } from "../../../routes/(app)/project/components";
+	import WeekPopupSummary from "./WeekPopupSummary.svelte";
 
     interface Props {
 		portfolio: Portfolio;
@@ -37,25 +38,15 @@
 
             {#each row.weeks as week}
                 {@const cellColor = week.risks.length > 0 ? "bg-yellow-400" : "bg-green-600 " }
+                {@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
                 {#if week.active}
                 <td class="text-center text-xs p-1 text-gray-100 {cellColor}">
-                <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}
-                <Popover class="w-64 text-sm font-light " title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
-                    <div class="">
-                    <ul class="">
-                        {#each week.activities as activity}
-                        <li class="text-left ml-2 p-1">
-                            {activity.taskName}<br /> 
-                            <small class="text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
-                            <br class="clear-both" />
-                        </li>
-                        {/each}
-                    </ul>
-                    </div>
-                </Popover>
-            </button> 
-                
-            </td>
+                    <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}
+                        <Popover class="text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
+                            <WeekPopupSummary activities={week.activities} risks={week.risks} />
+                        </Popover>
+                    </button> 
+                </td>
             {:else}
                 <td></td>
             {/if}
