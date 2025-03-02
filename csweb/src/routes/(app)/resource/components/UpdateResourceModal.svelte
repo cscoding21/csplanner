@@ -42,6 +42,7 @@
 	let statusOpts:SelectOptionType<string>[] = [
 		{name: "In House", value: "inhouse"},
 		{name: "Proposed", value: "proposed"},
+		{name: "Exited", value: "exited"},
 	]
 
 	let roleOpts:SelectOptionType<string>[] = $state([] as SelectOptionType<string>[])

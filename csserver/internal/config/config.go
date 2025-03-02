@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 
 	log "github.com/sirupsen/logrus"
@@ -31,6 +33,16 @@ func InitConfig() {
 	// If a config file is found, read it in.
 	if err = viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	}
+
+	fp, err := filepath.Abs("../../../secrets/.env.local")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Cannot find .env.local.  Moving on...")
+	} else {
+		err = godotenv.Load(fp)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Cannot load .env.local.  Moving on...")
+		}
 	}
 
 	replacer := strings.NewReplacer(".", "_")
@@ -81,6 +93,11 @@ func setDefaults() {
 	viper.SetDefault("pubsub.streamname", "CSPLANNER")
 	viper.SetDefault("pubsub.name", "csplanner-nats")
 
+	//Content Management
+	viper.SetDefault("cms.orgid", "nats://nats.nats.svc:4222")
+	viper.SetDefault("cms.spaceid", "%s.%s.%s.%s")
+	viper.SetDefault("cms.pat", "CSPLANNER")
+
 	//Services
 	viper.SetDefault("services.aihost", "http://localhost:7000/bot")
 	viper.SetDefault("services.ollamahost", "ollama.ollama.svc:11434")
@@ -93,6 +110,7 @@ type ConfigValues struct {
 	Security SecurityConfig
 	Server   ServerConfig
 	PubSub   PubSubConfig
+	CMS      CMSConfig
 	Services ServicesConfig
 }
 
@@ -136,6 +154,12 @@ type PubSubConfig struct {
 	SubjectFormat string
 	StreamName    string
 	Name          string
+}
+
+type CMSConfig struct {
+	OrgID   string
+	SpaceID string
+	PAT     string
 }
 
 type ServicesConfig struct {

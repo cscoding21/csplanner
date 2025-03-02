@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.49 // indirect
 	github.com/Nerzal/gocloak/v13 v13.9.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/contentful-labs/contentful-go v0.4.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/cscoding21/csgen v0.6.9 // indirect
 	github.com/cscoding21/csmap v0.3.5 // indirect
@@ -24,11 +25,13 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/nats-io/nats.go v1.37.0 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

@@ -5,9 +5,9 @@
     import { NoResults, CSSection, SectionHeading, ResourceList, DataCard } from "$lib/components";
     import { formatDate, pluralize, formatPercent, formatCurrency } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Badge } from "flowbite-svelte";
+	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Badge, Alert } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
-	import { DollarOutline } from "flowbite-svelte-icons";
+	import { DollarOutline, InfoCircleSolid } from "flowbite-svelte-icons";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
@@ -96,21 +96,39 @@
 					<TableBodyCell tdClass="text-center">
 						{#if week.active}
 						{@const cellColor = week.risks.length > 0 ? "yellow" : "green" }
+						{@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
 						<Button  size="xs" color={cellColor} id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
-						<Popover class="w-64 text-sm font-light " title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
-							<div class="p-2">
-							<ul class="">
-								{#each week.activities as activity}
-								<li class="text-left ml-2 p-2">
-									<span class="float-left mr-2">
-										<ResourceList resources={[activity.resource]} size="sm" maxSize={1} />
+						<Popover class=" text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
+							<div class="p-2 flex">
+								<div class="flex-none">
+								<ul class="">
+									{#each week.activities as activity}
+									<li class="text-left ml-2 p-2">
+										<span class="float-left mr-2">
+											<ResourceList resources={[activity.resource]} size="sm" maxSize={1} />
+										</span>
+										{activity.taskName}<br /> 
+										<small class="text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
+										<br class="clear-both" />
+									</li>
+									{/each}
+								</ul>
+								</div>
+								{#if week.risks.length > 0}
+								<div class="flex-1 ml-8">
+								<Alert class="items-start! text-left" color="yellow" border>
+									<span slot="icon">
+									<InfoCircleSolid class="w-5 h-5" />
+									<span class="sr-only">Warning</span>
 									</span>
-									{activity.taskName}<br /> 
-									<small class="text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
-									<br class="clear-both" />
-								</li>
-								{/each}
-							</ul>
+									<ul class="mt-1.5 ms-4 list-disc list-inside">
+										{#each week.risks as ex}
+											<li>{ex}</li>
+										{/each}
+									</ul>
+								</Alert> 
+								</div>
+								{/if}
 						</div>
 						</Popover>
 						

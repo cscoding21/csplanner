@@ -3,6 +3,7 @@ package factory
 import (
 	"context"
 	"csserver/internal/config"
+	"csserver/internal/providers/contentful"
 	"csserver/internal/providers/nats"
 	"csserver/internal/providers/surreal"
 	"csserver/internal/services/activity"
@@ -91,6 +92,16 @@ func GetPubSubClient() (nats.PubSubProvider, error) {
 	)
 
 	return ps, nil
+}
+
+func GetContentfulClient() (*contentful.ContentfulProvider, error) {
+	cp := &contentful.ContentfulProvider{
+		OrgID:   config.Config.CMS.OrgID,
+		SpaceID: config.Config.CMS.SpaceID,
+		PAT:     config.Config.CMS.PAT,
+	}
+
+	return cp, nil
 }
 
 // GetKeycloakClient return a Keycloak client

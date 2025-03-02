@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { type Booleanish } from "svelte/elements";
 
     interface Props {
         href: string
@@ -14,7 +13,7 @@
 </script>
 
 <li>
-    <a href={href} class="block {classAugment}" aria-current={active ? "page" as "time" | Booleanish | "page" | "step" | "location" | "date" | null | undefined : undefined}>
+    <a href={href} class="block {classAugment}" aria-current={active}>
         {@render children()}
     </a>
 </li>

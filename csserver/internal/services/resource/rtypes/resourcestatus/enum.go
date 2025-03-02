@@ -7,4 +7,5 @@ const (
 
 	Inhouse  = "inhouse"
 	Proposed = "proposed"
+	Exited   = "exited"
 )
