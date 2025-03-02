@@ -23,7 +23,7 @@
                 <ResourceList resources={[activity.resource]} size="sm" maxSize={1} />
             </span>
             {activity.taskName}<br /> 
-            <small class="text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
+            <small class="text-gray-800 dark:text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
             <br class="clear-both" />
         </li>
         {/each}

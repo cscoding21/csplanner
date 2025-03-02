@@ -1,14 +1,13 @@
 <script lang="ts">
-    import type { Portfolio, PortfolioWeekSummary } from "$lib/graphql/generated/sdk";
+    import type { Portfolio } from "$lib/graphql/generated/sdk";
 	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
 	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
-    import { NoResults, CSSection, SectionHeading, ResourceList, DataCard, WeekPopupSummary } from "$lib/components";
-    import { formatDate, pluralize, formatPercent, formatCurrency } from "$lib/utils/format";
+    import { NoResults, CSSection, SectionHeading, DataCard, WeekPopupSummary, SectionSubHeading } from "$lib/components";
+    import { formatDate, formatPercent, formatCurrency } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Badge, Alert } from "flowbite-svelte";
+	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
-	import { DollarOutline, InfoCircleSolid } from "flowbite-svelte-icons";
-	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
+	import { DollarOutline } from "flowbite-svelte-icons";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
 
@@ -19,6 +18,16 @@
 
 		return res;
 	};
+
+	const getHealth = (data:number) => {
+		if(data < 0) {
+			return "bad"
+		} else {
+			return "good"
+		}
+
+		return undefined
+	}
 
 	let portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
@@ -39,7 +48,7 @@
 	<CSSection>
 		<div class="flex mb-4">
 			<div class="flex-1 pr-2">
-				<DataCard dataPoint={formatCurrency.format(portfolio.calculated?.totalValue as number)} indicatorClass="text-green-500 dark:text-green-500">
+				<DataCard health={getHealth(portfolio.calculated?.totalValue)} dataPoint={formatCurrency.format(portfolio.calculated?.totalValue as number)} indicatorClass="text-green-500 dark:text-green-500">
 					{#snippet description()}
 						Total portfolio value
 					{/snippet}
@@ -49,7 +58,7 @@
 				</DataCard>
 			</div>	
 			<div class="flex-1  px-2">
-				<DataCard dataPoint={formatCurrency.format(portfolio.calculated?.valueInFlight as number)} indicatorClass="text-green-500 dark:text-green-500">
+				<DataCard health={getHealth(portfolio.calculated?.valueInFlight)} dataPoint={formatCurrency.format(portfolio.calculated?.valueInFlight as number)} indicatorClass="text-green-500 dark:text-green-500">
 					{#snippet description()}
 						Value in flight
 					{/snippet}
@@ -59,7 +68,7 @@
 				</DataCard>
 			</div>
 			<div class="flex-1  pl-2">
-				<DataCard dataPoint={formatCurrency.format(portfolio.calculated?.valueScheduled as number)} indicatorClass="text-green-500 dark:text-green-500">
+				<DataCard health={getHealth(portfolio.calculated?.valueScheduled)} dataPoint={formatCurrency.format(portfolio.calculated?.valueScheduled as number)} indicatorClass="text-green-500 dark:text-green-500">
 					{#snippet description()}
 						Value scheduled
 					{/snippet}
