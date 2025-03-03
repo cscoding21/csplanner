@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { SelectInput } from '$lib/components';
-	import { Button, type SelectOptionType } from 'flowbite-svelte';
+	import { Button, Label, Range, type SelectOptionType } from 'flowbite-svelte';
 	import { skillForm, skillSchema } from '$lib/forms/skill.validation';
 	import { mergeErrors, parseErrors, findSelectOptsFromList } from '$lib/forms/helpers';
-	import { updateResourceSkill } from '$lib/services/resource';
+	import { decodeProficiency, updateResourceSkill } from '$lib/services/resource';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, deepCopy } from '$lib/utils/helpers';
 	import { getList } from '$lib/services/list';
@@ -37,8 +37,8 @@
 							type: 'success'
 						});
 
-						skillForm.id = '';
-						skillForm.proficiency = '';
+						sf.id = '';
+						skillForm.sf = 2;
 
 						callIf(update);
 					} else {
@@ -58,11 +58,11 @@
 	};
 
 	let availableSkillOpts = $state([] as SelectOptionType<string>[]);
-	const proficiencyOpts = [
-		{ value: 1, name: 'Novice' },
-		{ value: 2, name: 'Competent' },
-		{ value: 3, name: 'Expert' }
-	];
+	// const proficiencyOpts = [
+	// 	{ value: 1, name: decodeProficiency(1) },
+	// 	{ value: 2, name: decodeProficiency(2) },
+	// 	{ value: 3, name: decodeProficiency(3) }
+	// ];
 
 	const loadPage = async () => {
 		getList('Skills')
@@ -88,12 +88,15 @@
 			/>
 		</span>
 		<span class="col-span-2">
-			<SelectInput
+			<!-- <SelectInput
 				fieldName="Proficiency"
 				bind:value={sf.proficiency}
 				error={errors.proficiency}
 				options={proficiencyOpts}
-			/>
+			/> -->
+			<Label>Proficiency</Label>
+			<Range size="lg" id="range-steps" min="1" max="3" bind:value={sf.proficiency} step="1" />
+			<br /><small>{decodeProficiency(sf.proficiency)}</small>
 		</span>
 		<span class="w-1/5 pt-8">
 			<Button onclick={add}>Add</Button>

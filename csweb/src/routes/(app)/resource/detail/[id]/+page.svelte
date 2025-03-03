@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Avatar,
-		Rating,
 		Card,
 		Alert,
 		Table,
@@ -11,7 +10,8 @@
 		TableHeadCell,
 		TableBodyCell,
 		Button,
-		ButtonGroup
+		ButtonGroup,
+		Range
 	} from 'flowbite-svelte';
 	import { TrashBinOutline, PenOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
@@ -21,14 +21,15 @@
 		DeleteResource,
 		UpdateResourceModal
 	} from '../../components';
-	import { getResource, deleteResourceSkill } from '$lib/services/resource';
+	import { getResource, deleteResourceSkill, decodeProficiency } from '$lib/services/resource';
 	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import type { Resource, Portfolio } from '$lib/graphql/generated/sdk';
+	import type { Resource, Portfolio, Skill } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
 	import { SectionSubHeading, CSSection , PieChart, CSHR, PortfolioTable } from '$lib/components';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
+	import SkillsTable from '../../components/SkillsTable.svelte';
 
 	const id = page.params.id;
 
@@ -74,6 +75,9 @@
 	const updateResource = () => {
 		refresh().then((r) => {
 			resourcePromise = r as Resource;
+			resourceSkills = r.skills as Skill[] 
+
+			return r
 		}).then(p => {
 			 refreshWork().then(p => {
 				portfolio = p
@@ -84,6 +88,7 @@
 	}
 
 	let flatData = $state([] as FlatPortfolioItem[])
+	let resourceSkills = $state([] as Skill[])
 	let resourcePromise:Resource = $state({} as Resource);
 	let projectPieData = $derived(csGroupBy(deepCopy(flatData), "projectName", "actualizedHours"))
 	let skillPieData = $derived(csGroupBy(deepCopy(flatData), "requiredSkill", "actualizedHours"))
@@ -185,38 +190,7 @@
 
 					{#if resourcePromise.type === "human"}
 					<SectionSubHeading>User skills</SectionSubHeading>
-
-					{#if resourcePromise.skills && resourcePromise.skills.length > 0}
-						<Table>
-							<TableHead>
-								<TableHeadCell>Skill</TableHeadCell>
-								<TableHeadCell>Proficienty</TableHeadCell>
-								<TableHeadCell>
-									<span class="sr-only">Action</span>
-								</TableHeadCell>
-							</TableHead>
-							<TableBody>
-								{#each resourcePromise.skills as s (s)}
-									<TableBodyRow>
-										<TableBodyCell>{s.name}</TableBodyCell>
-										<TableBodyCell
-											><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
-										>
-										<TableBodyCell tdClass="float-right pt-2">
-											<Button color="dark" onclick={() => deleteSkill(s.id)}>
-												<TrashBinOutline size="sm" />
-											</Button>
-										</TableBodyCell>
-									</TableBodyRow>
-								{/each}
-							</TableBody>
-						</Table>
-					{:else}
-						<Alert>No skills have been added for this resource.</Alert>
-					{/if}
-
-					<hr class="my-4" />
-					<AddSkill resourceID={id} update={updateResource} />
+					<SkillsTable resourceID={id} skills={resourceSkills} update={() => updateResource()} allowAdd={true} />
 					{/if}
 				</Card>
 			</div>

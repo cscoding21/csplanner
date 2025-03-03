@@ -292,7 +292,7 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 				if skill == nil {
 					out = append(out, newScheduleException(
 						*t.ID,
-						fmt.Sprintf("Task '%s' resoure, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID),
+						fmt.Sprintf("Task '%s' resource, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID),
 						TaskAssignedResourceMissingSkill,
 						ScheduleError))
 				}
@@ -300,7 +300,7 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 				if resource.Status != resourcestatus.Inhouse {
 					out = append(out, newScheduleException(
 						*t.ID,
-						fmt.Sprintf("Task '%s' resoure, %s, is not currently on staff", t.Name, resource.Name),
+						fmt.Sprintf("Task '%s' resource, %s, is not currently on staff", t.Name, resource.Name),
 						AssignedResourceNotOnStaff,
 						ScheduleWarning))
 				}

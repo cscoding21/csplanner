@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ButtonGroup } from 'flowbite-svelte';
-	import { TableHeader } from 'flowbite-svelte-blocks'
 	import { UserAddOutline } from 'flowbite-svelte-icons';
 	import { findResources } from '$lib/services/resource';
 	import { ResourceActionBar, ResourceCard, UpdateResourceModal, ResourceSearchFilters } from './components';

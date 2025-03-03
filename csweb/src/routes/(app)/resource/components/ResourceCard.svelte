@@ -9,6 +9,8 @@
 		resource: Resource;
 	}
 	let { resource = $bindable() }: Props = $props();
+
+	console.log(resource)
 </script>
 
 <div

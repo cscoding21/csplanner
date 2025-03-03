@@ -13,9 +13,7 @@ type ContentfulProvider struct {
 	PAT     string
 }
 
-const DefaultLanguage = "en-US"
-
-func (c *ContentfulProvider) GetContent(ctx context.Context, id string) (interface{}, error) {
+func (c *ContentfulProvider) GetContent(ctx context.Context, id string) (*contentful.Entry, error) {
 	cma := contentful.NewCMA(c.PAT)
 
 	cma.SetOrganization(c.OrgID)
@@ -26,8 +24,9 @@ func (c *ContentfulProvider) GetContent(ctx context.Context, id string) (interfa
 		return nil, err
 	}
 
-	field := item.Fields["title"].(map[string]interface{})
-	out := fmt.Sprint(field[DefaultLanguage].(string))
+	if item == nil {
+		return nil, fmt.Errorf("contentful error for id %s was returned as nil value", id)
+	}
 
-	return &out, nil
+	return item, nil
 }

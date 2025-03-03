@@ -240,3 +240,16 @@ export const deleteRole = async (id: string): Promise<Status> => {
 			return err;
 		});
 };
+
+export const decodeProficiency = (p:number):string => {
+	switch(p) {
+		case(1):
+			return "Novice"
+		case(2):
+			return "Competent"
+		case(3):
+			return "Expert"
+		default:
+			return "Unknown"
+	}
+}

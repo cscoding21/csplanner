@@ -28,6 +28,11 @@ interface Props {
 				badgeColor = 'green';
 				badgeIndicatorColor = 'green';
 				break;
+			case 'exited':
+				badgeName = 'Exited';
+				badgeColor = 'red';
+				badgeIndicatorColor = 'red';
+				break;
 		}
 	})
 </script>

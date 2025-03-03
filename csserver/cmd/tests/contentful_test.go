@@ -28,12 +28,16 @@ func TestGetContent(t *testing.T) {
 	if con == nil {
 		t.Error("name returned as nil value")
 	} else {
-		name := con.(*string)
 
-		if !strings.EqualFold(*name, expectedValue) {
-			t.Errorf("unexpected value returned: expected '%s' - got '%s'", expectedValue, *name)
+		if !strings.EqualFold(con.Title, expectedValue) {
+			t.Errorf("unexpected value returned: expected '%s' - got '%s'", expectedValue, con.Title)
 		}
 
-		fmt.Println(name)
+		fmt.Printf("Title: %s\n", con.Title)
+		fmt.Printf("Content: %s\n", con.Content)
+		fmt.Printf("Short Description: %s\n", con.ShortDescription)
+		fmt.Printf("VideoURL: %s\n", con.VideoURL)
+		fmt.Printf("Token: %s\n", con.Token)
+
 	}
 }

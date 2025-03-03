@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Search, type SelectOptionType, Select } from 'flowbite-svelte';
+    import { Search, type SelectOptionType } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
 	import { CSMultiFilter } from '$lib/components';
     import { getList } from '$lib/services/list';
@@ -15,6 +15,7 @@
     let statusOpts = [
         { value: "inhouse", name: "In-house", checked: false},
         { value: "proposed", name: "Proposed", checked: false},
+        { value: "exited", name: "Exited", checked: false},
     ]
 
     let typeOpts = [
