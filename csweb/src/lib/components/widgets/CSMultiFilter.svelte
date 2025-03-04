@@ -34,7 +34,7 @@
             return internalState && internalState.length > 0
         }
 
-        return internalState[0].length > 0
+        return internalState[0] && internalState[0].length > 0
     }
 
     const dropDownChange = (opt:string) => {
