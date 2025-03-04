@@ -51,6 +51,7 @@ export const findAllResources = async (): Promise<ResourceResults> => {
  */
 export const findResources = async (input: PageAndFilter): Promise<ResourceResults> => {
 	const client = getApolloClient();
+	//client.resetStore()
 
 	return client
 		.query({ query: FindResourcesDocument, variables: { input } })

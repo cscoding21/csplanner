@@ -51,6 +51,10 @@
 			resources = r as ResourceResults;
 			pagingDisplay = r.paging as Pagination
 			filterDisplay = r.filters
+
+			// for(let i = 0; i < resources.results[1].skills.length; i++) {
+			// 	console.log(resources.results[1].skills[i].name)
+			// }
 		});
 	};
 
@@ -77,7 +81,7 @@
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
-	{#if resources.results != null && resources.results.length}
+	{#if resources.results && resources.results.length}
 		<CSPaging paging={pagingDisplay} change={pagingChange} />
 
 		<div class="grid grid-cols-3 gap-3">

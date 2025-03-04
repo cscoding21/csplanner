@@ -2,34 +2,23 @@
 	import {
 		Avatar,
 		Card,
-		Alert,
-		Table,
-		TableBody,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell,
-		TableBodyCell,
-		Button,
-		ButtonGroup,
-		Range
+		ButtonGroup
 	} from 'flowbite-svelte';
 	import { TrashBinOutline, PenOutline } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import {
 		ResourceActionBar,
-		AddSkill,
 		DeleteResource,
-		UpdateResourceModal
+		UpdateResourceModal,
+		SkillsTable
 	} from '../../components';
-	import { getResource, deleteResourceSkill, decodeProficiency } from '$lib/services/resource';
+	import { getResource } from '$lib/services/resource';
 	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import type { Resource, Portfolio, Skill } from '$lib/graphql/generated/sdk';
-	import { addToast } from '$lib/stores/toasts';
 	import { findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
 	import { SectionSubHeading, CSSection , PieChart, CSHR, PortfolioTable } from '$lib/components';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
-	import SkillsTable from '../../components/SkillsTable.svelte';
 
 	const id = page.params.id;
 
@@ -50,32 +39,12 @@
 		})
 	}
 
-	const deleteSkill = async (skillID: string) => {
-		deleteResourceSkill(id, skillID).then((res) => {
-			if (res.success) {
-				addToast({
-					message: 'Resource skill deleted successfully',
-					dismissible: true,
-					type: 'success'
-				});
-
-				refresh().then((r) => {
-					resourcePromise = r as Resource;
-				})
-			} else {
-				addToast({
-					message: 'Error updating resource: ' + res.message,
-					dismissible: true,
-					type: 'error'
-				});
-			}
-		});
-	};
-
 	const updateResource = () => {
 		refresh().then((r) => {
 			resourcePromise = r as Resource;
 			resourceSkills = r.skills as Skill[] 
+
+			console.log("updateResource", resourceSkills)
 
 			return r
 		}).then(p => {

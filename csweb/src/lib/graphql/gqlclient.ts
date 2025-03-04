@@ -38,6 +38,12 @@ export const getApolloClient = () => {
 		httpLink
 	);
 
+	// const client = new ApolloClient({
+	// 	link: logoutLink.concat(splitLink),
+	// 	cache: new InMemoryCache(),
+	// 	headers: as.getAuthHeaders()
+	// });
+
 	const client = new ApolloClient({
 		link: logoutLink.concat(splitLink),
 		cache: new InMemoryCache(),

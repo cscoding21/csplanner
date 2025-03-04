@@ -58,11 +58,6 @@
 	};
 
 	let availableSkillOpts = $state([] as SelectOptionType<string>[]);
-	// const proficiencyOpts = [
-	// 	{ value: 1, name: decodeProficiency(1) },
-	// 	{ value: 2, name: decodeProficiency(2) },
-	// 	{ value: 3, name: decodeProficiency(3) }
-	// ];
 
 	const loadPage = async () => {
 		getList('Skills')
@@ -88,12 +83,6 @@
 			/>
 		</span>
 		<span class="col-span-2">
-			<!-- <SelectInput
-				fieldName="Proficiency"
-				bind:value={sf.proficiency}
-				error={errors.proficiency}
-				options={proficiencyOpts}
-			/> -->
 			<Label>Proficiency</Label>
 			<Range size="lg" id="range-steps" min="1" max="3" bind:value={sf.proficiency} step="1" />
 			<br /><small>{decodeProficiency(sf.proficiency)}</small>

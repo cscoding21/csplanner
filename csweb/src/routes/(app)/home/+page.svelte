@@ -4,6 +4,7 @@
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
 	import { findProjects } from "$lib/services/project";
+	import Wizard from "./setup/Wizard.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -24,7 +25,9 @@
 
     const loadPage = async () => {
         getOrganization().then(o => {
+            org = o
 
+            return o
         }).then(r => {
             findProjects(getFilters())
                 .then(res => {
@@ -33,6 +36,7 @@
         })   
     }
 
+    let org = $state({} as Organization)
     let myProjects = $state({} as ProjectResults)
 </script>
 
@@ -46,6 +50,8 @@
     {#await loadPage()}
         Loading...
     {:then promiseData} 
+    <Wizard {org} />
+
     <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
             <ul>

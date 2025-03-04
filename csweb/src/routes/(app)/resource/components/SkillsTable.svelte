@@ -5,7 +5,7 @@
 	import { AddSkill } from ".";
 	import type { Skill } from "$lib/graphql/generated/sdk";
 	import { skillForm, skillSchema } from "$lib/forms/skill.validation";
-	import { callIf, deepCopy } from "$lib/utils/helpers";
+	import { deepCopy } from "$lib/utils/helpers";
 	import { addToast } from "$lib/stores/toasts";
 	import { findSelectOptsFromList, mergeErrors, parseErrors } from "$lib/forms/helpers";
 	import { getList } from "$lib/services/list";

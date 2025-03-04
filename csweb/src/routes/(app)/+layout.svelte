@@ -68,6 +68,9 @@
 			<span class="block truncate text-sm font-medium">{cu?.email}</span>
 		</DropdownHeader>
 		<DropdownItem>
+			<a href="http://localhost:3006" target="_blank">Account</a>
+		</DropdownItem>
+		<DropdownItem>
 			<a href="/settings">Settings</a>
 		</DropdownItem>
 		<DropdownDivider />
