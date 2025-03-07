@@ -140,7 +140,7 @@
                 break;
             case("abandoned"):
                 def.currentTitle = "Abandoned";
-                def.currentDesc = "This is a new project"
+                def.currentDesc = "A project that abandoned is removed from the schedule with no intention of coming back to in the future"
                 def.buttonDisplay = "Abandon this project"
                 def.buttonColor = "red"
                 break;

@@ -215,6 +215,10 @@ func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*goc
 func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userService.User, error) {
 	u, err := s.getKCUser(ctx, idOrEmail)
 
+	if u == nil {
+		return nil, err
+	}
+
 	user := userService.User{
 		ControlFields: common.ControlFields{
 			ID: *u.ID,
