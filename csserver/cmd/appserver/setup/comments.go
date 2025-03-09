@@ -1,17 +1,6 @@
 package setup
 
-import (
-	"context"
-	"encoding/json"
-
-	"csserver/internal/appserv/factory"
-	"csserver/internal/common"
-	"csserver/internal/services/comment"
-	"csserver/internal/utils/quilljs"
-
-	log "github.com/sirupsen/logrus"
-)
-
+/*
 func CreateTestComments(ctx context.Context) error {
 	service := factory.GetCommentService()
 
@@ -74,3 +63,4 @@ func CreateTestComments(ctx context.Context) error {
 
 	return nil
 }
+*/

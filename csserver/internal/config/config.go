@@ -59,12 +59,12 @@ func InitConfig() {
 
 func setDefaults() {
 	// Database
-	viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.user", "root")
-	viper.SetDefault("database.password", "root")
-	viper.SetDefault("database.namespace", "test")
-	viper.SetDefault("database.database", "test")
-	viper.SetDefault("database.port", 9999)
+	viper.SetDefault("database.host", "postgres-postgresql.database.svc")
+	viper.SetDefault("database.user", "postgres")
+	viper.SetDefault("database.password", "postgres")
+	viper.SetDefault("database.namespace", "")
+	viper.SetDefault("database.database", "csplanner")
+	viper.SetDefault("database.port", 5432)
 
 	//Default
 	viper.SetDefault("default.pagesize", 25)

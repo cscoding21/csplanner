@@ -93,29 +93,38 @@ func GenService(props GenProps) error {
 }
 
 var identifierTemplateString = `
+import (
+	"context"
+	"csserver/internal/common"
+	"csserver/internal/providers/nats"
+	"csserver/internal/providers/postgres"
+	"fmt"
+
+	"github.com/cscoding21/csval/validate"
+	"github.com/jackc/pgx/v5"
+)
+
+
 //---This is the name of the object in the database
-const {{.ServiceName}}Identifier = "{{.ServiceLower}}"
+const {{.ServiceName}}Identifier = postgres.TableName("{{.ServiceLower}}")
 
 `
 
 var serviceStructTemplateString = `
 // {{.ServiceName}}Service is a service for interacting with lists.
 type {{.ServiceName}}Service struct {
-	DBClient      surreal.DBClient
-	ContextHelper interfaces.ContextHelpers
-	PubSub nats.PubSubProvider
+	db      *pgx.Conn
+	pubsub nats.PubSubProvider
 }
 
 // New{{.ServiceName}}Service creates a new {{.ServiceName}} service.
 func New{{.ServiceName}}Service(
-	db surreal.DBClient,
-	ch config.ContextHelper,
+	db *pgx.Conn,
 	ps nats.PubSubProvider) *{{.ServiceName}}Service {
 
 	return &{{.ServiceName}}Service{
-		DBClient: db,
-		ContextHelper: &ch,
-		PubSub: ps,
+		db: db,
+		pubsub: ps,
 	}
 }
 
@@ -124,166 +133,100 @@ func New{{.ServiceName}}Service(
 var deleteTemplateString = `
 // Delete{{.ServiceName}} deletes a {{.ServiceName}}.
 func (s *{{.ServiceName}}Service) Delete{{.ServiceName}}(ctx context.Context, id string) error {
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
-
-	list, err := s.Get{{.ServiceName}}ByID(ctx, id)
-	if err != nil {
-		return common.HandleReturn(err)
-	}
-
-	return common.HandleReturn(
-		s.DBClient.SoftDeleteObject(userEmail, list),
-	)
+	return postgres.SoftDelete(ctx, s.db, {{.ServiceName}}Identifier, id)
 }
 
 `
 
 var getByIDTemplateString = `
 // Get{{.ServiceName}}ByID gets a {{.ServiceName}} by its ID.
-func (s *{{.ServiceName}}Service) Get{{.ServiceName}}ByID(ctx context.Context, id string) (*{{.ServiceName}}, error) {
-	outData, err := s.DBClient.GetObjectById(id)
-	if err != nil {
-		return common.HandleReturnWithValue[{{.ServiceName}}](nil, err)
-	}
-
-	output, err := marshal.SurrealUnmarshal[{{.ServiceName}}](outData)
-
-	return common.HandleReturnWithValue(
-		output,
-		err,
-	)
+func (s *{{.ServiceName}}Service) Get{{.ServiceName}}ByID(ctx context.Context, id string) (*common.BaseModel[{{.ServiceName}}], error) {
+	return postgres.GetObjectByID[{{.ServiceName}}](ctx, s.db, {{.ServiceName}}Identifier, id)
 }
 	
 `
 
 var createTemplateString = `
 // Create{{.ServiceName}} creates a new {{.ServiceName}}.
-func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (common.UpdateResult[{{.ServiceName}}], error) {
+func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, input {{.ServiceName}}) (common.UpdateResult[*common.BaseModel[{{.ServiceName}}]], error) {
 {{if .IncludeValidation}}
 	val := input.Validate()
 	if !val.Pass {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), fmt.Errorf("validation failed")
+		return common.NewUpdateResult[*common.BaseModel[{{.ServiceName}}]](val, nil), fmt.Errorf("validation failed")
 	}
 {{else}}
 	val := validate.NewSuccessValidationResult()
 {{end}}
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
-
-	outData, err := s.DBClient.CreateObject(userEmail, {{.ServiceName }}Identifier, input)
+	obj, err := postgres.UpdateObject(ctx, s.db, input, {{.ServiceName}}Identifier, input.ID)
 	if err != nil {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
+		return common.NewUpdateResult(val, &obj), err
 	}
 
-	outArray, err := marshal.SurrealUnmarshal[[]{{.ServiceName}}](outData)
-	if err != nil {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
-	}
-
-	outObj := utils.RefToVal(outArray)[0]
-	return common.NewUpdateResult[{{.ServiceName}}](&val, &outObj), nil
+	return common.NewUpdateResult(val, &obj), nil
 }
 	
 `
 
 var updateTemplateString = `
 // Update{{.ServiceName}} update an existing {{.ServiceName}}.
-func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, input *{{.ServiceName}}) (common.UpdateResult[{{.ServiceName}}], error) {
+func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, input {{.ServiceName}}) (common.UpdateResult[*common.BaseModel[{{.ServiceName}}]], error) {
 {{if .IncludeValidation}}
 	val := input.Validate()
 	if !val.Pass {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), fmt.Errorf("validation failed")
+		return common.NewUpdateResult[*common.BaseModel[{{.ServiceName}}]](val, nil), fmt.Errorf("validation failed")
 	}
 {{else}}
 	val := validate.NewSuccessValidationResult()
 {{end}}
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
-
-	lastObj, err := s.Get{{.ServiceName}}ByID(ctx, input.ID)
+	obj, err := postgres.UpdateObject(ctx, s.db, input, {{.ServiceName}}Identifier, input.ID)
 	if err != nil {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
+		return common.NewUpdateResult(val, &obj), err
 	}
 
-	//---ensure the integrity of the creation data
-	input.CreatedAt = lastObj.CreatedAt
-	input.CreatedBy = lastObj.CreatedBy
-
-	outData, err := s.DBClient.UpdateObject(userEmail, input.ID, input)
-	if err != nil {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
-	}
-
-	outObj, err := marshal.SurrealUnmarshal[{{.ServiceName}}](outData)
-	if err != nil {
-		return common.NewUpdateResult[{{.ServiceName}}](&val, input), err
-	}
-
-	return common.NewUpdateResult[{{.ServiceName}}](&val, outObj), nil
+	return common.NewUpdateResult(val, &obj), nil
 }
 
 `
 
 var upsertTemplateString = `
 // Upsert{{.ServiceName}} create or update a {{.ServiceName}}
-func (s *{{.ServiceName}}Service) Upsert{{.ServiceName}}(ctx context.Context, obj {{.ServiceName}}) (*common.UpdateResult[{{.ServiceName}}], error) {
-	existingObj, _ := s.Get{{.ServiceName}}ByID(ctx, obj.ID)
-
-	if existingObj == nil {
-		resp, err := s.Create{{.ServiceName}}(ctx, &obj)
-		return &resp, err
+func (s *{{.ServiceName}}Service) Upsert{{.ServiceName}}(ctx context.Context, input {{.ServiceName}}) (common.UpdateResult[*common.BaseModel[{{.ServiceName}}]], error) {
+{{if .IncludeValidation}}
+	val := input.Validate()
+	if !val.Pass {
+		return common.NewUpdateResult[*common.BaseModel[{{.ServiceName}}]](val, nil), fmt.Errorf("validation failed")
+	}
+{{else}}
+	val := validate.NewSuccessValidationResult()
+{{end}}
+	obj, err := postgres.UpdateObject(ctx, s.db, input, {{.ServiceName}}Identifier, input.ID)
+	if err != nil {
+		return common.NewUpdateResult(val, &obj), err
 	}
 
-	obj.ID = existingObj.ID
-	resp, err := s.Update{{.ServiceName}}(ctx, &obj)
-	return &resp, err
+	return common.NewUpdateResult(val, &obj), nil
 }
 
 `
 
 var findAllTemplateString = `
 // FindAll{{.ServiceName}}s return all {{.ServiceName}} in the system
-func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}s(ctx context.Context) (common.PagedResults[{{.ServiceName}}], error) {
-	pagingResults := common.NewPagedResultsForAllRecords[{{.ServiceName}}]()
-	sql := "select * from {{.ServiceLower}} where deleted_at is null order by name"
-
-	results, resultCount, err := s.DBClient.FindPagedObjects(sql, pagingResults.Pagination, pagingResults.Filters)
-	if err != nil {
-		return pagingResults, err
-	}
-
-	pagingResults.Pagination.TotalResults = &resultCount
-	unpacked, err := marshal.SurrealSmartUnmarshal[[]{{.ServiceName}}](results)
-	if err != nil {
-		return pagingResults, err
-	}
-
-	pagingResults.Results = common.RefToVal(unpacked)
-	return pagingResults, nil
+func (s *{{.ServiceName}}Service) FindAll{{.ServiceName}}s(ctx context.Context) (common.PagedResults[common.BaseModel[{{.ServiceName}}]], error) {
+	return postgres.FindAllObjects[{{.ServiceName}}](ctx, s.db, {{.ServiceName}}Identifier)
 }
 	
 `
 
 var findTemplateString = `
 // Find{{.ServiceName}} return a paged list of {{.ServiceName}} based on filter criteria
-func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[{{.ServiceName}}], error) {
+func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[common.BaseModel[{{.ServiceName}}]], error) {
 	out := common.NewPagedResults[{{.ServiceName}}](paging, filters)
 
-	whereSql, _ := s.DBClient.BuildWhereClauseFromFilters(&filters)
+	whereSql, _ := postgres.BuildWhereClauseFromFilters(&filters)
 
-	sql := fmt.Sprintf("SELECT * FROM {{.ServiceLower}} WHERE true AND deleted_at is null %s ORDER BY name", whereSql)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE true AND deleted_at is null %s ORDER BY created_at DESC", {{.ServiceName}}Identifier, whereSql)
 
-	rawResults, count, err := s.DBClient.FindPagedObjects(sql, paging, filters)
-	if err != nil {
-		return out, err
-	}
-
-	out.Pagination.TotalResults = &count
-	unpacked, err := marshal.SurrealSmartUnmarshal[[]{{.ServiceName}}](rawResults)
-	if err != nil {
-		return out, err
-	}
-
-	out.Results = common.RefToVal(unpacked)
-	return out, nil
+	return postgres.FindPagedObjects[{{.ServiceName}}](ctx, s.db, sql, out.Pagination, out.Filters)
 }
 `
 

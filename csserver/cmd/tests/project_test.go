@@ -2,6 +2,7 @@ package tests
 
 import (
 	"csserver/internal/appserv/factory"
+	"csserver/internal/common"
 	"csserver/internal/config"
 	"fmt"
 	"testing"
@@ -37,14 +38,15 @@ func TestSaveProject(t *testing.T) {
 		t.Error(err)
 	}
 
-	put.ProjectBasics.Name = put.ProjectBasics.Name + " T1"
+	put.Data.ProjectBasics.Name = put.Data.ProjectBasics.Name + " T1"
 
-	result, err := service.SaveProject(ctx, *put, resourceMap, roleMap, *org)
+	result, err := service.SaveProject(ctx, put.Data, resourceMap, roleMap, *org)
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Println(result.Object.ID)
+	p := common.UpwrapFromUpdateResult(result)
+	fmt.Println(p.ID)
 }
 
 func TestGetProject(t *testing.T) {
@@ -59,5 +61,5 @@ func TestGetProject(t *testing.T) {
 		t.Error(err)
 	}
 
-	fmt.Println(pro.ProjectBasics.Name)
+	fmt.Println(pro.Data.ProjectBasics.Name)
 }

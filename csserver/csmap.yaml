@@ -180,21 +180,24 @@ maps:
       target_name: "ProjectTemplateTask"
 
 
-  - name: "user_target"
-    source_path: "internal/services/iam/user/models.go"
+  - name: "appuser_target"
+    source_path: "internal/services/iam/appuser/models.go"
     target_path: "internal/appserv/graph/idl/models.gen.go"
     imports: 
-    - "csserver/internal/services/iam/user"
+    - "csserver/internal/services/iam/appuser"
     - "csserver/internal/common"
-  - name: "user_source"
+    map_overrides:
+    - source_name: "Appuser"
+      target_name: "User"
+  - name: "appuser_source"
     source_path: "internal/appserv/graph/idl/models.gen.go"
-    target_path: "internal/services/iam/user/models.go"
+    target_path: "internal/services/iam/appuser/models.go"
     imports: 
-    - "csserver/internal/services/iam/user"
+    - "csserver/internal/services/iam/appuser"
     - "csserver/internal/common"
     map_overrides:
     - source_name: "UpdateUser"
-      target_name: "User"
+      target_name: "Appuser"
 
 
 

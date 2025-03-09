@@ -1,16 +1,5 @@
 package comment
 
-import (
-	"context"
-	"csserver/internal/common"
-	"csserver/internal/marshal"
-	"csserver/internal/utils/quilljs"
-	"fmt"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
-)
-
 type CommentRelationshipType string
 type CommentEmoteType string
 
@@ -27,12 +16,15 @@ const (
 	BelongsTo  CommentRelationshipType = "belongsto"
 )
 
+/*
 // AddComment adds a comment to a project.  Is a wrapper for CreateComment
 func (s *CommentService) AddComment(ctx context.Context, comment Comment) (*common.UpdateResult[Comment], error) {
-	c, err := s.CreateComment(ctx, &comment)
+	result, err := s.CreateComment(ctx, comment)
 	if err != nil {
 		return nil, err
 	}
+
+	c := result.Object
 
 	//handleMentions(ctx, c, resource, c.ID)
 
@@ -45,7 +37,7 @@ func (s *CommentService) AddComment(ctx context.Context, comment Comment) (*comm
 	// 	return nil, err
 	// }
 	if comment.ProjectID != "" {
-		_, err = s.DBClient.RelateTo(ctx, c.Object.ID, comment.ProjectID, string(BelongsTo))
+		_, err = s.db.RelateTo(ctx, c.ID, comment.ProjectID, string(BelongsTo))
 		if err != nil {
 			return nil, err
 		}
@@ -89,7 +81,7 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 
 	//---clear out the project id for replies
 	comment.ProjectID = ""
-	c, err := s.CreateComment(ctx, &comment)
+	c, err := s.CreateComment(ctx, comment)
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -135,7 +127,7 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 	// 	return nil, err
 	// }
 
-	_, err = s.DBClient.RelateTo(ctx, c.Object.ID, parentComment.ID, string(IsAReplyTo))
+	_, err = s.db.RelateTo(ctx, c.Object.ID, parentComment.ID, string(IsAReplyTo))
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +137,7 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 
 // ModifyComment update the text of an existing comment
 func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (*common.UpdateResult[Comment], error) {
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
+	userEmail := config.GetUserEmailFromContext(ctx)
 
 	existingComment, err := s.GetCommentByID(ctx, comment.ID)
 	if err != nil {
@@ -277,14 +269,14 @@ func (s *CommentService) GetCommentThread(ctx context.Context, commentID string)
 // FindProjectComments finds all activity for a given project
 func (s *CommentService) FindCommentReplies(ctx context.Context, commentID string) (*common.PagedResults[Comment], error) {
 	pagingResults := common.NewPagedResultsForAllRecords[Comment]()
-	sql := `SELECT *, 
+	sql := `SELECT *,
 		<-likes<-user.id as likes,
 		<-loves<-user.id as loves,
 		<-dislikes<-user.id as dislikes,
 		<-laughs_at<-user.id as laughs_at,
 		<-acknowledges<-user.id as acknowledges
-	FROM comment 
-	WHERE ->is_a_reply_to->(comment where id = $comment) 
+	FROM comment
+	WHERE ->is_a_reply_to->(comment where id = $comment)
 	ORDER BY created_at
 	`
 
@@ -387,7 +379,7 @@ func (s *CommentService) RemoveComment(ctx context.Context, commentID string) er
 		return err
 	}
 
-	return s.DBClient.SoftDeleteObject(userEmail, commentToDelete)
+	return s.db.SoftDeleteObject(userEmail, commentToDelete)
 }
 
 // extractMentions extracts all mentions from a delta
@@ -414,3 +406,4 @@ func extractMentions(delta quilljs.Delta, commentID, projectID, contextUserID, c
 
 	return mentions
 }
+*/

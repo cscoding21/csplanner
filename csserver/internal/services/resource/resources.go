@@ -6,10 +6,6 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/resource/rtypes/resourcetype"
 	"slices"
-
-	"github.com/cscoding21/csval/validate"
-
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -18,28 +14,32 @@ var (
 )
 
 // SaveResource upserts a resource and updates calculated fields
-func (s *ResourceService) SaveResource(ctx context.Context, res Resource, org organization.Organization) (common.UpdateResult[Resource], error) {
+func (s *ResourceService) SaveResource(ctx context.Context, res Resource, org organization.Organization) (common.UpdateResult[*common.BaseModel[Resource]], error) {
 	s.CalculateResourceInfo(ctx, &res, org)
 
 	if len(res.ID) == 0 {
 		return s.addNewResource(ctx, res)
 	}
 
-	_, err := s.GetResourceByID(ctx, res.ID)
+	wrapperR, err := s.GetResourceByID(ctx, res.ID)
 	if err != nil {
 		//---there's an ID, but no existing record.  this is a new resource
+		return s.addNewResource(ctx, res)
+	}
+
+	if wrapperR == nil {
 		return s.addNewResource(ctx, res)
 	}
 
 	return s.PatchResource(ctx, res, org)
 }
 
-func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (common.UpdateResult[Resource], error) {
+func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (common.UpdateResult[*common.BaseModel[Resource]], error) {
 	if res.Type == resourcetype.Human {
 		if len(res.Skills) == 0 {
 			roleMap, err := s.GetRoleMap(ctx, true)
 			if err != nil {
-				return common.NewFailingUpdateResult(&res, err)
+				return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 			}
 
 			role, ok := roleMap[*res.RoleID]
@@ -49,33 +49,31 @@ func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (com
 		}
 	}
 
-	return s.CreateResource(ctx, &res)
+	return s.CreateResource(ctx, res)
 }
 
 // PatchResource performs a surgical update of a resource, specially handing certain fields
-func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, org organization.Organization) (common.UpdateResult[Resource], error) {
-	val := validate.NewSuccessValidationResult()
+func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, org organization.Organization) (common.UpdateResult[*common.BaseModel[Resource]], error) {
+	//val := validate.NewSuccessValidationResult()
 
 	res, err := s.GetResourceByID(ctx, resource.ID)
 	if err != nil {
-		log.Error(err)
-		return common.NewUpdateResult(&val, res), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	res.Name = resource.Name
-	res.ProfileImage = resource.ProfileImage
-	res.RoleID = resource.RoleID
-	res.AnnualizedCost = resource.AnnualizedCost
-	res.InitialCost = resource.InitialCost
-	res.Type = resource.Type
-	res.Status = resource.Status
+	res.Data.Name = resource.Name
+	res.Data.ProfileImage = resource.ProfileImage
+	res.Data.RoleID = resource.RoleID
+	res.Data.AnnualizedCost = resource.AnnualizedCost
+	res.Data.InitialCost = resource.InitialCost
+	res.Data.Type = resource.Type
+	res.Data.Status = resource.Status
 
-	s.CalculateResourceInfo(ctx, res, org)
+	s.CalculateResourceInfo(ctx, &res.Data, org)
 
-	out, err := s.UpdateResource(ctx, res)
+	out, err := s.UpdateResource(ctx, res.Data)
 	if err != nil {
-		log.Error(err)
-		return common.NewUpdateResult(&val, res), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
 	return out, nil
@@ -91,58 +89,54 @@ func (s *ResourceService) CalculateResourceInfo(ctx context.Context, res *Resour
 }
 
 // UpdateSkillForResource add or update a skill to s resource
-func (s *ResourceService) UpdateSkillForResource(ctx context.Context, id string, skill Skill) (common.UpdateResult[Resource], error) {
-	val := validate.NewSuccessValidationResult()
+func (s *ResourceService) UpdateSkillForResource(ctx context.Context, id string, skill Skill) (common.UpdateResult[*common.BaseModel[Resource]], error) {
+	//val := validate.NewSuccessValidationResult()
 
 	res, err := s.GetResourceByID(ctx, id)
 	if err != nil {
-		log.Error(err)
-		return common.NewUpdateResult(&val, res), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	if skillsContain(res.Skills, skill.ID) {
+	if skillsContain(res.Data.Skills, skill.ID) {
 		//---update the existing skill
-		for i, s := range res.Skills {
+		for i, s := range res.Data.Skills {
 			if s.ID == skill.ID {
-				res.Skills[i].Proficiency = skill.Proficiency
+				res.Data.Skills[i].Proficiency = skill.Proficiency
 			}
 		}
 	} else {
-		res.Skills = append(res.Skills, &skill)
+		res.Data.Skills = append(res.Data.Skills, &skill)
 	}
 
-	out, err := s.UpdateResource(ctx, res)
+	out, err := s.UpdateResource(ctx, res.Data)
 	if err != nil {
-		log.Error(err)
-		return common.NewUpdateResult(&val, res), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
 	return out, nil
 }
 
 // RemoveSkillFromResource remove a skill from a resource
-func (s *ResourceService) RemoveSkillFromResource(ctx context.Context, resourceID string, skillID string) (common.UpdateResult[Resource], error) {
-	val := validate.NewSuccessValidationResult()
+func (s *ResourceService) RemoveSkillFromResource(ctx context.Context, resourceID string, skillID string) (common.UpdateResult[*common.BaseModel[Resource]], error) {
+	//val := validate.NewSuccessValidationResult()
 
 	res, err := s.GetResourceByID(ctx, resourceID)
 	if err != nil {
-		log.Error(err)
-		return common.NewUpdateResult(&val, res), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	if skillsContain(res.Skills, skillID) {
+	if skillsContain(res.Data.Skills, skillID) {
 		//---update the existing skill
-		for i, s := range res.Skills {
+		for i, s := range res.Data.Skills {
 			if s.ID == skillID {
-				res.Skills = slices.Delete(res.Skills, i, i+1)
+				res.Data.Skills = slices.Delete(res.Data.Skills, i, i+1)
 			}
 		}
 	}
 
-	out, err := s.UpdateResource(ctx, res)
+	out, err := s.UpdateResource(ctx, res.Data)
 	if err != nil {
-		log.Error(err)
-		return common.NewUpdateResult(&val, res), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
 	return out, nil
@@ -161,7 +155,7 @@ func (s *ResourceService) GetResourceMap(ctx context.Context, force bool) (map[s
 
 	m := make(map[string]Resource)
 	for _, r := range res.Results {
-		m[r.ID] = r
+		m[r.ID] = r.Data
 	}
 
 	resourceMap = m
@@ -182,7 +176,7 @@ func (s *ResourceService) GetRoleMap(ctx context.Context, force bool) (map[strin
 
 	m := make(map[string]Role)
 	for _, r := range res.Results {
-		m[r.ID] = r
+		m[r.ID] = r.Data
 	}
 
 	roleMap = m

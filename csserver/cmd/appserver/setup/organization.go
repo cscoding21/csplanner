@@ -14,7 +14,7 @@ import (
 // CreateDefaultOrganization creates a default organization
 func CreateDefaultOrganization(ctx context.Context) error {
 	ts := factory.GetOrganizationService()
-	org := &organization.Organization{
+	org := organization.Organization{
 		ControlFields: common.ControlFields{
 			ID: organization.DefaultOrganizationID,
 		},

@@ -30,7 +30,7 @@ func TestCalculateProjectSchedule(t *testing.T) {
 		t.Error(err)
 	}
 
-	sch, err := ss.CalculateProjectSchedule(ctx, put, startTime, ram)
+	sch, err := ss.CalculateProjectSchedule(ctx, &put.Data, startTime, ram)
 	if err != nil {
 		t.Error(err)
 	}

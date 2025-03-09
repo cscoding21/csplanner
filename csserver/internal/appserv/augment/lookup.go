@@ -5,7 +5,8 @@ import (
 	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph/idl"
-	"csserver/internal/services/iam/user"
+	"csserver/internal/common"
+	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/list"
 	"csserver/internal/services/project"
 	"csserver/internal/services/projecttemplate"
@@ -21,7 +22,7 @@ import (
 var (
 	_skillCache    *[]list.ListItem
 	_resourceCache *[]resource.Resource
-	_userCache     *[]user.User
+	_userCache     *[]appuser.Appuser
 	_projectCache  *[]project.Project
 	_roleCache     *[]resource.Role
 	_templateCache *[]projecttemplate.Projecttemplate
@@ -89,7 +90,7 @@ func getSkills() *[]list.ListItem {
 		return nil
 	}
 
-	sc := utils.RefToValSlice(skillList.Values)
+	sc := utils.RefToValSlice(skillList.Data.Values)
 	_skillCache = &sc
 
 	return _skillCache
@@ -172,7 +173,7 @@ func findProjects() *[]project.Project {
 		return nil
 	}
 
-	_projectCache = &projects.Results
+	_projectCache = utils.ValToRef(common.ExtractDataFromBase(projects.Results))
 
 	return _projectCache
 }
@@ -194,12 +195,12 @@ func findResources() *[]resource.Resource {
 		return nil
 	}
 
-	_resourceCache = &resources.Results
+	_resourceCache = utils.ValToRef(common.ExtractDataFromBase(resources.Results))
 
 	return _resourceCache
 }
 
-func findUsers() *[]user.User {
+func findUsers() *[]appuser.Appuser {
 	if _userCache != nil {
 		return _userCache
 	}
@@ -238,7 +239,7 @@ func findLists() *[]list.List {
 		return nil
 	}
 
-	_listCache = &lists.Results
+	_listCache = utils.ValToRef(common.ExtractDataFromBase(lists.Results))
 
 	return _listCache
 }
@@ -260,7 +261,7 @@ func findRoles() *[]resource.Role {
 		return nil
 	}
 
-	_roleCache = &roles.Results
+	_roleCache = utils.ValToRef(common.ExtractDataFromBase(roles.Results))
 
 	return _roleCache
 }
@@ -282,7 +283,7 @@ func findTemplates() *[]projecttemplate.Projecttemplate {
 		return nil
 	}
 
-	_templateCache = &templates.Results
+	_templateCache = utils.ValToRef(common.ExtractDataFromBase(templates.Results))
 
 	return _templateCache
 }
@@ -292,7 +293,7 @@ func getUserByEmail(email string) *idl.User {
 
 	for _, u := range *users {
 		if u.Email == email {
-			out := csmap.UserUserToIdl(u)
+			out := csmap.AppuserAppuserToIdl(u)
 			return &out
 		}
 	}

@@ -16,14 +16,14 @@ fullnameOverride: ""
 
 env:
   - name: "CSP_DATABASE_HOST"
-    value: "surrealdb.database.svc"
+    value: "postgres-postgresql.database.svc"
   - name: "CSP_SERVICES_AIHOST"
     value: http://ai.app.svc:7000/bot
   - name: CSP_DATABASE_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: surreal-pass
-        key: surreal-pass.txt
+        name: db-pass
+        key: db-pass.txt
   - name: CSP_SECURITY_KEYCLOAKADMINPASS
     valueFrom:
       secretKeyRef:

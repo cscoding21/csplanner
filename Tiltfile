@@ -12,7 +12,7 @@ load('./tilt_lib/keycloak/Tiltfile', 'setup_keycloak')
 
 # DEPLOY SERVICES
 #---- Third party
-setup_surrealdb()
+#setup_surrealdb()
 setup_postgres()
 #setup_ollama()
 setup_keycloak()
@@ -32,11 +32,11 @@ setup_cssaas()
 # Watch: tell Tilt how to connect locally (optional)
 # Port forward service
 # SurrealDB
-k8s_resource(
-  workload='surrealdb',
-  port_forwards=9999,
-  labels=["Database"]
-)
+# k8s_resource(
+#   workload='surrealdb',
+#   port_forwards=9999,
+#   labels=["Database"]
+# )
 
 k8s_resource(
   workload='csserver',
@@ -75,4 +75,10 @@ k8s_resource(
   workload='keycloak',
   port_forwards="8080:8080",
   labels=["Keycloak"]
+)
+
+local_resource(
+  'database_setup',
+  cmd='sh -c "tilt_lib/postgres/setup.sh"',
+  resource_deps=['postgres']
 )

@@ -4,7 +4,6 @@ import (
 	"csserver/cmd/appserver/setup"
 	"csserver/internal/appserv"
 	"csserver/internal/config"
-	"csserver/migrations"
 
 	"github.com/cscoding21/csmig/shared"
 	log "github.com/sirupsen/logrus"
@@ -15,8 +14,8 @@ func init() {
 	config.InitConfig()
 	config.InitLogger()
 
-	migConfig := GetMigrationConfig()
-	migrations.Apply(migConfig)
+	//migConfig := GetMigrationConfig()
+	//migrations.Apply(migConfig)
 }
 
 // run the web server

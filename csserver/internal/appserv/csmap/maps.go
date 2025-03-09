@@ -83,9 +83,7 @@ func GetStatusFromUpdateResult[T any](result common.UpdateResult[T]) (*idl.Statu
 	}
 
 	status.Success = false
-	if result.ValidationResult != nil {
-		status.ValidationResult = common.ValToRef(GetValidationResultIdl(*result.ValidationResult))
-	}
+	status.ValidationResult = common.ValToRef(GetValidationResultIdl(result.ValidationResult))
 
 	return &status, nil
 }

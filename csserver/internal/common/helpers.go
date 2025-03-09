@@ -1,5 +1,11 @@
 package common
 
+import (
+	"encoding/base64"
+
+	"github.com/google/uuid"
+)
+
 // IsOneOf test to see if the input is equal to a list of items
 func IsOneOf[T comparable](input T, opts ...T) bool {
 	for _, o := range opts {
@@ -20,4 +26,10 @@ func Coalesce[T any](opts ...*T) *T {
 	}
 
 	return nil
+}
+
+// GetDBID create a base64 guid for DB ids
+func GetDBID() string {
+	uuid := []byte(uuid.New().String())
+	return base64.RawURLEncoding.EncodeToString(uuid)
 }

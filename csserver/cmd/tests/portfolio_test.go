@@ -37,9 +37,10 @@ func TestGetSchedule(t *testing.T) {
 	proj, err := projectService.GetProjectByID(ctx, pid)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
-	result, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, ram)
+	result, err := scheduleService.CalculateProjectSchedule(ctx, &proj.Data, startDate, ram)
 	if err != nil {
 		t.Error(err)
 	}

@@ -7,12 +7,12 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/config"
 
-	userPackage "csserver/internal/services/iam/user"
+	"csserver/internal/services/iam/appuser"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func CreateOrGetBot(ctx context.Context) *userPackage.User {
+func CreateOrGetBot(ctx context.Context) *appuser.Appuser {
 	service := factory.GetIAMAdminService()
 
 	user, err := service.GetUser(ctx, config.Config.Default.BotUserEmail)
@@ -20,11 +20,7 @@ func CreateOrGetBot(ctx context.Context) *userPackage.User {
 		log.Error(err)
 	}
 
-	// if user != nil && len(user.Email) > 0 {
-	// 	return user
-	// }
-
-	botUser := userPackage.User{
+	botUser := appuser.Appuser{
 		ControlFields: common.ControlFields{
 			ID: "user:bot",
 		},
@@ -52,12 +48,12 @@ func CreateOrGetBot(ctx context.Context) *userPackage.User {
 func CreateTestUsers(ctx context.Context) error {
 	service := factory.GetIAMAdminService()
 
-	usrs := []userPackage.User{
+	usrs := []appuser.Appuser{
 		//---users
-		{Email: "jeph@jmk21.com", FirstName: "Geomfry", LastName: "McHale", Password: "localpass", ConfirmPassword: "localpass"},
-		{Email: "tifa@jmk21.com", FirstName: "Tifa", LastName: "Lockhart", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/tifa.png"},
-		{Email: "cloud@jmk21.com", FirstName: "Cloud", LastName: "Strife", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/cloud.png"},
-		{Email: "aerith@jmk21.com", FirstName: "Aerith", LastName: "Gainsborough", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/aerith.png"},
+		{ControlFields: common.ControlFields{ID: "jeph@jmk21.com"}, Email: "jeph@jmk21.com", FirstName: "Geomfry", LastName: "McHale", Password: "localpass", ConfirmPassword: "localpass"},
+		{ControlFields: common.ControlFields{ID: "tifa@jmk21.com"}, Email: "tifa@jmk21.com", FirstName: "Tifa", LastName: "Lockhart", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/tifa.png"},
+		{ControlFields: common.ControlFields{ID: "cloud@jmk21.com"}, Email: "cloud@jmk21.com", FirstName: "Cloud", LastName: "Strife", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/cloud.png"},
+		{ControlFields: common.ControlFields{ID: "aerith@jmk21.com"}, Email: "aerith@jmk21.com", FirstName: "Aerith", LastName: "Gainsborough", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/aerith.png"},
 	}
 
 	for _, u := range usrs {

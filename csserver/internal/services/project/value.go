@@ -10,15 +10,16 @@ import (
 )
 
 // DeleteValueLineProject if the value like exists in the project object graph...remove it
-func (s *ProjectService) DeleteValueLineProject(ctx context.Context, projectID string, valueLineID string) (*common.UpdateResult[Project], error) {
-	project, err := s.GetProjectByID(ctx, projectID)
+func (s *ProjectService) DeleteValueLineProject(ctx context.Context, projectID string, valueLineID string) (common.UpdateResult[*common.BaseModel[Project]], error) {
+	projectBase, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	updatedProject := DeleteValueLineProjectGraph(*project, valueLineID)
-	pro, err := s.UpdateProject(ctx, &updatedProject)
-	return &pro, err
+	project := projectBase.Data
+
+	updatedProject := DeleteValueLineProjectGraph(project, valueLineID)
+	return s.UpdateProject(ctx, updatedProject)
 }
 
 // DeleteValueLineProjectGraph if the value line exists in the project, remove it.
@@ -39,19 +40,18 @@ func DeleteValueLineProjectGraph(project Project, valueLineID string) Project {
 }
 
 // UpdateProjectValueLine if the value line exists in the project object graph...update it.  Otherwise, add it
-func (s *ProjectService) UpdateProjectValueLine(ctx context.Context, projectID string, valueLine ProjectValueLine) (*common.UpdateResult[Project], error) {
+func (s *ProjectService) UpdateProjectValueLine(ctx context.Context, projectID string, valueLine ProjectValueLine) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	updatedProject := UpdateProjectValueLineGraph(*project, valueLine)
+	updatedProject := UpdateProjectValueLineGraph(project.Data, valueLine)
 	updatedProject.AggregateProjectValueLines()
 	updatedProject.GetProjectNPV()
 	updatedProject.GetProjectIRR()
 
-	pro, err := s.UpdateProject(ctx, &updatedProject)
-	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
+	return s.UpdateProject(ctx, updatedProject)
 }
 
 // updateProjectValueLineGraph if the value line exists in the project object graph...update it.  Otherwise, add it

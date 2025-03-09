@@ -11,15 +11,16 @@ import (
 )
 
 // DeleteTaskFromProject if the feature exists in the project object graph...remove it
-func (s *ProjectService) DeleteFeatureFromProject(ctx context.Context, projectID string, featureID string) (*common.UpdateResult[Project], error) {
-	project, err := s.GetProjectByID(ctx, projectID)
+func (s *ProjectService) DeleteFeatureFromProject(ctx context.Context, projectID string, featureID string) (common.UpdateResult[*common.BaseModel[Project]], error) {
+	result, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	updatedProject := DeleteFeatureFromProjectGraph(*project, featureID)
-	pro, err := s.UpdateProject(ctx, &updatedProject)
-	return &pro, err
+	project := result.Data
+
+	updatedProject := DeleteFeatureFromProjectGraph(project, featureID)
+	return s.UpdateProject(ctx, updatedProject)
 }
 
 // DeleteTaskFromProjectGraph if the feature exists in the project, remove it.
@@ -36,15 +37,15 @@ func DeleteFeatureFromProjectGraph(project Project, featureID string) Project {
 }
 
 // UpdateProjectFeature if the feature exists in the project object graph...update it.  Otherwise, add it
-func (s *ProjectService) UpdateProjectFeature(ctx context.Context, projectID string, feature ProjectFeature) (*common.UpdateResult[Project], error) {
-	project, err := s.GetProjectByID(ctx, projectID)
+func (s *ProjectService) UpdateProjectFeature(ctx context.Context, projectID string, feature ProjectFeature) (common.UpdateResult[*common.BaseModel[Project]], error) {
+	projectResult, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	updatedProject := UpdateProjectFeatureGraph(*project, feature)
-	pro, err := s.UpdateProject(ctx, &updatedProject)
-	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
+	project := projectResult.Data
+	updatedProject := UpdateProjectFeatureGraph(project, feature)
+	return s.UpdateProject(ctx, updatedProject)
 }
 
 // updateProjectFeatureGraph if the feature exists in the project object graph...update it.  Otherwise, add it

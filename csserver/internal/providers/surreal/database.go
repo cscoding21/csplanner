@@ -23,15 +23,15 @@ func NewDBClient(client surrealdb.DB) *DBClient {
 func (db *DBClient) GetObjectById(id string) (interface{}, error) {
 	objectData, err := db.Client.Select(id)
 	if err != nil {
-		return common.HandleReturnWithValue(&objectData, err)
+		return &objectData, err
 	}
 
 	err = surrealdb.Unmarshal(objectData, &objectData)
 	if err != nil {
-		return common.HandleReturnWithValue(&objectData, err)
+		return &objectData, err
 	}
 
-	return common.HandleReturnWithValue(&objectData, err)
+	return &objectData, err
 }
 
 // GetObjectById returns an object from the database
@@ -66,7 +66,7 @@ func (db *DBClient) SoftDeleteObject(
 	input.SetDeleteInfo(userEmail)
 
 	_, err := db.Client.Update(input.GetID(), input)
-	return common.HandleReturn(err)
+	return err
 }
 
 // CreateObject create an object of the passed in type
@@ -133,7 +133,7 @@ func (db *DBClient) GetCount(sql string, filters common.Filters) (*int, error) {
 	countData, err := db.Client.Query(countSql, filters.GetFiltersAsMap())
 	if err != nil {
 		log.Error(err)
-		return common.HandleReturnWithValue[int](nil, err)
+		return nil, err
 	}
 
 	return parseCountFromSurrealResult(countData)
@@ -167,7 +167,7 @@ func (db *DBClient) GetCount(sql string, filters common.Filters) (*int, error) {
 // Execute runs a statement against the database
 func (db *DBClient) Execute(sql string, vars map[string]interface{}) error {
 	_, err := db.Client.Query(sql, vars)
-	return common.HandleReturn(err)
+	return err
 }
 
 // BuildWhereClauseFromFilters convenience function to generate a where clause based on the input filters

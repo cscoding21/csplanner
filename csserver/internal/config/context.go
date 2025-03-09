@@ -5,7 +5,6 @@ import (
 )
 
 type contextKey string
-type ContextHelper struct{}
 
 const (
 	UserEmailKey contextKey = "userEmail"
@@ -30,11 +29,11 @@ func getValueFromContext(ctx context.Context, key contextKey) string {
 }
 
 // GetUserIDFromContext get user id from context
-func (h *ContextHelper) GetUserIDFromContext(ctx context.Context) string {
+func GetUserIDFromContext(ctx context.Context) string {
 	return getValueFromContext(ctx, UserIDKey)
 }
 
 // GetUserEmailFromContext get user id from context
-func (h *ContextHelper) GetUserEmailFromContext(ctx context.Context) string {
+func GetUserEmailFromContext(ctx context.Context) string {
 	return getValueFromContext(ctx, UserEmailKey)
 }

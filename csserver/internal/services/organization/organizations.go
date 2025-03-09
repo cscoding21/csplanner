@@ -3,8 +3,6 @@ package organization
 import (
 	"context"
 	"csserver/internal/common"
-
-	"github.com/cscoding21/csval/validate"
 )
 
 const (
@@ -19,18 +17,18 @@ func (s *OrganizationService) GetDefaultOrganization(
 		return nil, err
 	}
 
-	return org, nil
+	return &org.Data, nil
 }
 
 // SaveOrgDefaults update the default values in an organization
-func (s *OrganizationService) SaveOrgDefaults(ctx context.Context, defaults OrganizationDefaults) (common.UpdateResult[Organization], error) {
-	val := validate.NewSuccessValidationResult()
+func (s *OrganizationService) SaveOrgDefaults(ctx context.Context, defaults OrganizationDefaults) (common.UpdateResult[*common.BaseModel[Organization]], error) {
+	//val := validate.NewSuccessValidationResult()
 
 	org, err := s.GetDefaultOrganization(ctx)
 	if err != nil {
-		return common.NewUpdateResult(&val, org), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Organization]](nil, err)
 	}
 
 	org.Defaults = defaults
-	return s.UpdateOrganization(ctx, org)
+	return s.UpdateOrganization(ctx, *org)
 }

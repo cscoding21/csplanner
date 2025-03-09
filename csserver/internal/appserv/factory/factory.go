@@ -5,12 +5,12 @@ import (
 	"csserver/internal/config"
 	"csserver/internal/providers/contentful"
 	"csserver/internal/providers/nats"
-	"csserver/internal/providers/surreal"
+	"csserver/internal/providers/postgres"
 	"csserver/internal/services/activity"
 	"csserver/internal/services/comment"
 	"csserver/internal/services/content"
+	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/iam/auth"
-	"csserver/internal/services/iam/user"
 	"csserver/internal/services/list"
 	"csserver/internal/services/notification"
 	"csserver/internal/services/organization"
@@ -24,7 +24,7 @@ import (
 	"sync"
 
 	"github.com/Nerzal/gocloak/v13"
-	"github.com/surrealdb/surrealdb.go"
+	"github.com/jackc/pgx/v5"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -32,17 +32,11 @@ import (
 // ---define singletons
 var (
 	lock      = &sync.Mutex{}
-	_dbclient *surreal.DBClient
+	_dbclient *pgx.Conn
 )
 
-// GetContextHelper get context helper
-func GetContextHelper() *config.ContextHelper {
-	ch := config.ContextHelper{}
-	return &ch
-}
-
 // GetDBClient return a configured DB client as a singleton
-func GetDBClient() *surreal.DBClient {
+func GetDBClient() *pgx.Conn {
 	if _dbclient != nil {
 		return _dbclient
 	}
@@ -53,32 +47,21 @@ func GetDBClient() *surreal.DBClient {
 	fmt.Println("Creating DBClient instance now.")
 
 	// Connect to SurrealDB
-	host := fmt.Sprintf("ws://%s:%v/rpc", config.Config.Database.Host, config.Config.Database.Port)
-	_db, err := surrealdb.New(host)
+	//"postgres://username:password@localhost:5432/database_name"
+	host := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
+		config.Config.Database.User,
+		config.Config.Database.Password,
+		config.Config.Database.Host,
+		config.Config.Database.Port,
+		config.Config.Database.Database)
+
+	db, err := postgres.GetDB(context.Background(), host)
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	// Sign in
-	if _, err = _db.Signin(map[string]string{
-		"user": config.Config.Database.User,
-		"pass": config.Config.Database.Password,
-	}); err != nil {
-		log.Error(err)
-		return nil
-	}
-
-	// Select namespace and database
-	if _, err = _db.Use(
-		config.Config.Database.Namespace,
-		config.Config.Database.Database,
-	); err != nil {
-		log.Error(err)
-		return nil
-	}
-
-	_dbclient = surreal.NewDBClient(*_db)
+	_dbclient = db
 
 	return _dbclient
 }
@@ -113,14 +96,13 @@ func GetKeycloakClient() *gocloak.GoCloak {
 
 // GetActivityService get activity service instance
 func GetActivityService() *activity.ActivityService {
-	surrealClient := GetDBClient()
-	contextHelper := config.ContextHelper{}
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
-	return activity.NewActivityService(*surrealClient, contextHelper, pubsub)
+	return activity.NewActivityService(dbClient, pubsub)
 }
 
 // GetAuthService get user service instance
@@ -142,26 +124,26 @@ func GetAuthService(ctx context.Context) *auth.AuthService {
 
 // GetCommentService get comment service instance
 func GetCommentService() *comment.CommentService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return comment.NewCommentService(*surrealClient, config.ContextHelper{}, pubsub)
+	return comment.NewCommentService(dbClient, pubsub)
 }
 
 // GetListService get list service instance
 func GetListService() *list.ListService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return list.NewListService(*surrealClient, config.ContextHelper{}, pubsub)
+	return list.NewListService(dbClient, pubsub)
 }
 
 // GetListService get list service instance
@@ -177,43 +159,43 @@ func GetContentService() *content.ContentService {
 
 // GetNotificationService get notification service instance
 func GetNotificationService() *notification.NotificationService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return notification.NewNotificationService(*surrealClient, config.ContextHelper{}, pubsub)
+	return notification.NewNotificationService(dbClient, pubsub)
 }
 
 // GetOrganizationService get organization service instance
 func GetOrganizationService() *organization.OrganizationService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return organization.NewOrganizationService(*surrealClient, config.ContextHelper{}, pubsub)
+	return organization.NewOrganizationService(dbClient, pubsub)
 }
 
 // GetProjectService return a project service instance
 func GetProjectService() *project.ProjectService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return project.NewProjectService(*surrealClient, config.ContextHelper{}, pubsub)
+	return project.NewProjectService(dbClient, pubsub)
 }
 
 // GetPortfolioService return a portfolio service instance
 func GetPortfolioService() *portfolio.PortfolioService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	projectServce := GetProjectService()
 	resourceService := GetResourceService()
@@ -224,8 +206,7 @@ func GetPortfolioService() *portfolio.PortfolioService {
 	}
 
 	return portfolio.NewPortfolioService(
-		*surrealClient,
-		config.ContextHelper{},
+		dbClient,
 		pubsub,
 		*projectServce,
 		*resourceService,
@@ -234,7 +215,7 @@ func GetPortfolioService() *portfolio.PortfolioService {
 
 // GetProcessorService return a processor service instance
 func GetProcessorService() *processor.ProcessorService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	projectServce := GetProjectService()
 	resourceService := GetResourceService()
@@ -245,8 +226,7 @@ func GetProcessorService() *processor.ProcessorService {
 	}
 
 	return processor.NewProcessorService(
-		*surrealClient,
-		config.ContextHelper{},
+		dbClient,
 		pubsub,
 		*projectServce,
 		*resourceService,
@@ -255,45 +235,44 @@ func GetProcessorService() *processor.ProcessorService {
 
 // GetProjectTemplateService return a project template service instance
 func GetProjectTemplateService() *projecttemplate.ProjecttemplateService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return projecttemplate.NewProjecttemplateService(*surrealClient, config.ContextHelper{}, pubsub)
+	return projecttemplate.NewProjecttemplateService(dbClient, pubsub)
 }
 
 // GetResourceService return a resource service instance
 func GetResourceService() *resource.ResourceService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return resource.NewResourceService(*surrealClient, config.ContextHelper{}, pubsub)
+	return resource.NewResourceService(dbClient, pubsub)
 }
 
 // GetScheduleService return a schedule service instance
 func GetScheduleService() *schedule.ScheduleService {
-	surrealClient := GetDBClient()
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return schedule.NewScheduleService(*surrealClient, config.ContextHelper{}, pubsub)
+	return schedule.NewScheduleService(dbClient, pubsub)
 }
 
 // GetIAMAdminService get user service instance
 func GetIAMAdminService() *auth.IAMAdminService {
-	contextHelper := config.ContextHelper{}
 	client := GetKeycloakClient()
-	userService := GetUserService()
+	userService := GetAppuserService()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
@@ -301,7 +280,6 @@ func GetIAMAdminService() *auth.IAMAdminService {
 	}
 
 	svc := auth.NewIAMAdminService(
-		contextHelper,
 		client,
 		pubsub,
 		config.Config.Security.KeycloakRealm,
@@ -312,16 +290,16 @@ func GetIAMAdminService() *auth.IAMAdminService {
 	return &svc
 }
 
-// GetUserService return a resource service instance
-func GetUserService() *user.UserService {
-	surrealClient := GetDBClient()
+// GetAppuserService return a resource service instance
+func GetAppuserService() *appuser.AppuserService {
+	dbClient := GetDBClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {
 		log.Error(err)
 		return nil
 	}
 
-	return user.NewUserService(*surrealClient, config.ContextHelper{}, pubsub)
+	return appuser.NewAppuserService(dbClient, pubsub)
 }
 
 // GetDefaultOrganization return the default organization for the tenant
@@ -333,5 +311,5 @@ func GetDefaultOrganization(ctx context.Context) (*organization.Organization, er
 		return nil, err
 	}
 
-	return org, nil
+	return &org.Data, nil
 }

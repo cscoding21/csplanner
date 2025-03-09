@@ -76,4 +76,9 @@ genall:
 k8s-secrets:
 	./scripts/k8s-secrets.sh;
 
+## dbsetup: creates the database and user for the csPlanner PG instance
+.PHONY: dbsetup
+dbsetup:
+	./scripts/db.sh;
+
 

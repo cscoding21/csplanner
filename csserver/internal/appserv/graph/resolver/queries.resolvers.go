@@ -26,7 +26,7 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 		return nil, err
 	}
 
-	out := csmap.UserUserToIdl(*obj)
+	out := csmap.AppuserAppuserToIdl(*obj)
 
 	return &out, nil
 }
@@ -39,7 +39,7 @@ func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, erro
 		return nil, err
 	}
 
-	out := csmap.UserUserToIdl(*obj)
+	out := csmap.AppuserAppuserToIdl(*obj)
 
 	return &out, nil
 }
@@ -56,8 +56,8 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 
 	outResults := []*idl.Project{}
 	for _, r := range results.Results {
-		thisResult := csmap.ProjectProjectToIdl(r)
-		augment.AugmentProject(&r, &thisResult)
+		thisResult := csmap.ProjectProjectToIdl(r.Data)
+		augment.AugmentProject(&r.Data, &thisResult)
 		outResults = append(outResults, &thisResult)
 	}
 
@@ -79,9 +79,9 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 		return nil, err
 	}
 
-	service.GetStatusTransitionDetails(obj)
-	out := csmap.ProjectProjectToIdl(*obj)
-	augment.AugmentProject(obj, &out)
+	service.GetStatusTransitionDetails(&obj.Data)
+	out := csmap.ProjectProjectToIdl(*&obj.Data)
+	augment.AugmentProject(&obj.Data, &out)
 
 	return &out, nil
 }
@@ -106,7 +106,7 @@ func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID 
 		return nil, err
 	}
 
-	schedule, err := scheduleService.CalculateProjectSchedule(ctx, proj, startDate, ram)
+	schedule, err := scheduleService.CalculateProjectSchedule(ctx, &proj.Data, startDate, ram)
 	if err != nil {
 		return nil, err
 	}
@@ -137,56 +137,60 @@ func (r *queryResolver) CheckProjectStatus(ctx context.Context, projectID string
 
 // FindProjectComments is the resolver for the findProjectComments field.
 func (r *queryResolver) FindProjectComments(ctx context.Context, projectID string) (*idl.CommentResults, error) {
-	service := factory.GetCommentService()
+	panic("needs refactor")
+	// service := factory.GetCommentService()
 
-	results, err := service.FindProjectComments(ctx, projectID)
-	if err != nil {
-		return nil, err
-	}
+	// results, err := service.FindProjectComments(ctx, projectID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
-	out := idl.CommentResults{
-		Paging:  &pg,
-		Filters: &fi,
-		Results: csmap.CommentCommentToIdlSlice(common.ValToRefSlice(results.Results)),
-	}
+	// pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	// out := idl.CommentResults{
+	// 	Paging:  &pg,
+	// 	Filters: &fi,
+	// 	Results: csmap.CommentCommentToIdlSlice(common.ValToRefSlice(results.Results)),
+	// }
 
-	augment.AugmentCommentSlice(&out.Results)
+	// augment.AugmentCommentSlice(&out.Results)
 
-	return &out, nil
+	// return &out, nil
 }
 
 // GetCommentThread is the resolver for the getCommentThread field.
 func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.Comment, error) {
-	service := factory.GetCommentService()
-	obj, err := service.GetCommentThread(ctx, id)
-	if err != nil {
-		return nil, err
-	}
+	panic("needs refactor")
+	// service := factory.GetCommentService()
+	// obj, err := service.GetCommentThread(ctx, id)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	out := csmap.CommentCommentToIdl(*obj)
-	augment.AugmentComment(&out)
-	return &out, nil
+	// out := csmap.CommentCommentToIdl(*obj)
+	// augment.AugmentComment(&out)
+	// return &out, nil
 }
 
 // FindActivity is the resolver for the findActivity field.
 func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error) {
-	service := factory.GetActivityService()
+	panic("needs refactor")
 
-	//---TODO: make this find paged activities
-	activityResults, err := service.FindAllActivitys(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// service := factory.GetActivityService()
 
-	pg, fi := csmap.GetPageAndFilterIdl(activityResults.Pagination, activityResults.Filters)
-	out := idl.ActivityResults{
-		Paging:  &pg,
-		Filters: &fi,
-		Results: csmap.ActivityActivityToIdlSlice(common.ValToRefSlice(activityResults.Results)),
-	}
+	// //---TODO: make this find paged activities
+	// activityResults, err := service.FindAllActivitys(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &out, nil
+	// pg, fi := csmap.GetPageAndFilterIdl(activityResults.Pagination, activityResults.Filters)
+	// out := idl.ActivityResults{
+	// 	Paging:  &pg,
+	// 	Filters: &fi,
+	// 	Results: csmap.ActivityActivityToIdlSlice(common.ValToRefSlice(activityResults.Results)),
+	// }
+
+	// return &out, nil
 }
 
 // FindAllProjectTemplates is the resolver for the findAllProjectTemplates field.
@@ -201,7 +205,7 @@ func (r *queryResolver) FindAllProjectTemplates(ctx context.Context) (*idl.Proje
 	out := idl.ProjecttemplateResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ProjecttemplateProjecttemplateToIdlSlice(common.ValToRefSlice(results.Results)),
+		Results: csmap.ProjecttemplateProjecttemplateToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(results.Results))),
 	}
 
 	return &out, nil
@@ -215,7 +219,7 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 		return nil, err
 	}
 
-	out := csmap.OrganizationOrganizationToIdl(*org)
+	out := csmap.OrganizationOrganizationToIdl(org.Data)
 	augment.AugmentOrganization(&out)
 	return &out, nil
 }
@@ -291,7 +295,7 @@ func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, err
 	out := idl.UserResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.UserUserToIdlSlice(common.ValToRefSlice(userResults.Results)),
+		Results: csmap.AppuserAppuserToIdlSlice(common.ValToRefSlice(userResults.Results)),
 	}
 
 	return &out, nil
@@ -309,7 +313,7 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 	out := idl.ResourceResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(results.Results)),
+		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(results.Results))),
 	}
 
 	for _, r := range out.Results {
@@ -331,7 +335,7 @@ func (r *queryResolver) FindAllRoles(ctx context.Context) (*idl.RoleResults, err
 	out := idl.RoleResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.RoleResourceToIdlSlice(common.ValToRefSlice(results.Results)),
+		Results: csmap.RoleResourceToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(results.Results))),
 	}
 
 	return &out, nil
@@ -350,7 +354,7 @@ func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.Pa
 	out := idl.ResourceResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(results.Results)),
+		Results: csmap.ResourceResourceToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(results.Results))),
 	}
 
 	for _, r := range out.Results {
@@ -362,21 +366,23 @@ func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.Pa
 
 // FindUserNotifications is the resolver for the findUserNotifications field.
 func (r *queryResolver) FindUserNotifications(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.NotificationResults, error) {
-	service := factory.GetNotificationService()
-	paging, _ := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
-	results, err := service.FindUserNotifications(ctx, paging)
-	if err != nil {
-		return nil, err
-	}
+	panic("needs refactor")
 
-	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
-	out := idl.NotificationResults{
-		Paging:  &pg,
-		Filters: &fi,
-		Results: csmap.NotificationNotificationToIdlSlice(common.ValToRefSlice(results.Results)),
-	}
+	// service := factory.GetNotificationService()
+	// paging, _ := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
+	// results, err := service.FindUserNotifications(ctx, paging)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &out, nil
+	// pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	// out := idl.NotificationResults{
+	// 	Paging:  &pg,
+	// 	Filters: &fi,
+	// 	Results: csmap.NotificationNotificationToIdlSlice(common.ValToRefSlice(results.Results)),
+	// }
+
+	// return &out, nil
 }
 
 // GetResource is the resolver for the getResource field.
@@ -387,7 +393,7 @@ func (r *queryResolver) GetResource(ctx context.Context, id string) (*idl.Resour
 		return nil, err
 	}
 
-	out := csmap.ResourceResourceToIdl(*obj)
+	out := csmap.ResourceResourceToIdl(obj.Data)
 	augment.AugmentResource(&out)
 
 	return &out, nil
@@ -405,7 +411,7 @@ func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, err
 	out := idl.ListResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ListListToIdlSlice(common.ValToRefSlice(listResults.Results)),
+		Results: csmap.ListListToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(listResults.Results))),
 	}
 
 	return &out, nil
@@ -414,12 +420,14 @@ func (r *queryResolver) FindAllLists(ctx context.Context) (*idl.ListResults, err
 // GetList is the resolver for the getList field.
 func (r *queryResolver) GetList(ctx context.Context, nameOrID string) (*idl.List, error) {
 	service := factory.GetListService()
-	obj, err := service.GetList(ctx, nameOrID)
+	wrappedO, err := service.GetList(ctx, nameOrID)
 	if err != nil {
 		return nil, err
 	}
 
-	out := csmap.ListListToIdl(*obj)
+	obj := *wrappedO
+
+	out := csmap.ListListToIdl(obj.Data)
 
 	return &out, nil
 }

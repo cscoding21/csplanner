@@ -3,10 +3,7 @@ package processor
 import (
 	"context"
 	"csserver/internal/common"
-	"csserver/internal/config"
-	"csserver/internal/interfaces"
 	"csserver/internal/providers/nats"
-	"csserver/internal/providers/surreal"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/project/ptypes/projectstatus"
@@ -14,6 +11,8 @@ import (
 	"csserver/internal/services/schedule"
 	"errors"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // ---This is the name of the object in the database
@@ -21,8 +20,7 @@ const ProcessorIdentifier = "autoprocessor"
 
 // PortfolioService is a service for interacting with the project portfolio.
 type ProcessorService struct {
-	DBClient        surreal.DBClient
-	ContextHelper   interfaces.ContextHelpers
+	DBClient        *pgx.Conn
 	PubSub          nats.PubSubProvider
 	ProjectService  project.ProjectService
 	ResourceService resource.ResourceService
@@ -31,8 +29,7 @@ type ProcessorService struct {
 
 // NewProcessorService creates a new portfolio service.
 func NewProcessorService(
-	db surreal.DBClient,
-	ch config.ContextHelper,
+	db *pgx.Conn,
 	ps nats.PubSubProvider,
 	projService project.ProjectService,
 	resService resource.ResourceService,
@@ -40,7 +37,6 @@ func NewProcessorService(
 
 	return &ProcessorService{
 		DBClient:        db,
-		ContextHelper:   &ch,
 		PubSub:          ps,
 		ProjectService:  projService,
 		ResourceService: resService,
@@ -54,12 +50,12 @@ func (s *ProcessorService) ProcessNightly(ctx context.Context) error {
 		return err
 	}
 
-	err = s.ProcessSetProjectToInFlight(ctx, projects.Results)
+	err = s.ProcessSetProjectToInFlight(ctx, common.ExtractDataFromBase(projects.Results))
 	if err != nil {
 		return err
 	}
 
-	err = s.ProcessCompleteProject(ctx, projects.Results)
+	err = s.ProcessCompleteProject(ctx, common.ExtractDataFromBase(projects.Results))
 	if err != nil {
 		return err
 	}

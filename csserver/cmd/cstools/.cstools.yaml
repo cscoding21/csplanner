@@ -21,7 +21,7 @@ services:
     path: ""
   - name: Schedule
     path: ""
-  - name: User
+  - name: Appuser
     path: "iam"
   
   

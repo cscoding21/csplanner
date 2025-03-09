@@ -12,7 +12,6 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
-	"csserver/internal/services/comment"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
@@ -23,14 +22,16 @@ import (
 func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
 	out := idl.CreateUserResult{}
 	service := factory.GetIAMAdminService()
-	user := csmap.UpdateUserIdlToUser(input)
+	user := csmap.UpdateUserIdlToAppuser(input)
 
-	result, err := service.UpdateUser(ctx, &user)
+	result, err := service.UpdateUser(ctx, user)
+	wrapperU := result.Object
+	u := *wrapperU
 	if err != nil {
 		out.Status, _ = csmap.GetStatusFromError(err)
 	} else {
 		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
-		out.User = common.ValToRef(csmap.UserUserToIdl(*result.Object))
+		out.User = common.ValToRef(csmap.AppuserAppuserToIdl(u.Data))
 	}
 
 	return &out, nil
@@ -66,7 +67,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNe
 		return nil, err
 	}
 
-	result, err := service.CreateNewProject(ctx, basics, *template, resourceMap, roleMap, *org)
+	result, err := service.CreateNewProject(ctx, basics, template.Data, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +79,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNe
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -116,7 +117,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdatePr
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -155,14 +156,14 @@ func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.Upda
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	if err != nil {
 		return nil, err
 	}
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -179,14 +180,14 @@ func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID stri
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	if err != nil {
 		return nil, err
 	}
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -205,14 +206,14 @@ func (r *mutationResolver) UpdateProjectFeature(ctx context.Context, input idl.U
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	if err != nil {
 		return nil, err
 	}
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -229,14 +230,14 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	if err != nil {
 		return nil, err
 	}
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -255,14 +256,14 @@ func (r *mutationResolver) UpdateProjectValueLine(ctx context.Context, input idl
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	if err != nil {
 		return nil, err
 	}
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -279,14 +280,14 @@ func (r *mutationResolver) DeleteProjectValueLine(ctx context.Context, projectID
 		return nil, err
 	}
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	if err != nil {
 		return nil, err
 	}
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -310,7 +311,7 @@ func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID strin
 
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*result.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -327,55 +328,59 @@ func (r *mutationResolver) RunProcesses(ctx context.Context) (*idl.Status, error
 
 // CreateProjectComment is the resolver for the createProjectComment field.
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	service := factory.GetCommentService()
+	panic("needs refactor")
 
-	comment := comment.Comment{
-		ProjectID: input.ProjectID,
-		Text:      input.Text,
-	}
+	// service := factory.GetCommentService()
 
-	result, err := service.AddComment(ctx, comment)
-	if err != nil {
-		return nil, err
-	}
+	// comment := comment.Comment{
+	// 	ProjectID: input.ProjectID,
+	// 	Text:      input.Text,
+	// }
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
-	if err != nil {
-		return nil, err
-	}
+	// result, err := service.AddComment(ctx, comment)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	out := idl.CreateProjectCommentResult{
-		Status:  status,
-		Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
-	}
+	// status, err := csmap.GetStatusFromUpdateResult(*result)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &out, nil
+	// out := idl.CreateProjectCommentResult{
+	// 	Status:  status,
+	// 	Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
+	// }
+
+	// return &out, nil
 }
 
 // CreateProjectCommentReply is the resolver for the createProjectCommentReply field.
 func (r *mutationResolver) CreateProjectCommentReply(ctx context.Context, input idl.UpdateCommentReply) (*idl.CreateProjectCommentResult, error) {
-	service := factory.GetCommentService()
+	panic("needs refactor")
 
-	comment := comment.Comment{
-		Text: input.Text,
-	}
+	// service := factory.GetCommentService()
 
-	result, err := service.AddCommentReply(ctx, comment, input.ParentCommentID)
-	if err != nil {
-		return nil, err
-	}
+	// comment := comment.Comment{
+	// 	Text: input.Text,
+	// }
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
-	if err != nil {
-		return nil, err
-	}
+	// result, err := service.AddCommentReply(ctx, comment, input.ParentCommentID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	out := idl.CreateProjectCommentResult{
-		Status:  status,
-		Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
-	}
+	// status, err := csmap.GetStatusFromUpdateResult(*result)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &out, nil
+	// out := idl.CreateProjectCommentResult{
+	// 	Status:  status,
+	// 	Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
+	// }
+
+	// return &out, nil
 }
 
 // DeleteProjectComment is the resolver for the deleteProjectComment field.
@@ -387,33 +392,37 @@ func (r *mutationResolver) DeleteProjectComment(ctx context.Context, id string) 
 
 // UpdateProjectComment is the resolver for the updateProjectComment field.
 func (r *mutationResolver) UpdateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	service := factory.GetCommentService()
+	panic("needs refactor")
 
-	comment := csmap.UpdateCommentIdlToComment(input)
+	// service := factory.GetCommentService()
 
-	result, err := service.ModifyComment(ctx, comment)
-	if err != nil {
-		return nil, err
-	}
+	// comment := csmap.UpdateCommentIdlToComment(input)
 
-	status, err := csmap.GetStatusFromUpdateResult(*result)
-	if err != nil {
-		return nil, err
-	}
+	// result, err := service.ModifyComment(ctx, comment)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	out := idl.CreateProjectCommentResult{
-		Status:  status,
-		Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
-	}
+	// status, err := csmap.GetStatusFromUpdateResult(*result)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &out, nil
+	// out := idl.CreateProjectCommentResult{
+	// 	Status:  status,
+	// 	Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
+	// }
+
+	// return &out, nil
 }
 
 // ToggleEmote is the resolver for the toggleEmote field.
 func (r *mutationResolver) ToggleEmote(ctx context.Context, input idl.UpdateCommentEmote) (*idl.Status, error) {
-	service := factory.GetCommentService()
+	panic("needs refactor")
 
-	return csmap.GetStatusFromError(service.ToggleCommentEmote(ctx, input.CommentID, comment.CommentEmoteType(input.EmoteType)))
+	// service := factory.GetCommentService()
+
+	// return csmap.GetStatusFromError(service.ToggleCommentEmote(ctx, input.CommentID, comment.CommentEmoteType(input.EmoteType)))
 }
 
 // CreateResource is the resolver for the createResource field.
@@ -434,7 +443,7 @@ func (r *mutationResolver) CreateResource(ctx context.Context, input idl.UpdateR
 		out.Status, _ = csmap.GetStatusFromError(err)
 	} else {
 		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
-		out.Resource = common.ValToRef(csmap.ResourceResourceToIdl(*result.Object))
+		out.Resource = common.ValToRef(csmap.ResourceResourceToIdl(*common.UpwrapFromUpdateResult(result)))
 	}
 
 	return &out, err
@@ -447,7 +456,7 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 	out := idl.CreateResourceResult{}
 	service := factory.GetResourceService()
 	res := csmap.UpdateResourceIdlToResource(input)
-	var result common.UpdateResult[resource.Resource]
+	var result common.UpdateResult[*common.BaseModel[resource.Resource]]
 	var err error
 
 	org, err := factory.GetDefaultOrganization(ctx)
@@ -456,12 +465,11 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 	}
 
 	result, err = service.SaveResource(ctx, res, *org)
-
 	if err != nil {
 		out.Status, _ = csmap.GetStatusFromError(err)
 	} else {
 		out.Status, _ = csmap.GetStatusFromUpdateResult(result)
-		out.Resource = common.ValToRef(csmap.ResourceResourceToIdl(*result.Object))
+		out.Resource = common.ValToRef(csmap.ResourceResourceToIdl(*common.UpwrapFromUpdateResult(result)))
 	}
 
 	return &out, err
@@ -515,8 +523,8 @@ func (r *mutationResolver) UpdateRole(ctx context.Context, input idl.UpdateRole)
 		return &out, err
 	}
 
-	out.Status, _ = csmap.GetStatusFromUpdateResult(*result)
-	out.Role = common.ValToRef(csmap.RoleResourceToIdl(*result.Object))
+	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+	out.Role = common.ValToRef(csmap.RoleResourceToIdl(*common.UpwrapFromUpdateResult(result)))
 
 	return &out, nil
 }
@@ -537,16 +545,16 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 
 	model := csmap.UpdateOrganizationIdlToOrganization(input)
 
-	resp, err := service.SaveOrgDefaults(ctx, model.Defaults)
+	result, err := service.SaveOrgDefaults(ctx, model.Defaults)
 	if err != nil {
 		return nil, err
 	}
 
 	//---map back the result
-	status, _ := csmap.GetStatusFromUpdateResult(resp)
+	status, _ := csmap.GetStatusFromUpdateResult(result)
 	out := idl.CreateOrganizationResult{
 		Status:       status,
-		Organization: common.ValToRef(csmap.OrganizationOrganizationToIdl(*resp.Object)),
+		Organization: common.ValToRef(csmap.OrganizationOrganizationToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -565,7 +573,7 @@ func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList)
 	}
 
 	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
-	out.List = utils.ValToRef(csmap.ListListToIdl(*result.Object))
+	out.List = utils.ValToRef(csmap.ListListToIdl(*common.UpwrapFromUpdateResult(result)))
 
 	return &out, nil
 }
@@ -583,7 +591,7 @@ func (r *mutationResolver) UpdateProjectTemplate(ctx context.Context, input *idl
 	}
 
 	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
-	out.Template = utils.ValToRef(csmap.ProjecttemplateProjecttemplateToIdl(*result.Object))
+	out.Template = utils.ValToRef(csmap.ProjecttemplateProjecttemplateToIdl(*common.UpwrapFromUpdateResult(result)))
 
 	return &out, nil
 }
@@ -610,16 +618,16 @@ func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context,
 	}
 
 	//---update the project with the template structure
-	resp, err := service.SetProjectMilestonesFromTemplate(ctx, input.ProjectID, *template)
+	result, err := service.SetProjectMilestonesFromTemplate(ctx, input.ProjectID, template.Data)
 	if err != nil {
 		return nil, err
 	}
 
 	//---map back the result
-	status, err := csmap.GetStatusFromUpdateResult[project.Project](*resp)
+	status, err := csmap.GetStatusFromUpdateResult(result)
 	out := idl.CreateProjectResult{
 		Status:  status,
-		Project: common.ValToRef(csmap.ProjectProjectToIdl(*resp.Object)),
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
 	return &out, nil
@@ -627,14 +635,16 @@ func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context,
 
 // SetNotificationsRead is the resolver for the setNotificationsRead field.
 func (r *mutationResolver) SetNotificationsRead(ctx context.Context, input []string) (*idl.Status, error) {
-	service := factory.GetNotificationService()
+	panic("needs refactor")
 
-	err := service.SetNotificationsRead(ctx, input)
-	if err != nil {
-		return csmap.GetStatusFromError(err)
-	}
+	// service := factory.GetNotificationService()
 
-	return &idl.Status{Success: true}, nil
+	// err := service.SetNotificationsRead(ctx, input)
+	// if err != nil {
+	// 	return csmap.GetStatusFromError(err)
+	// }
+
+	// return &idl.Status{Success: true}, nil
 }
 
 // Mutation returns graph.MutationResolver implementation.

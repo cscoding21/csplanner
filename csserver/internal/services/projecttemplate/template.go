@@ -8,7 +8,7 @@ import (
 )
 
 // SaveTemplate create or update a project template
-func (s *ProjecttemplateService) SaveTemplate(ctx context.Context, model Projecttemplate) (common.UpdateResult[Projecttemplate], error) {
+func (s *ProjecttemplateService) SaveTemplate(ctx context.Context, model Projecttemplate) (common.UpdateResult[*common.BaseModel[Projecttemplate]], error) {
 	//---make sure all child item have IDs
 	for i, p := range model.Phases {
 		if len(p.ID) == 0 {
@@ -22,7 +22,5 @@ func (s *ProjecttemplateService) SaveTemplate(ctx context.Context, model Project
 		}
 	}
 
-	out, err := s.UpsertProjecttemplate(ctx, model)
-
-	return *out, err
+	return s.UpsertProjecttemplate(ctx, model)
 }

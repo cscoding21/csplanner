@@ -1,17 +1,28 @@
 package common
 
 import (
+	"fmt"
+
 	"github.com/cscoding21/csval/validate"
 )
 
 type UpdateResult[T any] struct {
 	Success          bool
-	ValidationResult *validate.ValidationResult
+	ValidationResult validate.ValidationResult
 	Object           *T
 }
 
+func UpwrapFromUpdateResult[T any](r UpdateResult[*BaseModel[T]]) *T {
+	if r.Object != nil {
+		obj := *r.Object
+		return &obj.Data
+	}
+
+	return nil
+}
+
 // NewUpdateResult return a result of an object update with validation information
-func NewUpdateResult[T any](val *validate.ValidationResult, obj *T) UpdateResult[T] {
+func NewUpdateResult[T any](val validate.ValidationResult, obj *T) UpdateResult[T] {
 	ur := UpdateResult[T]{
 		ValidationResult: val,
 	}
@@ -28,9 +39,16 @@ func NewUpdateResult[T any](val *validate.ValidationResult, obj *T) UpdateResult
 // NewFailingUpdateResult return a failing update result and error
 func NewFailingUpdateResult[T any](obj *T, err error) (UpdateResult[T], error) {
 	return UpdateResult[T]{
-		ValidationResult: &validate.ValidationResult{},
+		ValidationResult: validate.ValidationResult{},
 		Success:          false,
 		Object:           obj,
 	}, err
+}
 
+func NewFailingUpdateResultWithVal[T any](obj *T, val validate.ValidationResult) (UpdateResult[T], error) {
+	return UpdateResult[T]{
+		ValidationResult: val,
+		Success:          false,
+		Object:           obj,
+	}, fmt.Errorf("validation failed for object")
 }

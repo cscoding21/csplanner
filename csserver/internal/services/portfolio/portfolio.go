@@ -3,10 +3,8 @@ package portfolio
 import (
 	"context"
 	"csserver/internal/common"
-	"csserver/internal/config"
 	"csserver/internal/interfaces"
 	"csserver/internal/providers/nats"
-	"csserver/internal/providers/surreal"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
@@ -14,6 +12,8 @@ import (
 	"fmt"
 	"sort"
 	"time"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // ---This is the name of the object in the database
@@ -21,7 +21,7 @@ const PortfolioIdentifier = "portfolio"
 
 // PortfolioService is a service for interacting with the project portfolio.
 type PortfolioService struct {
-	DBClient        surreal.DBClient
+	DBClient        *pgx.Conn
 	ContextHelper   interfaces.ContextHelpers
 	PubSub          nats.PubSubProvider
 	ProjectService  project.ProjectService
@@ -31,8 +31,7 @@ type PortfolioService struct {
 
 // NewPortfolioService creates a new portfolio service.
 func NewPortfolioService(
-	db surreal.DBClient,
-	ch config.ContextHelper,
+	db *pgx.Conn,
 	ps nats.PubSubProvider,
 	projService project.ProjectService,
 	resService resource.ResourceService,
@@ -40,7 +39,6 @@ func NewPortfolioService(
 
 	return &PortfolioService{
 		DBClient:        db,
-		ContextHelper:   &ch,
 		PubSub:          ps,
 		ProjectService:  projService,
 		ResourceService: resService,
@@ -68,9 +66,10 @@ func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfo
 		return nil, err
 	}
 
-	port := NewPortfolio(response.Results, rm)
+	port := NewPortfolio(common.ExtractDataFromBase(response.Results), rm)
 
-	for _, proj := range response.Results {
+	for _, pr := range response.Results {
+		proj := pr.Data
 		startDate := time.Now()
 		if proj.ProjectBasics.StartDate != nil {
 			startDate = *proj.ProjectBasics.StartDate

@@ -1,14 +1,10 @@
 package notification
 
-import (
-	"context"
-	"csserver/internal/common"
-)
-
+/*
 // FindUserNotifications return a paged list of notifications specific to the logged in user
 func (s *NotificationService) FindUserNotifications(ctx context.Context, paging common.Pagination) (common.PagedResults[Notification], error) {
 	filters := common.Filters{Filters: []common.Filter{}}
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
+	userEmail := config.GetUserEmailFromContext(ctx)
 
 	filters.AddFilter(common.Filter{
 		Key:       "user_email",
@@ -25,13 +21,13 @@ func (s *NotificationService) SetNotificationsRead(ctx context.Context, ids []st
 	update notification
 	set is_read = true
 	where true
-		and user_id = $user
-		and id in $ids
+		and user_id = $1
+		and id in $2
 	`
 
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
-	return s.DBClient.Execute(sql, map[string]interface{}{
-		"user": userEmail,
-		"ids":  ids,
-	})
+	userEmail := config.GetUserEmailFromContext(ctx)
+	_, err := s.db.Exec(ctx, sql, userEmail, ids)
+
+	return err
 }
+*/

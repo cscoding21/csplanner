@@ -16,17 +16,16 @@ import (
 )
 
 // DeleteTaskFromProject if the tasks exists in the project object graph...remove it
-func (s *ProjectService) DeleteTaskFromProject(ctx context.Context, projectID string, milestoneID string, taskID string) (*common.UpdateResult[Project], error) {
+func (s *ProjectService) DeleteTaskFromProject(ctx context.Context, projectID string, milestoneID string, taskID string) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	updatedProject := deleteTaskFromProjectGraph(*project, milestoneID, taskID)
+	updatedProject := deleteTaskFromProjectGraph(project.Data, milestoneID, taskID)
 
 	updatedProject.CalculateProjectMilestoneStats()
-	pro, err := s.UpdateProject(ctx, &updatedProject)
-	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
+	return s.UpdateProject(ctx, updatedProject)
 }
 
 // deleteTaskFromProjectGraph if the milestone exists in the project object graph...remove the specified task
@@ -55,21 +54,20 @@ func (s *ProjectService) UpdateProjectTask(
 	task ProjectMilestoneTask,
 	resourceMap map[string]resource.Resource,
 	roleMap map[string]resource.Role,
-	org organization.Organization) (*common.UpdateResult[Project], error) {
+	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
 	//---DO THE UPDATE
-	updatedProject := UpdateTaskFromProjectGraph(*project, milestoneID, task)
+	updatedProject := UpdateTaskFromProjectGraph(project.Data, milestoneID, task)
 	updatedProject.CalculateProjectMilestoneStats()
 
-	project.CalculateProjectTaskStats(org, resourceMap, roleMap)
+	updatedProject.CalculateProjectTaskStats(org, resourceMap, roleMap)
 
-	pro, err := s.UpdateProject(ctx, &updatedProject)
-	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
+	return s.UpdateProject(ctx, updatedProject)
 }
 
 // updateTaskFromProjectGraph if the milestone exists in the project object graph...update the specified task.  Otherwise, add the task
@@ -108,13 +106,13 @@ func UpdateTaskFromProjectGraph(project Project, milestoneID string, task Projec
 
 // SetProjectMilestonesFromTemplate assign the details of a project plan to a specific project
 func (s *ProjectService) SetProjectMilestonesFromTemplate(
-	ctx context.Context, projectID string, template projecttemplate.Projecttemplate) (*common.UpdateResult[Project], error) {
+	ctx context.Context, projectID string, template projecttemplate.Projecttemplate) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		return common.HandleReturnWithValue[common.UpdateResult[Project]](nil, err)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	project.ProjectMilestones = make([]*ProjectMilestone, 0)
+	project.Data.ProjectMilestones = make([]*ProjectMilestone, 0)
 
 	for _, p := range template.Phases {
 		milestone := ProjectMilestone{
@@ -140,11 +138,9 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 			milestone.Tasks = append(milestone.Tasks, &task)
 		}
 
-		project.ProjectMilestones = append(project.ProjectMilestones, &milestone)
+		project.Data.ProjectMilestones = append(project.Data.ProjectMilestones, &milestone)
 	}
 
-	project.CalculateProjectMilestoneStats()
-	pro, err := s.UpdateProject(ctx, project)
-
-	return common.HandleReturnWithValue[common.UpdateResult[Project]](&pro, err)
+	project.Data.CalculateProjectMilestoneStats()
+	return s.UpdateProject(ctx, project.Data)
 }

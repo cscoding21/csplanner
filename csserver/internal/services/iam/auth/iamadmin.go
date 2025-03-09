@@ -8,7 +8,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/providers/nats"
-	userService "csserver/internal/services/iam/user"
+	"csserver/internal/services/iam/appuser"
 
 	"github.com/Nerzal/gocloak/v13"
 
@@ -16,26 +16,23 @@ import (
 )
 
 type IAMAdminService struct {
-	KCClient      *gocloak.GoCloak
-	KCRealm       string
-	KCAdminUser   string
-	KCAdminPass   string
-	ContextHelper config.ContextHelper
-	PubSub        nats.PubSubProvider
-	UserService   userService.UserService
+	KCClient    *gocloak.GoCloak
+	KCRealm     string
+	KCAdminUser string
+	KCAdminPass string
+	PubSub      nats.PubSubProvider
+	UserService appuser.AppuserService
 }
 
 func NewIAMAdminService(
-	ch config.ContextHelper,
 	client *gocloak.GoCloak,
 	pubsub nats.PubSubProvider,
 	realm string,
 	adminUser string,
 	adminPass string,
-	userService userService.UserService,
+	userService appuser.AppuserService,
 ) IAMAdminService {
 	out := IAMAdminService{}
-	out.ContextHelper = ch
 	out.KCClient = client
 	out.KCRealm = realm
 	out.KCAdminUser = adminUser
@@ -47,18 +44,18 @@ func NewIAMAdminService(
 }
 
 // CreateUser create a new Keycloak user
-func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User) (common.UpdateResult[userService.User], error) {
+func (s *IAMAdminService) CreateUser(ctx context.Context, user *appuser.Appuser) (common.UpdateResult[appuser.Appuser], error) {
 	val := user.Validate()
 	if !val.Pass {
-		return common.NewUpdateResult[userService.User](&val, nil), fmt.Errorf("validation failed")
+		return common.NewUpdateResult[appuser.Appuser](val, nil), fmt.Errorf("validation failed")
 	}
 
 	token, err := s.getAdminToken(ctx)
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[appuser.Appuser](val, nil), err
 	}
 
-	dbu, err := s.UserService.GetUser(user.Email)
+	dbu, err := s.UserService.GetAppuser(ctx, user.Email)
 	if err != nil {
 		log.Errorf("iamadmin getUser: %s", err)
 	}
@@ -66,7 +63,7 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 		user.ID = dbu.ID
 	}
 
-	dbUser, err := s.UserService.UpsertUser(ctx, userService.User{
+	updateResult, err := s.UserService.UpsertAppuser(ctx, appuser.Appuser{
 		ControlFields: common.ControlFields{
 			ID: user.ID,
 		},
@@ -76,17 +73,19 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 		ProfileImage: user.ProfileImage,
 	})
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[appuser.Appuser](val, nil), err
 	}
 
+	dbUser := *updateResult.Object
+
 	if dbUser == nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[appuser.Appuser](val, nil), err
 	}
 
 	props := make(map[string][]string)
 
 	props["profileImage"] = []string{user.ProfileImage}
-	props["dbid"] = []string{dbUser.Object.ID}
+	props["dbid"] = []string{dbUser.ID}
 
 	u := gocloak.User{
 		FirstName:  &user.FirstName,
@@ -109,33 +108,33 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *userService.User
 		err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, u)
 	}
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[appuser.Appuser](val, nil), err
 	}
 
 	err = s.KCClient.SetPassword(ctx, token.AccessToken, uid, s.KCRealm, user.Password, false)
 	if err != nil {
 		log.Errorf("iamadmin keycloak setPassword: %s", err)
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[appuser.Appuser](val, nil), err
 	}
 
-	return common.NewUpdateResult[userService.User](&val, nil), err
+	return common.NewUpdateResult[appuser.Appuser](val, nil), err
 }
 
 // UpdateUser create a new Keycloak user
-func (s *IAMAdminService) UpdateUser(ctx context.Context, user *userService.User) (common.UpdateResult[userService.User], error) {
+func (s *IAMAdminService) UpdateUser(ctx context.Context, user appuser.Appuser) (common.UpdateResult[*common.BaseModel[appuser.Appuser]], error) {
 	val := user.Validate()
 	if !val.Pass {
-		return common.NewUpdateResult[userService.User](&val, nil), fmt.Errorf("validation failed")
+		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), fmt.Errorf("validation failed")
 	}
 
 	token, err := s.getAdminToken(ctx)
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), err
 	}
 
-	dbUser, err := s.UserService.GetUser(user.Email)
+	dbUser, err := s.UserService.GetAppuser(ctx, user.Email)
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), err
 	}
 
 	dbUser.FirstName = user.FirstName
@@ -145,7 +144,7 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user *userService.User
 
 	kcUser, err := s.getKCUser(ctx, user.Email)
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), err
 	}
 
 	props := make(map[string][]string)
@@ -160,10 +159,10 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user *userService.User
 
 	err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, *kcUser)
 	if err != nil {
-		return common.NewUpdateResult[userService.User](&val, nil), err
+		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), err
 	}
 
-	return s.UserService.UpdateUser(ctx, dbUser)
+	return s.UserService.UpdateAppuser(ctx, *dbUser)
 }
 
 // getAdminToken return an token that can be used for
@@ -173,18 +172,18 @@ func (s *IAMAdminService) getAdminToken(ctx context.Context) (*gocloak.JWT, erro
 		s.KCAdminPass,
 		"master")
 
-	return common.HandleReturnWithValue(token, err)
+	return token, err
 }
 
 // GetCurrentUser gets the user based on the credentials from the context
-func (s *IAMAdminService) GetCurrentUser(ctx context.Context) (*userService.User, error) {
+func (s *IAMAdminService) GetCurrentUser(ctx context.Context) (*appuser.Appuser, error) {
 	contextUserEmail, ok := ctx.Value(config.UserEmailKey).(string)
 	if !ok {
-		return common.HandleReturnWithValue[userService.User](nil, errors.New("context does not contain user email"))
+		return nil, errors.New("context does not contain user email")
 	}
 
 	user, err := s.GetUser(ctx, contextUserEmail)
-	return common.HandleReturnWithValue(user, err)
+	return user, err
 }
 
 // getKCUser retrieve a user record from Keycloak
@@ -212,14 +211,14 @@ func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*goc
 }
 
 // GetUser get a user based on the passed in email
-func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userService.User, error) {
+func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*appuser.Appuser, error) {
 	u, err := s.getKCUser(ctx, idOrEmail)
 
 	if u == nil {
 		return nil, err
 	}
 
-	user := userService.User{
+	user := appuser.Appuser{
 		ControlFields: common.ControlFields{
 			ID: *u.ID,
 		},
@@ -229,12 +228,12 @@ func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*userS
 		ProfileImage: getProfileImage(u.Attributes),
 		DBID:         getDBID(u.Attributes),
 	}
-	return common.HandleReturnWithValue(&user, err)
+	return &user, err
 }
 
 // GetUser get a user based on the passed in email
-func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults[userService.User], error) {
-	pagingResults := common.NewPagedResultsForAllRecords[userService.User]()
+func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults[appuser.Appuser], error) {
+	pagingResults := common.NewPagedResultsForAllRecords[appuser.Appuser]()
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
@@ -250,10 +249,10 @@ func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults
 		return pagingResults, err
 	}
 
-	out := []userService.User{}
+	out := []appuser.Appuser{}
 
 	for i := range users {
-		user := userService.User{
+		user := appuser.Appuser{
 			ControlFields: common.ControlFields{
 				ID: *users[i].ID,
 			},

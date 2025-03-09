@@ -31,9 +31,9 @@ func parseCountFromSurrealResult(raw interface{}) (*int, error) {
 
 	_, err := surrealdb.UnmarshalRaw(raw, &countSlice)
 	if err != nil {
-		return common.HandleReturnWithValue[int](nil, err)
+		return nil, err
 	} else if len(countSlice) == 0 {
-		return common.HandleReturnWithValue[int](common.ValToRef(0), nil)
+		return common.ValToRef(0), nil
 	}
 
 	countMap := countSlice[0]

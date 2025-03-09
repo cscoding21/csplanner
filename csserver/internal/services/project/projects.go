@@ -7,7 +7,6 @@ import (
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
-	"fmt"
 
 	"github.com/cscoding21/csval/validate"
 
@@ -20,7 +19,7 @@ func (s *ProjectService) SaveProject(
 	pro Project,
 	resourceMap map[string]resource.Resource,
 	roleMap map[string]resource.Role,
-	org organization.Organization) (common.UpdateResult[Project], error) {
+	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	//---TODO: update to proper validation
 	//val := pro.Validate()
 	val := validate.NewSuccessValidationResult()
@@ -31,19 +30,22 @@ func (s *ProjectService) SaveProject(
 
 	lastProject, err := s.GetProjectByID(ctx, pro.ID)
 	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
+	}
+	if lastProject == nil {
 		//---existing project does not exist...create
 		return s.newProject(ctx, pro, resourceMap, roleMap, org, val)
 	}
 
-	lastProject.ProjectBasics = pro.ProjectBasics
-	lastProject.ProjectCost = pro.ProjectCost
-	lastProject.ProjectDaci = pro.ProjectDaci
+	lastProject.Data.ProjectBasics = pro.ProjectBasics
+	lastProject.Data.ProjectCost = pro.ProjectCost
+	lastProject.Data.ProjectDaci = pro.ProjectDaci
 
-	lastProject.ProjectValue.DiscountRate = pro.ProjectValue.DiscountRate
+	lastProject.Data.ProjectValue.DiscountRate = pro.ProjectValue.DiscountRate
 
-	lastProject.PerformAllCalcs(org, resourceMap, roleMap)
+	lastProject.Data.PerformAllCalcs(org, resourceMap, roleMap)
 
-	return s.UpdateProject(ctx, lastProject)
+	return s.UpdateProject(ctx, lastProject.Data)
 }
 
 func (s *ProjectService) newProject(
@@ -52,19 +54,20 @@ func (s *ProjectService) newProject(
 	resourceMap map[string]resource.Resource,
 	roleMap map[string]resource.Role,
 	org organization.Organization,
-	val validate.ValidationResult) (common.UpdateResult[Project], error) {
+	val validate.ValidationResult) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
 	pro.ProjectStatusBlock.Status = projectstatus.NewProject
-	proj, err := s.CreateProject(ctx, &pro)
+	updateResult, err := s.CreateProject(ctx, pro)
 	if err != nil {
-		return common.NewUpdateResult(&val, &pro), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	pro = *proj.Object
+	updateObj := *updateResult.Object
+	pro = updateObj.Data
 
 	pro.PerformAllCalcs(org, resourceMap, roleMap)
 
-	return s.UpdateProject(ctx, &pro)
+	return s.UpdateProject(ctx, pro)
 }
 
 // CreateNewProject adds a new project to the portfolio
@@ -74,7 +77,7 @@ func (s *ProjectService) CreateNewProject(
 	template projecttemplate.Projecttemplate,
 	rm map[string]resource.Resource,
 	roleMap map[string]resource.Role,
-	org organization.Organization) (common.UpdateResult[Project], error) {
+	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	newProj := Project{
 		ProjectBasics: &basics,
 		ProjectStatusBlock: &ProjectStatusBlock{
@@ -97,17 +100,20 @@ func (s *ProjectService) CreateNewProject(
 		Calculated:      ProjectCalculatedData{},
 	}
 
-	proj, err := s.CreateProject(ctx, &newProj)
+	updateResult, err := s.CreateProject(ctx, newProj)
 	if err != nil {
-		return proj, err
+		return updateResult, err
 	}
 
-	projWithMS, err := s.SetProjectMilestonesFromTemplate(ctx, proj.Object.ID, template)
+	pro := common.UpwrapFromUpdateResult(updateResult)
+	updateResultWithMS, err := s.SetProjectMilestonesFromTemplate(ctx, pro.ID, template)
 	if err != nil {
-		return *projWithMS, err
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	return s.SaveProject(ctx, *projWithMS.Object, rm, roleMap, org)
+	pro = common.UpwrapFromUpdateResult(updateResultWithMS)
+
+	return s.SaveProject(ctx, *pro, rm, roleMap, org)
 }
 
 // SetProjectStatus update the status of a project by adhering to the rules of the state machine
@@ -115,25 +121,24 @@ func (s *ProjectService) SetProjectStatus(
 	ctx context.Context,
 	projectID string,
 	status projectstatus.ProjectState,
-	force bool) (common.UpdateResult[Project], error) {
+	force bool) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
 	p, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
-		ev := validate.NewFailingValidationResult(validate.NewValidationMessage("", err.Error()))
-		return common.NewUpdateResult(&ev, p), err
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
 	newState := stateMachineMap[status]
 
-	val := newState.Can(p)
+	val := newState.Can(&p.Data)
 
 	if !val.Pass && !force {
-		return common.NewUpdateResult(&val, p), fmt.Errorf("illegal state transition")
+		return common.NewFailingUpdateResultWithVal[*common.BaseModel[Project]](nil, val)
 	}
 
-	p.ProjectStatusBlock.Status = newState.State
+	p.Data.ProjectStatusBlock.Status = newState.State
 
-	return s.UpdateProject(ctx, p)
+	return s.UpdateProject(ctx, p.Data)
 }
 
 // CheckProjectStatusChange performa dry run of a status change to see if it would go through successfully
@@ -146,7 +151,7 @@ func (s *ProjectService) CheckProjectStatusChange(ctx context.Context, projectID
 
 	newState := stateMachineMap[status]
 
-	return newState.Can(p), nil
+	return newState.Can(&p.Data), nil
 }
 
 // GetStatusTransitionDetails populate information about the project status state machine

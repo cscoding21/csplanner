@@ -22,7 +22,7 @@ import (
 func CreateTestProjects(ctx context.Context) error {
 	ps := factory.GetProjectService()
 	rs := factory.GetResourceService()
-	us := factory.GetUserService()
+	us := factory.GetAppuserService()
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	projectList, _ := ps.FindAllProjects(ctx)
@@ -41,7 +41,7 @@ func CreateTestProjects(ctx context.Context) error {
 	}
 
 	allResources, _ := rs.FindAllResources(ctx)
-	allUsers, _ := us.FindAllUsers(ctx)
+	allUsers, _ := us.FindAllAppusers(ctx)
 
 	updateProject := project.Project{
 		ControlFields: common.ControlFields{
@@ -50,7 +50,7 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-			OwnerID:     allUsers.Results[0].Email,
+			OwnerID:     allUsers.Results[0].Data.Email,
 			StartDate:   utils.ValToRef(time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC)),
 		},
 		ProjectStatusBlock: &project.ProjectStatusBlock{
@@ -285,16 +285,16 @@ func CreateTestProjects(ctx context.Context) error {
 	}
 
 	pr, err := ps.SaveProject(ctx, updateProject, resourceMap, roleMap, *org)
+
 	if err != nil {
 		log.Errorf("Save Project Error (YTS): %s", err)
-	} else {
-		log.Infof("PROJECT CREATED: %s", pr.Object.ProjectBasics.Name)
 	}
-	pr, err = ps.SetProjectStatus(ctx, pr.Object.ID, projectstatus.Scheduled, true)
+	wrappedP := *pr.Object
+	proj := *wrappedP
+
+	pr, err = ps.SetProjectStatus(ctx, proj.ID, projectstatus.Scheduled, true)
 	if err != nil {
 		log.Errorf("Set Project Status Error (YTS): %s", err)
-	} else {
-		log.Infof("PROJECT STATUS UPDATED: %s", pr.Object.ProjectBasics.Name)
 	}
 
 	otherProjects := findPortfolioProjects()
@@ -304,14 +304,13 @@ func CreateTestProjects(ctx context.Context) error {
 		pr, err = ps.SaveProject(ctx, otherProject, resourceMap, roleMap, *org)
 		if err != nil {
 			log.Errorf("Save Project Error (OTHER): %s", err)
-		} else {
-			log.Infof("PROJECT CREATED: %s", pr.Object.ProjectBasics.Name)
 		}
-		pr, err = ps.SetProjectStatus(ctx, pr.Object.ID, st, true)
+		wrappedP = *pr.Object
+		proj = *wrappedP
+
+		pr, err = ps.SetProjectStatus(ctx, proj.ID, st, true)
 		if err != nil {
 			log.Errorf("Set Project Status Error (YTS): %s", err)
-		} else {
-			log.Infof("PROJECT STATUS UPDATED: %s", pr.Object.ProjectBasics.Name)
 		}
 	}
 
@@ -363,10 +362,10 @@ func findPortfolioProjects() []project.Project {
 
 func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id int) project.Project {
 	rs := factory.GetResourceService()
-	us := factory.GetUserService()
+	us := factory.GetAppuserService()
 	ctx := context.Background()
 	allResources, _ := rs.FindAllResources(ctx)
-	allUsers, _ := us.FindAllUsers(ctx)
+	allUsers, _ := us.FindAllAppusers(ctx)
 
 	proj := project.Project{
 		ControlFields: common.ControlFields{
@@ -375,7 +374,7 @@ func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id 
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
 			Description: "Here's a video to add to the portfolio",
-			OwnerID:     allUsers.Results[rand.Intn(*allUsers.Pagination.TotalResults-1)].Email,
+			OwnerID:     allUsers.Results[rand.Intn(*allUsers.Pagination.TotalResults-1)].Data.Email,
 		},
 		ProjectStatusBlock: &project.ProjectStatusBlock{
 			Status: status,

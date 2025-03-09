@@ -17,7 +17,7 @@ func SetupTestData(ctx context.Context) error {
 	err = errors.Join(err, CreateTestTemplates(ctx))
 	err = errors.Join(err, CreateTestResources(ctx))
 	err = errors.Join(err, CreateTestProjects(ctx))
-	err = errors.Join(err, CreateTestComments(ctx))
+	//err = errors.Join(err, CreateTestComments(ctx))
 
 	processor := factory.GetProcessorService()
 

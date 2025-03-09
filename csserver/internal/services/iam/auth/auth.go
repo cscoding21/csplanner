@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 	"csserver/internal/providers/nats"
-	"csserver/internal/services/iam/user"
+	"csserver/internal/services/iam/appuser"
 	"fmt"
 	"strings"
 
@@ -23,7 +23,7 @@ type AuthResult struct {
 	Success      bool
 	Token        string
 	RefreshToken string
-	User         user.User
+	User         appuser.Appuser
 	Claims       interface{}
 	Message      string
 }
@@ -115,7 +115,7 @@ func (s *AuthService) NewSuccessAuthResult(ctx context.Context, token string, re
 		Success:      true,
 		Token:        token,
 		RefreshToken: refreshToken,
-		User: user.User{
+		User: appuser.Appuser{
 			Email:        GetKeyFromClaims(*claims, "email").(string),
 			FirstName:    GetKeyFromClaims(*claims, "given_name").(string),
 			LastName:     GetKeyFromClaims(*claims, "family_name").(string),

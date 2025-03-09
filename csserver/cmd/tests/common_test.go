@@ -8,12 +8,13 @@ import (
 
 // getTestContext return a context object suitable to running test against live services
 func getTestContext() context.Context {
-	service := factory.GetUserService()
+	service := factory.GetAppuserService()
 	ctx := context.Background()
+	anonID := ""
 
-	anonID, err := service.GetUser(config.Config.Default.BotUserEmail)
-	if err != nil {
-		panic(err)
+	anonUser, err := service.GetAppuser(ctx, config.Config.Default.BotUserEmail)
+	if err == nil {
+		anonID = anonUser.ID
 	}
 
 	ctx = context.WithValue(ctx, config.UserEmailKey, config.Config.Default.BotUserEmail)
