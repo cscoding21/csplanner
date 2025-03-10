@@ -26,11 +26,11 @@ func (s *ResourceService) FindAllRoles(ctx context.Context) (common.PagedResults
 func (s *ResourceService) FindRoles(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[common.BaseModel[Role]], error) {
 	out := common.NewPagedResults[Role](paging, filters)
 
-	whereSql, _ := postgres.BuildWhereClauseFromFilters(&filters)
+	whereSql, params := postgres.BuildWhereClauseFromFilters(&filters)
 
 	sql := fmt.Sprintf("SELECT * FROM %s WHERE true AND deleted_at is null %s ORDER BY name", RoleIdentifier, whereSql)
 
-	return postgres.FindPagedObjects[Role](ctx, s.db, sql, out.Pagination, out.Filters)
+	return postgres.FindPagedObjects[Role](ctx, s.db, sql, out.Pagination, out.Filters, params)
 }
 
 // CreateRoles creates a new Roles.

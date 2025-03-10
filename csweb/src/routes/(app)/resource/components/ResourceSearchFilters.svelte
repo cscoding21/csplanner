@@ -57,21 +57,21 @@
         let out:InputFilters = { filters: [] as InputFilter[] }
         let filterArray:InputFilter[] = [] 
 
-		const kwfil = { key: 'name', value: searchInput, operation: 'fl' }
+		const kwfil = { key: 'data.name', value: searchInput, operation: 'fl' }
         filterArray = [...filterArray, kwfil]
 
         if (status && status.length > 0) {
-            const stfil = { key: 'status', value: status.join(","), operation: 'in' }
+            const stfil = { key: 'data.status', value: status.join(","), operation: 'in' }
             filterArray = [...filterArray, stfil]
         }
 
         if (type && type.length > 0) {
-            const tyfil = { key: 'type', value: type.join(","), operation: 'in' }
+            const tyfil = { key: 'data.type', value: type.join(","), operation: 'in' }
             filterArray = [...filterArray, tyfil]
         }
 
         if (skills) {
-            const skfil = { key: 'skills.id', value: skills, operation: 'ct' }
+            const skfil = { key: 'data.skills.id', value: skills, operation: 'ct' }
             filterArray = [...filterArray, skfil]
         }
 

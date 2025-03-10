@@ -94,8 +94,8 @@ func setDefaults() {
 	viper.SetDefault("pubsub.name", "csplanner-nats")
 
 	//Content Management
-	viper.SetDefault("cms.orgid", "nats://nats.nats.svc:4222")
-	viper.SetDefault("cms.spaceid", "%s.%s.%s.%s")
+	viper.SetDefault("cms.orgid", "xxxxx")
+	viper.SetDefault("cms.spaceid", "xxxxx")
 	viper.SetDefault("cms.pat", "CSPLANNER")
 
 	//Services

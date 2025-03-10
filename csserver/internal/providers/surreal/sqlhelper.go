@@ -1,14 +1,6 @@
 package surreal
 
-import (
-	"fmt"
-	"strings"
-
-	"csserver/internal/common"
-
-	"github.com/surrealdb/surrealdb.go"
-)
-
+/*
 // getCountSql modify a SQL query so that it returns a count
 func getCountSql(sql string) string {
 	var builder strings.Builder

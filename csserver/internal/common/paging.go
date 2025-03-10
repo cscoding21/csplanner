@@ -2,7 +2,6 @@ package common
 
 import (
 	"math"
-	"strings"
 )
 
 type FilterOperation string
@@ -102,12 +101,22 @@ func (filters *Filters) GetFilterValue(key string) interface{} {
 	return f.Value
 }
 
-func (filters *Filters) GetFiltersAsMap() map[string]interface{} {
-	out := make(map[string]interface{})
+// func (filters *Filters) GetFiltersAsMap() map[string]interface{} {
+// 	out := make(map[string]interface{})
+
+// 	for _, f := range filters.Filters {
+// 		ky := strings.Replace(f.Key, ".", "_", 1)
+// 		out[ky] = f.Value
+// 	}
+
+// 	return out
+// }
+
+func (filters *Filters) GetFiltersOrderedValues() []any {
+	out := []any{}
 
 	for _, f := range filters.Filters {
-		ky := strings.Replace(f.Key, ".", "_", 1)
-		out[ky] = f.Value
+		out = append(out, f.Value)
 	}
 
 	return out

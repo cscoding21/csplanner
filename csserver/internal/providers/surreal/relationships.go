@@ -1,14 +1,6 @@
 package surreal
 
-import (
-	"context"
-	"csserver/internal/marshal"
-	"fmt"
-	"time"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/surrealdb/surrealdb.go"
-)
+/*
 
 type Relationship struct {
 	ID        string
@@ -94,3 +86,5 @@ func (db *DBClient) GetRelationship(ctx context.Context, relationshipID string) 
 
 	return output, err
 }
+
+*/

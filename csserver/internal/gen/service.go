@@ -222,11 +222,11 @@ var findTemplateString = `
 func (s *{{.ServiceName}}Service) Find{{.ServiceName}}s(ctx context.Context, paging common.Pagination, filters common.Filters) (common.PagedResults[common.BaseModel[{{.ServiceName}}]], error) {
 	out := common.NewPagedResults[{{.ServiceName}}](paging, filters)
 
-	whereSql, _ := postgres.BuildWhereClauseFromFilters(&filters)
+	whereSql, params := postgres.BuildWhereClauseFromFilters(&filters)
 
 	sql := fmt.Sprintf("SELECT * FROM %s WHERE true AND deleted_at is null %s ORDER BY created_at DESC", {{.ServiceName}}Identifier, whereSql)
 
-	return postgres.FindPagedObjects[{{.ServiceName}}](ctx, s.db, sql, out.Pagination, out.Filters)
+	return postgres.FindPagedObjects[{{.ServiceName}}](ctx, s.db, sql, out.Pagination, out.Filters, params)
 }
 `
 

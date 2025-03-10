@@ -14,8 +14,8 @@
 			paging: { pageNumber: 1, resultsPerPage: 10 },
             filters: {
                 filters: [
-                    { key: 'basics.owner_id', value: user?.email as string, operation: 'eq' },
-                    { key: 'status.status', value: "new,draft,approved,scheduled,inflight", operation: 'in' }
+                    { key: 'data.basics.owner_id', value: user?.email as string, operation: 'eq' },
+                    { key: 'data.status.status', value: "new,draft,approved,scheduled,inflight", operation: 'in' }
                 ]
             }
 		};

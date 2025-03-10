@@ -55,6 +55,7 @@ func GetDBClient() *pgx.Conn {
 		config.Config.Database.Port,
 		config.Config.Database.Database)
 
+	// host := fmt.Sprintf("ws://%s:%v/rpc", config.Config.Database.User, config.Config.Database.Password)
 	db, err := postgres.GetDB(context.Background(), host)
 	if err != nil {
 		log.Error(err)

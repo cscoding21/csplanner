@@ -56,6 +56,12 @@ func TestGetPortfolio(t *testing.T) {
 	result, err := portfolioService.GetUnbalancedPortfolio(ctx)
 	if err != nil {
 		t.Error(err)
+		return
+	}
+
+	if result == nil {
+		t.Error("no results returned")
+		return
 	}
 
 	for _, s := range result.Schedule {

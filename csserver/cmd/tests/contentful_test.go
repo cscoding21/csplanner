@@ -1,17 +1,14 @@
 package tests
 
 import (
-	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
-	"fmt"
-	"strings"
-	"testing"
 )
 
 func init() {
 	config.InitConfig()
 }
 
+/*
 func TestGetContent(t *testing.T) {
 	cf := factory.GetContentService()
 
@@ -41,3 +38,4 @@ func TestGetContent(t *testing.T) {
 
 	}
 }
+*/

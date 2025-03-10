@@ -1,14 +1,6 @@
 package surreal
 
-import (
-	"csserver/internal/common"
-	"csserver/internal/interfaces"
-
-	"github.com/surrealdb/surrealdb.go"
-
-	log "github.com/sirupsen/logrus"
-)
-
+/*
 type DBClient struct {
 	Client *surrealdb.DB
 }
@@ -103,41 +95,41 @@ func (db *DBClient) CreateOrUpdateObject(
 }
 
 // FindPagedObjects return paged objects from the database
-func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters common.Filters) (interface{}, int, error) {
-	pageSql := getPageSql(sql)
+// func (db *DBClient) FindPagedObjects(sql string, paging common.Pagination, filters common.Filters) (interface{}, int, error) {
+// 	pageSql := getPageSql(sql)
 
-	filters.AddFilter(common.Filter{Key: "start", Value: paging.GetOffset()})
-	filters.AddFilter(common.Filter{Key: "limit", Value: *paging.ResultsPerPage})
+// 	filters.AddFilter(common.Filter{Key: "start", Value: paging.GetOffset()})
+// 	filters.AddFilter(common.Filter{Key: "limit", Value: *paging.ResultsPerPage})
 
-	fm := filters.GetFiltersAsMap()
+// 	fm := filters.GetFiltersAsMap()
 
-	resultsData, err := db.Client.Query(pageSql, fm)
-	if err != nil {
-		log.Error(err)
-		return nil, -1, err
-	}
+// 	resultsData, err := db.Client.Query(pageSql, fm)
+// 	if err != nil {
+// 		log.Error(err)
+// 		return nil, -1, err
+// 	}
 
-	count, err := db.GetCount(sql, filters)
-	if err != nil {
-		log.Error(err)
-		return nil, -1, err
-	}
+// 	count, err := db.GetCount(sql, filters)
+// 	if err != nil {
+// 		log.Error(err)
+// 		return nil, -1, err
+// 	}
 
-	return resultsData, *count, nil
-}
+// 	return resultsData, *count, nil
+// }
 
 // GetCount returns an int representing the number of records in a database
-func (db *DBClient) GetCount(sql string, filters common.Filters) (*int, error) {
-	countSql := getCountSql(sql)
+// func (db *DBClient) GetCount(sql string, filters common.Filters) (*int, error) {
+// 	countSql := getCountSql(sql)
 
-	countData, err := db.Client.Query(countSql, filters.GetFiltersAsMap())
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
+// 	countData, err := db.Client.Query(countSql, filters.GetFiltersAsMap())
+// 	if err != nil {
+// 		log.Error(err)
+// 		return nil, err
+// 	}
 
-	return parseCountFromSurrealResult(countData)
-}
+// 	return parseCountFromSurrealResult(countData)
+// }
 
 // GetScalar returns a single value from the database
 // func  (db *DBClient) GetScalar(sql string, keyName string, filters map[string]interface{}) (interface{}, error) {
@@ -174,3 +166,5 @@ func (db *DBClient) Execute(sql string, vars map[string]interface{}) error {
 func (db *DBClient) BuildWhereClauseFromFilters(filters *common.Filters) (string, map[string]interface{}) {
 	return buildWhereClauseFromFilters(filters)
 }
+
+*/

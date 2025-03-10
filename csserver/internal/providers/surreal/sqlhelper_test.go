@@ -1,11 +1,6 @@
 package surreal
 
-import (
-	"csserver/internal/common"
-	"reflect"
-	"testing"
-)
-
+/*
 func TestBuildWhereClauseFromFilters(t *testing.T) {
 	testCases := []struct {
 		have    common.Filters
@@ -32,3 +27,4 @@ func TestBuildWhereClauseFromFilters(t *testing.T) {
 		}
 	}
 }
+*/

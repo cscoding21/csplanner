@@ -8,13 +8,9 @@
     }
     let { skills }:Props = $props()
 
-    console.log("skills", skills)
-
     let sortedSkills = skills.slice().sort((s1:Skill, s2:Skill) => {
         return (safeInt(s1.proficiency) < safeInt(s2.proficiency)) ? 1 : (safeInt(s1.proficiency) > safeInt(s2.proficiency)) ? -1 : 0
     });
-
-    console.log("sortedSkills", sortedSkills)
 </script>
 
 {#if sortedSkills}

@@ -15,6 +15,13 @@ type TableName string
 
 func GetDB(ctx context.Context, dbUrl string) (*pgx.Conn, error) {
 	// urlExample := "postgres://username:password@localhost:5432/database_name"
+	// config, err := pgxpool.ParseConfig(dbUrl)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return pgxpool.NewWithConfig(ctx, config)
+
 	return pgx.Connect(ctx, dbUrl)
 }
 
@@ -130,7 +137,7 @@ func FindAllObjects[T any](ctx context.Context,
 			AND deleted_at is null
 		`, table)
 
-	return FindPagedObjects[T](ctx, db, sql, pf.Pagination, pf.Filters)
+	return FindPagedObjects[T](ctx, db, sql, pf.Pagination, pf.Filters, []any{})
 }
 
 // SoftDelete soft-delete an object from the DB
@@ -224,29 +231,29 @@ func Exec(
 	return nil
 }
 
+// FindPagedObjects find objects based on a given sql statement
 func FindPagedObjects[T any](
 	ctx context.Context,
 	db *pgx.Conn,
 	sql string,
 	paging common.Pagination,
-	filters common.Filters) (common.PagedResults[common.BaseModel[T]], error) {
+	filters common.Filters,
+	params []any) (common.PagedResults[common.BaseModel[T]], error) {
 
-	pageSql := GetPageSql(sql, len(filters.Filters)+1)
+	pageSql := GetPageSql(sql, len(params)+1)
 	countSql := GetCountSql(sql)
 	out := common.NewPagedResults[common.BaseModel[T]](paging, filters)
 
-	params := []any{}
-
-	for _, f := range filters.Filters {
-		params = append(params, f.Value)
-	}
+	fmt.Println(pageSql)
+	fmt.Println(countSql)
+	fmt.Println(params...)
 
 	count, err := GetScalar[int](ctx, db, countSql, params...)
 	if err != nil {
 		return out, err
 	}
 
-	params = append(params, paging.ResultsPerPage)
+	params = append(params, *paging.ResultsPerPage)
 	params = append(params, paging.GetOffset())
 
 	fmt.Println(params)
@@ -255,6 +262,7 @@ func FindPagedObjects[T any](
 	if err != nil {
 		return out, err
 	}
+	defer rows.Close()
 
 	output, err := pgx.CollectRows(rows, pgx.RowToStructByName[common.BaseModel[T]])
 	if err != nil {

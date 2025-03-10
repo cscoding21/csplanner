@@ -5,6 +5,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/interfaces"
 	"csserver/internal/providers/nats"
+	"csserver/internal/providers/postgres"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
@@ -49,7 +50,9 @@ func NewPortfolioService(
 // GetUnbalancedPortfolio retrieves the currently scheduled projects
 func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfolio, error) {
 	pf := common.NewPagedResultsForAllRecords[project.Project]()
-	pf.Filters.AddFilter(common.Filter{Key: "status.status", Value: "scheduled,inflight", Operation: common.FilterOperationIn})
+
+	pf.Filters.AddFilter(common.Filter{Key: "status1", Value: "scheduled", Operation: common.FilterOperationIn})
+	pf.Filters.AddFilter(common.Filter{Key: "status2", Value: "inflight", Operation: common.FilterOperationIn})
 
 	rm, err := ps.ResourceService.GetResourceMap(ctx, false)
 	if err != nil {
@@ -61,7 +64,8 @@ func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfo
 		return nil, err
 	}
 
-	response, err := ps.ProjectService.FindProjects(ctx, pf.Pagination, pf.Filters)
+	sql := fmt.Sprintf("select * from %s where data->'status'->>'status' IN ($1, $2) ORDER BY data->'basics'->>'start_time'", project.ProjectIdentifier)
+	response, err := postgres.FindPagedObjects[project.Project](ctx, ps.DBClient, sql, pf.Pagination, pf.Filters, pf.Filters.GetFiltersOrderedValues())
 	if err != nil {
 		return nil, err
 	}

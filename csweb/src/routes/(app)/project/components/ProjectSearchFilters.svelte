@@ -52,16 +52,16 @@
         let out:InputFilters = { filters: [] as InputFilter[] }
         let filterArray:InputFilter[] = [] 
 
-		const kwfil = { key: 'basics.name', value: searchInput, operation: 'fl' }
+		const kwfil = { key: 'data.basics.name', value: searchInput, operation: 'fl' }
         filterArray = [...filterArray, kwfil]
 
         if (status && status.length > 0) {
-            const stfil = { key: 'status.status', value: status.join(","), operation: 'in' }
+            const stfil = { key: 'data.status.status', value: status.join(","), operation: 'in' }
             filterArray = [...filterArray, stfil]
         }
 
         if (resourceID) {
-            const rsfil = { key: 'resourceID', value: resourceID, operation: 'custom', customName: 'resource_in_project' }
+            const rsfil = { key: 'data.resourceID', value: resourceID, operation: 'custom', customName: 'resource_in_project' }
             filterArray = [...filterArray, rsfil]
         }
 
