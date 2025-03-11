@@ -1,5 +1,6 @@
 scalar Time
 scalar Upload
+
 type TimeResponse {
   unixTime: Int!
   timeStamp: String!
@@ -80,5 +81,18 @@ input InputFilter {
 
 input InputFilters {
   filters: [InputFilter]
+}
+
+type BaseModel {
+  id: String!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+  createdBy: String!
+  createByUser: User
+  updatedBy: String!
+  updateByUser: User
+  deletedBy: String
+  deleteByUser: User
 }
 

@@ -87,3 +87,17 @@ func GetStatusFromUpdateResult[T any](result common.UpdateResult[T]) (*idl.Statu
 
 	return &status, nil
 }
+
+func GetDataEnvelope[T any](model *common.BaseModel[T]) *idl.BaseModel {
+	out := idl.BaseModel{
+		ID:        model.ID,
+		CreatedAt: model.CreatedAt,
+		UpdatedAt: model.UpdatedAt,
+		DeletedAt: model.DeletedAt,
+		CreatedBy: model.CreatedBy,
+		UpdatedBy: model.UpdatedBy,
+		DeletedBy: model.DeletedBy,
+	}
+
+	return &out
+}

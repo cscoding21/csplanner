@@ -29,6 +29,19 @@ type Artifact struct {
 	URL      string `json:"url"`
 }
 
+type BaseModel struct {
+	ID           string     `json:"id"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    time.Time  `json:"updatedAt"`
+	DeletedAt    *time.Time `json:"deletedAt,omitempty"`
+	CreatedBy    string     `json:"createdBy"`
+	CreateByUser *User      `json:"createByUser,omitempty"`
+	UpdatedBy    string     `json:"updatedBy"`
+	UpdateByUser *User      `json:"updateByUser,omitempty"`
+	DeletedBy    *string    `json:"deletedBy,omitempty"`
+	DeleteByUser *User      `json:"deleteByUser,omitempty"`
+}
+
 type CSWeek struct {
 	Begin      time.Time `json:"begin"`
 	End        time.Time `json:"end"`
@@ -40,9 +53,6 @@ type Comment struct {
 	ID           string     `json:"id"`
 	ProjectID    string     `json:"projectId"`
 	Text         string     `json:"text"`
-	CreatedBy    string     `json:"createdBy"`
-	CreatedAt    time.Time  `json:"createdAt"`
-	UpdatedAt    time.Time  `json:"updatedAt"`
 	User         *User      `json:"user"`
 	Replies      []*Comment `json:"replies,omitempty"`
 	Likes        []string   `json:"likes,omitempty"`
@@ -161,19 +171,17 @@ type Mutation struct {
 }
 
 type Notification struct {
-	ID                    string     `json:"id"`
-	UserEmail             string     `json:"userEmail"`
-	UserName              string     `json:"userName"`
-	RecipientIsBot        bool       `json:"recipientIsBot"`
-	Type                  int        `json:"type"`
-	ContextID             string     `json:"contextId"`
-	Text                  *string    `json:"text,omitempty"`
-	IsRead                bool       `json:"isRead"`
-	InitiatorName         string     `json:"initiatorName"`
-	InitiatorEmail        string     `json:"initiatorEmail"`
-	InitiatorProfileImage *string    `json:"initiatorProfileImage,omitempty"`
-	CreatedAt             *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt             *time.Time `json:"updatedAt,omitempty"`
+	ID                    string  `json:"id"`
+	UserEmail             string  `json:"userEmail"`
+	UserName              string  `json:"userName"`
+	RecipientIsBot        bool    `json:"recipientIsBot"`
+	Type                  int     `json:"type"`
+	ContextID             string  `json:"contextId"`
+	Text                  *string `json:"text,omitempty"`
+	IsRead                bool    `json:"isRead"`
+	InitiatorName         string  `json:"initiatorName"`
+	InitiatorEmail        string  `json:"initiatorEmail"`
+	InitiatorProfileImage *string `json:"initiatorProfileImage,omitempty"`
 }
 
 type NotificationResults struct {
@@ -251,10 +259,6 @@ type PortfolioWeekSummary struct {
 
 type Project struct {
 	ID                 *string             `json:"id,omitempty"`
-	CreatedAt          *time.Time          `json:"createdAt,omitempty"`
-	UpdatedAt          *time.Time          `json:"updatedAt,omitempty"`
-	CreatedBy          *string             `json:"createdBy,omitempty"`
-	UpdatedBy          *string             `json:"updatedBy,omitempty"`
 	ProjectBasics      *ProjectBasics      `json:"projectBasics"`
 	ProjectStatusBlock *ProjectStatusBlock `json:"projectStatusBlock"`
 	ProjectValue       *ProjectValue       `json:"projectValue"`
@@ -312,6 +316,11 @@ type ProjectDaci struct {
 	Approver    []*Resource `json:"approver,omitempty"`
 	Contributor []*Resource `json:"contributor,omitempty"`
 	Informed    []*Resource `json:"informed,omitempty"`
+}
+
+type ProjectEnvelope struct {
+	Meta *BaseModel `json:"meta"`
+	Data *Project   `json:"data"`
 }
 
 type ProjectFeature struct {
@@ -473,7 +482,6 @@ type Resource struct {
 	InitialCost           *float64                `json:"initialCost,omitempty"`
 	AnnualizedCost        *float64                `json:"annualizedCost,omitempty"`
 	Skills                []*Skill                `json:"skills,omitempty"`
-	CreatedAt             *time.Time              `json:"createdAt,omitempty"`
 	AvailableHoursPerWeek *int                    `json:"availableHoursPerWeek,omitempty"`
 	Calculated            *ResourceCalculatedData `json:"calculated"`
 }
@@ -487,10 +495,15 @@ type ResourceCalculatedData struct {
 	HourlyCostMethod string   `json:"hourlyCostMethod"`
 }
 
+type ResourceEnvelope struct {
+	Meta *BaseModel `json:"meta"`
+	Data *Resource  `json:"data"`
+}
+
 type ResourceResults struct {
-	Paging  *Pagination `json:"paging,omitempty"`
-	Filters *Filters    `json:"filters"`
-	Results []*Resource `json:"results,omitempty"`
+	Paging  *Pagination         `json:"paging,omitempty"`
+	Filters *Filters            `json:"filters"`
+	Results []*ResourceEnvelope `json:"results,omitempty"`
 }
 
 type Role struct {
@@ -501,10 +514,15 @@ type Role struct {
 	DefaultSkills []*Skill `json:"defaultSkills,omitempty"`
 }
 
+type RoleEnvelope struct {
+	Meta *BaseModel `json:"meta"`
+	Data *Role      `json:"data"`
+}
+
 type RoleResults struct {
-	Paging  *Pagination `json:"paging,omitempty"`
-	Filters *Filters    `json:"filters"`
-	Results []*Role     `json:"results,omitempty"`
+	Paging  *Pagination     `json:"paging,omitempty"`
+	Filters *Filters        `json:"filters"`
+	Results []*RoleEnvelope `json:"results,omitempty"`
 }
 
 type Schedule struct {

@@ -101,7 +101,7 @@ export const formatPercent = new Intl.NumberFormat('default', {
  * @param name The name of the user
  * @returns a two-letter abbreviation of the passed in name
  */
-export const getInitialsFromName = (name: string) => {
+export const getInitialsFromName = (name: string|undefined) => {
 	if (!name) {
 		return 'XX';
 	}
@@ -174,7 +174,7 @@ export const truncateText = (text: string, length: number): string => {
  * @param text - the input text
  * @returns the text transformed into title case
  */
-export const titleCase = (text: string):string => {
+export const titleCase = (text: string|undefined):string => {
 	if (!text) {
 		return ""
 	}

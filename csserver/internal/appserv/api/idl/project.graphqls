@@ -4,10 +4,10 @@
 
 type Project {
   id: String
-  createdAt: Time
-  updatedAt: Time
-  createdBy: String
-  updatedBy: String
+  # createdAt: Time
+  # updatedAt: Time
+  # createdBy: String
+  # updatedBy: String
   projectBasics: ProjectBasics!
   projectStatusBlock: ProjectStatusBlock!
   projectValue: ProjectValue!
@@ -277,4 +277,10 @@ input UpdateNewProject {
   ownerID: String!
   templateID: String!
   isCapitalized: Boolean!
+}
+
+
+type ProjectEnvelope {
+  meta: BaseModel!
+  data: Project!
 }

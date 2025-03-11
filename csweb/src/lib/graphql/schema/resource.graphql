@@ -14,7 +14,6 @@ fragment resourceFragment on Resource {
 	annualizedCost
 	type
 	status
-	createdAt
 	availableHoursPerWeek
 	skills {
 		...skillFragment
@@ -85,7 +84,12 @@ mutation deleteResource($id: String!) {
 
 query getResource($id: String!) {
 	getResource(id: $id) {
-		...resourceFragment
+		meta {
+				...baseModelFragment
+			}
+		data {
+			...resourceFragment
+		}
 	}
 }
 
@@ -95,7 +99,12 @@ query findAllResources {
 			...pagingFragment
 		}
 		results {
-			...resourceFragment
+			meta {
+				...baseModelFragment
+			}
+			data {
+				...resourceFragment
+			}
 		}
 	}
 }
@@ -106,7 +115,12 @@ query findResources($input: PageAndFilter!) {
 			...pagingFragment
 		}
 		results {
-			...resourceFragment
+			meta {
+				...baseModelFragment
+			}
+			data {
+				...resourceFragment
+			}
 		}
 	}
 }
@@ -118,7 +132,12 @@ query findAllRoles {
 			...pagingFragment
 		}
 		results {
-			...roleFragment
+			meta {
+				...baseModelFragment
+			}
+			data {
+				...roleFragment
+			}
 		}
 	}
 }

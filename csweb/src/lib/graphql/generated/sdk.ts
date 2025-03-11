@@ -44,6 +44,20 @@ export type Artifact = {
   url: Scalars['String']['output'];
 };
 
+export type BaseModel = {
+  __typename?: 'BaseModel';
+  createByUser?: Maybe<User>;
+  createdAt: Scalars['Time']['output'];
+  createdBy: Scalars['String']['output'];
+  deleteByUser?: Maybe<User>;
+  deletedAt?: Maybe<Scalars['Time']['output']>;
+  deletedBy?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  updateByUser?: Maybe<User>;
+  updatedAt: Scalars['Time']['output'];
+  updatedBy: Scalars['String']['output'];
+};
+
 export type CsWeek = {
   __typename?: 'CSWeek';
   begin: Scalars['Time']['output'];
@@ -55,8 +69,6 @@ export type CsWeek = {
 export type Comment = {
   __typename?: 'Comment';
   acknowledges?: Maybe<Array<Scalars['String']['output']>>;
-  createdAt: Scalars['Time']['output'];
-  createdBy: Scalars['String']['output'];
   dislikes?: Maybe<Array<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
   isEdited: Scalars['Boolean']['output'];
@@ -66,7 +78,6 @@ export type Comment = {
   projectId: Scalars['String']['output'];
   replies?: Maybe<Array<Comment>>;
   text: Scalars['String']['output'];
-  updatedAt: Scalars['Time']['output'];
   user: User;
 };
 
@@ -377,7 +388,6 @@ export type MutationUpdateUserArgs = {
 export type Notification = {
   __typename?: 'Notification';
   contextId: Scalars['String']['output'];
-  createdAt?: Maybe<Scalars['Time']['output']>;
   id: Scalars['String']['output'];
   initiatorEmail: Scalars['String']['output'];
   initiatorName: Scalars['String']['output'];
@@ -386,7 +396,6 @@ export type Notification = {
   recipientIsBot: Scalars['Boolean']['output'];
   text?: Maybe<Scalars['String']['output']>;
   type: Scalars['Int']['output'];
-  updatedAt?: Maybe<Scalars['Time']['output']>;
   userEmail: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -474,8 +483,6 @@ export type PortfolioWeekSummary = {
 
 export type Project = {
   __typename?: 'Project';
-  createdAt?: Maybe<Scalars['Time']['output']>;
-  createdBy?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   projectBasics: ProjectBasics;
   projectCost: ProjectCost;
@@ -484,8 +491,6 @@ export type Project = {
   projectMilestones?: Maybe<Array<ProjectMilestone>>;
   projectStatusBlock: ProjectStatusBlock;
   projectValue: ProjectValue;
-  updatedAt?: Maybe<Scalars['Time']['output']>;
-  updatedBy?: Maybe<Scalars['String']['output']>;
 };
 
 export type ProjectActivity = {
@@ -542,6 +547,12 @@ export type ProjectDaci = {
   contributor?: Maybe<Array<Maybe<Resource>>>;
   driver?: Maybe<Array<Maybe<Resource>>>;
   informed?: Maybe<Array<Maybe<Resource>>>;
+};
+
+export type ProjectEnvelope = {
+  __typename?: 'ProjectEnvelope';
+  data: Project;
+  meta: BaseModel;
 };
 
 export type ProjectFeature = {
@@ -721,7 +732,7 @@ export type Query = {
   getPortfolio: Portfolio;
   getPortfolioForResource: Portfolio;
   getProject: Project;
-  getResource: Resource;
+  getResource: ResourceEnvelope;
   getUser: User;
 };
 
@@ -803,7 +814,6 @@ export type Resource = {
   annualizedCost?: Maybe<Scalars['Float']['output']>;
   availableHoursPerWeek?: Maybe<Scalars['Int']['output']>;
   calculated: ResourceCalculatedData;
-  createdAt?: Maybe<Scalars['Time']['output']>;
   id?: Maybe<Scalars['String']['output']>;
   initialCost?: Maybe<Scalars['Float']['output']>;
   name: Scalars['String']['output'];
@@ -828,11 +838,17 @@ export type ResourceCalculatedData = {
   hourlyCostMethod: Scalars['String']['output'];
 };
 
+export type ResourceEnvelope = {
+  __typename?: 'ResourceEnvelope';
+  data: Resource;
+  meta: BaseModel;
+};
+
 export type ResourceResults = {
   __typename?: 'ResourceResults';
   filters: Filters;
   paging?: Maybe<Pagination>;
-  results?: Maybe<Array<Resource>>;
+  results?: Maybe<Array<ResourceEnvelope>>;
 };
 
 export type Role = {
@@ -844,11 +860,17 @@ export type Role = {
   name: Scalars['String']['output'];
 };
 
+export type RoleEnvelope = {
+  __typename?: 'RoleEnvelope';
+  data: Role;
+  meta: BaseModel;
+};
+
 export type RoleResults = {
   __typename?: 'RoleResults';
   filters: Filters;
   paging?: Maybe<Pagination>;
-  results?: Maybe<Array<Role>>;
+  results?: Maybe<Array<RoleEnvelope>>;
 };
 
 export type Schedule = {
@@ -1144,14 +1166,10 @@ export const CommentFragmentFragmentDoc = gql`
   user {
     ...userFragment
   }
-  createdAt
-  updatedAt
   replies {
     id
     text
     isEdited
-    createdAt
-    updatedAt
     user {
       ...userFragment
     }
@@ -1170,6 +1188,32 @@ export const CommentFragmentFragmentDoc = gql`
     ${UserFragmentFragmentDoc}`;
 export const ControlFieldsFragmentFragmentDoc = gql`
     fragment controlFieldsFragment on ControlFields {
+  createdBy
+  createdAt
+  updatedAt
+  updatedBy
+  deletedAt
+  deletedBy
+  createByUser {
+    firstName
+    lastName
+    email
+  }
+  updateByUser {
+    firstName
+    lastName
+    email
+  }
+  deleteByUser {
+    firstName
+    lastName
+    email
+  }
+}
+    `;
+export const BaseModelFragmentFragmentDoc = gql`
+    fragment baseModelFragment on BaseModel {
+  id
   createdBy
   createdAt
   updatedAt
@@ -1242,7 +1286,6 @@ export const NotificationFragmentFragmentDoc = gql`
   initiatorName
   initiatorEmail
   initiatorProfileImage
-  updatedAt
 }
     `;
 export const OrganizationFragmentFragmentDoc = gql`
@@ -1305,7 +1348,6 @@ export const ResourceFragmentFragmentDoc = gql`
   annualizedCost
   type
   status
-  createdAt
   availableHoursPerWeek
   skills {
     ...skillFragment
@@ -1321,10 +1363,6 @@ ${SkillFragmentFragmentDoc}`;
 export const ProjectFragmentFragmentDoc = gql`
     fragment projectFragment on Project {
   id
-  createdAt
-  updatedAt
-  createdBy
-  updatedBy
   projectBasics {
     name
     description
@@ -1939,10 +1977,16 @@ export const DeleteResourceDocument = gql`
 export const GetResourceDocument = gql`
     query getResource($id: String!) {
   getResource(id: $id) {
-    ...resourceFragment
+    meta {
+      ...baseModelFragment
+    }
+    data {
+      ...resourceFragment
+    }
   }
 }
-    ${ResourceFragmentFragmentDoc}`;
+    ${BaseModelFragmentFragmentDoc}
+${ResourceFragmentFragmentDoc}`;
 export const FindAllResourcesDocument = gql`
     query findAllResources {
   findAllResources {
@@ -1950,11 +1994,17 @@ export const FindAllResourcesDocument = gql`
       ...pagingFragment
     }
     results {
-      ...resourceFragment
+      meta {
+        ...baseModelFragment
+      }
+      data {
+        ...resourceFragment
+      }
     }
   }
 }
     ${PagingFragmentFragmentDoc}
+${BaseModelFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
 export const FindResourcesDocument = gql`
     query findResources($input: PageAndFilter!) {
@@ -1963,11 +2013,17 @@ export const FindResourcesDocument = gql`
       ...pagingFragment
     }
     results {
-      ...resourceFragment
+      meta {
+        ...baseModelFragment
+      }
+      data {
+        ...resourceFragment
+      }
     }
   }
 }
     ${PagingFragmentFragmentDoc}
+${BaseModelFragmentFragmentDoc}
 ${ResourceFragmentFragmentDoc}`;
 export const FindAllRolesDocument = gql`
     query findAllRoles {
@@ -1976,11 +2032,17 @@ export const FindAllRolesDocument = gql`
       ...pagingFragment
     }
     results {
-      ...roleFragment
+      meta {
+        ...baseModelFragment
+      }
+      data {
+        ...roleFragment
+      }
     }
   }
 }
     ${PagingFragmentFragmentDoc}
+${BaseModelFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}`;
 export const UpdateRoleDocument = gql`
     mutation updateRole($input: UpdateRole!) {

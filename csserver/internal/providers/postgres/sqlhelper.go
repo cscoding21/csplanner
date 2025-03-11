@@ -203,6 +203,10 @@ func loadFilters() map[string]string {
 	return f
 }
 
+// func sanitizeSqlInput(input string) string {
+
+// }
+
 /*
 FilterOperationEqual          FilterOperation = "eq"
 FilterOperationNotEqual       FilterOperation = "ne"

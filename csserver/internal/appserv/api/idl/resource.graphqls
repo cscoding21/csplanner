@@ -11,7 +11,6 @@ type Resource {
   initialCost: Float
   annualizedCost: Float
   skills: [Skill!]
-  createdAt: Time
   availableHoursPerWeek: Int
   calculated: ResourceCalculatedData!
 }
@@ -80,11 +79,21 @@ type CreateRoleResult {
 type ResourceResults {
   paging: Pagination
   filters: Filters!
-  results: [Resource!]
+  results: [ResourceEnvelope!]
 }
 
 type RoleResults {
   paging: Pagination
   filters: Filters!
-  results: [Role!]
+  results: [RoleEnvelope!]
+}
+
+type ResourceEnvelope {
+  meta: BaseModel!
+  data: Resource!
+}
+
+type RoleEnvelope {
+  meta: BaseModel!
+  data: Role!
 }

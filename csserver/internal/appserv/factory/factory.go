@@ -24,7 +24,7 @@ import (
 	"sync"
 
 	"github.com/Nerzal/gocloak/v13"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -32,11 +32,11 @@ import (
 // ---define singletons
 var (
 	lock      = &sync.Mutex{}
-	_dbclient *pgx.Conn
+	_dbclient *pgxpool.Pool
 )
 
 // GetDBClient return a configured DB client as a singleton
-func GetDBClient() *pgx.Conn {
+func GetDBClient() *pgxpool.Pool {
 	if _dbclient != nil {
 		return _dbclient
 	}

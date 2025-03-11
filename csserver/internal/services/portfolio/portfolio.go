@@ -14,7 +14,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // ---This is the name of the object in the database
@@ -22,7 +22,7 @@ const PortfolioIdentifier = "portfolio"
 
 // PortfolioService is a service for interacting with the project portfolio.
 type PortfolioService struct {
-	DBClient        *pgx.Conn
+	DBClient        *pgxpool.Pool
 	ContextHelper   interfaces.ContextHelpers
 	PubSub          nats.PubSubProvider
 	ProjectService  project.ProjectService
@@ -32,7 +32,7 @@ type PortfolioService struct {
 
 // NewPortfolioService creates a new portfolio service.
 func NewPortfolioService(
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	ps nats.PubSubProvider,
 	projService project.ProjectService,
 	resService resource.ResourceService,

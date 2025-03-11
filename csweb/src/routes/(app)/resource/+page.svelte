@@ -85,7 +85,7 @@
 		<CSPaging paging={pagingDisplay} change={pagingChange} />
 
 		<div class="grid grid-cols-3 gap-3">
-			{#each resources.results as r(r.id)}
+			{#each resources.results as r(r.meta.id)}
 				<ResourceCard resource={r} />
 			{/each}
 		</div>

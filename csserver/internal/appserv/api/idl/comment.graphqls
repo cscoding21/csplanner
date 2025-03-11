@@ -2,9 +2,9 @@ type Comment {
   id: String!
   projectId: String!
   text: String!
-  createdBy: String!
-  createdAt: Time!
-  updatedAt: Time!
+  # createdBy: String!
+  # createdAt: Time!
+  # updatedAt: Time!
   user: User!
   replies: [Comment!]
   likes: [String!]

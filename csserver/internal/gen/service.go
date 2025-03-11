@@ -113,13 +113,13 @@ const {{.ServiceName}}Identifier = postgres.TableName("{{.ServiceLower}}")
 var serviceStructTemplateString = `
 // {{.ServiceName}}Service is a service for interacting with lists.
 type {{.ServiceName}}Service struct {
-	db      *pgx.Conn
+	db      *pgxpool.Pool
 	pubsub nats.PubSubProvider
 }
 
 // New{{.ServiceName}}Service creates a new {{.ServiceName}} service.
 func New{{.ServiceName}}Service(
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	ps nats.PubSubProvider) *{{.ServiceName}}Service {
 
 	return &{{.ServiceName}}Service{

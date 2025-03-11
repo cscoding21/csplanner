@@ -10,8 +10,8 @@ type Notification {
   initiatorName: String!
   initiatorEmail: String!
   initiatorProfileImage: String
-  createdAt: Time
-  updatedAt: Time
+  # createdAt: Time
+  # updatedAt: Time
 }
 
 

@@ -10,7 +10,7 @@
 
 	interface Props {
 		id: string;
-		name: string;
+		name: string|undefined;
 		children: Snippet;
 	}
 	let { id, name, children }: Props = $props();

@@ -9,26 +9,25 @@ import (
 	"csserver/internal/config"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type TableName string
 
-func GetDB(ctx context.Context, dbUrl string) (*pgx.Conn, error) {
-	// urlExample := "postgres://username:password@localhost:5432/database_name"
-	// config, err := pgxpool.ParseConfig(dbUrl)
-	// if err != nil {
-	// 	return nil, err
-	// }
+func GetDB(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
+	//urlExample := "postgres://username:password@localhost:5432/database_name"
+	config, err := pgxpool.ParseConfig(dbUrl)
+	if err != nil {
+		return nil, err
+	}
 
-	// return pgxpool.NewWithConfig(ctx, config)
-
-	return pgx.Connect(ctx, dbUrl)
+	return pgxpool.NewWithConfig(ctx, config)
 }
 
 // UpdateObject create or update an object in the given table
 func UpdateObject[T any](
 	ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	obj T,
 	table TableName,
 	id string) (*common.BaseModel[T], error) {
@@ -84,7 +83,7 @@ func UpdateObject[T any](
 
 // GetObjectByID return a single object from the database based on its ID
 func GetObjectByID[T any](ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	table TableName,
 	id string) (*common.BaseModel[T], error) {
 
@@ -101,7 +100,7 @@ func GetObjectByID[T any](ctx context.Context,
 
 // GetObject return a single object from the database
 func GetObject[T any](ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	table TableName,
 	sql string,
 	params ...any) (*common.BaseModel[T], error) {
@@ -110,6 +109,7 @@ func GetObject[T any](ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	output, err := pgx.CollectRows(rows, pgx.RowToStructByName[common.BaseModel[T]])
 	if err != nil {
@@ -125,7 +125,7 @@ func GetObject[T any](ctx context.Context,
 
 // FindAllObjects return all objects in a given database table that are not soft-deleted
 func FindAllObjects[T any](ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	table TableName) (common.PagedResults[common.BaseModel[T]], error) {
 
 	pf := common.NewPagedResultsForAllRecords[T]()
@@ -143,7 +143,7 @@ func FindAllObjects[T any](ctx context.Context,
 // SoftDelete soft-delete an object from the DB
 func SoftDelete(
 	ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	table TableName,
 	id string) error {
 
@@ -166,7 +166,6 @@ func SoftDelete(
 		time.Now(),
 		usr,
 		id)
-
 	if err != nil {
 		tx.Rollback(ctx)
 		return err
@@ -180,7 +179,7 @@ func SoftDelete(
 // Delete hard-delete an object from the database
 func Delete(
 	ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	table TableName,
 	id string) error {
 
@@ -210,7 +209,7 @@ func Delete(
 // Exec execute a sql statement in the DB
 func Exec(
 	ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	sql string,
 	params ...any) error {
 
@@ -234,7 +233,7 @@ func Exec(
 // FindPagedObjects find objects based on a given sql statement
 func FindPagedObjects[T any](
 	ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	sql string,
 	paging common.Pagination,
 	filters common.Filters,
@@ -278,7 +277,7 @@ func FindPagedObjects[T any](
 // GetScalar return a single bit of data from the database
 func GetScalar[T any](
 	ctx context.Context,
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	sql string,
 	params ...any) (*T, error) {
 

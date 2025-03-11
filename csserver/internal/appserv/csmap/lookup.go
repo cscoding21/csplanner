@@ -1,8 +1,7 @@
-package augment
+package csmap
 
 import (
 	"context"
-	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
@@ -119,7 +118,7 @@ func getListById(lists []list.List, name string) *list.List {
 func getResourceById(resources []resource.Resource, id string) *idl.Resource {
 	for _, r := range resources {
 		if r.ID == id {
-			out := csmap.ResourceResourceToIdl(r)
+			out := ResourceResourceToIdl(r)
 			AugmentResource(&out)
 
 			return &out
@@ -133,7 +132,7 @@ func getRoleById(id string) *idl.Role {
 	roles := findRoles()
 	for _, p := range *roles {
 		if p.ID == id {
-			out := csmap.RoleResourceToIdl(p)
+			out := RoleResourceToIdl(p)
 
 			return &out
 		}
@@ -145,7 +144,7 @@ func getRoleById(id string) *idl.Role {
 func getProjectById(projects []project.Project, id string) *idl.Project {
 	for _, p := range projects {
 		if p.ID == id {
-			out := csmap.ProjectProjectToIdl(p)
+			out := ProjectProjectToIdl(p)
 
 			AugmentProject(&p, &out)
 
@@ -293,7 +292,7 @@ func getUserByEmail(email string) *idl.User {
 
 	for _, u := range *users {
 		if u.Email == email {
-			out := csmap.AppuserAppuserToIdl(u)
+			out := AppuserAppuserToIdl(u)
 			return &out
 		}
 	}

@@ -2,7 +2,6 @@
 	import { Button, Modal } from 'flowbite-svelte';
 	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 	import { deleteRole } from '$lib/services/resource';
-	import { goto } from '$app/navigation';
 	import { addToast } from '$lib/stores/toasts';
 	import type { Snippet } from 'svelte';
 	import { callIf } from '$lib/utils/helpers';

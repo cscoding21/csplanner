@@ -15,7 +15,7 @@
 	import { getResource } from '$lib/services/resource';
 	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import type { Resource, Portfolio, Skill } from '$lib/graphql/generated/sdk';
+	import type { ResourceEnvelope, Portfolio, Skill } from '$lib/graphql/generated/sdk';
 	import { findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
 	import { SectionSubHeading, CSSection , PieChart, CSHR, PortfolioTable } from '$lib/components';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
@@ -25,7 +25,7 @@
 	const startDate = new Date()    
     const endDate = new Date(new Date().setDate(new Date().getDate() + 7 * 12));
 
-	const refresh = async ():Promise<Resource> => {
+	const refresh = async ():Promise<ResourceEnvelope> => {
 		const res = getResource(id);
 
 		return res;
@@ -41,8 +41,8 @@
 
 	const updateResource = () => {
 		refresh().then((r) => {
-			resourcePromise = r as Resource;
-			resourceSkills = r.skills as Skill[] 
+			resourcePromise = r as ResourceEnvelope;
+			resourceSkills = r.data?.skills as Skill[] 
 
 			console.log("updateResource", resourceSkills)
 
@@ -58,7 +58,7 @@
 
 	let flatData = $state([] as FlatPortfolioItem[])
 	let resourceSkills = $state([] as Skill[])
-	let resourcePromise:Resource = $state({} as Resource);
+	let resourcePromise:ResourceEnvelope = $state({} as ResourceEnvelope);
 	let projectPieData = $derived(csGroupBy(deepCopy(flatData), "projectName", "actualizedHours"))
 	let skillPieData = $derived(csGroupBy(deepCopy(flatData), "requiredSkill", "actualizedHours"))
 
@@ -74,12 +74,12 @@
 	<div>Loading...</div>
 {:then promiseData}
 	{#if resourcePromise}
-		<ResourceActionBar pageDetail={resourcePromise.name}>
+		<ResourceActionBar pageDetail={resourcePromise.data?.name}>
 			<ButtonGroup>
 				<UpdateResourceModal {id} update={updateResource}
 								><PenOutline class="mr-2 h-3 w-3" /> Edit</UpdateResourceModal
 							>
-				<DeleteResource id={resourcePromise.id || ''} name={resourcePromise.name}>
+				<DeleteResource id={resourcePromise.meta.id || ''} name={resourcePromise.data.name}>
 					<TrashBinOutline class="mr-2 h-3 w-3" />
 					Delete
 				</DeleteResource>
@@ -90,53 +90,53 @@
 			<div class="mr-4 col-span-1">
 				<Card padding="sm" size="xl">
 					<div class="flex flex-col items-center pb-4">
-						<Avatar size="lg" src={resourcePromise.profileImage as string} rounded
-							>{getInitialsFromName(resourcePromise.name)}</Avatar
+						<Avatar size="lg" src={resourcePromise.data.profileImage as string} rounded
+							>{getInitialsFromName(resourcePromise.data.name)}</Avatar
 						>
 						<h5 class="mb-1 mt-2 text-xl font-medium text-gray-900 dark:text-white">
-							{resourcePromise.name}
+							{resourcePromise.data?.name}
 						</h5>
-						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.role?.name}</span>
+						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.data.role?.name}</span>
 					</div>
 					<hr class="mb-4 mt-2" />
 					<div class="mb-6">
 						<ul class="list">
 							<li>
 								<span>Type</span>
-								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.type)}</span>
+								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data.type)}</span>
 							</li>
 							<li>
 								<span>Status</span>
-								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.status)}</span>
+								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data.status)}</span>
 							</li>
 							<li>
 								<span>Role</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.role?.name}</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.data?.role?.name}</span>
 							</li>
 							<li>
 								<span>User</span>
-								{#if resourcePromise.user}
-									<span class="float-right flex-auto font-semibold">{resourcePromise.user?.email}</span>
+								{#if resourcePromise.data?.user}
+									<span class="float-right flex-auto font-semibold">{resourcePromise.data?.user.email}</span>
 								{:else}
 									<span class="float-right flex-auto font-semibold">No User Account</span>
 								{/if}
 							</li>
 							<li>
 								<span>Hours per Week</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.availableHoursPerWeek}</span>
+								<span class="float-right flex-auto font-semibold">{resourcePromise.data?.availableHoursPerWeek}</span>
 							</li>
 							<li>
 								<span>Onboarding Cost</span>
-								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.initialCost as number)}</span>
+								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data.initialCost as number)}</span>
 							</li>
 							<li>
 								<span>Annualized Cost</span>
-								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.annualizedCost as number)}</span>
+								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data.annualizedCost as number)}</span>
 							</li>
 							<li>
 								<span>Created Date</span>
 								<span class="float-right flex-auto font-semibold"
-									>{formatDate(resourcePromise.createdAt)}</span
+									>{formatDate(resourcePromise.meta.createdAt)}</span
 								>
 							</li>
 
@@ -145,19 +145,19 @@
 							<li>
 								<span>Hourly Rate</span>
 								<span class="float-right flex-auto font-semibold"
-									>{formatCurrency.format(resourcePromise.calculated?.hourlyCost as number)}</span
+									>{formatCurrency.format(resourcePromise.data?.calculated?.hourlyCost as number)}</span
 								>
 							</li>
 							<li>
 								<span>Rate Determination Method</span>
 								<span class="float-right flex-auto font-semibold"
-									>{resourcePromise.calculated?.hourlyCostMethod}</span
+									>{resourcePromise.data?.calculated?.hourlyCostMethod}</span
 								>
 							</li>
 						</ul>
 					</div>
 
-					{#if resourcePromise.type === "human"}
+					{#if resourcePromise.data?.type === "human"}
 					<SectionSubHeading>User skills</SectionSubHeading>
 					<SkillsTable resourceID={id} skills={resourceSkills} update={() => updateResource()} allowAdd={true} />
 					{/if}

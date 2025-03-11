@@ -1,29 +1,29 @@
 <script lang="ts">
 	import { SectionHeading, TextInput, NumberInput, SectionSubHeading, SelectInput } from '$lib/components';
-	import { Alert, Button, Rating, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, type SelectOptionType } from 'flowbite-svelte';
+	import { Alert, Button, Rating, Table, TableBody, TableBodyCell, TableBodyRow, type SelectOptionType } from 'flowbite-svelte';
 	import { roleSchema, roleForm } from '$lib/forms/resource.validation';
 	import { findSelectOptsFromList, mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { onMount } from 'svelte';
 	import { is } from '$lib/utils/check';
-	import type { Role, UpdateRole, UpdateSkill } from '$lib/graphql/generated/sdk';
+	import type { RoleEnvelope, UpdateRole, UpdateSkill } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, deepCopy } from '$lib/utils/helpers';
 	import { updateRole } from '$lib/services/resource';
-	import { CirclePauseOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import { TrashBinOutline } from 'flowbite-svelte-icons';
 	import { skillForm, skillSchema } from '$lib/forms/skill.validation';
 	import { getList } from '$lib/services/list';
 
 	onMount(async () => {
-		if (role && role.id) {
-			rf = deepCopy(role) as UpdateRole;
-			rf.id = role.id;
+		if (role && role.meta.id) {
+			rf = deepCopy(role.data) as UpdateRole;
+			rf.id = role.meta.id;
 		} else {
 			rf = deepCopy(roleForm);
 		}
 	});
 
 	interface Props {
-		role: Role | undefined;
+		role: RoleEnvelope | undefined;
 		update?: Function;
 	}
 	let { 
@@ -114,7 +114,7 @@
 </script>
 
 <SectionHeading>
-	{#if is(role?.id)}
+	{#if is(role?.meta.id)}
 		Update Role
 	{:else}
 		Add a New Role

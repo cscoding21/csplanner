@@ -5,7 +5,7 @@ generator_path: "internal/appserv/csmap"
 common_structs:
   - package_name: common
     struct_name: ControlFields
-    path: internal/common/controlfields.go
+    path: internal/common/dbwrapper.go
   - package_name: common
     struct_name: Pagination
     path: internal/common/paging.go

@@ -2,13 +2,13 @@
 	import { Button, Modal } from 'flowbite-svelte';
 	import type { Snippet } from 'svelte';
 	import { RoleForm } from '.';
-	import type { Role } from '$lib/graphql/generated/sdk';
+	import type { RoleEnvelope} from '$lib/graphql/generated/sdk';
 	import { callIf } from '$lib/utils/helpers';
 
 	let popupModal = $state(false);
 
 	interface Props {
-        role?: Role | undefined
+        role?: RoleEnvelope | undefined
 		children: Snippet;
 		size: 'xs' | 'sm' | 'lg' | 'xl' | 'md' | undefined;
 		update?: Function;

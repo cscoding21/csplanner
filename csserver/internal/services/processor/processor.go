@@ -12,7 +12,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // ---This is the name of the object in the database
@@ -20,7 +20,7 @@ const ProcessorIdentifier = "autoprocessor"
 
 // PortfolioService is a service for interacting with the project portfolio.
 type ProcessorService struct {
-	DBClient        *pgx.Conn
+	DBClient        *pgxpool.Pool
 	PubSub          nats.PubSubProvider
 	ProjectService  project.ProjectService
 	ResourceService resource.ResourceService
@@ -29,7 +29,7 @@ type ProcessorService struct {
 
 // NewProcessorService creates a new portfolio service.
 func NewProcessorService(
-	db *pgx.Conn,
+	db *pgxpool.Pool,
 	ps nats.PubSubProvider,
 	projService project.ProjectService,
 	resService resource.ResourceService,

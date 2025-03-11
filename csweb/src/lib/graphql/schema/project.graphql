@@ -1,9 +1,5 @@
 fragment projectFragment on Project {
 	id
-	createdAt
-	updatedAt
-	createdBy
-	updatedBy
 	projectBasics {
 		name
 		description

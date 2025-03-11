@@ -1,7 +1,7 @@
 import type {
 	UpdateResource,
 	UpdateSkill,
-	Resource,
+	ResourceEnvelope,
 	ResourceResults,
 	Status,
 	CreateResourceResult,
@@ -70,7 +70,7 @@ export const findResources = async (input: PageAndFilter): Promise<ResourceResul
  * @param id - the ID of the resource to get
  * @returns a single resource based on the passed-in ID
  */
-export const getResource = async (id: string): Promise<Resource> => {
+export const getResource = async (id: string): Promise<ResourceEnvelope> => {
 	const client = getApolloClient();
 
 	return client

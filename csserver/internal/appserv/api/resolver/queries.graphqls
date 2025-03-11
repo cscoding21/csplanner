@@ -18,13 +18,13 @@ type Query {
     getPortfolio: Portfolio!
     getPortfolioForResource(resourceID: String!): Portfolio!
 
+    getResource(id: String!): ResourceEnvelope!
     findAllUsers: UserResults!
     findAllResources: ResourceResults!
     findAllRoles: RoleResults!
     findResources(pageAndFilter: PageAndFilter): ResourceResults!
-    findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
 
-    getResource(id: String!): Resource!
+    findUserNotifications(pageAndFilter: PageAndFilter): NotificationResults!
 
     findAllLists: ListResults!
     getList(nameOrID: String!): List

@@ -27,9 +27,10 @@
 
 	if (id) {
 		getResource(id as string).then((r) => {
-			formTitle = r.name;
+			formTitle = r.data?.name || "New resource";
 			isUpdate = true;
-			rf = coalesceToType<UpdateResource>(r, resourceSchema);
+			rf = coalesceToType<UpdateResource>(r.data, resourceSchema);
+			rf.id = r.meta.id
 		});
 	}
 
@@ -103,7 +104,7 @@
 	const loadPage = async () => {
 		findAllRoles()
 			.then((l) => {
-				roleOpts = l.results?.map(r => { return { name: r.name, value: r.id} }) as SelectOptionType<string>[];
+				roleOpts = l.results?.map(r => { return { name: r.data.name, value: r.meta.id} }) as SelectOptionType<string>[];
 			});
 	};
 </script>
@@ -182,12 +183,6 @@
 	<div class="float-right">
 		<Button color="primary" onclick={updateRes}>Update Resource</Button>
 	</div>
-
-	<!-- <svelte:fragment slot="footer">
-		<div class="float-right">
-			<Button color="primary" onclick={updateRes}>Update Resource</Button>
-		</div>
-	</svelte:fragment> -->
 </Modal>
 
 {/await}

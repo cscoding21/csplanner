@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { findAllRoles } from "$lib/services/resource";
-    import type { Role, RoleResults } from "$lib/graphql/generated/sdk";
+    import type { RoleEnvelope, RoleResults } from "$lib/graphql/generated/sdk";
     import { addToast } from "$lib/stores/toasts";
     import { SectionHeading } from "$lib/components";
-    import { Table, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, TableBody, ButtonGroup, Button } from "flowbite-svelte";
+    import { Table, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, TableBody, ButtonGroup } from "flowbite-svelte";
     import { formatCurrency } from "$lib/utils/format";
     import { DeleteRole, RoleFormModal } from ".";
     import { TrashBinOutline, EditOutline, PlusOutline } from "flowbite-svelte-icons";
 
-    let roles = $state([] as Role[])
+    let roles = $state([] as RoleEnvelope[])
 
     function refresh() {
 		load().then(l => {
-            roles = l.results as Role[]
+            roles = l.results as RoleEnvelope[]
         });
 	}
 
@@ -63,9 +63,9 @@
     <TableBody tableBodyClass="divide-y">
         {#each roles as role}
       <TableBodyRow>
-        <TableBodyCell>{role.name}</TableBodyCell>
-        <TableBodyCell>{role.description}</TableBodyCell>
-        <TableBodyCell>{formatCurrency.format(role.hourlyRate || 0)}</TableBodyCell>
+        <TableBodyCell>{role.data.name}</TableBodyCell>
+        <TableBodyCell>{role.data.description}</TableBodyCell>
+        <TableBodyCell>{formatCurrency.format(role.data.hourlyRate || 0)}</TableBodyCell>
         <TableBodyCell>
             <ButtonGroup>
                 <RoleFormModal
@@ -75,7 +75,7 @@
                         <EditOutline size="sm" />
                 </RoleFormModal>
             <DeleteRole
-                id={role.id || ''}
+                id={role.meta.id || ''}
                 size="md"
                 name="Delete role"
                 update={() => refresh()}

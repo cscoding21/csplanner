@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		pageDetail: string;
+		pageDetail: string|undefined;
 		children: Snippet;
 	}
 	let { pageDetail, children }: Props = $props();

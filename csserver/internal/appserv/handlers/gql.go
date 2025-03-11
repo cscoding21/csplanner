@@ -6,7 +6,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
-	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 
 	"github.com/gorilla/websocket"
@@ -30,12 +29,12 @@ func GetGqlHandler() *handler.Server {
 	gqlService.AddTransport(transport.POST{})
 	gqlService.AddTransport(transport.MultipartForm{})
 
-	gqlService.SetQueryCache(lru.New(1000))
+	//gqlService.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 
 	gqlService.Use(extension.Introspection{})
-	gqlService.Use(extension.AutomaticPersistedQuery{
-		Cache: lru.New(100),
-	})
+	// gqlService.Use(extension.AutomaticPersistedQuery{
+	// 	Cache: lru.New[string](100),
+	// })
 
 	gqlService.AddTransport(&transport.Websocket{
 		Upgrader: websocket.Upgrader{
