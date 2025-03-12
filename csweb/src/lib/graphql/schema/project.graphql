@@ -132,14 +132,24 @@ query findProjects($input: PageAndFilter!) {
 			...pagingFragment
 		}
 		results {
-			...projectFragment
+			meta {
+				...baseModelFragment
+			}
+			data {
+				...projectFragment
+			}
 		}
 	}
 }
 
 query getProject($id: String!) {
 	getProject(id: $id) {
-		...projectFragment
+		meta {
+			...baseModelFragment
+		}
+		data {
+			...projectFragment
+		}
 	}
 }
 

@@ -375,9 +375,9 @@ type ProjectMilestoneTask struct {
 }
 
 type ProjectResults struct {
-	Paging  *Pagination `json:"paging,omitempty"`
-	Filters *Filters    `json:"filters"`
-	Results []*Project  `json:"results,omitempty"`
+	Paging  *Pagination        `json:"paging,omitempty"`
+	Filters *Filters           `json:"filters"`
+	Results []*ProjectEnvelope `json:"results,omitempty"`
 }
 
 type ProjectScheduleResult struct {

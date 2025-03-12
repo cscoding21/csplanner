@@ -16,7 +16,7 @@
 	} from '../../components';
 	import { CommentList, CSSection } from "$lib/components";
 	import { TrashBinOutline, MessagesOutline, ArrowRightToBracketOutline } from 'flowbite-svelte-icons';
-	import type { Project } from '$lib/graphql/generated/sdk';
+	import type { ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { sineIn } from 'svelte/easing';
 	import { ProjectStatusUpdate } from '../../components';
 	import { goto } from '$app/navigation';
@@ -24,7 +24,7 @@
 	const id = $page.params.id;
 	let hash = $state($page.url.hash);
 
-	let project: Project = $state({} as Project);
+	let project: ProjectEnvelope = $state({} as ProjectEnvelope);
 
 	const loadPage = async () => {
 		if (!hash) {
@@ -54,13 +54,13 @@
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
-	<ProjectActionBar pageDetail={project.projectBasics?.name}>
+	<ProjectActionBar pageDetail={project.data?.projectBasics?.name}>
 		<ButtonGroup>
 			<ProjectStatusUpdate id={id} update={() => { goto("/project/detail/" + id + "#snapshot", { invalidateAll: true }) }}>
 				<ArrowRightToBracketOutline size="sm" class="mr-2"  />
 				Status
 			</ProjectStatusUpdate>
-			<DeleteProject id={id} name={project.projectBasics?.name}>
+			<DeleteProject id={id} name={project.data?.projectBasics?.name}>
 				<TrashBinOutline size="sm" class="mr-2" />
 				Delete
 			</DeleteProject>

@@ -243,9 +243,9 @@ func FindPagedObjects[T any](
 	countSql := GetCountSql(sql)
 	out := common.NewPagedResults[common.BaseModel[T]](paging, filters)
 
-	fmt.Println(pageSql)
-	fmt.Println(countSql)
-	fmt.Println(params...)
+	// fmt.Println(pageSql)
+	// fmt.Println(countSql)
+	// fmt.Println(params...)
 
 	count, err := GetScalar[int](ctx, db, countSql, params...)
 	if err != nil {

@@ -81,8 +81,8 @@
 		findAllResources()
 			.then((r) => {
 				resourceOpts = [...resourceOpts, ...r.results?.map((r) => ({
-					name: r.name,
-					value: r.id as string
+					name: r.data?.name,
+					value: r.meta?.id as string
 				})) as SelectOptionType<string>[]];
 			});
 	};

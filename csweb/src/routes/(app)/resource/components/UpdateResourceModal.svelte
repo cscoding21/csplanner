@@ -139,25 +139,30 @@
 		error={errors.name}
 	/>
 
-	<SelectInput
-		bind:value={rf.type as string}
-		fieldName="Type"
-		error={errors.type}
-		options={typeOpts}
-	/>
+	<div class="flex">
+		<div class="flex-1 pr-2">
+			<SelectInput
+				bind:value={rf.type as string}
+				fieldName="Type"
+				error={errors.type}
+				options={typeOpts}
+			/>
+		</div>
+		<div class="flex-1">
+			<SelectInput
+				bind:value={rf.status as string}
+				fieldName="Status"
+				error={errors.status}
+				options={statusOpts}
+			/>
+		</div>
+	</div>
 
+	{#if rf.type === "human"}
 	<NumberInput
 		bind:value={rf.availableHoursPerWeek as number}
 		fieldName="Available Hours per Week"
 		error={errors.availableHoursPerWeek}
-	/>
-
-
-	<SelectInput
-		bind:value={rf.status as string}
-		fieldName="Status"
-		error={errors.status}
-		options={statusOpts}
 	/>
 
 	<SelectInput
@@ -166,18 +171,24 @@
 		error={errors.roleID}
 		options={roleOpts}
 	/>
+	{/if}
 
-	<MoneyInput
-		bind:value={rf.initialCost}
-		fieldName="Onboarding Cost"
-		error={errors.initialCost}
-	/>
-
-	<MoneyInput
-		bind:value={rf.annualizedCost}
-		fieldName="Annualized Cost"
-		error={errors.annualizedCost}
-	/>
+	<div class="flex">
+		<div class="flex-1 pr-2">
+			<MoneyInput
+				bind:value={rf.initialCost}
+				fieldName="Initial Cost"
+				error={errors.initialCost}
+			/>
+		</div>	
+		<div class="flex-1 pr-2">
+			<MoneyInput
+				bind:value={rf.annualizedCost}
+				fieldName="Annualized Cost"
+				error={errors.annualizedCost}
+			/>
+		</div>
+	</div>
 
 	<Hr />
 	<div class="float-right">

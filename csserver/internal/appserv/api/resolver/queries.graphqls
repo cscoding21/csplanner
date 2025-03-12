@@ -3,7 +3,7 @@ type Query {
     getUser(id: String!): User!
 
     findProjects(pageAndFilter: PageAndFilter!): ProjectResults!
-    getProject(id: String!): Project!
+    getProject(id: String!): ProjectEnvelope!
     calculateProjectSchedule(projectID: String!, startDate: Time!): ProjectScheduleResult!
     checkProjectStatus(projectID: String!, newStatus: String!): ValidationResult!
 

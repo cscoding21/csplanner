@@ -556,6 +556,8 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 		Organization: common.ValToRef(csmap.OrganizationOrganizationToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 
+	csmap.AugmentOrganization(out.Organization)
+
 	return &out, nil
 }
 

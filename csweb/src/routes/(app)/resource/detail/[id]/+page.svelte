@@ -79,7 +79,7 @@
 				<UpdateResourceModal {id} update={updateResource}
 								><PenOutline class="mr-2 h-3 w-3" /> Edit</UpdateResourceModal
 							>
-				<DeleteResource id={resourcePromise.meta.id || ''} name={resourcePromise.data.name}>
+				<DeleteResource id={resourcePromise.meta.id || ''} name={resourcePromise.data?.name}>
 					<TrashBinOutline class="mr-2 h-3 w-3" />
 					Delete
 				</DeleteResource>
@@ -90,24 +90,24 @@
 			<div class="mr-4 col-span-1">
 				<Card padding="sm" size="xl">
 					<div class="flex flex-col items-center pb-4">
-						<Avatar size="lg" src={resourcePromise.data.profileImage as string} rounded
-							>{getInitialsFromName(resourcePromise.data.name)}</Avatar
+						<Avatar size="lg" src={resourcePromise.data?.profileImage as string} rounded
+							>{getInitialsFromName(resourcePromise.data?.name)}</Avatar
 						>
 						<h5 class="mb-1 mt-2 text-xl font-medium text-gray-900 dark:text-white">
 							{resourcePromise.data?.name}
 						</h5>
-						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.data.role?.name}</span>
+						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.data?.role?.name}</span>
 					</div>
 					<hr class="mb-4 mt-2" />
 					<div class="mb-6">
 						<ul class="list">
 							<li>
 								<span>Type</span>
-								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data.type)}</span>
+								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data?.type)}</span>
 							</li>
 							<li>
 								<span>Status</span>
-								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data.status)}</span>
+								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data?.status)}</span>
 							</li>
 							<li>
 								<span>Role</span>
@@ -127,16 +127,16 @@
 							</li>
 							<li>
 								<span>Onboarding Cost</span>
-								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data.initialCost as number)}</span>
+								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data?.initialCost as number)}</span>
 							</li>
 							<li>
 								<span>Annualized Cost</span>
-								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data.annualizedCost as number)}</span>
+								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data?.annualizedCost as number)}</span>
 							</li>
 							<li>
 								<span>Created Date</span>
 								<span class="float-right flex-auto font-semibold"
-									>{formatDate(resourcePromise.meta.createdAt)}</span
+									>{formatDate(resourcePromise.meta?.createdAt)}</span
 								>
 							</li>
 

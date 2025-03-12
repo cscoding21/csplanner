@@ -63,7 +63,7 @@ func AugmentOrganization(org *idl.Organization) {
 // AugmentPortfolio enhance calculate and caches properties of a portfolio
 func AugmentPortfolio(port *idl.Portfolio, resourceID *string) {
 	//---exit conditions
-	if port.Begin == nil || port.End == nil {
+	if port == nil || port.Begin == nil || port.End == nil {
 		return
 	}
 
@@ -131,6 +131,10 @@ func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData
 		TotalCount:     0,
 	}
 
+	if port == nil {
+		return out
+	}
+
 	for _, s := range port.Schedule {
 		out.TotalCount++
 		out.TotalValue += *s.Project.ProjectValue.Calculated.NetPresentValue
@@ -147,6 +151,10 @@ func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData
 }
 
 func AugmentProject(model *project.Project, proj *idl.Project) {
+	if proj == nil || model == nil {
+		return
+	}
+
 	if len(proj.ProjectMilestones) == 0 {
 		return
 	}
@@ -249,6 +257,10 @@ func getStateTransition(model project.Project, status projectstatus.ProjectState
 
 // AugmentResource fills in object data for a single reaource
 func AugmentResource(res *idl.Resource) {
+	if res == nil {
+		return
+	}
+
 	if res.UserEmail != nil {
 		res.User = getUserByEmail(*res.UserEmail)
 	}
@@ -276,6 +288,10 @@ func AugmentResource(res *idl.Resource) {
 
 // AugmentRole ensure the the skill name is inluded in the role's default skills
 func AugmentRole(r *idl.Role) {
+	if r == nil {
+		return
+	}
+
 	skills := getSkills()
 
 	if len(r.DefaultSkills) == 0 {
@@ -290,6 +306,10 @@ func AugmentRole(r *idl.Role) {
 }
 
 func AugmentSchedule(schedule *idl.Schedule) {
+	if schedule == nil {
+		return
+	}
+
 	resourceList := findResources()
 	projectList := findProjects()
 

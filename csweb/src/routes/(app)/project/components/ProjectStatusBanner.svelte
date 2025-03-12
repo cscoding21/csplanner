@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { Project, Schedule } from "$lib/graphql/generated/sdk";
+	import type { ProjectEnvelope, Schedule } from "$lib/graphql/generated/sdk";
     import { Alert, Button } from "flowbite-svelte";
     import { InfoCircleSolid } from "flowbite-svelte-icons";
     import { formatDate } from "$lib/utils/format";
 
     interface Props {
-		project: Project;
+		project: ProjectEnvelope;
 		schedule?: Schedule;
 	}
     let { project, schedule }: Props = $props();
@@ -14,13 +14,13 @@
 
 
 {#if schedule}
-    {#if project.projectStatusBlock.status === "scheduled"}
+    {#if project.data?.projectStatusBlock.status === "scheduled"}
     <Alert border color="blue" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
         <span class="font-medium">Project scheduled</span>
-        This project has been scheduled and is set to begin on <b>{formatDate(project.projectBasics.startDate)}</b>
+        This project has been scheduled and is set to begin on <b>{formatDate(project.data?.projectBasics.startDate)}</b>
     </Alert>
-    {:else if project.projectStatusBlock.status === "inflight"}
+    {:else if project.data?.projectStatusBlock.status === "inflight"}
     <Alert border color="green" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
         <span class="font-medium">Project in-flight!</span>
@@ -30,7 +30,7 @@
 {:else}
     <Alert border color="green" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
-        <span class="font-medium">{project.projectStatusBlock.status}</span>
+        <span class="font-medium">{project.data?.projectStatusBlock.status}</span>
         <Button slot="close-button" size="xs" let:close on:click={close} class="ms-auto">Dismiss</Button>
     </Alert>
 {/if}

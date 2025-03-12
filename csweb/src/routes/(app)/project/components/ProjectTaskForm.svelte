@@ -10,7 +10,7 @@
 	import type {
 		UpdateProjectMilestoneTask,
 		ProjectMilestoneTask,
-		Resource
+		ResourceEnvelope
 	} from '$lib/graphql/generated/sdk';
 	import { taskSchema } from '$lib/forms/project.validation';
 	import {
@@ -113,17 +113,17 @@
 		if (taskForm.requiredSkillID) {
 			resourceOpts = resourceRoster
 				.filter((res) => {
-					if (res.skills && res.skills.length > 0) {
+					if (res.data?.skills && res.data?.skills.length > 0) {
 						console.log(taskForm.requiredSkillID)
-						const val = res.skills?.map((rs) => rs.id).includes(taskForm.requiredSkillID);
+						const val = res.data?.skills?.map((rs) => rs.id).includes(taskForm.requiredSkillID);
 						return val;
 					} else {
 						return false;
 					}
 				})
-				.map((r) => ({ name: r.name as string, value: r.id as string }));
+				.map((r) => ({ name: r.data?.name as string, value: r.meta?.id as string }));
 		} else {
-			resourceOpts = resourceRoster.map((r) => ({ name: r.name as string, value: r.id as string }));
+			resourceOpts = resourceRoster.map((r) => ({ name: r.data?.name as string, value: r.meta?.id as string }));
 		}
 	})
 
@@ -135,7 +135,7 @@
 			.then(() => {
 				findAllResources()
 					.then((r) => {
-						resourceRoster = r.results as Resource[];
+						resourceRoster = r.results as ResourceEnvelope[];
 
 						return r;
 					})
@@ -143,7 +143,7 @@
 	};
 
 	let taskForm = $state(getTaskForm());
-	let resourceRoster = $state([] as Resource[]);
+	let resourceRoster = $state([] as ResourceEnvelope[]);
 	let resourceOpts = $state([] as SelectOptionType<string>[]);
 	let skillsOpts = $state([] as SelectOptionType<string>[]);
 

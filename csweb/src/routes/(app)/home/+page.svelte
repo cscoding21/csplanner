@@ -56,7 +56,7 @@
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
             <ul>
             {#each myProjects.results as project}
-                <li>{project?.projectBasics.name}</li>
+                <li>{project?.data?.projectBasics.name} {project?.meta?.id}</li>
             {/each}
             </ul>
         {/if}

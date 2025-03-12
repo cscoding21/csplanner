@@ -4,7 +4,7 @@ import type {
 	PageAndFilter,
 	UpdateProjectFeature,
 	UpdateProjectMilestoneTask,
-	Project,
+	ProjectEnvelope,
 	ProjectResults,
 	Resource,
 	Status,
@@ -72,7 +72,7 @@ export const findProjects = async (input: PageAndFilter): Promise<ProjectResults
  * @param id the ID of the project to retrieve
  * @returns the full object graph of the specified project
  */
-export const getProject = async (id: any): Promise<Project> => {
+export const getProject = async (id: any): Promise<ProjectEnvelope> => {
 	const client = getApolloClient();
 
 	return client
@@ -256,6 +256,7 @@ export const updateProjectDaci = async (
 ): Promise<CreateProjectResult> => {
 	const proj = await getProject(id);
 
+	console.log("updateProjectDaci", proj)
 	const updateProj = convertProjectToUpdateProject(proj);
 	updateProj.projectDaci = input;
 
@@ -449,22 +450,22 @@ export const calculateProjectSchedule = async (projectID: string, startDate :Dat
 		});
 };
 
-export const convertProjectToUpdateProject = (project: any): UpdateProject => {
+export const convertProjectToUpdateProject = (project: ProjectEnvelope): UpdateProject => {
 	const up: UpdateProject = {
-		id: project.id
+		id: project.meta?.id
 	};
 
-	console.log(coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema))
+	console.log("updateProject", coalesceToType<UpdateProjectValue>(project.data?.projectValue, valueSchema))
 
-	up.projectBasics = coalesceToType<UpdateProjectBasics>(project.projectBasics, basicSchema);
-	up.projectValue = coalesceToType<UpdateProjectValue>(project.projectValue, valueSchema);
-	up.projectCost = coalesceToType<UpdateProjectCost>(project.projectCost, costSchema);
+	up.projectBasics = coalesceToType<UpdateProjectBasics>(project.data?.projectBasics, basicSchema);
+	up.projectValue = coalesceToType<UpdateProjectValue>(project.data?.projectValue, valueSchema);
+	up.projectCost = coalesceToType<UpdateProjectCost>(project.data?.projectCost, costSchema);
 
 	const df = {
-		driverIDs: safeArray(project.projectDaci?.driver?.map((d:Resource) => d?.id) as string[]),
-		approverIDs: safeArray(project.projectDaci?.approver?.map((d:Resource) => d?.id) as string[]),
-		contributorIDs: safeArray(project.projectDaci?.contributor?.map((d:Resource) => d?.id) as string[]),
-		informedIDs: safeArray(project.projectDaci?.informed?.map((d:Resource) => d?.id) as string[])
+		driverIDs: safeArray(project.data?.projectDaci?.driver?.map(d => d?.id) as string[]),
+		approverIDs: safeArray(project.data?.projectDaci?.approver?.map(d => d?.id) as string[]),
+		contributorIDs: safeArray(project.data?.projectDaci?.contributor?.map(d => d?.id) as string[]),
+		informedIDs: safeArray(project.data?.projectDaci?.informed?.map(d => d?.id) as string[])
 	};
 
 	up.projectDaci = df;

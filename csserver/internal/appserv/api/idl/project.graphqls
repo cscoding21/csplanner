@@ -4,10 +4,6 @@
 
 type Project {
   id: String
-  # createdAt: Time
-  # updatedAt: Time
-  # createdBy: String
-  # updatedBy: String
   projectBasics: ProjectBasics!
   projectStatusBlock: ProjectStatusBlock!
   projectValue: ProjectValue!
@@ -97,7 +93,6 @@ type ProjectMilestoneTask {
   calculated: ProjectTaskCalculatedData
 }
 
-
 type ProjectFilters {
   status: String
 }
@@ -117,7 +112,7 @@ type ProjectStatusTransition {
 type ProjectResults {
   paging: Pagination
   filters: Filters!
-  results: [Project!]
+  results: [ProjectEnvelope!]
 }
 
 
@@ -131,8 +126,6 @@ type CreateProjectCommentResult {
   status: Status
   comment: Comment
 }
-
-
 
 type ProjectCostCalculatedData {
   initialCost: Float
@@ -177,7 +170,10 @@ type ProjectTaskCalculatedData {
   exceptions: [String!]
 }
 
-
+type ProjectEnvelope {
+  meta: BaseModel!
+  data: Project!
+}
 
 
 #----------------------
@@ -277,10 +273,4 @@ input UpdateNewProject {
   ownerID: String!
   templateID: String!
   isCapitalized: Boolean!
-}
-
-
-type ProjectEnvelope {
-  meta: BaseModel!
-  data: Project!
 }

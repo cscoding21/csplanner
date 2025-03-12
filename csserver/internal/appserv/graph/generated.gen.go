@@ -698,7 +698,7 @@ type QueryResolver interface {
 	CurrentUser(ctx context.Context) (*idl.User, error)
 	GetUser(ctx context.Context, id string) (*idl.User, error)
 	FindProjects(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ProjectResults, error)
-	GetProject(ctx context.Context, id string) (*idl.Project, error)
+	GetProject(ctx context.Context, id string) (*idl.ProjectEnvelope, error)
 	CalculateProjectSchedule(ctx context.Context, projectID string, startDate time.Time) (*idl.ProjectScheduleResult, error)
 	CheckProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.ValidationResult, error)
 	FindProjectComments(ctx context.Context, projectID string) (*idl.CommentResults, error)
@@ -4079,10 +4079,6 @@ type PortfolioCalculatedData {
 
 type Project {
   id: String
-  # createdAt: Time
-  # updatedAt: Time
-  # createdBy: String
-  # updatedBy: String
   projectBasics: ProjectBasics!
   projectStatusBlock: ProjectStatusBlock!
   projectValue: ProjectValue!
@@ -4172,7 +4168,6 @@ type ProjectMilestoneTask {
   calculated: ProjectTaskCalculatedData
 }
 
-
 type ProjectFilters {
   status: String
 }
@@ -4192,7 +4187,7 @@ type ProjectStatusTransition {
 type ProjectResults {
   paging: Pagination
   filters: Filters!
-  results: [Project!]
+  results: [ProjectEnvelope!]
 }
 
 
@@ -4206,8 +4201,6 @@ type CreateProjectCommentResult {
   status: Status
   comment: Comment
 }
-
-
 
 type ProjectCostCalculatedData {
   initialCost: Float
@@ -4252,7 +4245,10 @@ type ProjectTaskCalculatedData {
   exceptions: [String!]
 }
 
-
+type ProjectEnvelope {
+  meta: BaseModel!
+  data: Project!
+}
 
 
 #----------------------
@@ -4353,12 +4349,7 @@ input UpdateNewProject {
   templateID: String!
   isCapitalized: Boolean!
 }
-
-
-type ProjectEnvelope {
-  meta: BaseModel!
-  data: Project!
-}`, BuiltIn: false},
+`, BuiltIn: false},
 	{Name: "../api/idl/resource.graphqls", Input: `type Resource {
   id: String
   type: String!
@@ -4640,7 +4631,7 @@ input UpdateUser {
     getUser(id: String!): User!
 
     findProjects(pageAndFilter: PageAndFilter!): ProjectResults!
-    getProject(id: String!): Project!
+    getProject(id: String!): ProjectEnvelope!
     calculateProjectSchedule(projectID: String!, startDate: Time!): ProjectScheduleResult!
     checkProjectStatus(projectID: String!, newStatus: String!): ValidationResult!
 
@@ -18225,9 +18216,9 @@ func (ec *executionContext) _ProjectResults_results(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*idl.Project)
+	res := resTmp.([]*idl.ProjectEnvelope)
 	fc.Result = res
-	return ec.marshalOProject2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectᚄ(ctx, field.Selections, res)
+	return ec.marshalOProjectEnvelope2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectEnvelopeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -18238,24 +18229,12 @@ func (ec *executionContext) fieldContext_ProjectResults_results(_ context.Contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Project_id(ctx, field)
-			case "projectBasics":
-				return ec.fieldContext_Project_projectBasics(ctx, field)
-			case "projectStatusBlock":
-				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
-			case "projectValue":
-				return ec.fieldContext_Project_projectValue(ctx, field)
-			case "projectCost":
-				return ec.fieldContext_Project_projectCost(ctx, field)
-			case "projectDaci":
-				return ec.fieldContext_Project_projectDaci(ctx, field)
-			case "projectFeatures":
-				return ec.fieldContext_Project_projectFeatures(ctx, field)
-			case "projectMilestones":
-				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "meta":
+				return ec.fieldContext_ProjectEnvelope_meta(ctx, field)
+			case "data":
+				return ec.fieldContext_ProjectEnvelope_data(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ProjectEnvelope", field.Name)
 		},
 	}
 	return fc, nil
@@ -20604,9 +20583,9 @@ func (ec *executionContext) _Query_getProject(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*idl.Project)
+	res := resTmp.(*idl.ProjectEnvelope)
 	fc.Result = res
-	return ec.marshalNProject2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx, field.Selections, res)
+	return ec.marshalNProjectEnvelope2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectEnvelope(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getProject(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -20617,24 +20596,12 @@ func (ec *executionContext) fieldContext_Query_getProject(ctx context.Context, f
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Project_id(ctx, field)
-			case "projectBasics":
-				return ec.fieldContext_Project_projectBasics(ctx, field)
-			case "projectStatusBlock":
-				return ec.fieldContext_Project_projectStatusBlock(ctx, field)
-			case "projectValue":
-				return ec.fieldContext_Project_projectValue(ctx, field)
-			case "projectCost":
-				return ec.fieldContext_Project_projectCost(ctx, field)
-			case "projectDaci":
-				return ec.fieldContext_Project_projectDaci(ctx, field)
-			case "projectFeatures":
-				return ec.fieldContext_Project_projectFeatures(ctx, field)
-			case "projectMilestones":
-				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "meta":
+				return ec.fieldContext_ProjectEnvelope_meta(ctx, field)
+			case "data":
+				return ec.fieldContext_ProjectEnvelope_data(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ProjectEnvelope", field.Name)
 		},
 	}
 	defer func() {
@@ -33760,10 +33727,6 @@ func (ec *executionContext) marshalNPortfolioWeekSummary2ᚕᚖcsserverᚋintern
 	return ret
 }
 
-func (ec *executionContext) marshalNProject2csserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx context.Context, sel ast.SelectionSet, v idl.Project) graphql.Marshaler {
-	return ec._Project(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNProject2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx context.Context, sel ast.SelectionSet, v *idl.Project) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -33822,6 +33785,20 @@ func (ec *executionContext) marshalNProjectDaci2ᚖcsserverᚋinternalᚋappserv
 		return graphql.Null
 	}
 	return ec._ProjectDaci(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNProjectEnvelope2csserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectEnvelope(ctx context.Context, sel ast.SelectionSet, v idl.ProjectEnvelope) graphql.Marshaler {
+	return ec._ProjectEnvelope(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNProjectEnvelope2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectEnvelope(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectEnvelope) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectEnvelope(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNProjectFeature2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectFeature(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectFeature) graphql.Marshaler {
@@ -35120,53 +35097,6 @@ func (ec *executionContext) marshalOPortfolioWeekSummary2ᚖcsserverᚋinternal�
 	return ec._PortfolioWeekSummary(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProject2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Project) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNProject2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalOProject2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProject(ctx context.Context, sel ast.SelectionSet, v *idl.Project) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -35321,6 +35251,53 @@ func (ec *executionContext) marshalOProjectCostCalculatedData2ᚖcsserverᚋinte
 		return graphql.Null
 	}
 	return ec._ProjectCostCalculatedData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectEnvelope2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectEnvelopeᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectEnvelope) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNProjectEnvelope2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectEnvelope(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOProjectFeature2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectFeatureᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.ProjectFeature) graphql.Marshaler {

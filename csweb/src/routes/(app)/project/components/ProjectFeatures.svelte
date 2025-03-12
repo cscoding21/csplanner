@@ -4,7 +4,7 @@
 	import { BadgeProjectStatus, ProjectFeatureDisplay, ProjectFeatureForm } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
-	import type { Project } from '$lib/graphql/generated/sdk';
+	import type { ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { getDefaultProject } from '$lib/forms/project.validation';
 	import ShowIfStatus from './ShowIfStatus.svelte';
 
@@ -15,7 +15,7 @@
 
 	let { id, update }: Props = $props();
 
-	let project:Project = $state(getDefaultProject() as Project)
+	let project:ProjectEnvelope = $state(getDefaultProject() as ProjectEnvelope)
 
 	function refresh() {
 		console.log('refreshing')
@@ -26,7 +26,7 @@
 		})
 	}
 
-	const load = async ():Promise<Project> => {
+	const load = async ():Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
 				return proj
@@ -56,15 +56,15 @@
 	
 {#if project}
 <SectionHeading>
-	Features: {project.projectBasics.name}
-	<span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+	Features: {project.data?.projectBasics.name}
+	<span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 </SectionHeading>
 
 <div class="mb-8">
-	{#if project.projectFeatures && project.projectFeatures.length > 0}
-		{#each project.projectFeatures as feature (feature.id)}
+	{#if project.data?.projectFeatures && project.data?.projectFeatures.length > 0}
+		{#each project.data?.projectFeatures as feature (feature.id)}
 			{#if feature && feature.id}
-				<ProjectFeatureDisplay {feature} update={refresh} projectStatus={project.projectStatusBlock.status} projectID={project.id as string} />
+				<ProjectFeatureDisplay {feature} update={refresh} projectStatus={project.data?.projectStatusBlock.status} projectID={project.meta?.id as string} />
 				<Hr hrClass="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
 			{/if}
 		{/each}
@@ -75,7 +75,7 @@
 	{/if}
 </div>
 
-<ShowIfStatus scope={["new", "draft"]} status={project.projectStatusBlock?.status}>
+<ShowIfStatus scope={["new", "draft"]} status={project.data?.projectStatusBlock?.status}>
 	<ProjectFeatureForm projectID={id} feature={undefined} update={() => refresh()} />
 </ShowIfStatus>
 

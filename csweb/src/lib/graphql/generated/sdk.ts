@@ -616,7 +616,7 @@ export type ProjectResults = {
   __typename?: 'ProjectResults';
   filters: Filters;
   paging?: Maybe<Pagination>;
-  results?: Maybe<Array<Project>>;
+  results?: Maybe<Array<ProjectEnvelope>>;
 };
 
 export type ProjectScheduleResult = {
@@ -731,7 +731,7 @@ export type Query = {
   getOrganization: Organization;
   getPortfolio: Portfolio;
   getPortfolioForResource: Portfolio;
-  getProject: Project;
+  getProject: ProjectEnvelope;
   getResource: ResourceEnvelope;
   getUser: User;
 };
@@ -1757,19 +1757,31 @@ export const FindProjectsDocument = gql`
       ...pagingFragment
     }
     results {
-      ...projectFragment
+      meta {
+        ...baseModelFragment
+      }
+      data {
+        ...projectFragment
+      }
     }
   }
 }
     ${PagingFragmentFragmentDoc}
+${BaseModelFragmentFragmentDoc}
 ${ProjectFragmentFragmentDoc}`;
 export const GetProjectDocument = gql`
     query getProject($id: String!) {
   getProject(id: $id) {
-    ...projectFragment
+    meta {
+      ...baseModelFragment
+    }
+    data {
+      ...projectFragment
+    }
   }
 }
-    ${ProjectFragmentFragmentDoc}`;
+    ${BaseModelFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
 export const CheckProjectStatusDocument = gql`
     query checkProjectStatus($projectID: String!, $newStatus: String!) {
   checkProjectStatus(projectID: $projectID, newStatus: $newStatus) {

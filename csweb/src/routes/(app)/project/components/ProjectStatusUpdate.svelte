@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
-    import type { Project } from "$lib/graphql/generated/sdk";
+    import type { ProjectEnvelope } from "$lib/graphql/generated/sdk";
 	import { setProjectStatus, getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
     import { Button, Modal, Hr } from "flowbite-svelte";
@@ -26,9 +26,9 @@
     }
 
 
-    let project:Project = $state(getDefaultProject() as Project)
+    let project:ProjectEnvelope = $state(getDefaultProject() as ProjectEnvelope)
 
-    const load = async (): Promise<Project> => {
+    const load = async (): Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
 				return proj;
@@ -160,7 +160,7 @@
 		load().then(p => {
             project = p
 
-            currentStateDef = getStatusContent(p.projectStatusBlock?.status)
+            currentStateDef = getStatusContent(p.data?.projectStatusBlock?.status)
         });
 	};
 </script>
@@ -179,8 +179,8 @@
         <p>{currentStateDef.currentDesc}</p>
         
 
-        {#if project.projectStatusBlock.allowedNextStates}
-        {#each project.projectStatusBlock.allowedNextStates as next, index}
+        {#if project.data?.projectStatusBlock.allowedNextStates}
+        {#each project.data?.projectStatusBlock.allowedNextStates as next, index}
             <div class="text-left p-4">  
                 {#if next.canEnter}
                     {@const statusContent = getStatusContent(next.nextState)}
@@ -220,7 +220,7 @@
                     </div>
                 {/if}
             </div>
-            {#if index + 1 < project.projectStatusBlock.allowedNextStates.length}
+            {#if index + 1 < project.data?.projectStatusBlock.allowedNextStates.length}
             <Hr hrClass="h-px mt-2 mb-2 bg-gray-200 border-0 dark:bg-gray-700" />
             {/if}
         {/each}

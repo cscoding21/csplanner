@@ -7,7 +7,7 @@
 	import { Button, type SelectOptionType } from 'flowbite-svelte';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, safeArray } from '$lib/utils/helpers';
-	import type { UpdateProjectDaci, Project } from '$lib/graphql/generated/sdk';
+	import type { UpdateProjectDaci, ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { BadgeProjectStatus, ShowIfStatus } from '.';
 
 	interface Props {
@@ -16,7 +16,7 @@
 	}
 	let { id, update }: Props = $props();
 
-	let project:Project = $state(getDefaultProject() as Project)
+	let project:ProjectEnvelope = $state(getDefaultProject() as ProjectEnvelope)
 	let errors: any = $state({});
 	let df:UpdateProjectDaci = {
 		driverIDs: [] as string[],
@@ -30,20 +30,20 @@
 	let cids:string[] = $state([])
 	let iids:string[] = $state([])
 
-	const load = async (): Promise<Project> => {
+	const load = async (): Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
 				// daciForm = coalesceToType<UpdateProjectDaci>(proj.projectDaci, daciSchema);
-				dids = safeArray(proj.projectDaci?.driver?.map((d) => d?.id) as string[])
-				aids = safeArray(proj.projectDaci?.approver?.map((d) => d?.id) as string[])
-				cids = safeArray(proj.projectDaci?.contributor?.map((d) => d?.id) as string[])
-				iids = safeArray(proj.projectDaci?.informed?.map((d) => d?.id) as string[])
+				dids = safeArray(proj.data?.projectDaci?.driver?.map((d) => d?.id) as string[])
+				aids = safeArray(proj.data?.projectDaci?.approver?.map((d) => d?.id) as string[])
+				cids = safeArray(proj.data?.projectDaci?.contributor?.map((d) => d?.id) as string[])
+				iids = safeArray(proj.data?.projectDaci?.informed?.map((d) => d?.id) as string[])
 
 				df = {
-					driverIDs: safeArray(proj.projectDaci?.driver?.map((d) => d?.id) as string[]),
-					approverIDs: safeArray(proj.projectDaci?.approver?.map((d) => d?.id) as string[]),
-					contributorIDs: safeArray(proj.projectDaci?.contributor?.map((d) => d?.id) as string[]),
-					informedIDs: safeArray(proj.projectDaci?.informed?.map((d) => d?.id) as string[])
+					driverIDs: safeArray(proj.data?.projectDaci?.driver?.map((d) => d?.id) as string[]),
+					approverIDs: safeArray(proj.data?.projectDaci?.approver?.map((d) => d?.id) as string[]),
+					contributorIDs: safeArray(proj.data?.projectDaci?.contributor?.map((d) => d?.id) as string[]),
+					informedIDs: safeArray(proj.data?.projectDaci?.informed?.map((d) => d?.id) as string[])
 				};
 
 				return proj
@@ -67,11 +67,14 @@
 		df.contributorIDs = cids
 		df.informedIDs = iids
 
+		console.log("dids", dids)
+
 		const dfParsed = daciSchema.cast(df);
 		daciSchema
 			.validate(dfParsed, { abortEarly: false })
 			.then(async () => {
 
+				console.log("dfParsed", dfParsed)
 				await updateProjectDaci(id, dfParsed)
 					.then((res) => {
 						if (res.status?.success) {
@@ -93,6 +96,7 @@
 						}
 					})
 					.catch((err) => {
+						console.log("DACI:" + err)
 						addToast({
 							message: 'Error updating project DACI: ' + err,
 							dismissible: true,
@@ -111,9 +115,9 @@
 		findAllResources()
 			.then((r) => r)
 			.then((r) => {
-				resourceOpts = r.results?.filter(r => r.type === "human").map((r) => ({
-					name: r.name,
-					value: r.id as string
+				resourceOpts = r.results?.filter(r => r.data?.type === "human" || true).map((r) => ({
+					name: r.data?.name,
+					value: r.meta?.id as string
 				})) as SelectOptionType<string>[];
 			})
 			.then(() => {
@@ -131,8 +135,8 @@
 {:then promiseData}
 	{#if project}
 		<SectionHeading>
-			DACI: {project.projectBasics.name}
-			<span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+			DACI: {project.data?.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 		</SectionHeading>
 	{/if}
 
@@ -169,7 +173,7 @@
 			update={() => callIf(update)}
 		/>
 
-		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.projectStatusBlock?.status}>
+		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.data?.projectStatusBlock?.status}>
 		<div class="col-span-4">
 			<span class="float-right">
 				<Button on:click={updateDACI}>Update Team</Button>

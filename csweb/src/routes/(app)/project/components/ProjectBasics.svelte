@@ -4,7 +4,7 @@
 	import { getProject, updateProjectBasics } from '$lib/services/project';
 	import { basicSchema, getDefaultProject } from '$lib/forms/project.validation';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
-	import type { UpdateProjectBasics, Project } from '$lib/graphql/generated/sdk';
+	import type { UpdateProjectBasics, ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { coalesceToType } from '$lib/forms/helpers';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
@@ -17,12 +17,12 @@
 	}
 	let { id, update }: Props = $props();
 
-	let project:Project = $state(getDefaultProject() as Project)
+	let project:ProjectEnvelope = $state(getDefaultProject() as ProjectEnvelope)
 
-	const load = async (): Promise<Project> => {
+	const load = async (): Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
-				basicsForm = coalesceToType<UpdateProjectBasics>(proj.projectBasics, basicSchema);
+				basicsForm = coalesceToType<UpdateProjectBasics>(proj.data?.projectBasics, basicSchema);
 
 				return proj;
 			})
@@ -104,8 +104,8 @@
 {:then promiseData}
 	{#if project}
 		<SectionHeading>
-			Basics: {project.projectBasics.name}
-			<span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+			Basics: {project.data?.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 		</SectionHeading>
 	{/if}
 
@@ -136,7 +136,7 @@
 			<Toggle class="mt-3" bind:checked={basicsForm.isCapitalized}>Capitalized</Toggle>
 		</div>
 
-		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.projectStatusBlock?.status}>
+		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.data?.projectStatusBlock?.status}>
 		<div class="">
 			<span class="float-right">
 				<Button onclick={updateBasics}>Update Basics</Button>

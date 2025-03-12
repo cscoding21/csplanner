@@ -5,7 +5,7 @@
 	import { getDefaultProject} from '$lib/forms/project.validation';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
-	import type { Project, Resource } from '$lib/graphql/generated/sdk';
+	import type { ProjectEnvelope, Resource } from '$lib/graphql/generated/sdk';
 	import { BadgeProjectStatus } from '.';
 	import { ClockOutline, ClockSolid, DollarOutline } from 'flowbite-svelte-icons';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
@@ -33,7 +33,7 @@
 	}
 
 	let { id }: Props = $props();
-	let project:Project = $state(getDefaultProject() as Project)
+	let project:ProjectEnvelope = $state(getDefaultProject() as ProjectEnvelope)
 	let costTable:FlatCostDetail[] = $state([] as FlatCostDetail[])
 
 	let resourcePieValues:any[] = $state([] as any[])
@@ -41,14 +41,14 @@
 
 	let calculatedCostSum:number = $state(0.0);
 
-	const buildFlatCostDetails = (pro:Project):FlatCostDetail[] => {
+	const buildFlatCostDetails = (pro:ProjectEnvelope):FlatCostDetail[] => {
 		let out = [] as FlatCostDetail[]
-		if(!pro.projectMilestones) {
+		if(!pro.data?.projectMilestones) {
 			return out
 		}
 
-		for(let i = 0; i < pro.projectMilestones?.length; i++) {
-			const milestone = pro.projectMilestones[i]
+		for(let i = 0; i < pro.data?.projectMilestones?.length; i++) {
+			const milestone = pro.data?.projectMilestones[i]
 
 			if(!milestone || !milestone.tasks) {
 				continue
@@ -88,7 +88,7 @@
 		return out
 	}
 
-	const load = async ():Promise<Project> => {
+	const load = async ():Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
 				project = proj;
@@ -123,14 +123,14 @@
 {:then promiseData}
 	{#if project} 
 		<SectionHeading>
-			Estimated Implementation Cost: {project.projectBasics.name}
-			<span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+			Estimated Implementation Cost: {project.data?.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 		</SectionHeading>
 	{/if}
 
 	<div class="flex mb-8">
 		<div class="flex-1 px-r">
-	<DataCard dataPoint={formatCurrency.format(project.projectCost.calculated?.initialCost as number)} indicatorClass="text-green-500 dark:text-green-500">
+	<DataCard dataPoint={formatCurrency.format(project.data?.projectCost.calculated?.initialCost as number)} indicatorClass="text-green-500 dark:text-green-500">
 		{#snippet description()}
 			Implementation costs
 		{/snippet}
@@ -141,7 +141,7 @@
 </div>
 
 	<div class="flex-1 px-2">
-<DataCard dataPoint={project.projectCost.calculated?.hourEstimate + ""} indicatorClass="text-yellow-500 dark:text-yellow-500">
+<DataCard dataPoint={project.data?.projectCost.calculated?.hourEstimate + ""} indicatorClass="text-yellow-500 dark:text-yellow-500">
 	{#snippet description()}
 		Estimated hours
 	{/snippet}
@@ -152,7 +152,7 @@
 </div>
 
 	<div class="flex-1 pl-2">
-<DataCard dataPoint={project.projectCost.calculated?.hoursActualized+ ""} indicatorClass="text-orange-500 dark:text-orange-500">
+<DataCard dataPoint={project.data?.projectCost.calculated?.hoursActualized+ ""} indicatorClass="text-orange-500 dark:text-orange-500">
 	{#snippet description()}
 		Adjusted hours
 	{/snippet}

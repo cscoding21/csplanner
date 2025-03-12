@@ -54,25 +54,18 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 		return nil, err
 	}
 
-	outResults := []*idl.Project{}
-	for _, r := range results.Results {
-		thisResult := csmap.ProjectProjectToIdl(r.Data)
-		csmap.AugmentProject(&r.Data, &thisResult)
-		outResults = append(outResults, &thisResult)
-	}
-
 	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
 	out := idl.ProjectResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: outResults,
+		Results: csmap.ConvertProjectResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
 	}
 
 	return &out, nil
 }
 
 // GetProject is the resolver for the getProject field.
-func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project, error) {
+func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.ProjectEnvelope, error) {
 	service := factory.GetProjectService()
 	obj, err := service.GetProjectByID(ctx, id)
 	if err != nil {
@@ -80,10 +73,8 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 	}
 
 	service.GetStatusTransitionDetails(&obj.Data)
-	out := csmap.ProjectProjectToIdl(*&obj.Data)
-	csmap.AugmentProject(&obj.Data, &out)
 
-	return &out, nil
+	return csmap.ConvertProjectResultToEnvelope(obj), nil
 }
 
 // CalculateProjectSchedule is the resolver for the calculateProjectSchedule field.

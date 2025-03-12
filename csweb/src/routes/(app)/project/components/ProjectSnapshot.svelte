@@ -12,7 +12,7 @@
     import { 
         ProjectValueChart
     } from '../components'
-    import type { Project, Resource, User } from '$lib/graphql/generated/sdk'
+    import type { Project, ProjectEnvelope, Resource, User } from '$lib/graphql/generated/sdk'
     import { formatPercent, formatCurrency } from "$lib/utils/format";
     import { getProject } from "$lib/services/project";
     import { getDefaultProject } from "$lib/forms/project.validation";
@@ -23,9 +23,9 @@
     }
     let { id }:Props = $props()
 
-    let project:Project = $state(getDefaultProject() as Project)
+    let project:ProjectEnvelope = $state(getDefaultProject() as ProjectEnvelope)
 
-    const load = async (): Promise<Project> => {
+    const load = async (): Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
 				return proj;
@@ -55,8 +55,8 @@
 <!-- col span 3 -->
 <div class="col-span-3">
 <SectionHeading>
-    Financials: {project.projectBasics.name}
-    <span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+    Financials: {project.data?.projectBasics.name}
+    <span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 </SectionHeading>
 </div>
 
@@ -65,7 +65,7 @@
 <div class="col-span-1">
     <!-- col span 1 -->
     <SectionSubHeading>Executive Summary</SectionSubHeading>
-    <p class="mb-6 text-sm">{project.projectBasics?.description}</p>
+    <p class="mb-6 text-sm">{project.data?.projectBasics?.description}</p>
 </div>
 
 
@@ -77,35 +77,35 @@
         <li>
             <span>Net Present Value</span>
             <span class="float-right flex-auto font-semibold">
-                <MoneyDisplay amount={project.projectValue?.calculated?.netPresentValue || 0} />
+                <MoneyDisplay amount={project.data?.projectValue?.calculated?.netPresentValue || 0} />
             </span>
         </li>
 
         <li>
             <span>Internal Rate of Return</span>
             <span class="float-right flex-auto font-semibold"
-                >{formatPercent.format(project.projectValue?.calculated?.internalRateOfReturn || 0)}</span
+                >{formatPercent.format(project.data?.projectValue?.calculated?.internalRateOfReturn || 0)}</span
             >
         </li>
 
         <li>
             <span>Development Cost</span>
             <span class="float-right flex-auto font-semibold"
-                >{formatCurrency.format(project.projectCost?.calculated?.initialCost || 0)}</span
+                >{formatCurrency.format(project.data?.projectCost?.calculated?.initialCost || 0)}</span
             >
         </li>
 
         <li>
             <span>Development Hours</span>
             <span class="float-right flex-auto font-semibold"
-                >{project.projectCost?.calculated?.hourEstimate}</span
+                >{project.data?.projectCost?.calculated?.hourEstimate}</span
             >
         </li>
 
         <li>
             <span>Blended Hourly Rate</span>
             <span class="float-right flex-auto font-semibold"
-                >{formatCurrency.format(project.projectCost?.blendedRate || 0)}</span
+                >{formatCurrency.format(project.data?.projectCost?.blendedRate || 0)}</span
             >
         </li>
     </ul>
@@ -117,20 +117,20 @@
 <SectionSubHeading>Team</SectionSubHeading>
 
 <div class="font-medium text-gray-900 dark:text-white">Owner</div>
-<UserCard user={project.projectBasics.owner as User} />
+<UserCard user={project.data?.projectBasics.owner as User} />
 <Hr />
 <ul class="-m-4 p-2 divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-    {#if project.projectDaci?.driver}
-        {@render teamSection("Drivers", project.projectDaci?.driver as Resource[])}
+    {#if project.data?.projectDaci?.driver}
+        {@render teamSection("Drivers", project.data?.projectDaci?.driver as Resource[])}
     {/if}
-    {#if project.projectDaci?.approver}
-        {@render teamSection("Approvers", project.projectDaci?.approver as Resource[])}
+    {#if project.data?.projectDaci?.approver}
+        {@render teamSection("Approvers", project.data?.projectDaci?.approver as Resource[])}
     {/if}
-    {#if project.projectDaci?.contributor}
-        {@render teamSection("Contributors", project.projectDaci?.contributor as Resource[])}
+    {#if project.data?.projectDaci?.contributor}
+        {@render teamSection("Contributors", project.data?.projectDaci?.contributor as Resource[])}
     {/if}
-    {#if project.projectDaci?.informed}
-        {@render teamSection("Informed", project.projectDaci?.informed as Resource[])}
+    {#if project.data?.projectDaci?.informed}
+        {@render teamSection("Informed", project.data?.projectDaci?.informed as Resource[])}
     {/if}
 </ul>
 </div>
@@ -147,8 +147,8 @@
           <TableHeadCell>Status</TableHeadCell>
         </TableHead>
         <TableBody tableBodyClass="divide-y">
-        {#if project.projectFeatures}
-            {#each project.projectFeatures as feature}
+        {#if project.data?.projectFeatures}
+            {#each project.data?.projectFeatures as feature}
           <TableBodyRow>
             <TableBodyCell>
                 {feature.name}

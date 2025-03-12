@@ -2,7 +2,7 @@
 	import { findAllLists, updateList } from "$lib/services/list";
     import type { List, ListItem, ListResults, UpdateList } from "$lib/graphql/generated/sdk";
     import { addToast } from "$lib/stores/toasts";
-	import { Sidebar, SidebarWrapper, SidebarGroup, SidebarItem, Button } from "flowbite-svelte";
+	import { Button } from "flowbite-svelte";
 	import { CSSidebar, CSSidebarItem, SectionSubHeading } from "$lib/components";
 	import { Input, ButtonGroup } from "flowbite-svelte";
 	import { PlusOutline } from "flowbite-svelte-icons";

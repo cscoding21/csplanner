@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Project } from '$lib/graphql/generated/sdk';
+	import type { ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { Hr, Tabs, TabItem } from 'flowbite-svelte';
 	import {
 		ChevronRightOutline,
@@ -20,14 +20,14 @@
 
 	let modalState: boolean[] = $state([]);
 	let hasMilestones: boolean = $state(true);
-	let project = $state(getDefaultProject() as Project);
+	let project = $state({} as ProjectEnvelope);
 	let editTask = $state("")
 
 	const load = async (id: string) => {
 		await getProject(id)
 			.then((proj) => {
 				project = proj;
-				hasMilestones = (proj.projectMilestones && proj.projectMilestones.length > 0) as boolean;
+				hasMilestones = (proj.data?.projectMilestones && proj.data?.projectMilestones.length > 0) as boolean;
 			})
 			.catch((err) => {
 				console.log('Error on get ', err);
@@ -71,23 +71,23 @@
 {:then promiseData}
 	{#if project}
 		<SectionHeading>
-			Implementation Plan & Milestones: {project.projectBasics.name}
-			<span class="float-right"><BadgeProjectStatus status={project.projectStatusBlock?.status} /></span>
+			Implementation Plan & Milestones: {project.data?.projectBasics.name}
+			<span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 		</SectionHeading>
 	{/if}
 
-	{#if project.projectMilestones && project.projectMilestones.length > 0}
+	{#if project.data?.projectMilestones && project.data?.projectMilestones.length > 0}
 		<div class="">
 			<div class="">
 				<Tabs tabStyle="underline">
-					{#each project.projectMilestones as milestone, index}
+					{#each project.data?.projectMilestones as milestone, index}
 					<TabItem open={index === 0}>
 						<div slot="title" class="flex items-center gap-2">
 						  <ChevronRightOutline size="md" />
 						  {milestone.phase.name}
 						</div>
 						<div class="text-sm text-gray-500 dark:text-gray-400">
-							<ProjectMilestoneStatus milestone={project.projectMilestones[index]} />
+							<ProjectMilestoneStatus milestone={project.data?.projectMilestones[index]} />
 							<Hr />
 							{#if milestone.tasks}
 								{#each milestone.tasks as task, tindex}
@@ -97,11 +97,11 @@
 									</div>
 										<Hr />
 									{:else}
-									<ProjectTaskDisplay projectStatus={project.projectStatusBlock.status} projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} task={project.projectMilestones[index].tasks[tindex]} />
+									<ProjectTaskDisplay projectStatus={project.data?.projectStatusBlock.status} projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} task={project.data?.projectMilestones[index].tasks[tindex]} />
 									{/if}
 								{/each}
 							{/if}
-							<ShowIfStatus scope={["new", "draft"]} status={project.projectStatusBlock?.status}>
+							<ShowIfStatus scope={["new", "draft"]} status={project.data?.projectStatusBlock?.status}>
 								<Hr />
 								<SectionHeading>Add New Task to Milestone {milestone.phase.name}</SectionHeading>
 								<ProjectTaskForm milestoneID={milestone.id} projectID={id} update={() => refresh()} />

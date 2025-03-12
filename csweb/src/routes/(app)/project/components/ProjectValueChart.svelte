@@ -2,15 +2,15 @@
 	import { Chart } from 'flowbite-svelte';
 	import { type ApexOptions, default as ApexCharts } from 'apexcharts';
 
-	import type { Project } from '$lib/graphql/generated/sdk';
+	import type { ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { formatCurrency } from '$lib/utils/format';
 
 	interface Props {
-		project: Project;
+		project: ProjectEnvelope;
 	}
 	let { project }: Props = $props();
 
-	let getChartOptions = (p: Project): ApexOptions => {
+	let getChartOptions = (p: ProjectEnvelope): ApexOptions => {
 		return {
 			colors: ['#1A56DB', '#FDBA8C'],
 			series: [
@@ -18,11 +18,11 @@
 					name: 'Earnings',
 					color: '#5a67d8',
 					data: [
-						{ x: 'Year 1', y: p.projectValue?.calculated?.yearOneValue },
-						{ x: 'Year 2', y: p.projectValue?.calculated?.yearTwoValue },
-						{ x: 'Year 3', y: p.projectValue?.calculated?.yearThreeValue },
-						{ x: 'Year 4', y: p.projectValue?.calculated?.yearFourValue },
-						{ x: 'Year 5', y: p.projectValue?.calculated?.yearFiveValue }
+						{ x: 'Year 1', y: p.data?.projectValue?.calculated?.yearOneValue },
+						{ x: 'Year 2', y: p.data?.projectValue?.calculated?.yearTwoValue },
+						{ x: 'Year 3', y: p.data?.projectValue?.calculated?.yearThreeValue },
+						{ x: 'Year 4', y: p.data?.projectValue?.calculated?.yearFourValue },
+						{ x: 'Year 5', y: p.data?.projectValue?.calculated?.yearFiveValue }
 					]
 				}
 			],
