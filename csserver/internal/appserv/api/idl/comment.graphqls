@@ -18,7 +18,12 @@ type Comment {
 type CommentResults {
   paging: Pagination!
   filters: Filters!
-  results: [Comment]
+  results: [CommentEnvelope]
+}
+
+type CommentEnvelope {
+  meta: BaseModel!
+  data: Comment!
 }
 
 input UpdateComment {

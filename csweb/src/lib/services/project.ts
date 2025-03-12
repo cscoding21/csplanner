@@ -6,7 +6,6 @@ import type {
 	UpdateProjectMilestoneTask,
 	ProjectEnvelope,
 	ProjectResults,
-	Resource,
 	Status,
 	UpdateProjectValue,
 	UpdateProjectCost,
@@ -22,7 +21,6 @@ import type {
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import {
 	DeleteProjectDocument,
-	FindAllProjectTemplatesDocument,
 	FindProjectsDocument,
 	DeleteProjectFeatureDocument,
 	UpdateProjectFeatureDocument,
@@ -450,6 +448,11 @@ export const calculateProjectSchedule = async (projectID: string, startDate :Dat
 		});
 };
 
+/**
+ * convert a ProjectEnvelope object to it's updatable counterpart
+ * @param project a ProjectEnvelope object to be converted
+ * @returns an UpdateProject object
+ */
 export const convertProjectToUpdateProject = (project: ProjectEnvelope): UpdateProject => {
 	const up: UpdateProject = {
 		id: project.meta?.id

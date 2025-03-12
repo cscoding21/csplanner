@@ -8,7 +8,7 @@ type Query {
     checkProjectStatus(projectID: String!, newStatus: String!): ValidationResult!
 
     findProjectComments(projectID: String!) :CommentResults!  
-    getCommentThread(id: String!): Comment!
+    getCommentThread(id: String!): CommentEnvelope!
         
     findActivity(pageAndFilter: PageAndFilter!): ActivityResults!
     findAllProjectTemplates: ProjecttemplateResults!

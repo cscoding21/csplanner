@@ -14,11 +14,21 @@ import (
 )
 
 func AugmentComment(comment *idl.Comment) {
-	// user := getUserByEmail(comment.CreatedBy)
-	// comment.User = user
-
 	if comment.Replies != nil {
 		AugmentCommentSlice(&comment.Replies)
+	}
+}
+
+func AugmentBaseModel(base *idl.BaseModel) {
+	if base == nil {
+		return
+	}
+
+	base.CreateByUser = getUserByEmail(base.CreatedBy)
+	base.UpdateByUser = getUserByEmail(base.UpdatedBy)
+
+	if base.DeletedBy != nil {
+		base.DeleteByUser = getUserByEmail(*base.DeletedBy)
 	}
 }
 

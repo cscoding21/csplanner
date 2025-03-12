@@ -81,11 +81,17 @@ export type Comment = {
   user: User;
 };
 
+export type CommentEnvelope = {
+  __typename?: 'CommentEnvelope';
+  data: Comment;
+  meta: BaseModel;
+};
+
 export type CommentResults = {
   __typename?: 'CommentResults';
   filters: Filters;
   paging: Pagination;
-  results?: Maybe<Array<Maybe<Comment>>>;
+  results?: Maybe<Array<Maybe<CommentEnvelope>>>;
 };
 
 export type ControlFields = {
@@ -726,7 +732,7 @@ export type Query = {
   findProjects: ProjectResults;
   findResources: ResourceResults;
   findUserNotifications: NotificationResults;
-  getCommentThread: Comment;
+  getCommentThread: CommentEnvelope;
   getList?: Maybe<List>;
   getOrganization: Organization;
   getPortfolio: Portfolio;
@@ -1148,31 +1154,16 @@ export type ValidationResult = {
   pass: Scalars['Boolean']['output'];
 };
 
-export const UserFragmentFragmentDoc = gql`
-    fragment userFragment on User {
-  id
-  firstName
-  lastName
-  email
-  profileImage
-}
-    `;
 export const CommentFragmentFragmentDoc = gql`
     fragment commentFragment on Comment {
   id
   text
   isEdited
   projectId
-  user {
-    ...userFragment
-  }
   replies {
     id
     text
     isEdited
-    user {
-      ...userFragment
-    }
     likes
     loves
     dislikes
@@ -1185,7 +1176,7 @@ export const CommentFragmentFragmentDoc = gql`
   laughsAt
   acknowledges
 }
-    ${UserFragmentFragmentDoc}`;
+    `;
 export const ControlFieldsFragmentFragmentDoc = gql`
     fragment controlFieldsFragment on ControlFields {
   createdBy
@@ -1311,6 +1302,15 @@ export const OrganizationFragmentFragmentDoc = gql`
     hasReviewedOrgSettings
     isReadyForProjects
   }
+}
+    `;
+export const UserFragmentFragmentDoc = gql`
+    fragment userFragment on User {
+  id
+  firstName
+  lastName
+  email
+  profileImage
 }
     `;
 export const SkillFragmentFragmentDoc = gql`
@@ -1649,19 +1649,31 @@ export const FindProjectCommentsDocument = gql`
       ...pagingFragment
     }
     results {
-      ...commentFragment
+      meta {
+        ...baseModelFragment
+      }
+      data {
+        ...commentFragment
+      }
     }
   }
 }
     ${PagingFragmentFragmentDoc}
+${BaseModelFragmentFragmentDoc}
 ${CommentFragmentFragmentDoc}`;
 export const GetCommentThreadDocument = gql`
     query getCommentThread($commentID: String!) {
   getCommentThread(id: $commentID) {
-    ...commentFragment
+    meta {
+      ...baseModelFragment
+    }
+    data {
+      ...commentFragment
+    }
   }
 }
-    ${CommentFragmentFragmentDoc}`;
+    ${BaseModelFragmentFragmentDoc}
+${CommentFragmentFragmentDoc}`;
 export const FindAllListsDocument = gql`
     query findAllLists {
   findAllLists {

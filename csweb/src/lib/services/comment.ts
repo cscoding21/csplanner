@@ -1,5 +1,5 @@
 import { getApolloClient } from "$lib/graphql/gqlclient";
-import type { UpdateComment, UpdateCommentReply, UpdateCommentEmote, CommentResults } from "$lib/graphql/generated/sdk";
+import type { UpdateComment, UpdateCommentReply, UpdateCommentEmote, CommentResults, CommentEnvelope } from "$lib/graphql/generated/sdk";
 import { FindProjectCommentsDocument, CreateProjectCommentDocument, CreateProjectCommentReplyDocument, DeleteProjectCommentDocument, ToggleEmoteDocument, UpdateProjectCommentDocument, GetCommentThreadDocument } from "$lib/graphql/generated/sdk";
 
 /**
@@ -119,7 +119,7 @@ export const toggleCommentEmote = async (input: UpdateCommentEmote) => {
  * @param commentID - the ID of the comment
  * @returns a promise of the comment thread
  */ 
-export const getCommentThread = async (commentID: String) => {
+export const getCommentThread = async (commentID: String):Promise<CommentEnvelope> => {
     const client = getApolloClient()
 
     return client.query({ query: GetCommentThreadDocument, variables: { commentID } }).then((res) => {

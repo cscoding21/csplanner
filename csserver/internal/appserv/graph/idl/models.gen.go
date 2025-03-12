@@ -63,10 +63,15 @@ type Comment struct {
 	IsEdited     bool       `json:"isEdited"`
 }
 
+type CommentEnvelope struct {
+	Meta *BaseModel `json:"meta"`
+	Data *Comment   `json:"data"`
+}
+
 type CommentResults struct {
-	Paging  *Pagination `json:"paging"`
-	Filters *Filters    `json:"filters"`
-	Results []*Comment  `json:"results,omitempty"`
+	Paging  *Pagination        `json:"paging"`
+	Filters *Filters           `json:"filters"`
+	Results []*CommentEnvelope `json:"results,omitempty"`
 }
 
 type ControlFields struct {

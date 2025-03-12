@@ -4,6 +4,7 @@
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
     import { CheckBoxFilter, CSMultiFilter } from '$lib/components';
     import { findAllResources } from '$lib/services/resource';
+	import { CloseCircleOutline } from 'flowbite-svelte-icons';
 
     let searchInput:string = $state("")
     let status:string[] = $state([])
@@ -48,6 +49,14 @@
         
     }
 
+    const resetFilters = () => {
+        searchInput = ""
+        status = []
+        resourceID = ""
+
+        change(getFilters())
+    }
+
     const getFilters = ():InputFilters => {
         let out:InputFilters = { filters: [] as InputFilter[] }
         let filterArray:InputFilter[] = [] 
@@ -89,20 +98,24 @@
 </script>
 
 <div class="flex">
-    <div class="mr-4">
-        <Search slot="search" size="sm" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
+    <div class="mr-4 text-nowrap">
+        <Search slot="search" size="md" class="w-80" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
     </div>
 
-    <div class="mr-4">
+    <div class="mr-4 text-nowrap">
         <CSMultiFilter filterOpts={statusOpts} change={statusChange} filterValue={status} filterName="Status" isMulti={true} />
     </div>
 
     {#await loadPage()}
         ...
     {:then}
-    <div class="mr-4">
+    <div class="mr-4 text-nowrap">
         <CSMultiFilter filterOpts={resourceOpts} change={resourceChange} filterValue={[resourceID]} filterName="Assigned Resource" isMulti={false} />
     </div>
     {/await}
+
+    <div class="content-right justify-end w-full">
+        <button class="float-right" onclick={resetFilters} title="Clear all filters"><CloseCircleOutline size="lg" /></button>
+    </div>
 </div>
 

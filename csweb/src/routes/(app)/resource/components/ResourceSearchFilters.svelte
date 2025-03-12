@@ -4,6 +4,7 @@
 	import { CSMultiFilter } from '$lib/components';
     import { getList } from '$lib/services/list';
     import { findSelectOptsFromList } from '$lib/forms/helpers';
+	import { CloseCircleOutline } from 'flowbite-svelte-icons';
 
     let searchInput:string = $state("")
     let status:string[] = $state([])
@@ -53,6 +54,15 @@
         
     }
 
+    const resetFilters = () => {
+        searchInput = ""
+        status = []
+        type = []
+        skills = ""
+
+        change(getFilters())
+    }
+
     const getFilters = ():InputFilters => {
         let out:InputFilters = { filters: [] as InputFilter[] }
         let filterArray:InputFilter[] = [] 
@@ -99,23 +109,27 @@
 </script>
 
 <div class="flex">
-    <div class="mr-4">
-        <Search slot="search" size="sm" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
+    <div class="mr-4 text-nowrap">
+        <Search slot="search" size="md" class="w-80" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
     </div>
 
-    <div class="mr-4">
+    <div class="mr-4  text-nowrap">
         <CSMultiFilter filterOpts={statusOpts} change={statusChange} filterValue={status} filterName="Status" isMulti={true} />
     </div>  
 
-    <div class="mr-4">
+    <div class="mr-4  text-nowrap">
         <CSMultiFilter filterOpts={typeOpts} change={typeChange} filterValue={type} filterName="Type" isMulti={true} />
     </div>
 
     {#await loadPage()}
         ...
     {:then}
-    <div class="mr-4">
+    <div class="mr-4  text-nowrap">
         <CSMultiFilter filterOpts={skillsOpts} change={skillsChange} filterValue={[skills]} filterName="Skills" isMulti={false} />
     </div>
     {/await}
+
+    <div class="content-right justify-end w-full">
+        <button class="float-right" onclick={resetFilters} title="Clear all filters"><CloseCircleOutline size="lg" /></button>
+    </div>
 </div>

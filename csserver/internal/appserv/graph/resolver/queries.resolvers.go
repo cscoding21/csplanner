@@ -149,7 +149,7 @@ func (r *queryResolver) FindProjectComments(ctx context.Context, projectID strin
 }
 
 // GetCommentThread is the resolver for the getCommentThread field.
-func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.Comment, error) {
+func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.CommentEnvelope, error) {
 	panic("needs refactor")
 	// service := factory.GetCommentService()
 	// obj, err := service.GetCommentThread(ctx, id)
