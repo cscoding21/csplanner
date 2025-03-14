@@ -82,12 +82,6 @@
     });
 
     let atValues = $state([{id: "", value: ""}])
-
-    //  mentionContainerClass: "w-64 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-1/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
-    //  listItemClass: "block mb-2  py-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer",
-    //  mentionListClass: "block mb-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer",
-
-    // selectKeys: [13,9],
     const mentionOpts = {
             allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
             mentionDenotationChars: ["@"],
@@ -124,10 +118,6 @@
 
 {#await loadPage()}
     Loading...
-    <span title="mentionContainerClass" class="w-64 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></span>
-    <span title="listItemClass" class="block mb-2 py-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer"></span>
-    <span title="mentionListClass" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer"></span>
-    <span title="scratch" class="text-gray-600"></span>
 {:then promiseData} 
 <div
     class="w-full rounded-lg text-gray-100">

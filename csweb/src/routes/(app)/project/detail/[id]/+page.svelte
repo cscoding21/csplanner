@@ -66,7 +66,7 @@
 			</DeleteProject>
 			<Button onclick={() => chatBarHidden = !chatBarHidden}>	
 				<MessagesOutline size="sm" class="mr-2" />
-				Chat
+				Collaborate
 			</Button>
 		</ButtonGroup>
 	</ProjectActionBar>
