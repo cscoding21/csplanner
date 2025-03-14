@@ -76,7 +76,7 @@ export type Comment = {
   likes?: Maybe<Array<Scalars['String']['output']>>;
   loves?: Maybe<Array<Scalars['String']['output']>>;
   projectId: Scalars['String']['output'];
-  replies?: Maybe<Array<Comment>>;
+  replies?: Maybe<Array<CommentEnvelope>>;
   text: Scalars['String']['output'];
   user: User;
 };
@@ -939,6 +939,7 @@ export type UpdateComment = {
 export type UpdateCommentEmote = {
   commentID: Scalars['String']['input'];
   emoteType: Scalars['String']['input'];
+  projectID: Scalars['String']['input'];
 };
 
 export type UpdateCommentReply = {
@@ -1154,31 +1155,9 @@ export type ValidationResult = {
   pass: Scalars['Boolean']['output'];
 };
 
-export const CommentFragmentFragmentDoc = gql`
-    fragment commentFragment on Comment {
+export const BaseModelFragmentFragmentDoc = gql`
+    fragment baseModelFragment on BaseModel {
   id
-  text
-  isEdited
-  projectId
-  replies {
-    id
-    text
-    isEdited
-    likes
-    loves
-    dislikes
-    laughsAt
-    acknowledges
-  }
-  likes
-  loves
-  dislikes
-  laughsAt
-  acknowledges
-}
-    `;
-export const ControlFieldsFragmentFragmentDoc = gql`
-    fragment controlFieldsFragment on ControlFields {
   createdBy
   createdAt
   updatedAt
@@ -1202,9 +1181,37 @@ export const ControlFieldsFragmentFragmentDoc = gql`
   }
 }
     `;
-export const BaseModelFragmentFragmentDoc = gql`
-    fragment baseModelFragment on BaseModel {
+export const CommentFragmentFragmentDoc = gql`
+    fragment commentFragment on Comment {
   id
+  text
+  isEdited
+  projectId
+  replies {
+    meta {
+      ...baseModelFragment
+    }
+    data {
+      id
+      text
+      isEdited
+      projectId
+      likes
+      loves
+      dislikes
+      laughsAt
+      acknowledges
+    }
+  }
+  likes
+  loves
+  dislikes
+  laughsAt
+  acknowledges
+}
+    ${BaseModelFragmentFragmentDoc}`;
+export const ControlFieldsFragmentFragmentDoc = gql`
+    fragment controlFieldsFragment on ControlFields {
   createdBy
   createdAt
   updatedAt

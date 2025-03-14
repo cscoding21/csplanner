@@ -36,6 +36,13 @@ func NewUpdateResult[T any](val validate.ValidationResult, obj *T) UpdateResult[
 	return ur
 }
 
+// NewSuccessUpdateResult return a new successful result while handling the validation
+func NewSuccessUpdateResult[T any](obj T) (UpdateResult[T], error) {
+	val := validate.NewSuccessValidationResult()
+
+	return NewUpdateResult(val, &obj), nil
+}
+
 // NewFailingUpdateResult return a failing update result and error
 func NewFailingUpdateResult[T any](obj *T, err error) (UpdateResult[T], error) {
 	return UpdateResult[T]{

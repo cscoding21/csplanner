@@ -4,7 +4,7 @@
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
 	import { findProjects } from "$lib/services/project";
-	import Wizard from "./setup/Wizard.svelte";
+	import SetupWizard from "./setup/SetupWizard.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -50,7 +50,7 @@
     {#await loadPage()}
         Loading...
     {:then promiseData} 
-    <Wizard {org} />
+    <SetupWizard {org} />
 
     <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
@@ -62,7 +62,7 @@
         {/if}
 
         {#snippet elseRender()}
-            <p>I have no skills</p>
+            <p>I have no projects</p>
         {/snippet}
     </OrgStateChecker>
 

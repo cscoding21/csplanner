@@ -128,38 +128,33 @@ func (r *queryResolver) CheckProjectStatus(ctx context.Context, projectID string
 
 // FindProjectComments is the resolver for the findProjectComments field.
 func (r *queryResolver) FindProjectComments(ctx context.Context, projectID string) (*idl.CommentResults, error) {
-	panic("needs refactor")
-	// service := factory.GetCommentService()
+	service := factory.GetCommentService()
 
-	// results, err := service.FindProjectComments(ctx, projectID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	results, err := service.FindProjectComments(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
 
-	// pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
-	// out := idl.CommentResults{
-	// 	Paging:  &pg,
-	// 	Filters: &fi,
-	// 	Results: csmap.CommentCommentToIdlSlice(common.ValToRefSlice(results.Results)),
-	// }
+	pg, fi := csmap.GetPageAndFilterIdl(results.Pagination, results.Filters)
+	out := idl.CommentResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ConvertCommentResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
+	}
 
-	// augment.AugmentCommentSlice(&out.Results)
-
-	// return &out, nil
+	return &out, nil
 }
 
 // GetCommentThread is the resolver for the getCommentThread field.
 func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.CommentEnvelope, error) {
-	panic("needs refactor")
-	// service := factory.GetCommentService()
-	// obj, err := service.GetCommentThread(ctx, id)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	service := factory.GetCommentService()
+	obj, err := service.GetCommentThread(ctx, id)
+	if err != nil {
+		return nil, err
+	}
 
-	// out := csmap.CommentCommentToIdl(*obj)
-	// augment.AugmentComment(&out)
-	// return &out, nil
+	out := csmap.ConvertCommentResultToEnvelope(obj)
+	return out, nil
 }
 
 // FindActivity is the resolver for the findActivity field.

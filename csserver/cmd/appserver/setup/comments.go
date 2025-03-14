@@ -1,8 +1,29 @@
 package setup
 
-/*
+import (
+	"context"
+	"csserver/internal/appserv/factory"
+	"csserver/internal/common"
+	"csserver/internal/services/comment"
+	"csserver/internal/utils/quilljs"
+	"encoding/json"
+
+	log "github.com/sirupsen/logrus"
+)
+
 func CreateTestComments(ctx context.Context) error {
 	service := factory.GetCommentService()
+	projectID := "project:1"
+
+	results, err := service.FindProjectComments(ctx, projectID)
+	if err != nil {
+		log.Errorf("error checking existing comments %v", err)
+		return err
+	}
+
+	if *results.Pagination.TotalResults > 0 {
+		return nil
+	}
 
 	commentDelta := quilljs.New(nil)
 	attr := make(map[string]interface{})
@@ -19,7 +40,7 @@ func CreateTestComments(ctx context.Context) error {
 			ControlFields: common.ControlFields{
 				ID: "comment:1",
 			},
-			ProjectID: "project:1",
+			ProjectID: projectID,
 			Text:      string(js),
 			IsEdited:  false,
 		},
@@ -45,7 +66,7 @@ func CreateTestComments(ctx context.Context) error {
 
 	replies := []comment.Comment{
 		{
-			ProjectID: "project:1",
+			ProjectID: projectID,
 			Text:      string(js),
 			IsEdited:  false,
 		},
@@ -63,4 +84,3 @@ func CreateTestComments(ctx context.Context) error {
 
 	return nil
 }
-*/

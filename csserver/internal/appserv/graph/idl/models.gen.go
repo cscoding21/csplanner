@@ -50,17 +50,17 @@ type CSWeek struct {
 }
 
 type Comment struct {
-	ID           string     `json:"id"`
-	ProjectID    string     `json:"projectId"`
-	Text         string     `json:"text"`
-	User         *User      `json:"user"`
-	Replies      []*Comment `json:"replies,omitempty"`
-	Likes        []string   `json:"likes,omitempty"`
-	Loves        []string   `json:"loves,omitempty"`
-	Dislikes     []string   `json:"dislikes,omitempty"`
-	LaughsAt     []string   `json:"laughsAt,omitempty"`
-	Acknowledges []string   `json:"acknowledges,omitempty"`
-	IsEdited     bool       `json:"isEdited"`
+	ID           string             `json:"id"`
+	ProjectID    string             `json:"projectId"`
+	Text         string             `json:"text"`
+	User         *User              `json:"user"`
+	Replies      []*CommentEnvelope `json:"replies,omitempty"`
+	Likes        []string           `json:"likes,omitempty"`
+	Loves        []string           `json:"loves,omitempty"`
+	Dislikes     []string           `json:"dislikes,omitempty"`
+	LaughsAt     []string           `json:"laughsAt,omitempty"`
+	Acknowledges []string           `json:"acknowledges,omitempty"`
+	IsEdited     bool               `json:"isEdited"`
 }
 
 type CommentEnvelope struct {
@@ -578,6 +578,7 @@ type UpdateComment struct {
 
 type UpdateCommentEmote struct {
 	CommentID string `json:"commentID"`
+	ProjectID string `json:"projectID"`
 	EmoteType string `json:"emoteType"`
 }
 

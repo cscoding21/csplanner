@@ -84,6 +84,7 @@ func ConvertCommentResultToEnvelope(model *common.BaseModel[comment.Comment]) *i
 
 	out.Meta = GetDataEnvelope(model)
 	out.Data = utils.ValToRef(CommentCommentToIdl(model.Data))
+	out.Data.Replies = ConvertCommentResultToEnvelopeSlice(utils.ValToRefSlice(model.Data.CommentReplies))
 
 	AugmentBaseModel(out.Meta)
 

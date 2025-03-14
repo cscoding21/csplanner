@@ -32,6 +32,18 @@ func UpdateObject[T any](
 	table TableName,
 	id string) (*common.BaseModel[T], error) {
 
+	return UpdateObjectWithParent(ctx, db, obj, table, id, nil)
+}
+
+// UpdateObjectWithParent create or update an object with a parent context
+func UpdateObjectWithParent[T any](
+	ctx context.Context,
+	db *pgxpool.Pool,
+	obj T,
+	table TableName,
+	id string,
+	parentID *string) (*common.BaseModel[T], error) {
+
 	usr := config.GetUserEmailFromContext(ctx)
 
 	if len(id) == 0 {
@@ -40,6 +52,7 @@ func UpdateObject[T any](
 
 	dbObj := common.BaseModel[T]{
 		ID:        id,
+		ParentID:  parentID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 		CreatedBy: usr,
@@ -49,8 +62,8 @@ func UpdateObject[T any](
 
 	sql := fmt.Sprintf(`
 		INSERT INTO %s 
-			(id, created_at, created_by, updated_at, updated_by, data) 
-		VALUES ($1, $2, $3, $4, $5, $6) 
+			(id, parent_id, created_at, created_by, updated_at, updated_by, data) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7) 
 		ON CONFLICT(id)
 		DO UPDATE SET
 			updated_at = EXCLUDED.updated_at,
@@ -66,6 +79,7 @@ func UpdateObject[T any](
 
 	_, err = tx.Exec(ctx, sql,
 		dbObj.ID,
+		dbObj.ParentID,
 		dbObj.CreatedAt,
 		dbObj.CreatedBy,
 		dbObj.UpdatedAt,
@@ -79,6 +93,7 @@ func UpdateObject[T any](
 	}
 
 	return GetObjectByID[T](ctx, db, table, id)
+
 }
 
 // GetObjectByID return a single object from the database based on its ID
@@ -88,7 +103,7 @@ func GetObjectByID[T any](ctx context.Context,
 	id string) (*common.BaseModel[T], error) {
 
 	sql := fmt.Sprintf(`
-		SELECT id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
+		SELECT id, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
 		FROM %s
 		WHERE true 
 			AND deleted_at is null
@@ -131,13 +146,38 @@ func FindAllObjects[T any](ctx context.Context,
 	pf := common.NewPagedResultsForAllRecords[T]()
 
 	sql := fmt.Sprintf(`
-		SELECT id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
+		SELECT id, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
 		FROM %s
 		WHERE true 
 			AND deleted_at is null
 		`, table)
 
 	return FindPagedObjects[T](ctx, db, sql, pf.Pagination, pf.Filters, []any{})
+}
+
+// FindAllChildren return all children of a parent object
+func FindAllChildren[T any](ctx context.Context,
+	db *pgxpool.Pool,
+	table TableName,
+	parentID string) (common.PagedResults[common.BaseModel[T]], error) {
+
+	pf := common.NewPagedResultsForAllRecords[T]()
+
+	pf.Filters.AddFilter(common.Filter{
+		Key:       "parent_id",
+		Value:     parentID,
+		Operation: common.FilterOperationEqual,
+	})
+
+	sql := fmt.Sprintf(`
+		SELECT id, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
+		FROM %s
+		WHERE true 
+			AND deleted_at is null
+			and parent_id = $1
+		`, table)
+
+	return FindPagedObjects[T](ctx, db, sql, pf.Pagination, pf.Filters, pf.Filters.GetFiltersOrderedValues())
 }
 
 // SoftDelete soft-delete an object from the DB
@@ -159,19 +199,20 @@ func SoftDelete(
 
 	tx, err := db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	_, err = tx.Exec(ctx, sql,
 		time.Now(),
 		usr,
 		id)
-	if err != nil {
-		tx.Rollback(ctx)
-		return err
-	} else {
-		tx.Commit(ctx)
-	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(ctx)
+		} else {
+			tx.Commit(ctx)
+		}
+	}()
 
 	return nil
 }
@@ -191,17 +232,17 @@ func Delete(
 
 	tx, err := db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	_, err = tx.Exec(ctx, sql, id)
-
-	if err != nil {
-		tx.Rollback(ctx)
-		return err
-	} else {
-		tx.Commit(ctx)
-	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(ctx)
+		} else {
+			tx.Commit(ctx)
+		}
+	}()
 
 	return nil
 }
@@ -215,17 +256,17 @@ func Exec(
 
 	tx, err := db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	_, err = tx.Exec(ctx, sql, params...)
-
-	if err != nil {
-		tx.Rollback(ctx)
-		return err
-	} else {
-		tx.Commit(ctx)
-	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(ctx)
+		} else {
+			tx.Commit(ctx)
+		}
+	}()
 
 	return nil
 }
@@ -254,8 +295,6 @@ func FindPagedObjects[T any](
 
 	params = append(params, *paging.ResultsPerPage)
 	params = append(params, paging.GetOffset())
-
-	fmt.Println(params)
 
 	rows, err := db.Query(ctx, pageSql, params...)
 	if err != nil {

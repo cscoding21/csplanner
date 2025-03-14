@@ -666,7 +666,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Comment",
+                  "name": "CommentEnvelope",
                   "ofType": null
                 }
               }
@@ -7726,6 +7726,22 @@
           },
           {
             "name": "emoteType",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "projectID",
             "description": null,
             "type": {
               "kind": "NON_NULL",

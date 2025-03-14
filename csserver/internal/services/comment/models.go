@@ -14,15 +14,20 @@ type Comment struct {
 	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
-	ProjectID    string    `json:"project_id"`
-	Text         string    `json:"text"`
-	Replies      []Comment `json:"replies"`
-	Likes        []string  `json:"likes"`
-	Loves        []string  `json:"loves"`
-	Dislikes     []string  `json:"dislikes"`
-	LaughsAt     []string  `json:"laughs_at"`
-	Acknowledges []string  `json:"acknowledges"`
-	IsEdited     bool      `json:"is_edited"`
+	ProjectID      string                      `json:"project_id"`
+	Text           string                      `json:"text"`
+	CommentReplies []common.BaseModel[Comment] `json:"replies"`
+	Likes          []string                    `json:"likes"`
+	Loves          []string                    `json:"loves"`
+	Dislikes       []string                    `json:"dislikes"`
+	LaughsAt       []string                    `json:"laughs_at"`
+	Acknowledges   []string                    `json:"acknowledges"`
+	IsEdited       bool                        `json:"is_edited"`
+}
+
+type Reaction struct {
+	ProjectID string              `json:"project_id"`
+	Type      CommentReactionType `json:"type"`
 }
 
 type Mention struct {

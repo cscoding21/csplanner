@@ -2,11 +2,8 @@ type Comment {
   id: String!
   projectId: String!
   text: String!
-  # createdBy: String!
-  # createdAt: Time!
-  # updatedAt: Time!
   user: User!
-  replies: [Comment!]
+  replies: [CommentEnvelope!]
   likes: [String!]
   loves: [String!]
   dislikes: [String!]
@@ -41,5 +38,6 @@ input UpdateCommentReply {
 
 input UpdateCommentEmote {
   commentID: String!
+  projectID: String!
   emoteType: String!
 }

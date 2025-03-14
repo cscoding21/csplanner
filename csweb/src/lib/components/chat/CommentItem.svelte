@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Avatar, Popover, ToolbarButton } from 'flowbite-svelte';
     import { PaperPlaneOutline, PaperClipOutline } from 'flowbite-svelte-icons';
-    import type { Comment, User } from "$lib/graphql/generated/sdk";
+    import type { CommentEnvelope, User } from "$lib/graphql/generated/sdk";
     import { toggleCommentEmote, updateComment } from "$lib/services/comment";
     import { authService } from "$lib/services/auth";
     import { formatDateTime, getInitialsFromName, pluralize } from "$lib/utils/format"
@@ -10,14 +10,13 @@
     import { DotsHorizontalOutline, CheckPlusCircleOutline, ReplyOutline } from 'flowbite-svelte-icons';
     import { is } from '$lib/utils/check';
     import { normalizeID } from '$lib/utils/id';
-    // import { commentListStateStore } from '$lib/stores/comment'
     import { addToast } from '$lib/stores/toasts';
     import { callIf } from '$lib/utils/helpers';
     import { QuillEditor, QuillDisplay, ReplyToComment } from '..';
 
 
     interface Props {
-        comment: Comment
+        comment: CommentEnvelope
         projectID: string
         update: Function
         canReply: boolean
@@ -31,18 +30,18 @@
 
     const as = authService()
 
-    const id = comment.id
+    const id = comment.meta.id
     const userID:string = as.currentUser()?.id as string
     const userEmail:string = as.currentUser()?.email as string
-    let editorContent = $state(comment.text)
+    let editorContent = $state(comment.data.text)
 
-    let userCreatedComment: boolean = (userEmail === comment.user.email)
+    let userCreatedComment: boolean = (userEmail === comment.meta?.createByUser?.email)
     let editMode:boolean = $state(false)
 
     let qe:any
 
-    const toggleReaction = async (commentID:string, type:string) => {
-        toggleCommentEmote({ commentID: commentID, emoteType: type }).then(res => {
+    const toggleReaction = async (projectID:string, commentID:string, type:string) => {
+        toggleCommentEmote({ projectID: projectID, commentID: commentID, emoteType: type }).then(res => {
             if(res.success) {
                 callIf(update)
             } else {
@@ -81,64 +80,69 @@
 <article class="">
     <footer class="flex justify-between items-center">
         <div class="flex items-center">
-            <Avatar class="mr-2 w-8 h-8 rounded-lg" src={comment.user?.profileImage || ""}>{getInitialsFromName(comment.user?.firstName + " " + comment.user?.lastName)}</Avatar>
+            <Avatar class="mr-2 w-8 h-8 rounded-lg" src={comment.meta.createByUser?.profileImage || ""}>{getInitialsFromName(comment.meta.createByUser?.firstName + " " + comment.meta.createByUser?.lastName)}</Avatar>
             <div>
-                <span class="text-sm font-semibold text-gray-900 dark:text-white"><UserDisplay user={comment.user as User} /></span> 
+                <span class="text-sm font-semibold text-gray-900 dark:text-white"><UserDisplay user={comment.meta.createByUser as User} /></span> 
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                    <time datetime="2022-02-08" title={formatDateTime(comment.createdAt)}>{formatDateTime(comment.createdAt)}</time>
-                    {#if comment.isEdited}
-                        <span class="text-xs text-yellow-700 dark:text-yellow-200"> (edited {formatDateTime(comment.updatedAt)}) </span>
+                    <time datetime="2022-02-08" title={formatDateTime(comment.meta?.createdAt)}>{formatDateTime(comment.meta?.createdAt)}</time>
+                    {#if comment.data?.isEdited}
+                        <span class="text-xs text-yellow-700 dark:text-yellow-200"> (edited {formatDateTime(comment.meta?.updatedAt)}) </span>
                     {/if}
                 </p>
             </div>    
         </div>
         <div class="flex items-center space-x-2">
-            {#if is(comment.likes)}
+            {#if is(comment.data?.likes)}
             <EmoteButtonLike 
-                        userID={userID}
+                        userID={userEmail}
                         toggleReaction={toggleReaction}
                         commentID={id}
-                        users={comment.likes??[]}
+                        {projectID}
+                        users={comment.data?.likes??[]}
                         size="sm"
                         />
             {/if}
 
-            {#if is(comment.laughsAt)}
+            {#if is(comment.data?.laughsAt)}
             <EmoteButtonLaugh 
-                        userID={userID}
+                        userID={userEmail}
                         toggleReaction={toggleReaction}
                         commentID={id}
-                        users={comment.laughsAt??[]}
+                        {projectID}
+                        users={comment.data?.laughsAt??[]}
                         size="sm"
                         />
             {/if}
 
-            {#if is(comment.dislikes)}
+            {#if is(comment.data?.dislikes)}
             <EmoteButtonDislike 
-                        userID={userID}
+                        userID={userEmail}
                         toggleReaction={toggleReaction}
                         commentID={id}
-                        users={comment.dislikes??[]}
+                        {projectID}
+                        users={comment.data?.dislikes??[]}
                         size="sm"
                         />
             {/if}
 
-            {#if is(comment.loves)}
+            {#if is(comment.data?.loves)}
             <EmoteButtonLove 
-                        userID={userID}
+                        userID={userEmail}
                         toggleReaction={toggleReaction}
                         commentID={id}
-                        users={comment.loves??[]}
+                        {projectID}
+                        users={comment.data?.loves??[]}
                         size="sm"
                         />
             {/if}
 
-            {#if is(comment.acknowledges)}
+            {#if is(comment.data?.acknowledges)}
             <EmoteButtonAcknowledge 
-                        userID={userID}
+                        userID={userEmail}
                         toggleReaction={toggleReaction}
                         commentID={id}
-                        users={comment.acknowledges??[]}
+                        {projectID}
+                        users={comment.data?.acknowledges??[]}
                         size="sm"
                         />
             {/if}
@@ -150,58 +154,63 @@
                 <div class="flex">
                 <span class="p-1">
                 <EmoteButtonLike 
-                        userID={userID}
+                        userID={userEmail}
                         size="sm"
                         toggleReaction={toggleReaction}
                         commentID={id}
-                        users={comment.likes??[]}
+                        {projectID}
+                        users={comment.data?.likes??[]}
                         />
                 </span>
 
                 <span class="p-1">
                 <EmoteButtonLaugh 
-                        userID={userID}
+                        userID={userEmail}
                         size="sm"
                         toggleReaction={toggleReaction}
-                        commentID={comment.id}
-                        users={comment.laughsAt??[]}
+                        commentID={comment.meta?.id}
+                        {projectID}
+                        users={comment.data?.laughsAt??[]}
                         />
                 </span>
 
                 <span class="p-1">
                 <EmoteButtonDislike 
-                        userID={userID}
+                        userID={userEmail}
                         size="sm"
                         toggleReaction={toggleReaction}
-                        commentID={comment.id}
-                        users={comment.dislikes??[]}
+                        commentID={comment.meta?.id}
+                        {projectID}
+                        users={comment.data?.dislikes??[]}
                         />
                 </span>
 
                 <span class="p-1">
                 <EmoteButtonLove 
-                        userID={userID}
+                        userID={userEmail}
                         size="sm"
                         toggleReaction={toggleReaction}
-                        commentID={comment.id}
-                        users={comment.loves??[]}
+                        commentID={comment.meta?.id}
+                        {projectID}
+                        users={comment.data?.loves??[]}
                         />
                 </span>
 
                 <span class="p-1">
                 <EmoteButtonAcknowledge 
-                        userID={userID}
+                        userID={userEmail}
                         size="sm"
                         toggleReaction={toggleReaction}
-                        commentID={comment.id}
-                        users={comment.acknowledges??[]}
+                        commentID={comment.meta?.id}
+                        {projectID}
+                        users={comment.data?.acknowledges??[]}
                         />
                 </span>
                 </div>
             </Popover>
 
             {#if canReply}
-            <ReplyToComment comment={comment} update={update}>
+            <ReplyToComment comment={comment.data} update={update}>
                 <ReplyOutline />
             </ReplyToComment>
             {/if}
@@ -239,7 +248,7 @@
                         </ToolbarButton>
                     </div>
                     <div class="w-full">
-                        <QuillEditor attachContext={comment.id} bind:contents={editorContent} quillEditor={qe} />
+                        <QuillEditor attachContext={comment.meta?.id} bind:contents={editorContent} quillEditor={qe} />
                     </div>
                     <div>
                         <ToolbarButton type="submit" color="blue" class="rounded-full text-primary-600 dark:text-primary-500" onclick={updateComm}>

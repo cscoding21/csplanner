@@ -11,6 +11,7 @@ import (
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
+	"csserver/internal/services/comment"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
@@ -327,59 +328,57 @@ func (r *mutationResolver) RunProcesses(ctx context.Context) (*idl.Status, error
 
 // CreateProjectComment is the resolver for the createProjectComment field.
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	panic("needs refactor")
+	service := factory.GetCommentService()
 
-	// service := factory.GetCommentService()
+	comment := comment.Comment{
+		ProjectID: input.ProjectID,
+		Text:      input.Text,
+	}
 
-	// comment := comment.Comment{
-	// 	ProjectID: input.ProjectID,
-	// 	Text:      input.Text,
-	// }
+	result, err := service.UpdateComment(ctx, comment)
+	if err != nil {
+		return nil, err
+	}
 
-	// result, err := service.AddComment(ctx, comment)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	status, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
 
-	// status, err := csmap.GetStatusFromUpdateResult(*result)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	co := *result.Object
+	out := idl.CreateProjectCommentResult{
+		Status:  status,
+		Comment: common.ValToRef(csmap.CommentCommentToIdl(co.Data)),
+	}
 
-	// out := idl.CreateProjectCommentResult{
-	// 	Status:  status,
-	// 	Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
-	// }
-
-	// return &out, nil
+	return &out, nil
 }
 
 // CreateProjectCommentReply is the resolver for the createProjectCommentReply field.
 func (r *mutationResolver) CreateProjectCommentReply(ctx context.Context, input idl.UpdateCommentReply) (*idl.CreateProjectCommentResult, error) {
-	panic("needs refactor")
+	service := factory.GetCommentService()
 
-	// service := factory.GetCommentService()
+	comment := comment.Comment{
+		Text: input.Text,
+	}
 
-	// comment := comment.Comment{
-	// 	Text: input.Text,
-	// }
+	result, err := service.AddCommentReply(ctx, comment, input.ParentCommentID)
+	if err != nil {
+		return nil, err
+	}
 
-	// result, err := service.AddCommentReply(ctx, comment, input.ParentCommentID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	status, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
 
-	// status, err := csmap.GetStatusFromUpdateResult(*result)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	co := *result.Object
+	out := idl.CreateProjectCommentResult{
+		Status:  status,
+		Comment: common.ValToRef(csmap.CommentCommentToIdl(co.Data)),
+	}
 
-	// out := idl.CreateProjectCommentResult{
-	// 	Status:  status,
-	// 	Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
-	// }
-
-	// return &out, nil
+	return &out, nil
 }
 
 // DeleteProjectComment is the resolver for the deleteProjectComment field.
@@ -391,37 +390,34 @@ func (r *mutationResolver) DeleteProjectComment(ctx context.Context, id string) 
 
 // UpdateProjectComment is the resolver for the updateProjectComment field.
 func (r *mutationResolver) UpdateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	panic("needs refactor")
+	service := factory.GetCommentService()
 
-	// service := factory.GetCommentService()
+	comment := csmap.UpdateCommentIdlToComment(input)
 
-	// comment := csmap.UpdateCommentIdlToComment(input)
+	result, err := service.ModifyComment(ctx, comment)
+	if err != nil {
+		return nil, err
+	}
 
-	// result, err := service.ModifyComment(ctx, comment)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	status, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
 
-	// status, err := csmap.GetStatusFromUpdateResult(*result)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	c := *result.Object
+	out := idl.CreateProjectCommentResult{
+		Status:  status,
+		Comment: common.ValToRef(csmap.CommentCommentToIdl(c.Data)),
+	}
 
-	// out := idl.CreateProjectCommentResult{
-	// 	Status:  status,
-	// 	Comment: common.ValToRef(csmap.CommentCommentToIdl(*result.Object)),
-	// }
-
-	// return &out, nil
+	return &out, nil
 }
 
 // ToggleEmote is the resolver for the toggleEmote field.
 func (r *mutationResolver) ToggleEmote(ctx context.Context, input idl.UpdateCommentEmote) (*idl.Status, error) {
-	panic("needs refactor")
+	service := factory.GetCommentService()
 
-	// service := factory.GetCommentService()
-
-	// return csmap.GetStatusFromError(service.ToggleCommentEmote(ctx, input.CommentID, comment.CommentEmoteType(input.EmoteType)))
+	return csmap.GetStatusFromError(service.ToggleCommentReaction(ctx, input.ProjectID, input.CommentID, comment.CommentReactionType(input.EmoteType)))
 }
 
 // CreateResource is the resolver for the createResource field.

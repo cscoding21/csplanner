@@ -13,9 +13,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func AugmentComment(comment *idl.Comment) {
-	if comment.Replies != nil {
-		AugmentCommentSlice(&comment.Replies)
+func AugmentComment(comment *idl.CommentEnvelope) {
+	if comment.Data.Replies != nil {
+		AugmentCommentSlice(&comment.Data.Replies)
 	}
 }
 
@@ -32,7 +32,7 @@ func AugmentBaseModel(base *idl.BaseModel) {
 	}
 }
 
-func AugmentCommentSlice(comments *[]*idl.Comment) {
+func AugmentCommentSlice(comments *[]*idl.CommentEnvelope) {
 	for _, comment := range *comments {
 		AugmentComment(comment)
 	}

@@ -1,104 +1,58 @@
 package comment
 
-type CommentRelationshipType string
-type CommentEmoteType string
+import (
+	"context"
+	"csserver/internal/common"
+	"csserver/internal/config"
+	"csserver/internal/providers/postgres"
+	"csserver/internal/utils/quilljs"
+	"fmt"
+	"strings"
 
-const (
-	Likes       CommentEmoteType = "likes"
-	Dislikes    CommentEmoteType = "dislikes"
-	Loves       CommentEmoteType = "loves"
-	LaughsAt    CommentEmoteType = "laughs_at"
-	Acknowledge CommentEmoteType = "acknowledges"
-
-	Mentioned CommentRelationshipType = "mentioned"
-
-	IsAReplyTo CommentRelationshipType = "is_a_reply_to"
-	BelongsTo  CommentRelationshipType = "belongsto"
+	log "github.com/sirupsen/logrus"
 )
 
-/*
+// ---This is the name of the object in the database
+const ReactionIdentifier = postgres.TableName("reaction")
+
+// type CommentRelationshipType string
+type CommentReactionType string
+
+const (
+	Likes       CommentReactionType = "likes"
+	Dislikes    CommentReactionType = "dislikes"
+	Loves       CommentReactionType = "loves"
+	LaughsAt    CommentReactionType = "laughs_at"
+	Acknowledge CommentReactionType = "acknowledges"
+
+	// Mentioned CommentRelationshipType = "mentioned"
+
+	// IsAReplyTo CommentRelationshipType = "is_a_reply_to"
+	// BelongsTo  CommentRelationshipType = "belongsto"
+)
+
 // AddComment adds a comment to a project.  Is a wrapper for CreateComment
-func (s *CommentService) AddComment(ctx context.Context, comment Comment) (*common.UpdateResult[Comment], error) {
-	result, err := s.CreateComment(ctx, comment)
-	if err != nil {
-		return nil, err
-	}
-
-	c := result.Object
-
-	//handleMentions(ctx, c, resource, c.ID)
-
-	//---create the realtionship for the user that created the project
-	//activityDelta := getAddCommentActivityDelta(*user, project)
-
-	// _, err = activityService.CreateActivity(ctx, c.ID, activityDelta, utils.GetTruncatedText(comment.Text, 100), *project.ID)
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return nil, err
-	// }
-	if comment.ProjectID != "" {
-		_, err = s.db.RelateTo(ctx, c.ID, comment.ProjectID, string(BelongsTo))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &c, nil
+func (s *CommentService) AddComment(ctx context.Context, comment Comment) (common.UpdateResult[*common.BaseModel[Comment]], error) {
+	return s.CreateComment(ctx, comment)
 }
 
 // AddComment create a new comment for a project
-func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, parentCommentID string) (*common.UpdateResult[Comment], error) {
-	//userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
-
-	// user, err := userService.GetCurrentUser(ctx)
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return nil, err
-	// }
-	// resource, err := projectService.GetResource(ctx, user.ID)
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return nil, err
-	// }
-
+func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, parentCommentID string) (common.UpdateResult[*common.BaseModel[Comment]], error) {
 	log.Infof("RETRIEVING PARENT COMMENT: %v", parentCommentID)
 	parentComment, err := s.GetCommentByID(ctx, parentCommentID)
 	if err != nil {
-		return nil, err
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	// parentCommentUser, err := projectService.GetResource(ctx, parentComment.ControlFields.CreatedBy)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// project, err := database.GetObjectById[projectModels.Project](ctx, parentComment.ProjectID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
+	fmt.Println(parentComment)
 	log.Debugf("CREATE COMMENT REPLY: %v", comment)
+	comment.ProjectID = parentComment.Data.ProjectID
 
 	//---clear out the project id for replies
-	comment.ProjectID = ""
-	c, err := s.CreateComment(ctx, comment)
+	outComment, err := postgres.UpdateObjectWithParent(ctx, s.db, comment, CommentIdentifier, "", &parentCommentID)
 	if err != nil {
-		log.Error(err)
-		return nil, err
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
-
-	// parentCommentIDScalar, err := database.GetScalar("select out from belongsto where in = $parentCommentID", "out", map[string]interface{}{"parentCommentID": c.ID})
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return nil, err
-	// }
-	// if len(fmt.Sprint(parentCommentIDScalar)) > 0 {
-	// 	parentCommentID = parentCommentIDScalar.(string)
-	// 	log.Infof("UPDATING PARENT COMMENT ID TO %s", parentCommentID)
-	// }
-
-	// handleMentions(ctx, c, resource, parentCommentID)
-	// pubsub.Publish(ctx, "notification", "comment", "replied", comment)
 
 	replyDelta, err := quilljs.FromJSON([]byte(comment.Text))
 	if err != nil {
@@ -106,226 +60,205 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 	}
 
 	fmt.Println("replyDelta", replyDelta)
-
-	// notificationService.DispatchReplies(ctx, notificationModels.Notification{
-	// 	UserID:                *parentCommentUser.UserID,
-	// 	UserName:              parentCommentUser.Name,
-	// 	Type:                  notificationType.Reply,
-	// 	ContextID:             parentCommentID,
-	// 	InitiatorName:         resource.Name,
-	// 	InitiatorID:           *resource.ID,
-	// 	InitiatorProfileImage: resource.ProfileImage,
-	// 	Text:                  quilljs.DeltaToString(*replyDelta),
-	// 	RecipientIsBot:        parentCommentUser.IsBot,
-	// })
-
-	//---create the realtionship for the user that created the project
-	// activityDelta := getAddCommentReplyActivityDelta(*user, project)
-
-	// _, err = activityService.CreateActivity(ctx, c.ID, activityDelta, utils.GetTruncatedText(comment.Text, 100), *project.ID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	_, err = s.db.RelateTo(ctx, c.Object.ID, parentComment.ID, string(IsAReplyTo))
-	if err != nil {
-		return nil, err
-	}
-
-	return &c, nil
+	return common.NewSuccessUpdateResult(outComment)
 }
 
 // ModifyComment update the text of an existing comment
-func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (*common.UpdateResult[Comment], error) {
+func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (common.UpdateResult[*common.BaseModel[Comment]], error) {
 	userEmail := config.GetUserEmailFromContext(ctx)
 
 	existingComment, err := s.GetCommentByID(ctx, comment.ID)
 	if err != nil {
-		return nil, err
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	if userEmail != existingComment.ControlFields.CreatedBy {
+	if userEmail != existingComment.CreatedBy {
 		err := fmt.Errorf("user %v is not allowed to update comment %v", userEmail, existingComment.ID)
-		return nil, err
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	existingComment.Text = comment.Text
-	existingComment.IsEdited = true
+	existingComment.Data.Text = comment.Text
+	existingComment.Data.IsEdited = true
 
-	c, err := s.UpdateComment(ctx, existingComment)
+	result, err := postgres.UpdateObjectWithParent(ctx, s.db, existingComment.Data, CommentIdentifier, existingComment.ID, existingComment.ParentID)
 	if err != nil {
-		return nil, err
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	return &c, nil
+	return common.NewSuccessUpdateResult(result)
 }
 
 // FindProjectComments finds all activity for a given project
-func (s *CommentService) FindProjectComments(ctx context.Context, projectID string) (*common.PagedResults[Comment], error) {
-	pagingResults := common.NewPagedResultsForAllRecords[Comment]()
-	sql := `SELECT *,
-		<-likes<-user.id as likes,
-		<-loves<-user.id as loves,
-		<-dislikes<-user.id as dislikes,
-		<-laughs_at<-user.id as laughs_at,
-		<-acknowledges<-user.id as acknowledges
-	FROM comment
-	WHERE true
-		AND ->belongsto->(project where id = $project)
-		AND deleted_at = null
-	ORDER BY created_at
-	`
-
-	paging := common.NewPagedResultsForAllRecords[Comment]()
+func (s *CommentService) FindProjectComments(ctx context.Context, projectID string) (common.PagedResults[common.BaseModel[Comment]], error) {
+	pagedResults := common.NewPagedResultsForAllRecords[common.BaseModel[Comment]]()
 	filters := common.Filters{}
 	filters.AddFilter(common.Filter{
-		Key:       "project",
+		Key:       "data.project_id",
 		Value:     projectID,
 		Operation: common.FilterOperationEqual,
 	})
 
-	results, resultCount, err := s.DBClient.FindPagedObjects(sql, paging.Pagination, filters)
+	sql := `select * 
+			from comment 
+			where true 
+				and deleted_at is null 
+				and data->>'project_id' = $1
+			order by created_at`
+
+	results, err := postgres.FindPagedObjects[Comment](ctx, s.db, sql, pagedResults.Pagination, filters, filters.GetFiltersOrderedValues())
 	if err != nil {
-		return nil, err
+		return pagedResults, err
 	}
-	pagingResults.Pagination.TotalResults = &resultCount
 
-	unpacked, err := marshal.SurrealSmartUnmarshal[[]Comment](results)
+	reactions, err := s.FindProjectReactions(ctx, projectID)
 	if err != nil {
-		return nil, err
+		return pagedResults, err
+	}
+	resultMap := commentsToMap(results.Results)
+	applyReactionsToCommentList(resultMap, reactions.Results)
+
+	graphedResults, err := commentResultsToGraph(resultMap)
+	if err != nil {
+		return pagedResults, err
 	}
 
-	op := []Comment{}
-	for _, c := range *unpacked {
-		replies, err := s.FindCommentReplies(ctx, c.ID)
-		if err != nil {
-			break
-		}
+	results.Results = graphedResults
 
-		if replies != nil && len(replies.Results) > 0 {
-			c.Replies = append(c.Replies, replies.Results...)
-		}
+	return results, nil
+}
 
-		op = append(op, c)
+func commentsToMap(results []common.BaseModel[Comment]) map[string]common.BaseModel[Comment] {
+	out := make(map[string]common.BaseModel[Comment])
+
+	for _, r := range results {
+		out[r.ID] = r
 	}
 
-	pagingResults.Results = op
+	return out
+}
 
-	return &pagingResults, nil
+func commentResultsToGraph(results map[string]common.BaseModel[Comment]) ([]common.BaseModel[Comment], error) {
+	out := []common.BaseModel[Comment]{}
+	pm := make(map[string]common.BaseModel[Comment])
+
+	for _, r := range results {
+		if r.ParentID == nil {
+			pm[r.ID] = r
+		}
+	}
+
+	for _, r := range results {
+		if r.ParentID != nil {
+			pid := *r.ParentID
+			item, ok := pm[pid]
+			if !ok {
+				//---should be impossible
+				log.Warnf("parent comment not found for id %s when building graph", pid)
+			}
+
+			item.Data.CommentReplies = append(item.Data.CommentReplies, r)
+			pm[pid] = item
+		}
+	}
+
+	for _, v := range pm {
+		out = append(out, v)
+	}
+
+	return out, nil
+}
+
+func applyReactionsToCommentList(resultMap map[string]common.BaseModel[Comment], reactions []common.BaseModel[Reaction]) {
+	for _, react := range reactions {
+		item, ok := resultMap[*react.ParentID]
+		if ok {
+			switch react.Data.Type {
+			case (Likes):
+				item.Data.Likes = append(item.Data.Likes, react.CreatedBy)
+			case (Dislikes):
+				item.Data.Dislikes = append(item.Data.Dislikes, react.CreatedBy)
+			case (Loves):
+				item.Data.Loves = append(item.Data.Loves, react.CreatedBy)
+			case (Acknowledge):
+				item.Data.Acknowledges = append(item.Data.Acknowledges, react.CreatedBy)
+			case (LaughsAt):
+				item.Data.LaughsAt = append(item.Data.LaughsAt, react.CreatedBy)
+			}
+
+			resultMap[*react.ParentID] = item
+		}
+	}
 }
 
 // GetCommentThread return the entire comment thread for an id whether it's a top-level or child
-func (s *CommentService) GetCommentThread(ctx context.Context, commentID string) (*Comment, error) {
-	var outComment *Comment
+func (s *CommentService) GetCommentThread(ctx context.Context, commentID string) (*common.BaseModel[Comment], error) {
 	comment, err := s.GetCommentByID(ctx, commentID)
 	if err != nil {
 		return nil, err
 	}
 
-	filters := common.Filters{}
-	filters.AddFilter(common.Filter{
-		Key:       "commentID",
-		Value:     commentID,
-		Operation: common.FilterOperationEqual,
-	})
-
-	//---if this is not a top-level comment, then we need to get the parent
-	if comment.ProjectID == "" {
-		sql := `SELECT *
-			FROM comment
-			WHERE <-is_a_reply_to<-(comment where id = $commentID)
-			`
-		outCommentRaw, err := s.DBClient.GetObject(sql, filters.GetFiltersAsMap())
+	if comment.ParentID != nil {
+		//---this is a child...we want the parent
+		comment, err = s.GetCommentByID(ctx, *comment.ParentID)
 		if err != nil {
 			return nil, err
 		}
-
-		outCommentSlice, err := marshal.SurrealSmartUnmarshal[[]Comment](outCommentRaw)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(*outCommentSlice) > 0 {
-			outComment = &(*outCommentSlice)[0]
-		} else {
-			return nil, fmt.Errorf("no comment thread found for comment %s", commentID)
-		}
-	} else {
-		outComment = comment
 	}
 
-	replies, err := s.FindCommentReplies(ctx, outComment.ID)
+	sql := fmt.Sprintf(`select * from %s c where c.id = $1 or c.parent_id = $1 order by created_at`, CommentIdentifier)
+	pa := common.NewPagedResultsForAllRecords[Comment]()
+	pa.Filters.AddFilter(common.Filter{Key: "id", Value: comment.ID, Operation: common.FilterOperationEqual})
+
+	threadComments, err := postgres.FindPagedObjects[Comment](ctx, s.db, sql, pa.Pagination, pa.Filters, pa.Filters.GetFiltersOrderedValues())
 	if err != nil {
 		return nil, err
 	}
 
-	if replies != nil && replies.Results != nil && len(replies.Results) > 0 {
-		outComment.Replies = replies.Results
+	reactions, err := s.FindProjectReactions(ctx, comment.Data.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+	resultMap := commentsToMap(threadComments.Results)
+	applyReactionsToCommentList(resultMap, reactions.Results)
+
+	graphedResults, err := commentResultsToGraph(resultMap)
+	if err != nil {
+		return nil, err
 	}
 
-	return outComment, nil
+	return &graphedResults[0], nil
 }
 
 // FindProjectComments finds all activity for a given project
-func (s *CommentService) FindCommentReplies(ctx context.Context, commentID string) (*common.PagedResults[Comment], error) {
-	pagingResults := common.NewPagedResultsForAllRecords[Comment]()
-	sql := `SELECT *,
-		<-likes<-user.id as likes,
-		<-loves<-user.id as loves,
-		<-dislikes<-user.id as dislikes,
-		<-laughs_at<-user.id as laughs_at,
-		<-acknowledges<-user.id as acknowledges
-	FROM comment
-	WHERE ->is_a_reply_to->(comment where id = $comment)
-	ORDER BY created_at
-	`
-
-	paging := common.NewPagedResultsForAllRecords[Comment]()
-	filters := common.Filters{}
-	filters.AddFilter(common.Filter{
-		Key:       "comment",
-		Value:     commentID,
-		Operation: common.FilterOperationEqual,
-	})
-
-	results, _, err := s.DBClient.FindPagedObjects(sql, paging.Pagination, filters)
-	if err != nil {
-		return nil, err
-	}
-
-	unpacked, err := marshal.SurrealSmartUnmarshal[[]Comment](results)
-	if err != nil {
-		return nil, err
-	}
-
-	pagingResults.Results = *unpacked
-
-	return &pagingResults, nil
+func (s *CommentService) FindCommentReplies(ctx context.Context, commentID string) (common.PagedResults[common.BaseModel[Comment]], error) {
+	return postgres.FindAllChildren[Comment](ctx, s.db, CommentIdentifier, commentID)
 }
 
-// ToggleCommentEmote if a user has emoted to the comment...remove the existing emote.  Otherwise add it
-func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
-	dbID := s.ContextHelper.GetUserIDFromContext(ctx)
-
-	existingRelation, err := s.DBClient.TestRelationshipExist(ctx, dbID, commentID, string(emote))
+// ToggleCommentReaction if a user has emoted to the comment...remove the existing emote.  Otherwise add it
+func (s *CommentService) ToggleCommentReaction(ctx context.Context, projectID string, commentID string, reaction CommentReactionType) error {
+	userEmail := config.GetUserEmailFromContext(ctx)
+	sql := fmt.Sprintf(`select * from %s where created_by = $1 and parent_id = $2 and data->>'type' = $3`, ReactionIdentifier)
+	params := []any{userEmail, commentID, reaction}
+	existingReaction, err := postgres.GetObject[common.BaseModel[Reaction]](ctx, s.db, ReactionIdentifier, sql, params...)
 	if err != nil {
-		log.Errorf("testRelationshipExixts: %v\n", err)
 		return err
 	}
 
-	if existingRelation != nil {
-		err = s.DeleteCommentEmote(ctx, existingRelation.ID)
+	if existingReaction != nil {
+		if !strings.EqualFold(existingReaction.CreatedBy, userEmail) {
+			return fmt.Errorf("user %s cannot change the reaction of user %s", userEmail, existingReaction.CreatedBy)
+		}
+
+		err = s.deleteCommentReaction(ctx, existingReaction.ID)
 		if err != nil {
-			log.Errorf("deletCommentEmote: %v\n", err)
 			return err
 		}
 
 		return nil
 	}
 
-	err = s.CreateCommentEmote(ctx, commentID, emote)
+	err = s.createCommentReaction(ctx, projectID, commentID, reaction)
 	if err != nil {
-		log.Errorf("createCommentEmote: %v\n", err)
 		return err
 	}
 
@@ -333,55 +266,33 @@ func (s *CommentService) ToggleCommentEmote(ctx context.Context, commentID strin
 }
 
 // CreateCommentEmote add an emote to an comment
-func (s *CommentService) CreateCommentEmote(ctx context.Context, commentID string, emote CommentEmoteType) error {
-	dbID := s.ContextHelper.GetUserIDFromContext(ctx)
+func (s *CommentService) createCommentReaction(ctx context.Context, projectID string, commentID string, reaction CommentReactionType) error {
+	obj := Reaction{Type: reaction, ProjectID: projectID}
 
-	_, err := s.DBClient.RelateTo(ctx, dbID, commentID, string(emote))
+	_, err := postgres.UpdateObjectWithParent(ctx, s.db, obj, ReactionIdentifier, "", &commentID)
 	return err
 }
 
 // DeleteCommentEmote deletes an emote previously creatd by a user
-func (s *CommentService) DeleteCommentEmote(ctx context.Context, relationshipID string) error {
-	dbID := s.ContextHelper.GetUserIDFromContext(ctx)
-
-	emoteRelationship, err := s.DBClient.GetRelationship(ctx, relationshipID)
-	if err != nil {
-		return err
-	}
-
-	if emoteRelationship.In == dbID {
-		err = s.DBClient.DeleteObject(dbID, relationshipID)
-		if err != nil {
-			return err
-		}
-	} else {
-		err = fmt.Errorf("emote does not belong to user %s...no work was done", dbID)
-		return err
-	}
-
-	return nil
+func (s *CommentService) deleteCommentReaction(ctx context.Context, id string) error {
+	return postgres.Delete(ctx, s.db, ReactionIdentifier, id)
 }
 
 // RemoveComment soft-delete a comment based on its ID
 func (s *CommentService) RemoveComment(ctx context.Context, commentID string) error {
-	userEmail := s.ContextHelper.GetUserEmailFromContext(ctx)
-	commentToDelete, err := s.GetCommentByID(ctx, commentID)
-	if err != nil {
-		return err
-	}
-
-	if !strings.EqualFold(commentToDelete.ControlFields.CreatedBy, userEmail) {
-		err = fmt.Errorf(
-			"comments can only be deleted by creating user...no work was done.  %s - %s",
-			commentToDelete.ControlFields.CreatedBy,
-			userEmail)
-
-		return err
-	}
-
-	return s.db.SoftDeleteObject(userEmail, commentToDelete)
+	return postgres.SoftDelete(ctx, s.db, ReactionIdentifier, commentID)
 }
 
+// FindProjectReactions find all reactions related to project comments
+func (s *CommentService) FindProjectReactions(ctx context.Context, projectID string) (common.PagedResults[common.BaseModel[Reaction]], error) {
+	sql := fmt.Sprintf(`select * from %s where data->>'project_id' = $1`, ReactionIdentifier)
+	pf := common.NewPagedResultsForAllRecords[common.BaseModel[Reaction]]()
+	pf.Filters.AddFilter(common.Filter{Key: "data.project_id", Value: projectID, Operation: common.FilterOperationEqual})
+
+	return postgres.FindPagedObjects[Reaction](ctx, s.db, sql, pf.Pagination, pf.Filters, pf.Filters.GetFiltersOrderedValues())
+}
+
+/*
 // extractMentions extracts all mentions from a delta
 func extractMentions(delta quilljs.Delta, commentID, projectID, contextUserID, contextUserName string) []Mention {
 	mentions := []Mention{}

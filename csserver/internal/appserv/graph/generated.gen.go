@@ -3821,11 +3821,8 @@ type RelateArtifact {
   id: String!
   projectId: String!
   text: String!
-  # createdBy: String!
-  # createdAt: Time!
-  # updatedAt: Time!
   user: User!
-  replies: [Comment!]
+  replies: [CommentEnvelope!]
   likes: [String!]
   loves: [String!]
   dislikes: [String!]
@@ -3860,6 +3857,7 @@ input UpdateCommentReply {
 
 input UpdateCommentEmote {
   commentID: String!
+  projectID: String!
   emoteType: String!
 }`, BuiltIn: false},
 	{Name: "../api/idl/common.graphqls", Input: `scalar Time
@@ -7720,9 +7718,9 @@ func (ec *executionContext) _Comment_replies(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*idl.Comment)
+	res := resTmp.([]*idl.CommentEnvelope)
 	fc.Result = res
-	return ec.marshalOComment2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCommentᚄ(ctx, field.Selections, res)
+	return ec.marshalOCommentEnvelope2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCommentEnvelopeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Comment_replies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7733,30 +7731,12 @@ func (ec *executionContext) fieldContext_Comment_replies(_ context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Comment_id(ctx, field)
-			case "projectId":
-				return ec.fieldContext_Comment_projectId(ctx, field)
-			case "text":
-				return ec.fieldContext_Comment_text(ctx, field)
-			case "user":
-				return ec.fieldContext_Comment_user(ctx, field)
-			case "replies":
-				return ec.fieldContext_Comment_replies(ctx, field)
-			case "likes":
-				return ec.fieldContext_Comment_likes(ctx, field)
-			case "loves":
-				return ec.fieldContext_Comment_loves(ctx, field)
-			case "dislikes":
-				return ec.fieldContext_Comment_dislikes(ctx, field)
-			case "laughsAt":
-				return ec.fieldContext_Comment_laughsAt(ctx, field)
-			case "acknowledges":
-				return ec.fieldContext_Comment_acknowledges(ctx, field)
-			case "isEdited":
-				return ec.fieldContext_Comment_isEdited(ctx, field)
+			case "meta":
+				return ec.fieldContext_CommentEnvelope_meta(ctx, field)
+			case "data":
+				return ec.fieldContext_CommentEnvelope_data(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CommentEnvelope", field.Name)
 		},
 	}
 	return fc, nil
@@ -27198,7 +27178,7 @@ func (ec *executionContext) unmarshalInputUpdateCommentEmote(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"commentID", "emoteType"}
+	fieldsInOrder := [...]string{"commentID", "projectID", "emoteType"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -27212,6 +27192,13 @@ func (ec *executionContext) unmarshalInputUpdateCommentEmote(ctx context.Context
 				return it, err
 			}
 			it.CommentID = data
+		case "projectID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectID = data
 		case "emoteType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emoteType"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -34971,53 +34958,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOComment2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCommentᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.Comment) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNComment2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐComment(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalOComment2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐComment(ctx context.Context, sel ast.SelectionSet, v *idl.Comment) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -35062,6 +35002,53 @@ func (ec *executionContext) marshalOCommentEnvelope2ᚕᚖcsserverᚋinternalᚋ
 
 	}
 	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOCommentEnvelope2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCommentEnvelopeᚄ(ctx context.Context, sel ast.SelectionSet, v []*idl.CommentEnvelope) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCommentEnvelope2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCommentEnvelope(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }

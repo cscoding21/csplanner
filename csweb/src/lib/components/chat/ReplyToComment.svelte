@@ -40,6 +40,8 @@
                 console.log('success')
 
                 callIf(update)
+
+                popupModal = false
             } else {
                 console.error(res.status.message)
             }

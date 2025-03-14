@@ -4,14 +4,20 @@ fragment commentFragment on Comment {
 	isEdited
 	projectId
 	replies {
-		id
-		text
-		isEdited
-		likes
-		loves
-		dislikes
-		laughsAt
-		acknowledges
+		meta {
+			...baseModelFragment
+		}
+		data {
+			id
+			text
+			isEdited
+			projectId
+			likes
+			loves
+			dislikes
+			laughsAt
+			acknowledges
+		}
 	}
 	likes
 	loves
