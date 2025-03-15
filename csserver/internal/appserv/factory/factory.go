@@ -3,8 +3,8 @@ package factory
 import (
 	"context"
 	"csserver/internal/config"
+	"csserver/internal/events"
 	"csserver/internal/providers/contentful"
-	"csserver/internal/providers/nats"
 	"csserver/internal/providers/postgres"
 	"csserver/internal/services/activity"
 	"csserver/internal/services/comment"
@@ -68,8 +68,8 @@ func GetDBClient() *pgxpool.Pool {
 }
 
 // GetPubSubClient return a pubsub client
-func GetPubSubClient() (nats.PubSubProvider, error) {
-	ps := nats.NewPubSubProvider(
+func GetPubSubClient() (events.PubSubProvider, error) {
+	ps := events.NewPubSubProvider(
 		config.Config.PubSub.Host,
 		config.Config.PubSub.Name,
 		config.Config.PubSub.SubjectFormat,
@@ -107,7 +107,7 @@ func GetActivityService() *activity.ActivityService {
 }
 
 // GetAuthService get user service instance
-func GetAuthService(ctx context.Context) *auth.AuthService {
+func GetAuthService() *auth.AuthService {
 	kc := GetKeycloakClient()
 	pubsub, err := GetPubSubClient()
 	if err != nil {

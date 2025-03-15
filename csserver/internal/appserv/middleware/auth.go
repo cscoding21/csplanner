@@ -12,7 +12,6 @@ import (
 
 	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
-	"csserver/internal/services/iam/auth"
 
 	"encoding/json"
 	"net/http"
@@ -77,7 +76,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 
 		token := getTokenFromHeader(r)
 
-		authService := factory.GetAuthService(bctx)
+		authService := factory.GetAuthService()
 		result, err := authService.ValidateToken(bctx, token)
 		if err != nil {
 			log.Errorf("error on validate: %s", err)
@@ -118,16 +117,17 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (context.Context, *transport.InitPayload, error) {
 	// Get the token from payload
-	log.Debugf("INIT PAYLOAD: %v", initPayload)
-	any := initPayload["Authorization"]
+	authPayload := initPayload["Authorization"]
 
-	token, ok := any.(string)
+	log.Warnf("AUTH PAYLOAD: %v", authPayload)
+
+	token, ok := authPayload.(string)
 	if !ok || token == "" {
 		log.Errorf("error in init.  will attempt auth token - Authorization: %s", token)
 		//---try authToken.  these settings are handled by the providers
 		//TODO: search for a way to handle properly
-		any = initPayload["authToken"]
-		token, ok = any.(string)
+		authPayload = initPayload["authToken"]
+		token, ok = authPayload.(string)
 		if !ok || token == "" {
 			log.Errorf("authToken failed: %s", token)
 			return nil, &initPayload, fmt.Errorf("authorization not found in transport payload: %v", initPayload)
@@ -135,11 +135,11 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 	}
 
 	bctx := config.NewContext()
-	authService := factory.GetAuthService(bctx)
+	authService := factory.GetAuthService()
 
-	result, _ := authService.Authenticate(bctx, auth.AuthCredentials{Token: token})
+	result, _ := authService.ValidateToken(bctx, token)
 	if result.Success {
-		log.Debugf("WebSocket authentication success for user %s", result.User.Email)
+		log.Warnf("WebSocket authentication success for user %s", result.User.Email)
 
 		bctx = context.WithValue(bctx, config.UserEmailKey, result.User.Email)
 		bctx = context.WithValue(bctx, config.UserIDKey, result.User.DBID)
@@ -147,6 +147,7 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 		return bctx, &initPayload, nil
 	}
 
+	log.Warnf("login failed : %v", result)
 	return ctx, &initPayload, fmt.Errorf("login failed for token %s", token)
 }
 

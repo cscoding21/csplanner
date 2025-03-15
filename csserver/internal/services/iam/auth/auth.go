@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"csserver/internal/providers/nats"
+	"csserver/internal/events"
 	"csserver/internal/services/iam/appuser"
 	"fmt"
 	"strings"
@@ -33,12 +33,12 @@ type AuthService struct {
 	KCClientID     string
 	KCClientSecret string
 	KCRealm        string
-	PubSub         nats.PubSubProvider
+	PubSub         events.PubSubProvider
 }
 
 // NewAuthService return an AuthService instance with proper configuration
 func NewAuthService(client *gocloak.GoCloak,
-	PubSubProvider nats.PubSubProvider,
+	PubSubProvider events.PubSubProvider,
 	clientID string,
 	clientSecret string,
 	realm string) *AuthService {
@@ -85,10 +85,10 @@ func (s *AuthService) Signout(ctx context.Context, refreshToken string) error {
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
-	log.Debug(creds)
-	log.Debug(s.KCClientID)
-	log.Debug(s.KCClientSecret)
-	log.Debug(s.KCRealm)
+	log.Warnf("CREDS: %v", creds)
+	log.Warnf("ClientID: %v", s.KCClientID)
+	log.Warnf("Client Secret: %v", s.KCClientSecret)
+	log.Warnf("Realm: %v", s.KCRealm)
 
 	token, err := s.KCClient.Login(ctx,
 		s.KCClientID,

@@ -3,7 +3,7 @@ package processor
 import (
 	"context"
 	"csserver/internal/common"
-	"csserver/internal/providers/nats"
+	"csserver/internal/events"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/project/ptypes/projectstatus"
@@ -21,7 +21,7 @@ const ProcessorIdentifier = "autoprocessor"
 // PortfolioService is a service for interacting with the project portfolio.
 type ProcessorService struct {
 	DBClient        *pgxpool.Pool
-	PubSub          nats.PubSubProvider
+	PubSub          events.PubSubProvider
 	ProjectService  project.ProjectService
 	ResourceService resource.ResourceService
 	ScheduleService schedule.ScheduleService
@@ -30,7 +30,7 @@ type ProcessorService struct {
 // NewProcessorService creates a new portfolio service.
 func NewProcessorService(
 	db *pgxpool.Pool,
-	ps nats.PubSubProvider,
+	ps events.PubSubProvider,
 	projService project.ProjectService,
 	resService resource.ResourceService,
 	schedService schedule.ScheduleService) *ProcessorService {

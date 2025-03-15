@@ -3,8 +3,8 @@ package portfolio
 import (
 	"context"
 	"csserver/internal/common"
+	"csserver/internal/events"
 	"csserver/internal/interfaces"
-	"csserver/internal/providers/nats"
 	"csserver/internal/providers/postgres"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
@@ -24,7 +24,7 @@ const PortfolioIdentifier = "portfolio"
 type PortfolioService struct {
 	DBClient        *pgxpool.Pool
 	ContextHelper   interfaces.ContextHelpers
-	PubSub          nats.PubSubProvider
+	PubSub          events.PubSubProvider
 	ProjectService  project.ProjectService
 	ResourceService resource.ResourceService
 	ScheduleService schedule.ScheduleService
@@ -33,7 +33,7 @@ type PortfolioService struct {
 // NewPortfolioService creates a new portfolio service.
 func NewPortfolioService(
 	db *pgxpool.Pool,
-	ps nats.PubSubProvider,
+	ps events.PubSubProvider,
 	projService project.ProjectService,
 	resService resource.ResourceService,
 	schedService schedule.ScheduleService) *PortfolioService {

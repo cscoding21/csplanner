@@ -96,7 +96,7 @@ var identifierTemplateString = `
 import (
 	"context"
 	"csserver/internal/common"
-	"csserver/internal/providers/nats"
+	"csserver/internal/events"
 	"csserver/internal/providers/postgres"
 	"fmt"
 
@@ -114,13 +114,13 @@ var serviceStructTemplateString = `
 // {{.ServiceName}}Service is a service for interacting with lists.
 type {{.ServiceName}}Service struct {
 	db      *pgxpool.Pool
-	pubsub nats.PubSubProvider
+	pubsub events.PubSubProvider
 }
 
 // New{{.ServiceName}}Service creates a new {{.ServiceName}} service.
 func New{{.ServiceName}}Service(
 	db *pgxpool.Pool,
-	ps nats.PubSubProvider) *{{.ServiceName}}Service {
+	ps events.PubSubProvider) *{{.ServiceName}}Service {
 
 	return &{{.ServiceName}}Service{
 		db: db,

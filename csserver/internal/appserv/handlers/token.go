@@ -22,7 +22,7 @@ type RefreshArgs struct {
 func (h LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Info("LoginHandler")
 	ctx := r.Context()
-	as := factory.GetAuthService(ctx)
+	as := factory.GetAuthService()
 	var creds auth.AuthCredentials
 
 	err := json.NewDecoder(r.Body).Decode(&creds)
@@ -63,7 +63,7 @@ func GetLoginHandler() LoginHandler {
 func (h SignoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Info("SignoutHandler")
 	ctx := r.Context()
-	as := factory.GetAuthService(ctx)
+	as := factory.GetAuthService()
 
 	var args RefreshArgs
 	err := json.NewDecoder(r.Body).Decode(&args)
@@ -96,7 +96,7 @@ func GetSignoutHandler() SignoutHandler {
 func (h RefreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Info("RefreshHandler")
 	ctx := r.Context()
-	as := factory.GetAuthService(ctx)
+	as := factory.GetAuthService()
 	var args RefreshArgs
 
 	err := json.NewDecoder(r.Body).Decode(&args)

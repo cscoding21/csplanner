@@ -6,10 +6,14 @@ package resolver
 
 import (
 	"context"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
 	"fmt"
 	"time"
+
+	"github.com/nats-io/nats.go"
+	log "github.com/sirupsen/logrus"
 )
 
 // CurrentTime is the resolver for the currentTime field.
@@ -57,7 +61,38 @@ func (r *subscriptionResolver) CurrentTime(ctx context.Context) (<-chan *idl.Tim
 
 // NotificationUpdate is the resolver for the notificationUpdate field.
 func (r *subscriptionResolver) NotificationUpdate(ctx context.Context) (<-chan string, error) {
-	panic(fmt.Errorf("not implemented: NotificationUpdate - notificationUpdate"))
+	ch := make(chan string)
+
+	client, err := factory.GetPubSubClient()
+	if err != nil {
+		return nil, err
+	}
+
+	subject := client.GetSubjectName("notification", "comment", "*")
+	conn := client.GetPubSubConn()
+	_, err = conn.Subscribe(subject, func(msg *nats.Msg) {
+		log.Infof("Received message on subject %s: %s", subject, string(msg.Data))
+
+		data := string(msg.Data)
+
+		select {
+		case <-ctx.Done(): // This runs when context gets cancelled. Subscription closes.
+			log.Info("Subscription Closed")
+			// Handle deregistration of the channel here. `close(ch)`
+			// close(ch)
+			return // Remember to return to end the routine.
+
+		case ch <- data: // This is the actual send.
+			log.Infof("Message sent: %s", data)
+			// Our message went through, do nothing
+		}
+	})
+	if err != nil {
+		log.Errorf("Subscribe Error: %s", err)
+		return nil, err
+	}
+
+	return ch, nil
 }
 
 // Subscription returns graph.SubscriptionResolver implementation.

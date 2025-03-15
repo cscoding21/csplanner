@@ -1,4 +1,4 @@
-package nats
+package events
 
 import (
 	"context"
@@ -51,12 +51,12 @@ func NewPubSubProvider(host string, name string, subjectFormat string, streamNam
 }
 
 // getSubjectName enforce a standard around pubsub subject naming
-func (s *PubSubProvider) getSubjectName(service string, object string, eventName string) string {
+func (s *PubSubProvider) GetSubjectName(service string, object string, eventName string) string {
 	return fmt.Sprintf(s.SubjectFormat, s.StreamName, service, object, eventName)
 }
 
 // GetPubSubClient return a configured NATS client
-func (s *PubSubProvider) getPubSubClient() *nats.Conn {
+func (s *PubSubProvider) GetPubSubConn() *nats.Conn {
 	client, err := nats.Connect(
 		s.Host,
 		nats.Name(s.Name),
@@ -71,10 +71,10 @@ func (s *PubSubProvider) getPubSubClient() *nats.Conn {
 
 // Publish publish a message to the pubsub platform
 func (s *PubSubProvider) Publish(ctx context.Context, service string, object string, eventName string, body interface{}) error {
-	client := s.getPubSubClient()
+	client := s.GetPubSubConn()
 	//defer client.Drain()
 
-	subject := s.getSubjectName(service, object, eventName)
+	subject := s.GetSubjectName(service, object, eventName)
 	data, err := s.getWrappedData(body)
 	if err != nil {
 		log.Error(err)
@@ -87,11 +87,15 @@ func (s *PubSubProvider) Publish(ctx context.Context, service string, object str
 }
 
 // Subscribe consumes messages from NATS
-func (s *PubSubProvider) Subscribe(ctx context.Context, service string, object string, eventName string) (*nats.Subscription, error) {
-	client := s.getPubSubClient()
-	subject := s.getSubjectName(service, object, eventName)
+func (s *PubSubProvider) Subscribe(
+	ctx context.Context,
+	service string,
+	object string,
+	eventName string) (*nats.Subscription, error) {
+	conn := s.GetPubSubConn()
+	subject := s.GetSubjectName(service, object, eventName)
 
-	sub, err := client.Subscribe(subject, func(msg *nats.Msg) {
+	sub, err := conn.Subscribe(subject, func(msg *nats.Msg) {
 		log.Debugf("Received message on subject %s: %s", subject, string(msg.Data))
 	})
 	if err != nil {

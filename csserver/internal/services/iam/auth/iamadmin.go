@@ -7,7 +7,7 @@ import (
 
 	"csserver/internal/common"
 	"csserver/internal/config"
-	"csserver/internal/providers/nats"
+	"csserver/internal/events"
 	"csserver/internal/services/iam/appuser"
 
 	"github.com/Nerzal/gocloak/v13"
@@ -20,13 +20,13 @@ type IAMAdminService struct {
 	KCRealm     string
 	KCAdminUser string
 	KCAdminPass string
-	PubSub      nats.PubSubProvider
+	PubSub      events.PubSubProvider
 	UserService appuser.AppuserService
 }
 
 func NewIAMAdminService(
 	client *gocloak.GoCloak,
-	pubsub nats.PubSubProvider,
+	pubsub events.PubSubProvider,
 	realm string,
 	adminUser string,
 	adminPass string,

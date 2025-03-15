@@ -40,7 +40,7 @@ func GetGqlHandler() *handler.Server {
 		Upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				// Check against your desired domains here
-				log.Debugf("CHECK ORIGIN HOST: %s", r.Host)
+				log.Warnf("CHECK ORIGIN HOST: %s", r.Host)
 				return true //r.Host == "localhost:4000"
 			},
 			ReadBufferSize:  1024,
