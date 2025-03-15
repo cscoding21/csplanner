@@ -3,7 +3,7 @@ load('./tilt_lib/csweb/Tiltfile', 'setup_csweb')
 load('./tilt_lib/csai/Tiltfile', 'setup_csai')
 load('./tilt_lib/cssaas/Tiltfile', 'setup_cssaas')
 load('./tilt_lib/debug/Tiltfile', 'setup_debug')
-load('./tilt_lib/surrealdb/Tiltfile', 'setup_surrealdb')
+# load('./tilt_lib/surrealdb/Tiltfile', 'setup_surrealdb')
 load('./tilt_lib/postgres/Tiltfile', 'setup_postgres')
 load('./tilt_lib/nats/Tiltfile', 'setup_nats')
 load('./tilt_lib/ollama/Tiltfile', 'setup_ollama')
@@ -14,7 +14,7 @@ load('./tilt_lib/keycloak/Tiltfile', 'setup_keycloak')
 #---- Third party
 #setup_surrealdb()
 setup_postgres()
-#setup_ollama()
+setup_ollama()
 setup_keycloak()
 setup_nats()
 
@@ -41,9 +41,9 @@ setup_cssaas()
 k8s_resource(
   workload='csserver',
   port_forwards="5000:5000",
-  labels=["csPlanner"],
-  resource_deps=['surrealdb']
+  labels=["csPlanner"] 
 )
+# resource_deps=['surrealdb']
 
 k8s_resource(
   workload='csweb',

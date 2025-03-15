@@ -12,6 +12,7 @@ uvicorn = {extras = ["standard"], version = "^0.32.0"}
 pydantic = "^2.9.2"
 fastapi = "^0.115.2"
 langchain-community = "^0.3.19"
+langchain-ollama = "^0.2.3"
 
 
 [tool.poetry.group.dev.dependencies]

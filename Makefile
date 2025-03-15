@@ -81,4 +81,3 @@ k8s-secrets:
 dbsetup:
 	./scripts/db.sh;
 
-
