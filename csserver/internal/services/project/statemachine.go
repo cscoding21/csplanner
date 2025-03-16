@@ -191,7 +191,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.InFlight,
 		Description: "project has been started",
 		//---states that can be entered from this state
-		NextValidStates: []projectstatus.ProjectState{projectstatus.Deferred, projectstatus.Abandoned},
+		NextValidStates: []projectstatus.ProjectState{projectstatus.Deferred},
 		//---can auto-transition to complete
 
 		Can: func(p *Project) validate.ValidationResult {

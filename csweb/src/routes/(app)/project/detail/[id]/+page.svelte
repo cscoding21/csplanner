@@ -20,6 +20,7 @@
 	import { sineIn } from 'svelte/easing';
 	import { ProjectStatusUpdate } from '../../components';
 	import { goto } from '$app/navigation';
+	import ShowIfStatus from '../../components/ShowIfStatus.svelte';
 
 	const id = $page.params.id;
 	let hash = $state($page.url.hash);
@@ -60,10 +61,12 @@
 				<ArrowRightToBracketOutline size="sm" class="mr-2"  />
 				Status
 			</ProjectStatusUpdate>
-			<DeleteProject id={id} name={project.data?.projectBasics?.name}>
-				<TrashBinOutline size="sm" class="mr-2" />
-				Delete
-			</DeleteProject>
+			<ShowIfStatus scope={["new", "draft", "abandoned", "rejected"]} status={project.data?.projectStatusBlock?.status}>
+				<DeleteProject id={id} name={project.data?.projectBasics?.name}>
+					<TrashBinOutline size="sm" class="mr-2" />
+					Delete
+				</DeleteProject>
+			</ShowIfStatus>
 			<Button onclick={() => chatBarHidden = !chatBarHidden}>	
 				<MessagesOutline size="sm" class="mr-2" />
 				Collaborate
