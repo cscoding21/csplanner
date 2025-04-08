@@ -55,9 +55,9 @@
 {#await loadPage()}
     Loading...
 {:then promiseData} 
-    {#if checkStatus()}
+    {#if !invert && checkStatus()}
         {@render children()}
-    {:else if !checkStatus() && invert }
+    {:else if invert && !checkStatus() }
         {@render children()}
     {:else}
         {#if elseRender}

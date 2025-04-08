@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import logoImage from '$lib/assets/images/csplanner-logo-white.png?enhanced'
+	import logoImageLightBG from '$lib/assets/images/csplanner-logo-dark.png?enhanced'
 
 	import {
 		Navbar,
@@ -20,6 +21,7 @@
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import { PageMessages, CSNavItem } from '$lib/components';
+	import { isDarkMode } from '$lib/utils/darkmode';
 
 	const as = authService();
 	const cu = as.currentUser();
@@ -27,6 +29,7 @@
 	let { children } = $props();
 
 	let pageCat = $derived(page.url.pathname)
+	let showDarkModeLogo = $derived(isDarkMode())
 
 	const logoutUser = () => {
 		as.signout().then((r) => {
@@ -53,7 +56,11 @@
 <div class="w-full h-screen">
 <Navbar fluid={true}>
 	<NavBrand href="/">
+		{#if showDarkModeLogo}
 		<enhanced:img src={logoImage} width="141" alt="csPlanner" />
+		{:else}
+		<enhanced:img src={logoImageLightBG} width="141" alt="csPlanner" />
+		{/if}
 	</NavBrand>
 	<div class="flex items-center md:order-3">
 		<DarkMode class="mr-2 text-2xl" />

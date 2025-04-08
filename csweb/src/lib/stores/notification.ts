@@ -9,7 +9,7 @@ const getInitialValue = (): Notification[] => {
 export const notificationStore = writable(getInitialValue());
 
 export const refreshNotificationStore = async () => {
-	const response = await findNotifications({ paging: { pageNumber: 1, resultsPerPage: 100 } });
+	const res = await findNotifications({ paging: { pageNumber: 1, resultsPerPage: 100 } });
 
-	notificationStore.set(response.data.findUserNotifications.results);
+	notificationStore.set(res.results);
 };

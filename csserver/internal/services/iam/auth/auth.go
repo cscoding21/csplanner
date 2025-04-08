@@ -9,8 +9,6 @@ import (
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/golang-jwt/jwt/v5"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type AuthCredentials struct {
@@ -85,10 +83,10 @@ func (s *AuthService) Signout(ctx context.Context, refreshToken string) error {
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
-	log.Warnf("CREDS: %v", creds)
-	log.Warnf("ClientID: %v", s.KCClientID)
-	log.Warnf("Client Secret: %v", s.KCClientSecret)
-	log.Warnf("Realm: %v", s.KCRealm)
+	// log.Warnf("CREDS: %v", creds)
+	// log.Warnf("ClientID: %v", s.KCClientID)
+	// log.Warnf("Client Secret: %v", s.KCClientSecret)
+	// log.Warnf("Realm: %v", s.KCRealm)
 
 	token, err := s.KCClient.Login(ctx,
 		s.KCClientID,

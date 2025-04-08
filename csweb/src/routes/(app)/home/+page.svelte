@@ -4,7 +4,12 @@
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
 	import { findProjects } from "$lib/services/project";
+	import { Button, ButtonGroup } from "flowbite-svelte";
 	import SetupWizard from "./setup/SetupWizard.svelte";
+	import Welcome from "./setup/Welcome.svelte";
+	import { ArrowLeftOutline, ArrowRightOutline } from "flowbite-svelte-icons";
+	import OrgSettings from "./setup/OrgSettings.svelte";
+	import Skills from "./setup/Skills.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -38,21 +43,22 @@
 
     let org = $state({} as Organization)
     let myProjects = $state({} as ProjectResults)
+    let currentStep = $state(1)
+
+    const next = () => {
+        ++currentStep
+    }
 </script>
 
 <div class="p-4">
 <PageHeading title={"Welcome " + user?.firstName} />
 
 <CSSection>
-    
-
-
     {#await loadPage()}
         Loading...
     {:then promiseData} 
-    <SetupWizard {org} />
 
-    <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
+    <OrgStateChecker invert={true} stateToCheck="isReadyForProjects">
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
             <ul>
             {#each myProjects.results as project}
@@ -62,13 +68,37 @@
         {/if}
 
         {#snippet elseRender()}
-            <p>I have no projects</p>
+            <SetupWizard {org} bind:step={currentStep} />
+
+            {#if currentStep == 1}
+                <Welcome onDone={next} />
+            {:else if currentStep == 2}
+                <OrgSettings onDone={next} />
+            {:else if currentStep == 3}
+                <Skills onDone={next} />
+            {:else if currentStep == 4}
+                <b>4</b>
+            {:else if currentStep == 5}
+                <b>5</b>
+            {:else if currentStep == 6}
+                <b>6</b>
+            {:else if currentStep == 7}
+                <b>7</b>
+            {/if}
+        
+        
+            
+            <div class="mt-4">
+                <ButtonGroup>
+                    <Button onclick={() => { --currentStep }} disabled={currentStep == 1}><ArrowLeftOutline /> Previous</Button>
+                    <Button onclick={() => { ++currentStep }} disabled={currentStep == 7}>Next <ArrowRightOutline /></Button>
+                </ButtonGroup>
+            </div>
+    
         {/snippet}
     </OrgStateChecker>
 
-        
     {/await}
-
 </CSSection>
 
 </div>
