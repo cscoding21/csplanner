@@ -1,7 +1,6 @@
 package main
 
 import (
-	"csserver/cmd/appserver/setup"
 	"csserver/internal/appserv"
 	"csserver/internal/config"
 
@@ -20,9 +19,6 @@ func init() {
 
 // run the web server
 func main() {
-	ctx := config.NewContext()
-	setup.SetupTestData(ctx)
-
 	log.Infof("Starting GraphQL server listening on port %v", config.Config.Server.ServerPort)
 	log.Fatal(appserv.Serve())
 }

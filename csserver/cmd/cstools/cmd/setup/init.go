@@ -29,7 +29,7 @@ func SetupTestData(ctx context.Context) error {
 func GetBotContext(ctx context.Context) context.Context {
 	user := CreateOrGetBot(ctx)
 
-	ctx = context.WithValue(ctx, config.UserEmailKey, user.Email)
+	ctx = context.WithValue(ctx, config.UserEmailKey, config.Config.Default.BotUserEmail)
 	ctx = context.WithValue(ctx, config.UserIDKey, user.ID)
 
 	return ctx

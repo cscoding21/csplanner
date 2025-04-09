@@ -67,6 +67,38 @@ func GetDBClient() *pgxpool.Pool {
 	return _dbclient
 }
 
+// GetDBClient return a configured DB client as a singleton
+func GetSaasDBClient() *pgxpool.Pool {
+	if _dbclient != nil {
+		return _dbclient
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+
+	fmt.Println("Creating Master DBClient instance now.")
+
+	// Connect to SurrealDB
+	//"postgres://username:password@localhost:5432/database_name"
+	host := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
+		config.Config.MasterDB.User,
+		config.Config.MasterDB.Password,
+		config.Config.MasterDB.Host,
+		config.Config.MasterDB.Port,
+		config.Config.MasterDB.Database)
+
+	// host := fmt.Sprintf("ws://%s:%v/rpc", config.Config.Database.User, config.Config.Database.Password)
+	db, err := postgres.GetDB(context.Background(), host)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	_dbclient = db
+
+	return _dbclient
+}
+
 // GetPubSubClient return a pubsub client
 func GetPubSubClient() (events.PubSubProvider, error) {
 	ps := events.NewPubSubProvider(

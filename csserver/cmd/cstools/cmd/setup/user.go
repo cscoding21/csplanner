@@ -17,7 +17,7 @@ func CreateOrGetBot(ctx context.Context) *appuser.Appuser {
 
 	user, err := service.GetUser(ctx, config.Config.Default.BotUserEmail)
 	if err != nil {
-		log.Error(err)
+		log.Fatal(err)
 	}
 
 	botUser := appuser.Appuser{

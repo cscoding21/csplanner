@@ -65,6 +65,18 @@ servgen:
 	go install cstools.go && \
 	cstools gen;
 
+## testdata: run cstools to generate test data for the application
+.PHONY: testdata
+testdata:
+	cd ./csserver/cmd/cstools && \
+	go install cstools.go && \
+	cstools testdata;
+
+## db-reset: delete all records from the csplanner database
+.PHONY: db-reset
+db-reset:
+	./scripts/db-reset.sh
+
 ## genall: run gql and csmap in succession
 .PHONY: genall
 genall:

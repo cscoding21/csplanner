@@ -35,13 +35,29 @@ func InitConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 
-	fp, err := filepath.Abs("../../../secrets/.env.local")
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Cannot find .env.local.  Moving on...")
-	} else {
-		err = godotenv.Load(fp)
+	//---TODO: make this less embarrassing
+	envPaths := []string{
+		"../../../../../secrets/.env.local",
+		"../../../../secrets/.env.local",
+		"../../../secrets/.env.local",
+		"../../secrets/.env.local",
+		"../secrets/.env.local",
+		"./secrets/.env.local",
+	}
+
+	for _, p := range envPaths {
+		fp, err := filepath.Abs(p)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Cannot load .env.local.  Moving on...")
+			fmt.Fprintln(os.Stderr, "Cannot find .env.local.  Moving on...")
+		} else {
+			err = godotenv.Load(fp)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Cannot load .env.local in %s.  Moving on...\n", fp)
+			} else {
+				//---if we load an env file...no need to keep looking
+				fmt.Fprintf(os.Stderr, ".env.local loaded from %s.  test setttings applied\n", fp)
+				break
+			}
 		}
 	}
 
@@ -58,6 +74,14 @@ func InitConfig() {
 }
 
 func setDefaults() {
+	// Database
+	viper.SetDefault("masterdb.host", "postgres-postgresql.database.svc")
+	viper.SetDefault("masterdb.user", "postgres")
+	viper.SetDefault("masterdb.password", "postgres")
+	viper.SetDefault("masterdb.namespace", "")
+	viper.SetDefault("masterdb.database", "cssaas")
+	viper.SetDefault("masterdb.port", 5432)
+
 	// Database
 	viper.SetDefault("database.host", "postgres-postgresql.database.svc")
 	viper.SetDefault("database.user", "postgres")
@@ -105,6 +129,7 @@ func setDefaults() {
 
 // Config the parent config structure
 type ConfigValues struct {
+	MasterDB DatabaseConfig
 	Database DatabaseConfig
 	Default  DefaultsConfig
 	Security SecurityConfig

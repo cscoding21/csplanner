@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"csserver/cmd/cstools/cmd/setup"
+	"csserver/internal/config"
 	"csserver/internal/gen"
 	"fmt"
 
@@ -49,8 +51,34 @@ to quickly create a Cobra application.`,
 	},
 }
 
+// testdataCmd represents the testdataCmd command
+var testdataCmd = &cobra.Command{
+	Use:   "testdata",
+	Short: "An operation that will setup test data within the application",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("testdata called")
+
+		ctx := config.NewContext()
+
+		err := setup.SetupTestData(ctx)
+		if err != nil {
+			log.Error(err)
+		} else {
+			log.Info("Test data generation complete")
+		}
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(genCmd)
+	rootCmd.AddCommand(testdataCmd)
 
 	// Here you will define your flags and configuration settings.
 

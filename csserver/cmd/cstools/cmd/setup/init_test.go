@@ -1,7 +1,6 @@
 package setup
 
 import (
-	"context"
 	"csserver/internal/config"
 	"testing"
 )
@@ -12,7 +11,7 @@ func init() {
 }
 
 func TestSetupTestData(t *testing.T) {
-	ctx := context.Background()
+	ctx := config.NewContext()
 	err := SetupTestData(ctx)
 	if err != nil {
 		t.Error(err)

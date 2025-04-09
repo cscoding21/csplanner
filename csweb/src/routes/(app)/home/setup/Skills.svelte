@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { SectionHeading } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
+	import type { UpdateList, UpdateListItem } from "$lib/graphql/generated/sdk";
+	import { updateList } from "$lib/services/list";
+	import { addToast } from "$lib/stores/toasts";
+	import { callIf } from "$lib/utils/helpers";
+	import { nameToID } from "$lib/utils/id";
 	import { Badge, Button, Input, P, Popover } from "flowbite-svelte";
 	import { CloseCircleSolid } from "flowbite-svelte-icons";
 
@@ -34,6 +39,48 @@
             addSkill()
         }
     })
+
+    const getSkillList = () => {
+        let list:UpdateList = {
+            id: "list:skills",
+            description: "A list of skills used by the organization",
+            values: []
+        }
+
+        for(let i = 0; i < skillList.length; i++) {
+            const sk = skillList[i]
+            const listItem:UpdateListItem = {
+                name: sk,
+                value: nameToID(sk)
+            }
+
+            list.values.push(listItem)
+        }
+
+        return list
+    }
+
+    const saveList = () => {
+		const list = getSkillList()
+
+		updateList(list).then(res => {
+			if (res && res.status?.success) {
+				addToast({
+					message: 'List updated successfully',
+					dismissible: true,
+					type: 'success'
+				});
+
+                callIf(onDone)
+			} else {
+				addToast({
+					message: 'Error updating list: ' + res.status?.message,
+					dismissible: true,
+					type: 'error'
+				});
+			}
+		});
+	}
 
     const saasSkillGroup = [
         "Backend Development",
@@ -145,7 +192,7 @@
             {/each}
         </div>
 
-        <Button onclick={() => onDone()}>I'm done for now.  Let's keep going! >></Button>
+        <Button onclick={saveList}>I'm done for now.  Let's keep going! >></Button>
     </div>
 </div>
 </div>
