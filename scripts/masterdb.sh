@@ -19,12 +19,13 @@ psql 'dbname=cssaas host=localhost user=postgres password=postgres port=5432 ssl
 CREATE TABLE IF NOT EXISTS organization (
     id VARCHAR(128) UNIQUE NOT NULL,
     name VARCHAR(128) NOT NULL,
+    db_host VARCHAR(128) NOT NULL,
     url VARCHAR(128) NOT NULL,
     is_provisioned BOOLEAN NOT NULL,
 
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_by VARCHAR(128) NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_by VARCHAR(128) NOT NULL,
     deleted_at TIMESTAMP,
     deleted_by VARCHAR(128),
@@ -46,9 +47,9 @@ CREATE TABLE IF NOT EXISTS license (
     cancelled_on TIMESTAMP NOT NULL,
     auto_renew BOOLEAN NOT NULL,
 
-    created_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_by VARCHAR(128) NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_by VARCHAR(128) NOT NULL,
     deleted_at TIMESTAMP,
     deleted_by VARCHAR(128),

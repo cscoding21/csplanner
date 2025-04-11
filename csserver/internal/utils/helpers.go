@@ -3,6 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // RemoveAll removes all occurrences of items from input.
@@ -28,4 +30,11 @@ func DeepCopy[T any](input T) (*T, error) {
 	}
 
 	return &clone, nil
+}
+
+// GeneratePassword create a secure password
+func GeneratePassword() string {
+	u := uuid.NewString()
+
+	return u
 }

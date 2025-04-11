@@ -31,8 +31,9 @@ import (
 
 // ---define singletons
 var (
-	lock      = &sync.Mutex{}
-	_dbclient *pgxpool.Pool
+	lock          = &sync.Mutex{}
+	_dbclient     *pgxpool.Pool
+	_saasDBClient *pgxpool.Pool
 )
 
 // GetDBClient return a configured DB client as a singleton
@@ -69,8 +70,8 @@ func GetDBClient() *pgxpool.Pool {
 
 // GetDBClient return a configured DB client as a singleton
 func GetSaasDBClient() *pgxpool.Pool {
-	if _dbclient != nil {
-		return _dbclient
+	if _saasDBClient != nil {
+		return _saasDBClient
 	}
 
 	lock.Lock()
@@ -94,9 +95,27 @@ func GetSaasDBClient() *pgxpool.Pool {
 		return nil
 	}
 
-	_dbclient = db
+	_saasDBClient = db
 
-	return _dbclient
+	return _saasDBClient
+}
+
+// GetSpecificDBClient gets a db client based on passed in config info
+func GetSpecificDBClient(dbinfo config.DatabaseConfig) *pgxpool.Pool {
+	host := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
+		dbinfo.User,
+		dbinfo.Password,
+		dbinfo.Host,
+		dbinfo.Port,
+		dbinfo.Database)
+
+	db, err := postgres.GetDB(context.Background(), host)
+	if err != nil {
+		log.Error(err)
+		return nil
+	}
+
+	return db
 }
 
 // GetPubSubClient return a pubsub client

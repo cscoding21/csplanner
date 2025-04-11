@@ -248,7 +248,7 @@ func Delete(
 }
 
 // Exec execute a sql statement in the DB
-func Exec(
+func ExecTx(
 	ctx context.Context,
 	db *pgxpool.Pool,
 	sql string,
@@ -271,6 +271,18 @@ func Exec(
 	return nil
 }
 
+// Exec execute a sql statement in the DB
+func Exec(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	sql string,
+	params ...any) error {
+
+	_, err := db.Exec(ctx, sql, params...)
+
+	return err
+}
+
 // FindPagedObjects find objects based on a given sql statement
 func FindPagedObjects[T any](
 	ctx context.Context,
@@ -283,10 +295,6 @@ func FindPagedObjects[T any](
 	pageSql := GetPageSql(sql, len(params)+1)
 	countSql := GetCountSql(sql)
 	out := common.NewPagedResults[common.BaseModel[T]](paging, filters)
-
-	// fmt.Println(pageSql)
-	// fmt.Println(countSql)
-	// fmt.Println(params...)
 
 	count, err := GetScalar[int](ctx, db, countSql, params...)
 	if err != nil {

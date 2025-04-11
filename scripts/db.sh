@@ -26,11 +26,11 @@ do
     CREATE TABLE IF NOT EXISTS ${i} (
         id VARCHAR(128) UNIQUE NOT NULL,
         parent_id VARCHAR(128),
-        created_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         created_by VARCHAR(128) NOT NULL,
-        updated_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_by VARCHAR(128) NOT NULL,
-        deleted_at TIMESTAMP,
+        deleted_at TIMESTAMP ,
         deleted_by VARCHAR(128),
         data JSONB
     );

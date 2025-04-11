@@ -16,6 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"csserver/internal/appserv/factory"
+	"csserver/internal/config"
+	"csserver/internal/provision"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -33,6 +36,12 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("provision called")
+
+		name, _ := cmd.Flags().GetString("name")
+		ctx := config.NewContext()
+		db := factory.GetSaasDBClient()
+
+		provision.ProvisionNewOrganization(ctx, db, name)
 	},
 }
 
