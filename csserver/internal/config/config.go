@@ -105,6 +105,11 @@ func setDefaults() {
 	viper.SetDefault("security.keycloakadminpass", "pass")
 	viper.SetDefault("security.keycloakclientid", "web-client")
 	viper.SetDefault("security.keycloakclientsecret", "pass")
+	viper.SetDefault("security.keycloakrealmtemplatepath", "")
+	viper.SetDefault("security.keycloakmasterrealmname", "master")
+
+	viper.SetDefault("security.keycloakprovisionerclientid", "cs-provisioner")
+	viper.SetDefault("security.keycloakprovisionerclientsecret", "pass")
 
 	//Server
 	viper.SetDefault("server.enableplayground", "true")
@@ -116,11 +121,6 @@ func setDefaults() {
 	viper.SetDefault("pubsub.subjectformat", "%s.%s.%s.%s")
 	viper.SetDefault("pubsub.streamname", "CSPLANNER")
 	viper.SetDefault("pubsub.name", "csplanner-nats")
-
-	//Content Management
-	viper.SetDefault("cms.orgid", "xxxxx")
-	viper.SetDefault("cms.spaceid", "xxxxx")
-	viper.SetDefault("cms.pat", "CSPLANNER")
 
 	//Services
 	viper.SetDefault("services.aihost", "http://localhost:7000/bot")
@@ -135,7 +135,6 @@ type ConfigValues struct {
 	Security SecurityConfig
 	Server   ServerConfig
 	PubSub   PubSubConfig
-	CMS      CMSConfig
 	Services ServicesConfig
 }
 
@@ -156,16 +155,20 @@ type DefaultsConfig struct {
 }
 
 type SecurityConfig struct {
-	BypassAuth           bool
-	JwtSigningKey        string
-	JwtAudience          string
-	JwtIssuer            string
-	KeycloakURL          string
-	KeycloakRealm        string
-	KeycloakAdminUser    string
-	KeycloakAdminPass    string
-	KeycloakClientID     string
-	KeycloakClientSecret string
+	BypassAuth                      bool
+	JwtSigningKey                   string
+	JwtAudience                     string
+	JwtIssuer                       string
+	KeycloakURL                     string
+	KeycloakMasterRealmName         string
+	KeycloakRealm                   string
+	KeycloakAdminUser               string
+	KeycloakAdminPass               string
+	KeycloakClientID                string
+	KeycloakClientSecret            string
+	KeycloakRealmTemplatePath       string
+	KeycloakProvisionerClientID     string
+	KeycloakProvisionerClientSecret string
 }
 
 type ServerConfig struct {

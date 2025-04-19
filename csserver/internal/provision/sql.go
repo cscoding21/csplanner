@@ -39,6 +39,9 @@ INSERT INTO license (
 );
 `
 
+var deleteOrgLicensesSQL = `DELETE FROM license WHERE org_id = $1;`
+var deleteOrgSQL = `DELETE FROM organization WHERE id = $1;`
+
 var setProvisionedCompleteSQL = `
 UPDATE organization
 SET is_provisioned = true,
@@ -78,3 +81,9 @@ CREATE TABLE IF NOT EXISTS %s (
     CREATE INDEX IF NOT EXISTS idx_%s_updated_by
     ON %s(updated_by);
 `
+
+// ---Delete operations
+var dropDatabaseSQL = `DROP DATABASE %s WITH(force);`
+var revokeTablePrivligesDatabaseSQL = `REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM %s_user;`
+var revokeSchemaPrivligesDatabaseSQL = `REVOKE USAGE ON SCHEMA public FROM %s_user;`
+var dropDatabaseUserSQL = `DROP USER %s_user;`

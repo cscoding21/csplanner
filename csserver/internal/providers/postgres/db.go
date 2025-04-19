@@ -14,6 +14,7 @@ import (
 
 type TableName string
 
+// GetDB returns a connection pool from a connection string
 func GetDB(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
 	//urlExample := "postgres://username:password@localhost:5432/database_name"
 	config, err := pgxpool.ParseConfig(dbUrl)
@@ -22,6 +23,18 @@ func GetDB(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
 	}
 
 	return pgxpool.NewWithConfig(ctx, config)
+}
+
+// GetDBFromConfig returns a connection pool from a database config object
+func GetDBFromConfig(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) {
+	url := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
+		cfg.User,
+		cfg.Password,
+		cfg.Host,
+		cfg.Port,
+		cfg.Database)
+
+	return GetDB(ctx, url)
 }
 
 // UpdateObject create or update an object in the given table

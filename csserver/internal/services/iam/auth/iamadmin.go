@@ -170,7 +170,7 @@ func (s *IAMAdminService) getAdminToken(ctx context.Context) (*gocloak.JWT, erro
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
-		"master")
+		config.Config.Security.KeycloakMasterRealmName)
 
 	return token, err
 }
@@ -191,7 +191,7 @@ func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*goc
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
-		"master")
+		config.Config.Security.KeycloakMasterRealmName)
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +237,7 @@ func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
-		"master")
+		config.Config.Security.KeycloakMasterRealmName)
 	if err != nil {
 		return pagingResults, err
 	}

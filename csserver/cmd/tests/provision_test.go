@@ -3,6 +3,7 @@ package tests
 import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
+	"csserver/internal/providers/postgres"
 	"csserver/internal/provision"
 	"fmt"
 	"testing"
@@ -15,6 +16,20 @@ var name = "Jeph Test Org"
 func init() {
 	config.InitConfig()
 	config.InitLogger()
+}
+
+func TestProvisionNewOrganization(t *testing.T) {
+	ctx := getTestContext()
+	saasdb := factory.GetSaasDBClient()
+
+	provision.ProvisionNewOrganization(ctx, saasdb, name)
+}
+
+func TestTeardownOrgInfrastructure(t *testing.T) {
+	ctx := getTestContext()
+	saasdb := factory.GetSaasDBClient()
+
+	provision.TeardownOrgInfrastructure(ctx, saasdb, name)
 }
 
 func TestCreateOrgDatabase(t *testing.T) {
@@ -48,6 +63,16 @@ func TestAddOrgToMasterDB(t *testing.T) {
 	}
 }
 
+func TestDeleteMasterDBRecords(t *testing.T) {
+	ctx := config.NewContext()
+	saasdb := factory.GetSaasDBClient()
+
+	err := provision.DeleteMasterDBRecords(ctx, saasdb, name)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestSetOrgProvisioned(t *testing.T) {
 	ctx := config.NewContext()
 	saasdb := factory.GetSaasDBClient()
@@ -63,13 +88,15 @@ func TestCreateTablesForPlanner(t *testing.T) {
 	creds := provision.GetDBCredsFromName(name)
 	creds.User = "postgres"
 	creds.Password = "postgres"
-	db := factory.GetSpecificDBClient(creds)
+	db, err := postgres.GetDBFromConfig(ctx, creds)
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-	errs := provision.CreateTablesForPlanner(ctx, db)
-	for _, err := range errs {
-		if err != nil {
-			t.Error(errs)
-		}
+	err = provision.CreateTablesForPlanner(ctx, db)
+	if err != nil {
+		t.Error(err)
 	}
 }
 
@@ -110,6 +137,26 @@ func TestCreateInitialTemplates(t *testing.T) {
 	ts := factory.GetProjectTemplateService()
 
 	err := provision.CreateInitialTemplates(ctx, ts)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCreateNewOrgRealm(t *testing.T) {
+	ctx := config.NewContext()
+	realmName := slug.Make(name)
+
+	err := provision.CreateNewOrgRealm(ctx, realmName)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestDeleteOrgRealm(t *testing.T) {
+	ctx := config.NewContext()
+	realmName := slug.Make(name)
+
+	err := provision.DeleteOrgRealm(ctx, realmName)
 	if err != nil {
 		t.Error(err)
 	}

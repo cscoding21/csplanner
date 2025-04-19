@@ -4,11 +4,9 @@ import (
 	"context"
 	"csserver/internal/config"
 	"csserver/internal/events"
-	"csserver/internal/providers/contentful"
 	"csserver/internal/providers/postgres"
 	"csserver/internal/services/activity"
 	"csserver/internal/services/comment"
-	"csserver/internal/services/content"
 	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/iam/auth"
 	"csserver/internal/services/list"
@@ -100,24 +98,6 @@ func GetSaasDBClient() *pgxpool.Pool {
 	return _saasDBClient
 }
 
-// GetSpecificDBClient gets a db client based on passed in config info
-func GetSpecificDBClient(dbinfo config.DatabaseConfig) *pgxpool.Pool {
-	host := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
-		dbinfo.User,
-		dbinfo.Password,
-		dbinfo.Host,
-		dbinfo.Port,
-		dbinfo.Database)
-
-	db, err := postgres.GetDB(context.Background(), host)
-	if err != nil {
-		log.Error(err)
-		return nil
-	}
-
-	return db
-}
-
 // GetPubSubClient return a pubsub client
 func GetPubSubClient() (events.PubSubProvider, error) {
 	ps := events.NewPubSubProvider(
@@ -128,16 +108,6 @@ func GetPubSubClient() (events.PubSubProvider, error) {
 	)
 
 	return ps, nil
-}
-
-func GetContentfulProvider() (*contentful.ContentfulProvider, error) {
-	cp := &contentful.ContentfulProvider{
-		OrgID:   config.Config.CMS.OrgID,
-		SpaceID: config.Config.CMS.SpaceID,
-		PAT:     config.Config.CMS.PAT,
-	}
-
-	return cp, nil
 }
 
 // GetKeycloakClient return a Keycloak client
@@ -196,17 +166,6 @@ func GetListService() *list.ListService {
 	}
 
 	return list.NewListService(dbClient, pubsub)
-}
-
-// GetListService get list service instance
-func GetContentService() *content.ContentService {
-	cms, err := GetContentfulProvider()
-	if err != nil {
-		log.Error(err)
-		return nil
-	}
-
-	return content.NewContentService(*cms)
 }
 
 // GetNotificationService get notification service instance

@@ -2,6 +2,7 @@ package provision
 
 import (
 	"context"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/providers/postgres"
@@ -13,6 +14,7 @@ import (
 	"csserver/internal/utils"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/gosimple/slug"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -25,12 +27,49 @@ func ProvisionNewOrganization(
 	db *pgxpool.Pool,
 	name string) error {
 
+	existing := CheckDatabaseExits(ctx, db, name)
+	if !existing {
+		_, err := CreateOrgDatabase(ctx, db, name)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	orgDBCreds := GetDBCredsFromName(name)
+	orgDBCreds.Host = db.Config().ConnConfig.Host
+	orgDBCreds.Port = int(db.Config().ConnConfig.Port)
+	orgDBCreds.User = db.Config().ConnConfig.User
+	orgDBCreds.Password = db.Config().ConnConfig.Password
+
+	orgDBClient, err := postgres.GetDBFromConfig(ctx, orgDBCreds)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	errs := CreateTablesForPlanner(ctx, orgDBClient)
+	if errs != nil {
+		log.Error(errs)
+	}
+
+	CreateNewOrgRealm(ctx, name)
+
+	pubSub, _ := factory.GetPubSubClient()
+	gk := getKeycloakClient()
+	appUserService := appuser.NewAppuserService(orgDBClient, pubSub)
+	us := auth.NewIAMAdminService(gk, pubSub, orgDBCreds.Database, config.Config.Security.KeycloakAdminUser, config.Config.Security.KeycloakAdminPass, *appUserService)
+
+	err = CreateBotUser(ctx, &us)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	/*
 		check for existing name and provision status in master DB table
 		- check for existing db
 			-  if yes, exit
 
 		create db for new org
+		create realm for new org
 
 		run setup scripts/migrations
 		- create bot user
@@ -48,6 +87,97 @@ func ProvisionNewOrganization(
 	return nil
 }
 
+// TeardownOrgInfrastructure remove all elements of a SaaS org
+func TeardownOrgInfrastructure(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	name string) {
+
+	//--- delete database and perform all cleanup
+	err := dropOrgDatabase(ctx, db, name)
+	if err != nil {
+		log.Error(err)
+	}
+
+	//--- delete realm
+	err = DeleteOrgRealm(ctx, name)
+	if err != nil {
+		log.Error(err)
+	}
+
+	//--- delete master db records
+	err = DeleteMasterDBRecords(ctx, db, name)
+	if err != nil {
+		log.Error(err)
+	}
+}
+
+func dropOrgDatabase(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	name string) error {
+
+	newDBCreds := GetDBCredsFromName(name)
+
+	// 	var dropDatabaseSQL = `DROP DATABASE %s WITH(force);`
+	// var revokeTablePrivligesDatabaseSQL = `REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM %s;`
+	// var revokeSchemaPrivligesDatabaseSQL = `REVOKE USAGE ON SCHEMA public FROM %s;`
+	// var dropDatabaseUserSQL = `DROP USER %s;`
+
+	sql := fmt.Sprintf(dropDatabaseSQL, newDBCreds.Database)
+	err := errors.Join(postgres.Exec(ctx, db, sql))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	sql = fmt.Sprintf(revokeTablePrivligesDatabaseSQL, newDBCreds.Database)
+	err = errors.Join(postgres.Exec(ctx, db, sql))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	sql = fmt.Sprintf(revokeSchemaPrivligesDatabaseSQL, newDBCreds.Database)
+	err = errors.Join(postgres.Exec(ctx, db, sql))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	sql = fmt.Sprintf(dropDatabaseUserSQL, newDBCreds.Database)
+	err = errors.Join(postgres.Exec(ctx, db, sql))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func DeleteMasterDBRecords(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	name string) error {
+
+	id := getOrgIDFromName(name)
+
+	err := errors.Join(postgres.Exec(ctx, db, deleteOrgLicensesSQL, id))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	err = errors.Join(postgres.Exec(ctx, db, deleteOrgSQL, id))
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+// CheckDatabaseExits return true if the proposed database exists
 func CheckDatabaseExits(
 	ctx context.Context,
 	db *pgxpool.Pool,
@@ -62,6 +192,7 @@ func CheckDatabaseExits(
 	return count != nil && *count == 1
 }
 
+// CreateOrgDatabase create a new database for a give org
 func CreateOrgDatabase(
 	ctx context.Context,
 	db *pgxpool.Pool,
@@ -72,22 +203,36 @@ func CreateOrgDatabase(
 	//---create DB
 	sql := fmt.Sprintf(newDatabaseSQL, newDBCreds.Database)
 	err := postgres.Exec(ctx, db, sql)
+	if err != nil {
+		log.Error(err)
+		return newDBCreds, err
+	}
 
 	//---create user
 	sql = fmt.Sprintf(newDBUserSQL, newDBCreds.User, newDBCreds.Password)
 	err = errors.Join(postgres.Exec(ctx, db, sql))
+	if err != nil {
+		log.Error(err)
+	}
 
 	//---grant table privilidges
 	sql = fmt.Sprintf(grantOnDBSQL, newDBCreds.Database, newDBCreds.User)
 	err = errors.Join(postgres.Exec(ctx, db, sql))
+	if err != nil {
+		log.Error(err)
+	}
 
 	//---grant schema privilidges
-	sql = fmt.Sprintf(grandOnSchemaSQL, newDBCreds.User)
-	err = errors.Join(postgres.Exec(ctx, db, sql))
+	// sql = fmt.Sprintf(grandOnSchemaSQL, newDBCreds.User)
+	// err = errors.Join(postgres.Exec(ctx, db, sql))
+	// if err != nil {
+	// 	log.Error(err)
+	// }
 
 	return newDBCreds, err
 }
 
+// AddOrgToMasterDB add the organization record to the master DB list
 func AddOrgToMasterDB(
 	ctx context.Context,
 	db *pgxpool.Pool,
@@ -95,13 +240,21 @@ func AddOrgToMasterDB(
 
 	//---TODO: create tokenize function
 	tokenizedName := slug.Make(name)
-	id := fmt.Sprintf("organization:%s", name)
+	id := getOrgIDFromName(name)
 	opUser := "test:bot"
 
-	sql := fmt.Sprintf(newMasterOrgRecordSQL)
+	sql := newMasterOrgRecordSQL
 	return postgres.Exec(ctx, db, sql, id, name, tokenizedName, false, "localhost", opUser, opUser)
 }
 
+func getOrgIDFromName(name string) string {
+	tokenizedName := slug.Make(name)
+	id := fmt.Sprintf("organization:%s", tokenizedName)
+
+	return id
+}
+
+// SetOrgProvisioned set the orgs provisioned flag to true.  This should be called when all steps have been completed
 func SetOrgProvisioned(
 	ctx context.Context,
 	db *pgxpool.Pool,
@@ -113,24 +266,26 @@ func SetOrgProvisioned(
 	return postgres.Exec(ctx, db, sql, opUser, orgID)
 }
 
+// CreateTablesForPlanner generaete all tables required for a csPlanner instance DB
 func CreateTablesForPlanner(
 	ctx context.Context,
-	db *pgxpool.Pool) []error {
+	db *pgxpool.Pool) error {
 
 	tables := []string{"list", "organization", "project", "projecttemplate", "resource", "role", "appuser", "comment", "reaction"}
 
-	var errs []error
+	var err error
 
 	for _, t := range tables {
 		fmt.Println(t)
 
 		sql := fmt.Sprintf(createCSPlannerTableSQL, t, t, t, t, t, t, t, t, t, t, t, t, t)
-		errs = append(errs, postgres.Exec(ctx, db, sql))
+		errors.Join(err, postgres.Exec(ctx, db, sql))
 	}
 
-	return errs
+	return err
 }
 
+// CreateDefaultOrg create the default organization for a new csPlanner instance
 func CreateDefaultOrg(
 	ctx context.Context,
 	name string,
@@ -163,6 +318,7 @@ func CreateDefaultOrg(
 	return nil
 }
 
+// CreateBotUser create the bot user account for a csPlanner instance
 func CreateBotUser(
 	ctx context.Context,
 	userService *auth.IAMAdminService) error {
@@ -188,6 +344,7 @@ func CreateBotUser(
 	return nil
 }
 
+// CreateInitialLists create all of the required list records needed for csPlanner
 func CreateInitialLists(
 	ctx context.Context,
 	listService *list.ListService) error {
@@ -237,6 +394,7 @@ func CreateInitialLists(
 	return nil
 }
 
+// CreateInitialTemplates create a default set of project templates for csPlanner
 func CreateInitialTemplates(
 	ctx context.Context,
 	templateService *projecttemplate.ProjecttemplateService) error {
@@ -261,11 +419,12 @@ func CreateInitialTemplates(
 // GetDBCredsFromName return a DB creds object based on the
 func GetDBCredsFromName(name string) config.DatabaseConfig {
 	name = slug.Make(name)
+	name = strings.Replace(name, "-", "_", -1)
 	return config.DatabaseConfig{
 		Host:     config.Config.MasterDB.Host,
 		Port:     config.Config.MasterDB.Port,
 		Database: fmt.Sprintf("csp_%s", name),
-		User:     fmt.Sprintf("%s_user", name),
+		User:     fmt.Sprintf("csp_%s_user", name),
 		Password: utils.GeneratePassword(),
 	}
 }
