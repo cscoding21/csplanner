@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"strings"
 
@@ -37,4 +38,11 @@ func GeneratePassword() string {
 	u := uuid.NewString()
 
 	return u
+}
+
+// GenerateBase64Guid create a uuid that is compressed to 22 characters.  Suitable for ID generateion
+func GenerateBase64UUID() string {
+	guid := uuid.New()
+	encodedGuid := base64.RawURLEncoding.EncodeToString(guid[:])
+	return encodedGuid
 }

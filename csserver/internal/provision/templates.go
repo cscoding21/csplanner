@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var template = &projecttemplate.Projecttemplate{
+var projectTemplate = &projecttemplate.Projecttemplate{
 	ControlFields: common.ControlFields{
 		ID: "projecttemplate:primary",
 	},

@@ -18,6 +18,7 @@ func init() {
 	config.InitLogger()
 }
 
+// STANDUP
 func TestProvisionNewOrganization(t *testing.T) {
 	ctx := getTestContext()
 	saasdb := factory.GetSaasDBClient()
@@ -25,6 +26,7 @@ func TestProvisionNewOrganization(t *testing.T) {
 	provision.ProvisionNewOrganization(ctx, saasdb, name)
 }
 
+// TEARDOWN
 func TestTeardownOrgInfrastructure(t *testing.T) {
 	ctx := getTestContext()
 	saasdb := factory.GetSaasDBClient()
@@ -146,10 +148,12 @@ func TestCreateNewOrgRealm(t *testing.T) {
 	ctx := config.NewContext()
 	realmName := slug.Make(name)
 
-	err := provision.CreateNewOrgRealm(ctx, realmName)
+	result, err := provision.CreateNewOrgRealm(ctx, realmName)
 	if err != nil {
 		t.Error(err)
 	}
+
+	fmt.Printf("Realm '%s' created \n", result)
 }
 
 func TestDeleteOrgRealm(t *testing.T) {

@@ -35,6 +35,8 @@ func ProvisionNewOrganization(
 		}
 	}
 
+	orgKey := GenerateOrgKey(name)
+
 	orgDBCreds := GetDBCredsFromName(name)
 	orgDBCreds.Host = db.Config().ConnConfig.Host
 	orgDBCreds.Port = int(db.Config().ConnConfig.Port)
@@ -43,46 +45,46 @@ func ProvisionNewOrganization(
 
 	orgDBClient, err := postgres.GetDBFromConfig(ctx, orgDBCreds)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("GetDBFromConfig: %s\n", err)
 	}
 
 	errs := CreateTablesForPlanner(ctx, orgDBClient)
 	if errs != nil {
-		log.Error(errs)
+		log.Errorf("CreateTablesForPlanner: %s\n", err)
 	}
 
-	CreateNewOrgRealm(ctx, name)
+	realm, err := CreateNewOrgRealm(ctx, name)
+	if err != nil {
+		log.Errorf("CreateNewOrgRealm: %s\n", err)
+	}
 
 	pubSub, _ := factory.GetPubSubClient()
 	gk := getKeycloakClient()
 	appUserService := appuser.NewAppuserService(orgDBClient, pubSub)
-	us := auth.NewIAMAdminService(gk, pubSub, orgDBCreds.Database, config.Config.Security.KeycloakAdminUser, config.Config.Security.KeycloakAdminPass, *appUserService)
+	us := auth.NewIAMAdminService(gk, pubSub, realm, config.Config.Security.KeycloakAdminUser, config.Config.Security.KeycloakAdminPass, *appUserService)
 
 	err = CreateBotUser(ctx, &us)
 	if err != nil {
-		log.Fatal(err)
+		log.Errorf("CreateBotUser: %s\n", err)
 	}
 
-	/*
-		check for existing name and provision status in master DB table
-		- check for existing db
-			-  if yes, exit
+	os := organization.NewOrganizationService(orgDBClient, pubSub)
+	err = CreateDefaultOrg(ctx, name, orgKey, os)
+	if err != nil {
+		log.Errorf("CreateDefaultOrg: %s\n", err)
+	}
 
-		create db for new org
-		create realm for new org
+	ls := list.NewListService(orgDBClient, pubSub)
+	err = CreateInitialLists(ctx, ls)
+	if err != nil {
+		log.Errorf("CreateInitialLists: %s\n", err)
+	}
 
-		run setup scripts/migrations
-		- create bot user
-		- create default organization
-		- create initial lists
-			- skills (no values)
-			- funding sources (internal/external)
-			- value categories ()
-		- create project templates
-			- simple
-			- complex
-
-	*/
+	ts := projecttemplate.NewProjecttemplateService(orgDBClient, pubSub)
+	err = CreateInitialTemplates(ctx, ts)
+	if err != nil {
+		log.Errorf("CreateInitialTemplates: %s\n", err)
+	}
 
 	return nil
 }
@@ -406,7 +408,7 @@ func CreateInitialTemplates(
 		fmt.Printf("CreateInitialTemplates Simple: %v\n", result)
 	}
 
-	result, err = templateService.SaveTemplate(ctx, *template)
+	result, err = templateService.SaveTemplate(ctx, *projectTemplate)
 	if err != nil {
 		fmt.Printf("CreateInitialTemplates Tempate Error: %s\n", err)
 	} else {
@@ -418,8 +420,8 @@ func CreateInitialTemplates(
 
 // GetDBCredsFromName return a DB creds object based on the
 func GetDBCredsFromName(name string) config.DatabaseConfig {
-	name = slug.Make(name)
-	name = strings.Replace(name, "-", "_", -1)
+	name = GenerateOrgKey(name)
+
 	return config.DatabaseConfig{
 		Host:     config.Config.MasterDB.Host,
 		Port:     config.Config.MasterDB.Port,
@@ -427,4 +429,12 @@ func GetDBCredsFromName(name string) config.DatabaseConfig {
 		User:     fmt.Sprintf("csp_%s_user", name),
 		Password: utils.GeneratePassword(),
 	}
+}
+
+// GenerateOrgKey create a key for the org to be used in URLs, object names, etc
+func GenerateOrgKey(name string) string {
+	name = slug.Make(name)
+	name = strings.Replace(name, "-", "_", -1)
+
+	return name
 }

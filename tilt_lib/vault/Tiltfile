@@ -1,0 +1,21 @@
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+load('ext://namespace', 'namespace_create')
+
+NAMESPACE = 'hashicorp'
+
+def setup_vault():
+    namespace_create(NAMESPACE, allow_duplicates=True)
+
+    helm_repo(
+        'hashicorp-repo', 
+        'https://helm.releases.hashicorp.com',
+        labels=["HelmRepos"]
+    )
+
+    helm_resource(
+        'vault', 
+        'hashicorp/vault', 
+        namespace = NAMESPACE, 
+        flags=['--values=tilt_lib/vault/values.local.yaml'],
+        labels=["Hashicorp"]
+    )

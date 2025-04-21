@@ -8,6 +8,7 @@ load('./tilt_lib/postgres/Tiltfile', 'setup_postgres')
 load('./tilt_lib/nats/Tiltfile', 'setup_nats')
 load('./tilt_lib/ollama/Tiltfile', 'setup_ollama')
 load('./tilt_lib/keycloak/Tiltfile', 'setup_keycloak')
+load('./tilt_lib/vault/Tiltfile', 'setup_vault')
 
 
 # DEPLOY SERVICES
@@ -17,6 +18,7 @@ setup_postgres()
 #setup_ollama()
 setup_keycloak()
 setup_nats()
+#setup_vault()
 
 #---- Tools
 setup_debug()

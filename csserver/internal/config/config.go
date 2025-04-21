@@ -172,9 +172,10 @@ type SecurityConfig struct {
 }
 
 type ServerConfig struct {
-	EnablePlayground bool
-	ServerPort       int
-	DataDir          string
+	EnablePlayground    bool
+	ServerPort          int
+	DataDir             string
+	DefaultOrganization string
 }
 
 type PubSubConfig struct {

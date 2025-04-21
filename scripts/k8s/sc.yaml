@@ -20,3 +20,18 @@ spec:
   - ReadWriteOnce
   hostPath:
     path: /home/jeph/projects/data
+
+# ---
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: vault-pv
+# spec:
+#   storageClassName: local-disk
+#   capacity:
+#     storage: 16Gi
+#   accessModes:
+#   - ReadWriteOnce
+#   hostPath:
+#     path: /home/jeph/projects/data
