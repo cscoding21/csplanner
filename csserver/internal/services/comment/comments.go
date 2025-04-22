@@ -15,9 +15,6 @@ import (
 // ---This is the name of the object in the database
 const ReactionIdentifier = postgres.TableName("reaction")
 
-// type CommentRelationshipType string
-type CommentReactionType string
-
 const (
 	Likes       CommentReactionType = "likes"
 	Dislikes    CommentReactionType = "dislikes"

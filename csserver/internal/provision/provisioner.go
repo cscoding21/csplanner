@@ -36,6 +36,7 @@ func ProvisionNewOrganization(
 	}
 
 	orgKey := GenerateOrgKey(name)
+	urlKey := GenerateUrlKeyForOrg(name)
 
 	orgDBCreds := GetDBCredsFromName(name)
 	orgDBCreds.Host = db.Config().ConnConfig.Host
@@ -69,7 +70,9 @@ func ProvisionNewOrganization(
 	}
 
 	os := organization.NewOrganizationService(orgDBClient, pubSub)
-	err = CreateDefaultOrg(ctx, name, orgKey, os)
+	//---TODO: change up DB host
+	err = CreateDefaultOrg(ctx,
+		name, urlKey, orgKey, "localhost", orgDBCreds.Database, os)
 	if err != nil {
 		log.Errorf("CreateDefaultOrg: %s\n", err)
 	}
@@ -84,6 +87,11 @@ func ProvisionNewOrganization(
 	err = CreateInitialTemplates(ctx, ts)
 	if err != nil {
 		log.Errorf("CreateInitialTemplates: %s\n", err)
+	}
+
+	err = SetOrgProvisioned(ctx, db, name)
+	if err != nil {
+		log.Errorf("SetOrgProvisioned: %s\n", err)
 	}
 
 	return nil
@@ -263,7 +271,7 @@ func SetOrgProvisioned(
 	name string) error {
 	opUser := "test:bot"
 
-	orgID := fmt.Sprintf("organization:%s", slug.Make(name))
+	orgID := getOrgIDFromName(name)
 	sql := setProvisionedCompleteSQL
 	return postgres.Exec(ctx, db, sql, opUser, orgID)
 }
@@ -291,14 +299,20 @@ func CreateTablesForPlanner(
 func CreateDefaultOrg(
 	ctx context.Context,
 	name string,
-	url string,
+	urlKey string,
+	realm string,
+	dbHost string,
+	database string,
 	orgService *organization.OrganizationService) error {
 	org := organization.Organization{
 		ControlFields: common.ControlFields{
 			ID: organization.DefaultOrganizationID,
 		},
-		Name: name,
-		URL:  url,
+		Name:     name,
+		URLKey:   urlKey,
+		Database: database,
+		DBHost:   dbHost,
+		Realm:    realm,
 		Defaults: organization.OrganizationDefaults{
 			FocusFactor:              utils.ValToRef(5.0),
 			HoursPerWeek:             40,
@@ -435,6 +449,13 @@ func GetDBCredsFromName(name string) config.DatabaseConfig {
 func GenerateOrgKey(name string) string {
 	name = slug.Make(name)
 	name = strings.Replace(name, "-", "_", -1)
+
+	return name
+}
+
+// GenerateUrlKeyForOrg create a key for the org to be used in URLs, object names, etc
+func GenerateUrlKeyForOrg(name string) string {
+	name = slug.Make(name)
 
 	return name
 }

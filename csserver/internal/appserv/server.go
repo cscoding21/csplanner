@@ -23,7 +23,10 @@ func Serve() error {
 
 	//---add handlers to router
 	//	auth handlers
-	router.Handle("/login", middleware.AuthMiddleware(handlers.GetLoginHandler()))
+	router.Handle("/login",
+		middleware.OrgMiddleware(
+			middleware.AuthMiddleware(handlers.GetLoginHandler()),
+		))
 	router.Handle("/refresh",
 		middleware.AuthMiddleware(
 			middleware.ValidationMiddleware(handlers.GetRefreshHandler()),
@@ -36,7 +39,10 @@ func Serve() error {
 	)
 
 	//	graphql handlers
-	router.Handle("/query", middleware.ValidationMiddleware(handlers.GetGqlHandler()))
+	router.Handle("/query",
+		middleware.OrgMiddleware(
+			middleware.ValidationMiddleware(handlers.GetGqlHandler())),
+	)
 	if config.Config.Server.EnablePlayground {
 		router.Handle("/playground", playground.Handler("GraphQL playground", "/query"))
 	}
@@ -59,7 +65,7 @@ func getRouter() *chi.Mux {
 		AllowedHeaders:   []string{"Content-Type", "Authorization", "Tus-Resumable", "Upload-Metadata", "Upload-Length", "Upload-Offset", "Sec-Websocket-Extensions", "Sec-Websocket-Key", "Sec-Websocket-Protocol", "Sec-Websocket-Version"},
 		AllowCredentials: true,
 		Debug:            false,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
+		MaxAge:           300, // Maximum value not ignored by any major browsers
 	}))
 
 	return router

@@ -15,8 +15,13 @@ type Organization struct {
 
 	//---TODO: add fields here
 	Name     string               `json:"name"`
-	URL      string               `json:"url"`
+	URLKey   string               `json:"url_key"`
+	DBHost   string               `json:"db_host"`
+	Database string               `json:"database"`
+	Realm    string               `json:"realm"`
 	Defaults OrganizationDefaults `json:"organization_defaults"`
+	Logo     string               `json:"logo"`
+	Licenses []OrgLicense         `json:"licenses"`
 }
 
 type OrganizationDefaults struct {
@@ -26,4 +31,7 @@ type OrganizationDefaults struct {
 	CommsCoefficient         float64  `json:"comms_coefficient"`
 	GenericBlendedHourlyRate int      `json:"generic_blended_hourly_rate"`
 	WorkingHoursPerYear      int      `json:"working_hours_per_year"`
+}
+
+type OrgLicense struct {
 }

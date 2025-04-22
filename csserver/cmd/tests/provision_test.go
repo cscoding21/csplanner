@@ -104,11 +104,12 @@ func TestCreateTablesForPlanner(t *testing.T) {
 
 func TestCreateDefaultOrg(t *testing.T) {
 	ctx := config.NewContext()
-	//creds := provision.GetDBCredsFromName(name)
+	creds := provision.GetDBCredsFromName(name)
 	os := factory.GetOrganizationService()
-	url := slug.Make(name)
+	url := provision.GenerateUrlKeyForOrg(name)
+	realm := provision.GenerateOrgKey(name)
 
-	err := provision.CreateDefaultOrg(ctx, name, url, os)
+	err := provision.CreateDefaultOrg(ctx, name, url, realm, "localhost", creds.Database, os)
 	if err != nil {
 		t.Error(err)
 	}

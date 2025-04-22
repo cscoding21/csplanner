@@ -9,6 +9,9 @@ import (
 	"csserver/internal/common"
 )
 
+// type CommentRelationshipType string
+type CommentReactionType string
+
 type Comment struct {
 	//---common for all DB objects
 	common.ControlFields `csval:"validate"`

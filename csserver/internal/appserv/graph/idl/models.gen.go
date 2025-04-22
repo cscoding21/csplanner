@@ -198,7 +198,7 @@ type NotificationResults struct {
 type Organization struct {
 	ID       *string               `json:"id,omitempty"`
 	Name     string                `json:"name"`
-	URL      string                `json:"url"`
+	URLKey   string                `json:"urlKey"`
 	Defaults *OrganizationDefaults `json:"defaults"`
 	Setup    *OrganizationSetup    `json:"setup"`
 }

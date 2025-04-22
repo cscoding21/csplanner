@@ -18,8 +18,10 @@ func CreateDefaultOrganization(ctx context.Context) error {
 		ControlFields: common.ControlFields{
 			ID: organization.DefaultOrganizationID,
 		},
-		Name: "Jeph Heavy",
-		URL:  "jeph",
+		Name:     "Jeph Heavy",
+		URLKey:   "jeph",
+		DBHost:   "localhost",
+		Database: "jeph",
 		Defaults: organization.OrganizationDefaults{
 			FocusFactor:              utils.ValToRef(5.0),
 			HoursPerWeek:             40,

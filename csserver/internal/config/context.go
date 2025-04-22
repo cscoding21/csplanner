@@ -9,6 +9,7 @@ type contextKey string
 const (
 	UserEmailKey contextKey = "userEmail"
 	UserIDKey    contextKey = "userID"
+	OrgUrlKey    contextKey = "orgUrlKey"
 )
 
 // NewContext create a new context
@@ -36,4 +37,9 @@ func GetUserIDFromContext(ctx context.Context) string {
 // GetUserEmailFromContext get user id from context
 func GetUserEmailFromContext(ctx context.Context) string {
 	return getValueFromContext(ctx, UserEmailKey)
+}
+
+// GetOrgUrlKeyFromContext get org url key from context
+func GetOrgUrlKeyFromContext(ctx context.Context) string {
+	return getValueFromContext(ctx, OrgUrlKey)
 }
