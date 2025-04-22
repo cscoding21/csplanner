@@ -16,11 +16,12 @@ func init() {
 }
 
 func TestGetSchedule(t *testing.T) {
-	scheduleService := factory.GetScheduleService()
-	projectService := factory.GetProjectService()
-	resourceService := factory.GetResourceService()
-
 	ctx := getTestContext()
+
+	scheduleService := factory.GetScheduleService(ctx)
+	projectService := factory.GetProjectService(ctx)
+	resourceService := factory.GetResourceService(ctx)
+
 	pid := "project:1"
 	startDate := time.Now()
 
@@ -51,7 +52,7 @@ func TestGetSchedule(t *testing.T) {
 func TestGetPortfolio(t *testing.T) {
 	ctx := getTestContext()
 
-	portfolioService := factory.GetPortfolioService()
+	portfolioService := factory.GetPortfolioService(ctx)
 
 	result, err := portfolioService.GetUnbalancedPortfolio(ctx)
 	if err != nil {
@@ -75,7 +76,7 @@ func TestGetPortfolio(t *testing.T) {
 
 func TestBalancePortfolio(t *testing.T) {
 	ctx := getTestContext()
-	ps := factory.GetPortfolioService()
+	ps := factory.GetPortfolioService(ctx)
 
 	port, err := ps.GetUnbalancedPortfolio(ctx)
 	if err != nil {
@@ -94,7 +95,7 @@ func TestBalancePortfolio(t *testing.T) {
 
 func TestGetPortfolioForResource(t *testing.T) {
 	ctx := getTestContext()
-	ps := factory.GetPortfolioService()
+	ps := factory.GetPortfolioService(ctx)
 
 	port, err := ps.GetBalancedPortfolio(ctx)
 	if err != nil {

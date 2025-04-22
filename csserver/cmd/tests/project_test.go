@@ -15,13 +15,13 @@ func init() {
 func TestSaveProject(t *testing.T) {
 	ctx := getTestContext()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 	org, err := factory.GetDefaultOrganization(ctx)
 	if err != nil {
 		t.Error(err)
 	}
 
-	rs := factory.GetResourceService()
+	rs := factory.GetResourceService(ctx)
 
 	resourceMap, err := rs.GetResourceMap(ctx, false)
 	if err != nil {
@@ -54,7 +54,7 @@ func TestGetProject(t *testing.T) {
 
 	ctx := getTestContext()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	pro, err := service.GetProjectByID(ctx, projectUnderTest)
 	if err != nil {

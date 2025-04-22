@@ -10,8 +10,9 @@ import (
 )
 
 func TestCreateOrGetBot(t *testing.T) {
-	service := factory.GetIAMAdminService()
 	ctx := getTestContext()
+
+	service := factory.GetIAMAdminService(ctx)
 
 	user, err := service.GetUser(ctx, config.Config.Default.BotUserEmail)
 	if err != nil {

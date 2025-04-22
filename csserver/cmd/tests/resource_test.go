@@ -11,7 +11,7 @@ import (
 func TestFindResources(t *testing.T) {
 	ctx := getTestContext()
 
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 
 	filters := common.NewPagedResultsForAllRecords[resource.Resource]()
 

@@ -11,7 +11,7 @@ import (
 )
 
 func CreateTestLists(ctx context.Context) error {
-	service := factory.GetListService()
+	service := factory.GetListService(ctx)
 	skillsList := list.List{
 		ControlFields: common.ControlFields{
 			ID: "list:skills",

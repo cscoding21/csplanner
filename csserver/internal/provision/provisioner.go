@@ -15,17 +15,34 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	log "github.com/sirupsen/logrus"
 )
 
+// id, name, db_host, database, url_key, realm, created_at, created_by, updated_at, updated_by
+type ProvisionOrg struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	DBHost    string    `json:"db_host"`
+	Database  string    `json:"database"`
+	UrlKey    string    `json:"url_key"`
+	Realm     string    `json:"realm"`
+	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedAt time.Time `json:"updated_at"`
+	UpdatedBy string    `json:"updated_by"`
+}
+
 func ProvisionNewOrganization(
 	ctx context.Context,
 	db *pgxpool.Pool,
-	name string) error {
+	name string,
+	urlKey string) error {
 
 	existing := CheckDatabaseExits(ctx, db, name)
 	if !existing {
@@ -36,7 +53,6 @@ func ProvisionNewOrganization(
 	}
 
 	orgKey := GenerateOrgKey(name)
-	urlKey := GenerateUrlKeyForOrg(name)
 
 	orgDBCreds := GetDBCredsFromName(name)
 	orgDBCreds.Host = db.Config().ConnConfig.Host
@@ -59,7 +75,7 @@ func ProvisionNewOrganization(
 		log.Errorf("CreateNewOrgRealm: %s\n", err)
 	}
 
-	pubSub, _ := factory.GetPubSubClient()
+	pubSub, _ := factory.GetPubSubClient(ctx)
 	gk := getKeycloakClient()
 	appUserService := appuser.NewAppuserService(orgDBClient, pubSub)
 	us := auth.NewIAMAdminService(gk, pubSub, realm, config.Config.Security.KeycloakAdminUser, config.Config.Security.KeycloakAdminPass, *appUserService)
@@ -443,6 +459,27 @@ func GetDBCredsFromName(name string) config.DatabaseConfig {
 		User:     fmt.Sprintf("csp_%s_user", name),
 		Password: utils.GeneratePassword(),
 	}
+}
+
+// GetSaaSOrganization return an organization from the SaaS DB
+func GetSaaSOrganization(ctx context.Context, db *pgxpool.Pool, url string) (ProvisionOrg, error) {
+	var org ProvisionOrg
+	rows, err := db.Query(ctx, selectOrganizationByURLSQL, url)
+	if err != nil {
+		return org, err
+	}
+	defer rows.Close()
+
+	output, err := pgx.CollectRows(rows, pgx.RowToStructByName[ProvisionOrg])
+	if err != nil {
+		return org, err
+	}
+
+	if len(output) > 0 {
+		return output[0], nil
+	}
+
+	return org, nil
 }
 
 // GenerateOrgKey create a key for the org to be used in URLs, object names, etc

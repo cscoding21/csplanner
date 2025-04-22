@@ -12,6 +12,7 @@ import (
 )
 
 var name = "Jeph Test Org"
+var urlKey = "localhost"
 
 func init() {
 	config.InitConfig()
@@ -23,7 +24,7 @@ func TestProvisionNewOrganization(t *testing.T) {
 	ctx := getTestContext()
 	saasdb := factory.GetSaasDBClient()
 
-	provision.ProvisionNewOrganization(ctx, saasdb, name)
+	provision.ProvisionNewOrganization(ctx, saasdb, name, urlKey)
 }
 
 // TEARDOWN
@@ -105,7 +106,7 @@ func TestCreateTablesForPlanner(t *testing.T) {
 func TestCreateDefaultOrg(t *testing.T) {
 	ctx := config.NewContext()
 	creds := provision.GetDBCredsFromName(name)
-	os := factory.GetOrganizationService()
+	os := factory.GetOrganizationService(ctx)
 	url := provision.GenerateUrlKeyForOrg(name)
 	realm := provision.GenerateOrgKey(name)
 
@@ -117,7 +118,7 @@ func TestCreateDefaultOrg(t *testing.T) {
 
 func TestCreateBotUser(t *testing.T) {
 	ctx := config.NewContext()
-	us := factory.GetIAMAdminService()
+	us := factory.GetIAMAdminService(ctx)
 
 	err := provision.CreateBotUser(ctx, us)
 	if err != nil {
@@ -127,7 +128,7 @@ func TestCreateBotUser(t *testing.T) {
 
 func TestCreateInitialLists(t *testing.T) {
 	ctx := config.NewContext()
-	ls := factory.GetListService()
+	ls := factory.GetListService(ctx)
 
 	err := provision.CreateInitialLists(ctx, ls)
 	if err != nil {
@@ -137,7 +138,7 @@ func TestCreateInitialLists(t *testing.T) {
 
 func TestCreateInitialTemplates(t *testing.T) {
 	ctx := config.NewContext()
-	ts := factory.GetProjectTemplateService()
+	ts := factory.GetProjectTemplateService(ctx)
 
 	err := provision.CreateInitialTemplates(ctx, ts)
 	if err != nil {
@@ -165,4 +166,17 @@ func TestDeleteOrgRealm(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestGetSaaSOrganization(t *testing.T) {
+	ctx := config.NewContext()
+	url := "localhost"
+	saasdb := factory.GetSaasDBClient()
+
+	org, err := provision.GetSaaSOrganization(ctx, saasdb, url)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Println(org)
 }

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec scripts/db.sh
+# exec scripts/db.sh

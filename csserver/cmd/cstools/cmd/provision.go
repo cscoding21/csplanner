@@ -27,7 +27,7 @@ import (
 // provisionCmd represents the provision command
 var provisionCmd = &cobra.Command{
 	Use:   "provision",
-	Short: "A brief description of your command",
+	Short: "This command is used to create the infrastructure",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -38,10 +38,11 @@ to quickly create a Cobra application.`,
 		fmt.Println("provision called")
 
 		name, _ := cmd.Flags().GetString("name")
+		key, _ := cmd.Flags().GetString("key")
 		ctx := config.NewContext()
 		db := factory.GetSaasDBClient()
 
-		provision.ProvisionNewOrganization(ctx, db, name)
+		provision.ProvisionNewOrganization(ctx, db, name, key)
 	},
 }
 

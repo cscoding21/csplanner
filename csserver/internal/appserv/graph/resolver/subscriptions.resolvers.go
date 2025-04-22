@@ -63,7 +63,7 @@ func (r *subscriptionResolver) CurrentTime(ctx context.Context) (<-chan *idl.Tim
 func (r *subscriptionResolver) NotificationUpdate(ctx context.Context) (<-chan string, error) {
 	ch := make(chan string)
 
-	client, err := factory.GetPubSubClient()
+	client, err := factory.GetPubSubClient(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -39,6 +39,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("gen called")
 
+		//---TODO: do better
 		mp := "/home/jeph/projects/cscoding21/csplanner/csserver/cmd/cstools/.cstools.yaml"
 
 		err := gen.GenServices(mp)

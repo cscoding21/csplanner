@@ -52,8 +52,8 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		us := factory.GetIAMAdminService()
 		bctx := r.Context()
+		us := factory.GetIAMAdminService(bctx)
 
 		if allowAnonomousOperation(r) || bypassSecurity(r) {
 			anonEmail := config.Config.Default.BotUserEmail
@@ -76,7 +76,7 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 
 		token := getTokenFromHeader(r)
 
-		authService := factory.GetAuthService()
+		authService := factory.GetAuthService(bctx)
 		result, err := authService.ValidateToken(bctx, token)
 		if err != nil {
 			log.Errorf("error on validate: %s", err)
@@ -134,17 +134,16 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 		}
 	}
 
-	bctx := config.NewContext()
-	authService := factory.GetAuthService()
+	authService := factory.GetAuthService(ctx)
 
-	result, _ := authService.ValidateToken(bctx, token)
+	result, _ := authService.ValidateToken(ctx, token)
 	if result.Success {
 		log.Warnf("WebSocket authentication success for user %s", result.User.Email)
 
-		bctx = context.WithValue(bctx, config.UserEmailKey, result.User.Email)
-		bctx = context.WithValue(bctx, config.UserIDKey, result.User.DBID)
+		ctx = context.WithValue(ctx, config.UserEmailKey, result.User.Email)
+		ctx = context.WithValue(ctx, config.UserIDKey, result.User.DBID)
 
-		return bctx, &initPayload, nil
+		return ctx, &initPayload, nil
 	}
 
 	log.Warnf("login failed : %v", result)

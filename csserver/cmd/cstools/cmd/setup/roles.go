@@ -10,7 +10,7 @@ import (
 )
 
 func CreateTestRoles(ctx context.Context) error {
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 	roles := []resource.Role{
 		{
 			ControlFields: common.ControlFields{

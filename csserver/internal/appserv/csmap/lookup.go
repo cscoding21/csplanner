@@ -81,7 +81,7 @@ func getSkills() *[]list.ListItem {
 	defer _skillCacheLock.Unlock()
 
 	ctx := context.Background()
-	ss := factory.GetListService()
+	ss := factory.GetListService(ctx)
 
 	skillList, err := ss.GetList(ctx, list.ListNameSkills)
 	if err != nil {
@@ -164,7 +164,7 @@ func findProjects() *[]project.Project {
 	defer _projectCacheLock.Unlock()
 
 	ctx := context.Background()
-	rs := factory.GetProjectService()
+	rs := factory.GetProjectService(ctx)
 
 	projects, err := rs.FindAllProjects(ctx)
 	if err != nil {
@@ -186,7 +186,7 @@ func findResources() *[]resource.Resource {
 	defer _resourceCacheLock.Unlock()
 
 	ctx := context.Background()
-	rs := factory.GetResourceService()
+	rs := factory.GetResourceService(ctx)
 
 	resources, err := rs.FindAllResources(ctx)
 	if err != nil {
@@ -208,7 +208,7 @@ func findUsers() *[]appuser.Appuser {
 	defer _userCacheLock.Unlock()
 
 	ctx := context.Background()
-	us := factory.GetIAMAdminService()
+	us := factory.GetIAMAdminService(ctx)
 
 	users, err := us.FindAllUsers(ctx)
 	if err != nil {
@@ -230,7 +230,7 @@ func findLists() *[]list.List {
 	defer _listCacheLock.Unlock()
 
 	ctx := context.Background()
-	us := factory.GetListService()
+	us := factory.GetListService(ctx)
 
 	lists, err := us.FindAllLists(ctx)
 	if err != nil {
@@ -252,7 +252,7 @@ func findRoles() *[]resource.Role {
 	defer _roleCacheLock.Unlock()
 
 	ctx := context.Background()
-	us := factory.GetResourceService()
+	us := factory.GetResourceService(ctx)
 
 	roles, err := us.FindAllRoles(ctx)
 	if err != nil {
@@ -274,7 +274,7 @@ func findTemplates() *[]projecttemplate.Projecttemplate {
 	defer _templateCacheLock.Unlock()
 
 	ctx := context.Background()
-	us := factory.GetProjectTemplateService()
+	us := factory.GetProjectTemplateService(ctx)
 
 	templates, err := us.FindAllProjecttemplates(ctx)
 	if err != nil {
@@ -300,8 +300,8 @@ func getUserByEmail(email string) *idl.User {
 	return nil
 }
 
-func getStatusTransitionDetails(p *project.Project) {
-	service := factory.GetProjectService()
+func getStatusTransitionDetails(ctx context.Context, p *project.Project) {
+	service := factory.GetProjectService(ctx)
 
 	service.GetStatusTransitionDetails(p)
 }

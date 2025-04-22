@@ -87,3 +87,5 @@ var dropDatabaseSQL = `DROP DATABASE %s WITH(force);`
 var revokeTablePrivligesDatabaseSQL = `REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM %s_user;`
 var revokeSchemaPrivligesDatabaseSQL = `REVOKE USAGE ON SCHEMA public FROM %s_user;`
 var dropDatabaseUserSQL = `DROP USER %s_user;`
+
+var selectOrganizationByURLSQL = `SELECT id, name, db_host, database, url_key, realm, created_at, created_by, updated_at, updated_by FROM organization where url_key = $1;`

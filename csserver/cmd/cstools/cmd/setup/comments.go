@@ -12,7 +12,7 @@ import (
 )
 
 func CreateTestComments(ctx context.Context) error {
-	service := factory.GetCommentService()
+	service := factory.GetCommentService(ctx)
 	projectID := "project:1"
 
 	results, err := service.FindProjectComments(ctx, projectID)

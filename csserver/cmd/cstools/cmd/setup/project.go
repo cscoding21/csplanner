@@ -20,9 +20,9 @@ import (
 )
 
 func CreateTestProjects(ctx context.Context) error {
-	ps := factory.GetProjectService()
-	rs := factory.GetResourceService()
-	us := factory.GetAppuserService()
+	ps := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
+	us := factory.GetAppuserService(ctx)
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	projectList, _ := ps.FindAllProjects(ctx)
@@ -361,9 +361,11 @@ func findPortfolioProjects() []project.Project {
 }
 
 func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id int) project.Project {
-	rs := factory.GetResourceService()
-	us := factory.GetAppuserService()
 	ctx := context.Background()
+
+	rs := factory.GetResourceService(ctx)
+	us := factory.GetAppuserService(ctx)
+
 	allResources, _ := rs.FindAllResources(ctx)
 	allUsers, _ := us.FindAllAppusers(ctx)
 

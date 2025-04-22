@@ -21,7 +21,7 @@ import (
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser) (*idl.CreateUserResult, error) {
 	out := idl.CreateUserResult{}
-	service := factory.GetIAMAdminService()
+	service := factory.GetIAMAdminService(ctx)
 	user := csmap.UpdateUserIdlToAppuser(input)
 
 	result, err := service.UpdateUser(ctx, user)
@@ -41,9 +41,9 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser)
 func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNewProject) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
-	rs := factory.GetResourceService()
-	ts := factory.GetProjectTemplateService()
+	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
+	ts := factory.GetProjectTemplateService(ctx)
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	resourceMap, err := rs.GetResourceMap(ctx, false)
@@ -89,8 +89,8 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNe
 func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdateProject) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
-	rs := factory.GetResourceService()
+	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	proj := csmap.UpdateProjectIdlToProject(input)
@@ -127,7 +127,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdatePr
 func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*idl.Status, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 	return csmap.GetStatusFromError(service.DeleteProject(ctx, id))
 }
 
@@ -135,8 +135,8 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, id string) (*idl.S
 func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.UpdateProjectMilestoneTask) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
-	rs := factory.GetResourceService()
+	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	resourceMap, err := rs.GetResourceMap(ctx, false)
@@ -173,7 +173,7 @@ func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.Upda
 func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID string, milestoneID string, taskID string) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	result, err := service.DeleteTaskFromProject(ctx, projectID, milestoneID, taskID)
 	if err != nil {
@@ -197,7 +197,7 @@ func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID stri
 func (r *mutationResolver) UpdateProjectFeature(ctx context.Context, input idl.UpdateProjectFeature) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	feature := csmap.UpdateProjectFeatureIdlToProject(input)
 
@@ -223,7 +223,7 @@ func (r *mutationResolver) UpdateProjectFeature(ctx context.Context, input idl.U
 func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID string, featureID string) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	result, err := service.DeleteFeatureFromProject(ctx, projectID, featureID)
 	if err != nil {
@@ -247,7 +247,7 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 func (r *mutationResolver) UpdateProjectValueLine(ctx context.Context, input idl.UpdateProjectValueLine) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	vl := csmap.UpdateProjectValueLineIdlToProject(input)
 
@@ -273,7 +273,7 @@ func (r *mutationResolver) UpdateProjectValueLine(ctx context.Context, input idl
 func (r *mutationResolver) DeleteProjectValueLine(ctx context.Context, projectID string, valueLineID string) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	result, err := service.DeleteValueLineProject(ctx, projectID, valueLineID)
 	if err != nil {
@@ -297,7 +297,7 @@ func (r *mutationResolver) DeleteProjectValueLine(ctx context.Context, projectID
 func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID string, newStatus string) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
+	service := factory.GetProjectService(ctx)
 
 	result, err := service.SetProjectStatus(ctx, projectID, projectstatus.ProjectState(newStatus), false)
 	if err != nil {
@@ -319,7 +319,7 @@ func (r *mutationResolver) SetProjectStatus(ctx context.Context, projectID strin
 
 // RunProcesses is the resolver for the runProcesses field.
 func (r *mutationResolver) RunProcesses(ctx context.Context) (*idl.Status, error) {
-	service := factory.GetProcessorService()
+	service := factory.GetProcessorService(ctx)
 
 	err := service.ProcessNightly(ctx)
 
@@ -328,7 +328,7 @@ func (r *mutationResolver) RunProcesses(ctx context.Context) (*idl.Status, error
 
 // CreateProjectComment is the resolver for the createProjectComment field.
 func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	service := factory.GetCommentService()
+	service := factory.GetCommentService(ctx)
 
 	comment := comment.Comment{
 		ProjectID: input.ProjectID,
@@ -356,7 +356,7 @@ func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.U
 
 // CreateProjectCommentReply is the resolver for the createProjectCommentReply field.
 func (r *mutationResolver) CreateProjectCommentReply(ctx context.Context, input idl.UpdateCommentReply) (*idl.CreateProjectCommentResult, error) {
-	service := factory.GetCommentService()
+	service := factory.GetCommentService(ctx)
 
 	comment := comment.Comment{
 		Text: input.Text,
@@ -383,14 +383,14 @@ func (r *mutationResolver) CreateProjectCommentReply(ctx context.Context, input 
 
 // DeleteProjectComment is the resolver for the deleteProjectComment field.
 func (r *mutationResolver) DeleteProjectComment(ctx context.Context, id string) (*idl.Status, error) {
-	service := factory.GetCommentService()
+	service := factory.GetCommentService(ctx)
 
 	return csmap.GetStatusFromError(service.DeleteComment(ctx, id))
 }
 
 // UpdateProjectComment is the resolver for the updateProjectComment field.
 func (r *mutationResolver) UpdateProjectComment(ctx context.Context, input idl.UpdateComment) (*idl.CreateProjectCommentResult, error) {
-	service := factory.GetCommentService()
+	service := factory.GetCommentService(ctx)
 
 	comment := csmap.UpdateCommentIdlToComment(input)
 
@@ -415,7 +415,7 @@ func (r *mutationResolver) UpdateProjectComment(ctx context.Context, input idl.U
 
 // ToggleEmote is the resolver for the toggleEmote field.
 func (r *mutationResolver) ToggleEmote(ctx context.Context, input idl.UpdateCommentEmote) (*idl.Status, error) {
-	service := factory.GetCommentService()
+	service := factory.GetCommentService(ctx)
 
 	return csmap.GetStatusFromError(service.ToggleCommentReaction(ctx, input.ProjectID, input.CommentID, comment.CommentReactionType(input.EmoteType)))
 }
@@ -425,7 +425,7 @@ func (r *mutationResolver) CreateResource(ctx context.Context, input idl.UpdateR
 	defer csmap.ExpireResourceCache()
 
 	out := idl.CreateResourceResult{}
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 	org, err := factory.GetDefaultOrganization(ctx)
 	if err != nil {
 		out.Status, _ = csmap.GetStatusFromError(err)
@@ -449,7 +449,7 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 	defer csmap.ExpireResourceCache()
 
 	out := idl.CreateResourceResult{}
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 	res := csmap.UpdateResourceIdlToResource(input)
 	var result common.UpdateResult[*common.BaseModel[resource.Resource]]
 	var err error
@@ -474,7 +474,7 @@ func (r *mutationResolver) UpdateResource(ctx context.Context, input idl.UpdateR
 func (r *mutationResolver) DeleteResource(ctx context.Context, id string) (*idl.Status, error) {
 	defer csmap.ExpireResourceCache()
 
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 
 	return csmap.GetStatusFromError(service.DeleteResource(ctx, id))
 }
@@ -483,7 +483,7 @@ func (r *mutationResolver) DeleteResource(ctx context.Context, id string) (*idl.
 func (r *mutationResolver) UpdateResourceSkill(ctx context.Context, input idl.UpdateSkill) (*idl.Status, error) {
 	defer csmap.ExpireResourceCache()
 
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 	skill := csmap.UpdateSkillIdlToResource(input)
 
 	_, err := service.UpdateSkillForResource(ctx, input.ResourceID, skill)
@@ -498,7 +498,7 @@ func (r *mutationResolver) UpdateResourceSkill(ctx context.Context, input idl.Up
 func (r *mutationResolver) DeleteResourceSkill(ctx context.Context, resourceID string, skillID string) (*idl.Status, error) {
 	defer csmap.ExpireResourceCache()
 
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 	_, err := service.RemoveSkillFromResource(ctx, resourceID, skillID)
 
 	return csmap.GetStatusFromError(err)
@@ -508,7 +508,7 @@ func (r *mutationResolver) DeleteResourceSkill(ctx context.Context, resourceID s
 func (r *mutationResolver) UpdateRole(ctx context.Context, input idl.UpdateRole) (*idl.CreateRoleResult, error) {
 	defer csmap.ExpireRoleCache()
 
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 	out := idl.CreateRoleResult{}
 
 	role := csmap.UpdateRoleIdlToResource(input)
@@ -528,7 +528,7 @@ func (r *mutationResolver) UpdateRole(ctx context.Context, input idl.UpdateRole)
 func (r *mutationResolver) DeleteRole(ctx context.Context, id string) (*idl.Status, error) {
 	defer csmap.ExpireRoleCache()
 
-	service := factory.GetResourceService()
+	service := factory.GetResourceService(ctx)
 
 	err := service.DeleteRole(ctx, id)
 	return csmap.GetStatusFromError(err)
@@ -536,7 +536,7 @@ func (r *mutationResolver) DeleteRole(ctx context.Context, id string) (*idl.Stat
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.UpdateOrganization) (*idl.CreateOrganizationResult, error) {
-	service := factory.GetOrganizationService()
+	service := factory.GetOrganizationService(ctx)
 
 	model := csmap.UpdateOrganizationIdlToOrganization(input)
 
@@ -559,7 +559,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 
 // UpdateList is the resolver for the updateList field.
 func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList) (*idl.CreateListResult, error) {
-	service := factory.GetListService()
+	service := factory.GetListService(ctx)
 	out := idl.CreateListResult{}
 
 	model := csmap.UpdateListIdlToList(input)
@@ -577,7 +577,7 @@ func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList)
 
 // UpdateProjectTemplate is the resolver for the updateProjectTemplate field.
 func (r *mutationResolver) UpdateProjectTemplate(ctx context.Context, input *idl.UpdateProjecttemplate) (*idl.CreateProjectTemplateResult, error) {
-	service := factory.GetProjectTemplateService()
+	service := factory.GetProjectTemplateService(ctx)
 	out := idl.CreateProjectTemplateResult{}
 
 	model := csmap.UpdateProjecttemplateIdlToProjecttemplate(*input)
@@ -595,7 +595,7 @@ func (r *mutationResolver) UpdateProjectTemplate(ctx context.Context, input *idl
 
 // DeleteProjectTemplate is the resolver for the deleteProjectTemplate field.
 func (r *mutationResolver) DeleteProjectTemplate(ctx context.Context, id string) (*idl.Status, error) {
-	service := factory.GetProjectTemplateService()
+	service := factory.GetProjectTemplateService(ctx)
 
 	err := service.DeleteProjecttemplate(ctx, id)
 	return csmap.GetStatusFromError(err)
@@ -605,8 +605,8 @@ func (r *mutationResolver) DeleteProjectTemplate(ctx context.Context, id string)
 func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context, input *idl.UpdateProjectMilestoneTemplate) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
-	service := factory.GetProjectService()
-	templateService := factory.GetProjectTemplateService()
+	service := factory.GetProjectService(ctx)
+	templateService := factory.GetProjectTemplateService(ctx)
 
 	//---get the selected template
 	template, err := templateService.GetProjecttemplateByID(ctx, input.TemplateID)

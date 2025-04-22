@@ -15,7 +15,7 @@ import (
 
 func CreateTestResources(ctx context.Context) error {
 	//us := factory.GetIAMAdminService()
-	rs := factory.GetResourceService()
+	rs := factory.GetResourceService(ctx)
 	org, err := factory.GetDefaultOrganization(ctx)
 	if err != nil {
 		return err

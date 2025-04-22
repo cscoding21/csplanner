@@ -2,6 +2,7 @@ package factory
 
 import (
 	"context"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/config"
 	"csserver/internal/events"
 	"csserver/internal/providers/postgres"
@@ -30,40 +31,17 @@ import (
 // ---define singletons
 var (
 	lock          = &sync.Mutex{}
-	_dbclient     *pgxpool.Pool
 	_saasDBClient *pgxpool.Pool
 )
 
 // GetDBClient return a configured DB client as a singleton
-func GetDBClient() *pgxpool.Pool {
-	if _dbclient != nil {
-		return _dbclient
-	}
-
-	lock.Lock()
-	defer lock.Unlock()
-
-	fmt.Println("Creating DBClient instance now.")
-
-	// Connect to SurrealDB
-	//"postgres://username:password@localhost:5432/database_name"
-	host := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
-		config.Config.Database.User,
-		config.Config.Database.Password,
-		config.Config.Database.Host,
-		config.Config.Database.Port,
-		config.Config.Database.Database)
-
-	// host := fmt.Sprintf("ws://%s:%v/rpc", config.Config.Database.User, config.Config.Database.Password)
-	db, err := postgres.GetDB(context.Background(), host)
+func GetDBClient(ctx context.Context) *pgxpool.Pool {
+	org, err := orgmap.GetSaaSOrg(ctx)
 	if err != nil {
 		log.Error(err)
-		return nil
 	}
 
-	_dbclient = db
-
-	return _dbclient
+	return org.DB
 }
 
 // GetDBClient return a configured DB client as a singleton
@@ -75,7 +53,7 @@ func GetSaasDBClient() *pgxpool.Pool {
 	lock.Lock()
 	defer lock.Unlock()
 
-	fmt.Println("Creating Master DBClient instance now.")
+	log.Info("Creating Master DBClient instance now.")
 
 	// Connect to SurrealDB
 	//"postgres://username:password@localhost:5432/database_name"
@@ -99,7 +77,7 @@ func GetSaasDBClient() *pgxpool.Pool {
 }
 
 // GetPubSubClient return a pubsub client
-func GetPubSubClient() (events.PubSubProvider, error) {
+func GetPubSubClient(ctx context.Context) (events.PubSubProvider, error) {
 	ps := events.NewPubSubProvider(
 		config.Config.PubSub.Host,
 		config.Config.PubSub.Name,
@@ -111,15 +89,15 @@ func GetPubSubClient() (events.PubSubProvider, error) {
 }
 
 // GetKeycloakClient return a Keycloak client
-func GetKeycloakClient() *gocloak.GoCloak {
+func GetKeycloakClient(ctx context.Context) *gocloak.GoCloak {
 	client := gocloak.NewClient(config.Config.Security.KeycloakURL)
 	return client
 }
 
 // GetActivityService get activity service instance
-func GetActivityService() *activity.ActivityService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetActivityService(ctx context.Context) *activity.ActivityService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -128,9 +106,9 @@ func GetActivityService() *activity.ActivityService {
 }
 
 // GetAuthService get user service instance
-func GetAuthService() *auth.AuthService {
-	kc := GetKeycloakClient()
-	pubsub, err := GetPubSubClient()
+func GetAuthService(ctx context.Context) *auth.AuthService {
+	kc := GetKeycloakClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -145,9 +123,9 @@ func GetAuthService() *auth.AuthService {
 }
 
 // GetCommentService get comment service instance
-func GetCommentService() *comment.CommentService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetCommentService(ctx context.Context) *comment.CommentService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -157,9 +135,9 @@ func GetCommentService() *comment.CommentService {
 }
 
 // GetListService get list service instance
-func GetListService() *list.ListService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetListService(ctx context.Context) *list.ListService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -169,9 +147,9 @@ func GetListService() *list.ListService {
 }
 
 // GetNotificationService get notification service instance
-func GetNotificationService() *notification.NotificationService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetNotificationService(ctx context.Context) *notification.NotificationService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -181,9 +159,9 @@ func GetNotificationService() *notification.NotificationService {
 }
 
 // GetOrganizationService get organization service instance
-func GetOrganizationService() *organization.OrganizationService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetOrganizationService(ctx context.Context) *organization.OrganizationService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -193,9 +171,9 @@ func GetOrganizationService() *organization.OrganizationService {
 }
 
 // GetProjectService return a project service instance
-func GetProjectService() *project.ProjectService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetProjectService(ctx context.Context) *project.ProjectService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -205,12 +183,12 @@ func GetProjectService() *project.ProjectService {
 }
 
 // GetPortfolioService return a portfolio service instance
-func GetPortfolioService() *portfolio.PortfolioService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
-	projectServce := GetProjectService()
-	resourceService := GetResourceService()
-	schedService := GetScheduleService()
+func GetPortfolioService(ctx context.Context) *portfolio.PortfolioService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
+	projectServce := GetProjectService(ctx)
+	resourceService := GetResourceService(ctx)
+	schedService := GetScheduleService(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -225,12 +203,12 @@ func GetPortfolioService() *portfolio.PortfolioService {
 }
 
 // GetProcessorService return a processor service instance
-func GetProcessorService() *processor.ProcessorService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
-	projectServce := GetProjectService()
-	resourceService := GetResourceService()
-	schedService := GetScheduleService()
+func GetProcessorService(ctx context.Context) *processor.ProcessorService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
+	projectServce := GetProjectService(ctx)
+	resourceService := GetResourceService(ctx)
+	schedService := GetScheduleService(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -245,9 +223,9 @@ func GetProcessorService() *processor.ProcessorService {
 }
 
 // GetProjectTemplateService return a project template service instance
-func GetProjectTemplateService() *projecttemplate.ProjecttemplateService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetProjectTemplateService(ctx context.Context) *projecttemplate.ProjecttemplateService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -257,9 +235,9 @@ func GetProjectTemplateService() *projecttemplate.ProjecttemplateService {
 }
 
 // GetResourceService return a resource service instance
-func GetResourceService() *resource.ResourceService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetResourceService(ctx context.Context) *resource.ResourceService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -269,9 +247,9 @@ func GetResourceService() *resource.ResourceService {
 }
 
 // GetScheduleService return a schedule service instance
-func GetScheduleService() *schedule.ScheduleService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetScheduleService(ctx context.Context) *schedule.ScheduleService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -281,10 +259,10 @@ func GetScheduleService() *schedule.ScheduleService {
 }
 
 // GetIAMAdminService get user service instance
-func GetIAMAdminService() *auth.IAMAdminService {
-	client := GetKeycloakClient()
-	userService := GetAppuserService()
-	pubsub, err := GetPubSubClient()
+func GetIAMAdminService(ctx context.Context) *auth.IAMAdminService {
+	client := GetKeycloakClient(ctx)
+	userService := GetAppuserService(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -302,9 +280,9 @@ func GetIAMAdminService() *auth.IAMAdminService {
 }
 
 // GetAppuserService return a resource service instance
-func GetAppuserService() *appuser.AppuserService {
-	dbClient := GetDBClient()
-	pubsub, err := GetPubSubClient()
+func GetAppuserService(ctx context.Context) *appuser.AppuserService {
+	dbClient := GetDBClient(ctx)
+	pubsub, err := GetPubSubClient(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -315,12 +293,12 @@ func GetAppuserService() *appuser.AppuserService {
 
 // GetDefaultOrganization return the default organization for the tenant
 func GetDefaultOrganization(ctx context.Context) (*organization.Organization, error) {
-	service := GetOrganizationService()
-	org, err := service.GetOrganizationByID(ctx, "organization:default")
+	service := GetOrganizationService(ctx)
+	org, err := service.GetDefaultOrganization(ctx)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	return &org.Data, nil
+	return org, nil
 }

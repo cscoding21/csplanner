@@ -9,8 +9,8 @@ import (
 )
 
 func TestFindProjectComments(t *testing.T) {
-	service := factory.GetCommentService()
 	ctx := getTestContext()
+	service := factory.GetCommentService(ctx)
 	idUnderTest := "project:1"
 
 	comments, err := service.FindProjectComments(ctx, idUnderTest)
@@ -25,8 +25,9 @@ func TestFindProjectComments(t *testing.T) {
 }
 
 func TestGetCommentThread(t *testing.T) {
-	service := factory.GetCommentService()
 	ctx := getTestContext()
+	service := factory.GetCommentService(ctx)
+
 	idUnderTest := "comment:1"
 
 	comment, err := service.GetCommentThread(ctx, idUnderTest)
@@ -43,8 +44,9 @@ func TestGetCommentThread(t *testing.T) {
 }
 
 func TestToggleCommentReaction(t *testing.T) {
-	service := factory.GetCommentService()
 	ctx := getTestContext()
+	service := factory.GetCommentService(ctx)
+
 	idUnderTest := "comment:1"
 	projectUnderTest := "project:1"
 

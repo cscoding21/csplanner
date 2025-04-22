@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/config"
 	"net/http"
 	"strings"
@@ -17,6 +18,15 @@ func OrgMiddleware(next http.Handler) http.Handler {
 
 		log.Warnf("OrgMiddleware: %v", orgKey)
 		ctx = context.WithValue(ctx, config.OrgUrlKey, orgKey)
+
+		m, err := orgmap.GetSaaSOrg(ctx)
+		if err != nil {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		} else {
+			log.Infof("SaaS Org: %v", *m.Info.Org)
+			log.Infof("SaaS Org: %v", *m.Info.Licenses)
+		}
 
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)

@@ -12,7 +12,7 @@ import (
 )
 
 func CreateTestTemplates(ctx context.Context) error {
-	ts := factory.GetProjectTemplateService()
+	ts := factory.GetProjectTemplateService(ctx)
 	template := &projecttemplate.Projecttemplate{
 		ControlFields: common.ControlFields{
 			ID: "projecttemplate:primary",

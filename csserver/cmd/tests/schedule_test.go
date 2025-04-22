@@ -7,13 +7,14 @@ import (
 )
 
 func TestCalculateProjectSchedule(t *testing.T) {
-	ss := factory.GetScheduleService()
-	ps := factory.GetProjectService()
 	ctx := getTestContext()
+
+	ss := factory.GetScheduleService(ctx)
+	ps := factory.GetProjectService(ctx)
 
 	startTime := time.Now()
 
-	rs := factory.GetResourceService()
+	rs := factory.GetResourceService(ctx)
 
 	resourceMap, err := rs.GetResourceMap(ctx, false)
 	if err != nil {
