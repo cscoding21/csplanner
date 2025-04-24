@@ -371,7 +371,12 @@ func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.Pa
 
 // FindUserNotifications is the resolver for the findUserNotifications field.
 func (r *queryResolver) FindUserNotifications(ctx context.Context, pageAndFilter *idl.PageAndFilter) (*idl.NotificationResults, error) {
-	panic("needs refactor")
+	log.Error("FindUserNotifications needs refactor")
+
+	return &idl.NotificationResults{
+		Paging:  &idl.Pagination{},
+		Results: []*idl.Notification{},
+	}, nil
 
 	// service := factory.GetNotificationService()
 	// paging, _ := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)

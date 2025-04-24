@@ -34,7 +34,7 @@
 
 {#snippet stepSnippet(number:number, name:string, hasNext:boolean)}
 {#if step == number}
-<li class="flex items-center text-blue-600 dark:text-blue-500">
+<li class="flex items-center text-blue-600 dark:text-blue-500 text-nowrap">
     <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border  border-blue-600 rounded-full shrink-0 dark:border-blue-500">{number}</span> {name}
     {#if hasNext}
     <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
@@ -43,7 +43,7 @@
     {/if}
 </li>
 {:else if step > number}
-<li class="flex items-center text-green-600 dark:text-green-500">
+<li class="flex items-center text-green-600 dark:text-green-500 text-nowrap">
     <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">{number}</span> <button onclick={() => { step = number}}>{name}</button>
     <CheckCircleSolid class="ml-2" />
     {#if hasNext}
@@ -53,7 +53,7 @@
     {/if}
 </li>
 {:else if maxStepAttained() >= number}
-<li class="flex items-center text-green-600 dark:text-green-500">
+<li class="flex items-center text-green-600 dark:text-green-500  text-nowrap">
     <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">{number}</span> <button onclick={() => { step = number }}>{name}</button>
     <CheckCircleSolid class="ml-2" />
     {#if hasNext}
@@ -63,7 +63,7 @@
     {/if}
 </li>
 {:else}
-<li class="flex items-center text-gray-600 dark:text-gray-500">
+<li class="flex items-center text-gray-600 dark:text-gray-500 text-nowrap">
     <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">{number}</span> {name}
     {#if hasNext}
     <svg class="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">

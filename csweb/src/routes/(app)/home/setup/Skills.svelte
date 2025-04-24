@@ -17,7 +17,7 @@
     let newSkill:string = $state("")
 
     const addSkill = () => {
-        if (!newSkill) {
+        if (!newSkill || !okToAdd(newSkill)) {
             return
         }
 
@@ -40,6 +40,12 @@
         }
     })
 
+    const okToAdd = (skill:string):boolean => {
+        const sk = skillList.filter(s => skill.toLocaleLowerCase() === s.toLocaleLowerCase())
+
+        return sk.length === 0
+    }
+
     const getSkillList = () => {
         let list:UpdateList = {
             id: "list:skills",
@@ -51,7 +57,8 @@
             const sk = skillList[i]
             const listItem:UpdateListItem = {
                 name: sk,
-                value: nameToID(sk)
+                value: nameToID(sk),
+                sortOrder: 0,
             }
 
             list.values.push(listItem)

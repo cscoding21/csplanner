@@ -242,6 +242,7 @@ type ComplexityRoot struct {
 		RecipientIsBot        func(childComplexity int) int
 		Text                  func(childComplexity int) int
 		Type                  func(childComplexity int) int
+		UpdatedAt             func(childComplexity int) int
 		UserEmail             func(childComplexity int) int
 		UserName              func(childComplexity int) int
 	}
@@ -1751,6 +1752,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Notification.Type(childComplexity), true
+
+	case "Notification.updatedAt":
+		if e.complexity.Notification.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Notification.UpdatedAt(childComplexity), true
 
 	case "Notification.userEmail":
 		if e.complexity.Notification.UserEmail == nil {
@@ -4008,7 +4016,7 @@ type CreateListResult {
   initiatorEmail: String!
   initiatorProfileImage: String
   # createdAt: Time
-  # updatedAt: Time
+  updatedAt: Time
 }
 
 
@@ -12561,6 +12569,47 @@ func (ec *executionContext) fieldContext_Notification_initiatorProfileImage(_ co
 	return fc, nil
 }
 
+func (ec *executionContext) _Notification_updatedAt(ctx context.Context, field graphql.CollectedField, obj *idl.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NotificationResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.NotificationResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NotificationResults_paging(ctx, field)
 	if err != nil {
@@ -12721,6 +12770,8 @@ func (ec *executionContext) fieldContext_NotificationResults_results(_ context.C
 				return ec.fieldContext_Notification_initiatorEmail(ctx, field)
 			case "initiatorProfileImage":
 				return ec.fieldContext_Notification_initiatorProfileImage(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Notification_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Notification", field.Name)
 		},
@@ -29863,6 +29914,8 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			}
 		case "initiatorProfileImage":
 			out.Values[i] = ec._Notification_initiatorProfileImage(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Notification_updatedAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

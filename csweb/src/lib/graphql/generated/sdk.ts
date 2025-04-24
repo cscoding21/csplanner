@@ -402,6 +402,7 @@ export type Notification = {
   recipientIsBot: Scalars['Boolean']['output'];
   text?: Maybe<Scalars['String']['output']>;
   type: Scalars['Int']['output'];
+  updatedAt?: Maybe<Scalars['Time']['output']>;
   userEmail: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };

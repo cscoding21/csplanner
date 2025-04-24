@@ -21,7 +21,7 @@ type RefreshArgs struct {
 
 // ServeHTTP handles login functionality
 func (h LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Info("LoginHandler")
+	log.Debug("Entered LoginHandler")
 	ctx := r.Context()
 	as := factory.GetAuthService(ctx)
 	var creds auth.AuthCredentials
@@ -38,7 +38,7 @@ func (h LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	creds.Realm = orgInfo.Info.Org.Realm
 
-	log.Warnf("Credentials : %v", creds)
+	log.Debugf("Credentials : %v", creds)
 	resp, err := as.Authenticate(ctx, creds)
 	if err != nil {
 		log.Error(err)

@@ -20,8 +20,10 @@
 	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import { PageMessages, CSNavItem } from '$lib/components';
+	import { PageMessages, CSNavItem, NotificationList } from '$lib/components';
 	import { isDarkMode } from '$lib/utils/darkmode';
+	import type { Organization } from '$lib/graphql/generated/sdk';
+	import { getOrganization } from '$lib/services/organization';
 
 	const as = authService();
 	const cu = as.currentUser();
@@ -30,6 +32,7 @@
 
 	let pageCat = $derived(page.url.pathname)
 	let showDarkModeLogo = $derived(isDarkMode())
+	let org = $state({} as Organization)
 
 	const logoutUser = () => {
 		as.signout().then((r) => {
@@ -50,6 +53,10 @@
 		}
 
 		as.refreshCycle();
+
+		await getOrganization().then(o => {
+			org = o
+		})
 	});
 </script>
 
@@ -64,7 +71,9 @@
 	</NavBrand>
 	<div class="flex items-center md:order-3">
 		<DarkMode class="mr-2 text-2xl" />
-		<!-- <NotificationList /> -->
+		<NotificationList />
+		<span class="ml-4">{org.name}</span>
+		
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
 		>

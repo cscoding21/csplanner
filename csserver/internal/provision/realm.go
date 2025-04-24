@@ -89,6 +89,9 @@ var realmTemplate = `
 {
     "id": "{{.RealmID}}",
     "realm": "{{.OrgKey}}",
+    "revokeRefreshToken": true,
+    "refreshTokenMaxReuse": 0,
+    "accessTokenLifespan": 600,
     "enabled": true,
     "notBefore": 0,
     "defaultSignatureAlgorithm": "RS256",

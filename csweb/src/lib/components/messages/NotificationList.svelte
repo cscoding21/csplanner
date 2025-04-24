@@ -36,10 +36,10 @@
 	// 	}
 	// });
 
-	let notificationIndicator = $state($notificationStore.some((n) => !n.isRead));
+	let notificationIndicator = $state($notificationStore?.some((n) => !n.isRead));
 	let title = $state(
-		$notificationStore.filter((n) => !n.isRead).length > 0
-			? '(' + $notificationStore.filter((n) => !n.isRead).length + ') csPlanner'
+		$notificationStore?.filter((n) => !n.isRead).length > 0
+			? '(' + $notificationStore?.filter((n) => !n.isRead).length + ') csPlanner'
 			: 'csPlanner'
 	);
 </script>

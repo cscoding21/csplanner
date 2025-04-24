@@ -8,6 +8,7 @@ package notification
 import (
 	"csserver/internal/common"
 	"csserver/internal/services/notification/ntypes"
+	"time"
 )
 
 type Notification struct {
@@ -25,4 +26,5 @@ type Notification struct {
 	InitiatorName         string                  `json:"initiator_name"`
 	InitiatorEmail        string                  `json:"initiator_email"`
 	InitiatorProfileImage *string                 `json:"initiator_profile_image"`
+	UpdatedAt             time.Time               `json:"updated_at"`
 }

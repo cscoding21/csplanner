@@ -176,17 +176,18 @@ type Mutation struct {
 }
 
 type Notification struct {
-	ID                    string  `json:"id"`
-	UserEmail             string  `json:"userEmail"`
-	UserName              string  `json:"userName"`
-	RecipientIsBot        bool    `json:"recipientIsBot"`
-	Type                  int     `json:"type"`
-	ContextID             string  `json:"contextId"`
-	Text                  *string `json:"text,omitempty"`
-	IsRead                bool    `json:"isRead"`
-	InitiatorName         string  `json:"initiatorName"`
-	InitiatorEmail        string  `json:"initiatorEmail"`
-	InitiatorProfileImage *string `json:"initiatorProfileImage,omitempty"`
+	ID                    string     `json:"id"`
+	UserEmail             string     `json:"userEmail"`
+	UserName              string     `json:"userName"`
+	RecipientIsBot        bool       `json:"recipientIsBot"`
+	Type                  int        `json:"type"`
+	ContextID             string     `json:"contextId"`
+	Text                  *string    `json:"text,omitempty"`
+	IsRead                bool       `json:"isRead"`
+	InitiatorName         string     `json:"initiatorName"`
+	InitiatorEmail        string     `json:"initiatorEmail"`
+	InitiatorProfileImage *string    `json:"initiatorProfileImage,omitempty"`
+	UpdatedAt             *time.Time `json:"updatedAt,omitempty"`
 }
 
 type NotificationResults struct {

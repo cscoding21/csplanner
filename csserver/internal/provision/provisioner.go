@@ -398,6 +398,9 @@ func CreateGenesisUser(
 
 	initialPass := utils.GenerateBase64UUID()
 
+	//---temporary for local development
+	initialPass = "localpass"
+
 	botUser := appuser.Appuser{
 		ControlFields: common.ControlFields{
 			ID: fmt.Sprintf("user:%s", utils.GenerateBase64UUID()),

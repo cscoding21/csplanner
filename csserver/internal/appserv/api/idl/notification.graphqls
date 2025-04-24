@@ -11,7 +11,7 @@ type Notification {
   initiatorEmail: String!
   initiatorProfileImage: String
   # createdAt: Time
-  # updatedAt: Time
+  updatedAt: Time
 }
 
 

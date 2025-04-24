@@ -84,10 +84,10 @@ func (s *AuthService) Signout(ctx context.Context, realm string, refreshToken st
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
-	log.Warnf("CREDS: %v", creds)
-	log.Warnf("ClientID: %v", s.KCClientID)
-	log.Warnf("Client Secret: %v", s.KCClientSecret)
-	log.Warnf("Realm: %v", creds.Realm)
+	log.Debugf("CREDS: %v", creds)
+	log.Debugf("ClientID: %v", s.KCClientID)
+	log.Debugf("Client Secret: %v", s.KCClientSecret)
+	log.Debugf("Realm: %v", creds.Realm)
 
 	token, err := s.KCClient.Login(ctx,
 		s.KCClientID,

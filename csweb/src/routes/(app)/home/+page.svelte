@@ -58,7 +58,8 @@
         Loading...
     {:then promiseData} 
 
-    <OrgStateChecker invert={true} stateToCheck="isReadyForProjects">
+    <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
+        <h1>My Projects</h1>
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
             <ul>
             {#each myProjects.results as project}
@@ -68,6 +69,7 @@
         {/if}
 
         {#snippet elseRender()}
+            <h1>Setup wizard</h1>
             <SetupWizard {org} bind:step={currentStep} />
 
             {#if currentStep == 1}
@@ -94,7 +96,6 @@
                     <Button onclick={() => { ++currentStep }} disabled={currentStep == 7}>Next <ArrowRightOutline /></Button>
                 </ButtonGroup>
             </div>
-    
         {/snippet}
     </OrgStateChecker>
 

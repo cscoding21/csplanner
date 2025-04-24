@@ -28,14 +28,16 @@ func Serve() error {
 			middleware.AuthMiddleware(handlers.GetLoginHandler()),
 		))
 	router.Handle("/refresh",
-		middleware.AuthMiddleware(
-			middleware.ValidationMiddleware(handlers.GetRefreshHandler()),
-		),
+		middleware.OrgMiddleware(
+			middleware.AuthMiddleware(
+				middleware.ValidationMiddleware(handlers.GetRefreshHandler()),
+			)),
 	)
 	router.Handle("/signout",
-		middleware.AuthMiddleware(
-			middleware.ValidationMiddleware(handlers.GetSignoutHandler()),
-		),
+		middleware.OrgMiddleware(
+			middleware.AuthMiddleware(
+				middleware.ValidationMiddleware(handlers.GetSignoutHandler()),
+			)),
 	)
 
 	//	graphql handlers

@@ -16,7 +16,7 @@ func OrgMiddleware(next http.Handler) http.Handler {
 
 		ctx := r.Context()
 
-		log.Warnf("OrgMiddleware: %v", orgKey)
+		log.Debugf("OrgMiddleware: %v", orgKey)
 		ctx = context.WithValue(ctx, config.OrgUrlKey, orgKey)
 
 		m, err := orgmap.GetSaaSOrg(ctx)
@@ -24,8 +24,8 @@ func OrgMiddleware(next http.Handler) http.Handler {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		} else {
-			log.Infof("SaaS Org: %v", *m.Info.Org)
-			log.Infof("SaaS Org: %v", *m.Info.Licenses)
+			log.Debugf("SaaS Org: %v", *m.Info.Org)
+			log.Debugf("SaaS Licenses: %v", *m.Info.Licenses)
 		}
 
 		r = r.WithContext(ctx)

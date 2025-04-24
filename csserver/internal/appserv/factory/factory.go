@@ -53,7 +53,7 @@ func GetSaasDBClient() *pgxpool.Pool {
 	lock.Lock()
 	defer lock.Unlock()
 
-	log.Info("Creating Master DBClient instance now.")
+	log.Debug("Creating Master DBClient instance now.")
 
 	// Connect to SurrealDB
 	//"postgres://username:password@localhost:5432/database_name"

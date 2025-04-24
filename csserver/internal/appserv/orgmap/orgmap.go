@@ -37,7 +37,7 @@ func GetSaaSOrg(ctx context.Context) (*OrgResources, error) {
 
 	outOrg, ok := orgmap[urlKey]
 	if ok {
-		log.Infof("returning org map from cache: %s", urlKey)
+		log.Debugf("returning org map from cache: %s", urlKey)
 		return outOrg, nil
 	}
 
@@ -57,7 +57,8 @@ func GetSaaSOrg(ctx context.Context) (*OrgResources, error) {
 	}
 	orgDBClient, err := postgres.GetDBFromConfig(ctx, orgDBCreds)
 	if err != nil {
-		log.Fatalf("GetDBFromConfig: %s\n", err)
+		log.Errorf("GetDBFromConfig: %s\n", err)
+		return nil, err
 	}
 
 	orgResources := &OrgResources{
@@ -79,7 +80,7 @@ func GetSaasDBClient() *pgxpool.Pool {
 	lock.Lock()
 	defer lock.Unlock()
 
-	fmt.Println("Creating Master DBClient instance now.")
+	log.Debugf("Creating Master DBClient instance now.")
 
 	// Connect to SurrealDB
 	//"postgres://username:password@localhost:5432/database_name"
