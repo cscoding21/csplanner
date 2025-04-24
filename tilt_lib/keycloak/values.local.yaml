@@ -12,6 +12,8 @@ command:
   - "--spi-events-listener-jboss-logging-error-level=warn"
 
 extraEnv: |
+  - name: KC_LOG_LEVEL
+    value: INFO
   - name: KEYCLOAK_ADMIN
     valueFrom:
       secretKeyRef:

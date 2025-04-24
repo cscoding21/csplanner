@@ -1,6 +1,7 @@
 package csmap
 
 import (
+	"context"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/common"
 	"csserver/internal/services/comment"
@@ -10,92 +11,92 @@ import (
 )
 
 // ---RESOURCE
-func ConvertResourceResultToEnvelope(model *common.BaseModel[resource.Resource]) *idl.ResourceEnvelope {
+func ConvertResourceResultToEnvelope(ctx context.Context, model *common.BaseModel[resource.Resource]) *idl.ResourceEnvelope {
 	out := idl.ResourceEnvelope{}
 
 	out.Meta = GetDataEnvelope(model)
 	out.Data = utils.ValToRef(ResourceResourceToIdl(model.Data))
 
-	AugmentBaseModel(out.Meta)
-	AugmentResource(out.Data)
+	AugmentBaseModel(ctx, out.Meta)
+	AugmentResource(ctx, out.Data)
 
 	return &out
 }
 
-func ConvertResourceResultToEnvelopeSlice(results []*common.BaseModel[resource.Resource]) []*idl.ResourceEnvelope {
+func ConvertResourceResultToEnvelopeSlice(ctx context.Context, results []*common.BaseModel[resource.Resource]) []*idl.ResourceEnvelope {
 	out := []*idl.ResourceEnvelope{}
 
 	for _, r := range results {
-		out = append(out, ConvertResourceResultToEnvelope(r))
+		out = append(out, ConvertResourceResultToEnvelope(ctx, r))
 	}
 
 	return out
 }
 
 // ---ROLE
-func ConvertRoleResultToEnvelope(model *common.BaseModel[resource.Role]) *idl.RoleEnvelope {
+func ConvertRoleResultToEnvelope(ctx context.Context, model *common.BaseModel[resource.Role]) *idl.RoleEnvelope {
 	out := idl.RoleEnvelope{}
 
 	out.Meta = GetDataEnvelope(model)
 	out.Data = utils.ValToRef(RoleResourceToIdl(model.Data))
 
-	AugmentBaseModel(out.Meta)
+	AugmentBaseModel(ctx, out.Meta)
 	AugmentRole(out.Data)
 
 	return &out
 }
 
-func ConvertRoleResultToEnvelopeSlice(results []*common.BaseModel[resource.Role]) []*idl.RoleEnvelope {
+func ConvertRoleResultToEnvelopeSlice(ctx context.Context, results []*common.BaseModel[resource.Role]) []*idl.RoleEnvelope {
 	out := []*idl.RoleEnvelope{}
 
 	for _, r := range results {
-		out = append(out, ConvertRoleResultToEnvelope(r))
+		out = append(out, ConvertRoleResultToEnvelope(ctx, r))
 	}
 
 	return out
 }
 
 // ---PROJECT
-func ConvertProjectResultToEnvelope(model *common.BaseModel[project.Project]) *idl.ProjectEnvelope {
+func ConvertProjectResultToEnvelope(ctx context.Context, model *common.BaseModel[project.Project]) *idl.ProjectEnvelope {
 	out := idl.ProjectEnvelope{}
 
 	out.Meta = GetDataEnvelope(model)
 	out.Data = utils.ValToRef(ProjectProjectToIdl(model.Data))
 
-	AugmentBaseModel(out.Meta)
-	AugmentProject(&model.Data, out.Data)
+	AugmentBaseModel(ctx, out.Meta)
+	AugmentProject(ctx, &model.Data, out.Data)
 
 	return &out
 }
 
-func ConvertProjectResultToEnvelopeSlice(results []*common.BaseModel[project.Project]) []*idl.ProjectEnvelope {
+func ConvertProjectResultToEnvelopeSlice(ctx context.Context, results []*common.BaseModel[project.Project]) []*idl.ProjectEnvelope {
 	out := []*idl.ProjectEnvelope{}
 
 	for _, r := range results {
-		out = append(out, ConvertProjectResultToEnvelope(r))
+		out = append(out, ConvertProjectResultToEnvelope(ctx, r))
 	}
 
 	return out
 }
 
 // ---COMMENT
-func ConvertCommentResultToEnvelope(model *common.BaseModel[comment.Comment]) *idl.CommentEnvelope {
+func ConvertCommentResultToEnvelope(ctx context.Context, model *common.BaseModel[comment.Comment]) *idl.CommentEnvelope {
 	out := idl.CommentEnvelope{}
 
 	out.Meta = GetDataEnvelope(model)
 	out.Data = utils.ValToRef(CommentCommentToIdl(model.Data))
-	out.Data.Replies = ConvertCommentResultToEnvelopeSlice(utils.ValToRefSlice(model.Data.CommentReplies))
+	out.Data.Replies = ConvertCommentResultToEnvelopeSlice(ctx, utils.ValToRefSlice(model.Data.CommentReplies))
 
-	AugmentBaseModel(out.Meta)
+	AugmentBaseModel(ctx, out.Meta)
 
 	return &out
 }
 
-func ConvertCommentResultToEnvelopeSlice(results []*common.BaseModel[comment.Comment]) []*idl.CommentEnvelope {
+func ConvertCommentResultToEnvelopeSlice(ctx context.Context, results []*common.BaseModel[comment.Comment]) []*idl.CommentEnvelope {
 	out := []*idl.CommentEnvelope{}
 
 	for _, r := range results {
-		out = append(out, ConvertCommentResultToEnvelope(r))
+		out = append(out, ConvertCommentResultToEnvelope(ctx, r))
 	}
 
 	return out

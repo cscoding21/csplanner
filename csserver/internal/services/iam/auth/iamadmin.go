@@ -17,7 +17,6 @@ import (
 
 type IAMAdminService struct {
 	KCClient    *gocloak.GoCloak
-	KCRealm     string
 	KCAdminUser string
 	KCAdminPass string
 	PubSub      events.PubSubProvider
@@ -27,14 +26,12 @@ type IAMAdminService struct {
 func NewIAMAdminService(
 	client *gocloak.GoCloak,
 	pubsub events.PubSubProvider,
-	realm string,
 	adminUser string,
 	adminPass string,
 	userService appuser.AppuserService,
 ) IAMAdminService {
 	out := IAMAdminService{}
 	out.KCClient = client
-	out.KCRealm = realm
 	out.KCAdminUser = adminUser
 	out.KCAdminPass = adminPass
 	out.PubSub = pubsub
@@ -44,7 +41,7 @@ func NewIAMAdminService(
 }
 
 // CreateUser create a new Keycloak user
-func (s *IAMAdminService) CreateUser(ctx context.Context, user *appuser.Appuser) (common.UpdateResult[appuser.Appuser], error) {
+func (s *IAMAdminService) CreateUser(ctx context.Context, realm string, user *appuser.Appuser) (common.UpdateResult[appuser.Appuser], error) {
 	val := user.Validate()
 	if !val.Pass {
 		return common.NewUpdateResult[appuser.Appuser](val, nil), fmt.Errorf("validation failed")
@@ -96,22 +93,22 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *appuser.Appuser)
 		Attributes: &props,
 	}
 
-	existingKCUser, _ := s.GetUser(ctx, user.Email)
+	existingKCUser, _ := s.GetUser(ctx, realm, user.Email)
 
 	var uid string
 
 	if existingKCUser == nil {
-		uid, err = s.KCClient.CreateUser(ctx, token.AccessToken, s.KCRealm, u)
+		uid, err = s.KCClient.CreateUser(ctx, token.AccessToken, realm, u)
 	} else {
 		uid = existingKCUser.ID
 		u.ID = &uid
-		err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, u)
+		err = s.KCClient.UpdateUser(ctx, token.AccessToken, realm, u)
 	}
 	if err != nil {
 		return common.NewUpdateResult[appuser.Appuser](val, nil), err
 	}
 
-	err = s.KCClient.SetPassword(ctx, token.AccessToken, uid, s.KCRealm, user.Password, false)
+	err = s.KCClient.SetPassword(ctx, token.AccessToken, uid, realm, user.Password, false)
 	if err != nil {
 		log.Errorf("iamadmin keycloak setPassword: %s", err)
 		return common.NewUpdateResult[appuser.Appuser](val, nil), err
@@ -121,7 +118,7 @@ func (s *IAMAdminService) CreateUser(ctx context.Context, user *appuser.Appuser)
 }
 
 // UpdateUser create a new Keycloak user
-func (s *IAMAdminService) UpdateUser(ctx context.Context, user appuser.Appuser) (common.UpdateResult[*common.BaseModel[appuser.Appuser]], error) {
+func (s *IAMAdminService) UpdateUser(ctx context.Context, realm string, user appuser.Appuser) (common.UpdateResult[*common.BaseModel[appuser.Appuser]], error) {
 	val := user.Validate()
 	if !val.Pass {
 		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), fmt.Errorf("validation failed")
@@ -142,7 +139,7 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user appuser.Appuser) 
 	dbUser.ProfileImage = user.ProfileImage
 	dbUser.Email = user.Email
 
-	kcUser, err := s.getKCUser(ctx, user.Email)
+	kcUser, err := s.getKCUser(ctx, realm, user.Email)
 	if err != nil {
 		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), err
 	}
@@ -157,7 +154,7 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, user appuser.Appuser) 
 	kcUser.Email = &user.Email
 	kcUser.Attributes = &props
 
-	err = s.KCClient.UpdateUser(ctx, token.AccessToken, s.KCRealm, *kcUser)
+	err = s.KCClient.UpdateUser(ctx, token.AccessToken, realm, *kcUser)
 	if err != nil {
 		return common.NewUpdateResult[*common.BaseModel[appuser.Appuser]](val, nil), err
 	}
@@ -176,18 +173,18 @@ func (s *IAMAdminService) getAdminToken(ctx context.Context) (*gocloak.JWT, erro
 }
 
 // GetCurrentUser gets the user based on the credentials from the context
-func (s *IAMAdminService) GetCurrentUser(ctx context.Context) (*appuser.Appuser, error) {
+func (s *IAMAdminService) GetCurrentUser(ctx context.Context, realm string) (*appuser.Appuser, error) {
 	contextUserEmail, ok := ctx.Value(config.UserEmailKey).(string)
 	if !ok {
 		return nil, errors.New("context does not contain user email")
 	}
 
-	user, err := s.GetUser(ctx, contextUserEmail)
+	user, err := s.GetUser(ctx, realm, contextUserEmail)
 	return user, err
 }
 
 // getKCUser retrieve a user record from Keycloak
-func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*gocloak.User, error) {
+func (s *IAMAdminService) getKCUser(ctx context.Context, realm string, idOrEmail string) (*gocloak.User, error) {
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
 		s.KCAdminPass,
@@ -200,7 +197,7 @@ func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*goc
 		Email: &idOrEmail,
 	}
 
-	users, err := s.KCClient.GetUsers(ctx, token.AccessToken, s.KCRealm, params)
+	users, err := s.KCClient.GetUsers(ctx, token.AccessToken, realm, params)
 	if err != nil || len(users) == 0 {
 		return nil, err
 	}
@@ -211,8 +208,8 @@ func (s *IAMAdminService) getKCUser(ctx context.Context, idOrEmail string) (*goc
 }
 
 // GetUser get a user based on the passed in email
-func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*appuser.Appuser, error) {
-	u, err := s.getKCUser(ctx, idOrEmail)
+func (s *IAMAdminService) GetUser(ctx context.Context, realm string, idOrEmail string) (*appuser.Appuser, error) {
+	u, err := s.getKCUser(ctx, realm, idOrEmail)
 
 	if u == nil {
 		return nil, err
@@ -232,7 +229,7 @@ func (s *IAMAdminService) GetUser(ctx context.Context, idOrEmail string) (*appus
 }
 
 // GetUser get a user based on the passed in email
-func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults[appuser.Appuser], error) {
+func (s *IAMAdminService) FindAllUsers(ctx context.Context, realm string) (common.PagedResults[appuser.Appuser], error) {
 	pagingResults := common.NewPagedResultsForAllRecords[appuser.Appuser]()
 	token, err := s.KCClient.LoginAdmin(ctx,
 		s.KCAdminUser,
@@ -244,7 +241,7 @@ func (s *IAMAdminService) FindAllUsers(ctx context.Context) (common.PagedResults
 
 	params := gocloak.GetUsersParams{}
 
-	users, err := s.KCClient.GetUsers(ctx, token.AccessToken, s.KCRealm, params)
+	users, err := s.KCClient.GetUsers(ctx, token.AccessToken, realm, params)
 	if err != nil || len(users) == 0 {
 		return pagingResults, err
 	}

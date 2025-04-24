@@ -1,6 +1,7 @@
 package csmap
 
 import (
+	"context"
 	"csserver/internal/appserv/graph/idl"
 	"csserver/internal/calendar"
 	"csserver/internal/common"
@@ -19,16 +20,16 @@ func AugmentComment(comment *idl.CommentEnvelope) {
 	}
 }
 
-func AugmentBaseModel(base *idl.BaseModel) {
+func AugmentBaseModel(ctx context.Context, base *idl.BaseModel) {
 	if base == nil {
 		return
 	}
 
-	base.CreateByUser = getUserByEmail(base.CreatedBy)
-	base.UpdateByUser = getUserByEmail(base.UpdatedBy)
+	base.CreateByUser = getUserByEmail(ctx, base.CreatedBy)
+	base.UpdateByUser = getUserByEmail(ctx, base.UpdatedBy)
 
 	if base.DeletedBy != nil {
-		base.DeleteByUser = getUserByEmail(*base.DeletedBy)
+		base.DeleteByUser = getUserByEmail(ctx, *base.DeletedBy)
 	}
 }
 
@@ -160,7 +161,7 @@ func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData
 	return out
 }
 
-func AugmentProject(model *project.Project, proj *idl.Project) {
+func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Project) {
 	if proj == nil || model == nil {
 		return
 	}
@@ -172,7 +173,7 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 	skillList := getSkills()
 	resourceList := findResources()
 
-	proj.ProjectBasics.Owner = getUserByEmail(model.ProjectBasics.OwnerID)
+	proj.ProjectBasics.Owner = getUserByEmail(ctx, model.ProjectBasics.OwnerID)
 
 	for i, s := range proj.ProjectStatusBlock.AllowedNextStates {
 		tra := getStateTransition(*model, projectstatus.ProjectState(s.NextState))
@@ -205,7 +206,7 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 
 			if len(t.ResourceIDs) > 0 {
 				for _, r := range t.ResourceIDs {
-					resource := getResourceById(*resourceList, r)
+					resource := getResourceById(ctx, *resourceList, r)
 					proj.ProjectMilestones[i].Tasks[j].Resources = append(proj.ProjectMilestones[i].Tasks[j].Resources, resource)
 				}
 			}
@@ -216,8 +217,8 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 		if len(model.ProjectDaci.DriverIDs) > 0 {
 			for _, r := range model.ProjectDaci.DriverIDs {
 				if r != nil {
-					resource := getResourceById(*resourceList, *r)
-					AugmentResource(resource)
+					resource := getResourceById(ctx, *resourceList, *r)
+					AugmentResource(ctx, resource)
 					proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
 				}
 			}
@@ -226,8 +227,8 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 		if len(model.ProjectDaci.ApproverIDs) > 0 {
 			for _, r := range model.ProjectDaci.ApproverIDs {
 				if r != nil {
-					resource := getResourceById(*resourceList, *r)
-					AugmentResource(resource)
+					resource := getResourceById(ctx, *resourceList, *r)
+					AugmentResource(ctx, resource)
 					proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
 				}
 			}
@@ -236,8 +237,8 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 		if len(model.ProjectDaci.ContributorIDs) > 0 {
 			for _, r := range model.ProjectDaci.ContributorIDs {
 				if r != nil {
-					resource := getResourceById(*resourceList, *r)
-					AugmentResource(resource)
+					resource := getResourceById(ctx, *resourceList, *r)
+					AugmentResource(ctx, resource)
 					proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
 				}
 			}
@@ -246,8 +247,8 @@ func AugmentProject(model *project.Project, proj *idl.Project) {
 		if len(model.ProjectDaci.InformedIDs) > 0 {
 			for _, r := range model.ProjectDaci.InformedIDs {
 				if r != nil {
-					resource := getResourceById(*resourceList, *r)
-					AugmentResource(resource)
+					resource := getResourceById(ctx, *resourceList, *r)
+					AugmentResource(ctx, resource)
 					proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
 				}
 			}
@@ -266,13 +267,13 @@ func getStateTransition(model project.Project, status projectstatus.ProjectState
 }
 
 // AugmentResource fills in object data for a single reaource
-func AugmentResource(res *idl.Resource) {
+func AugmentResource(ctx context.Context, res *idl.Resource) {
 	if res == nil {
 		return
 	}
 
 	if res.UserEmail != nil {
-		res.User = getUserByEmail(*res.UserEmail)
+		res.User = getUserByEmail(ctx, *res.UserEmail)
 	}
 
 	if res.RoleID != nil {
@@ -315,7 +316,7 @@ func AugmentRole(r *idl.Role) {
 	}
 }
 
-func AugmentSchedule(schedule *idl.Schedule) {
+func AugmentSchedule(ctx context.Context, schedule *idl.Schedule) {
 	if schedule == nil {
 		return
 	}
@@ -331,11 +332,11 @@ func AugmentSchedule(schedule *idl.Schedule) {
 		}
 	}
 
-	schedule.Project = getProjectById(*projectList, schedule.ProjectID)
+	schedule.Project = getProjectById(ctx, *projectList, schedule.ProjectID)
 
 	for i, week := range schedule.ProjectActivityWeeks {
 		for j, act := range week.Activities {
-			resource := getResourceById(*resourceList, act.ResourceID)
+			resource := getResourceById(ctx, *resourceList, act.ResourceID)
 			schedule.ProjectActivityWeeks[i].Activities[j].Resource = resource
 			schedule.ProjectActivityWeeks[i].OrgCapacity = orgCapacity
 		}

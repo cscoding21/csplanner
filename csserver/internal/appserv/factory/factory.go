@@ -118,8 +118,7 @@ func GetAuthService(ctx context.Context) *auth.AuthService {
 		kc,
 		pubsub,
 		config.Config.Security.KeycloakClientID,
-		config.Config.Security.KeycloakClientSecret,
-		config.Config.Security.KeycloakRealm)
+		config.Config.Security.KeycloakClientSecret)
 }
 
 // GetCommentService get comment service instance
@@ -271,7 +270,6 @@ func GetIAMAdminService(ctx context.Context) *auth.IAMAdminService {
 	svc := auth.NewIAMAdminService(
 		client,
 		pubsub,
-		config.Config.Security.KeycloakRealm,
 		config.Config.Security.KeycloakAdminUser,
 		config.Config.Security.KeycloakAdminPass,
 		*userService)

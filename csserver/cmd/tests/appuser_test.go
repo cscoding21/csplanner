@@ -2,6 +2,7 @@ package tests
 
 import (
 	"csserver/internal/appserv/factory"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/services/iam/appuser"
@@ -13,8 +14,12 @@ func TestCreateOrGetBot(t *testing.T) {
 	ctx := getTestContext()
 
 	service := factory.GetIAMAdminService(ctx)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		t.Error(err)
+	}
 
-	user, err := service.GetUser(ctx, config.Config.Default.BotUserEmail)
+	user, err := service.GetUser(ctx, orgInfo.Info.Org.Realm, config.Config.Default.BotUserEmail)
 	if err != nil {
 		t.Error(err)
 	}
@@ -33,7 +38,7 @@ func TestCreateOrGetBot(t *testing.T) {
 		ProfileImage:    "/aibot.jpg",
 	}
 
-	ur, err := service.CreateUser(ctx, &botUser)
+	ur, err := service.CreateUser(ctx, orgInfo.Info.Org.Realm, &botUser)
 	if err != nil {
 		t.Errorf("error creating user: %v", err)
 	}

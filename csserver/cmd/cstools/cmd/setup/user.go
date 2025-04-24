@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"csserver/internal/appserv/factory"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/common"
 	"csserver/internal/config"
 
@@ -14,8 +15,12 @@ import (
 
 func CreateOrGetBot(ctx context.Context) *appuser.Appuser {
 	service := factory.GetIAMAdminService(ctx)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Error(err)
+	}
 
-	user, err := service.GetUser(ctx, config.Config.Default.BotUserEmail)
+	user, err := service.GetUser(ctx, orgInfo.Info.Org.Realm, config.Config.Default.BotUserEmail)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +37,7 @@ func CreateOrGetBot(ctx context.Context) *appuser.Appuser {
 		ProfileImage:    "/aibot.jpg",
 	}
 
-	ur, err := service.CreateUser(ctx, &botUser)
+	ur, err := service.CreateUser(ctx, orgInfo.Info.Org.Realm, &botUser)
 	if err != nil {
 		log.Errorf("error creating user: %v", err)
 	}
@@ -47,6 +52,10 @@ func CreateOrGetBot(ctx context.Context) *appuser.Appuser {
 // CreateTestUsers create a set of users for testing
 func CreateTestUsers(ctx context.Context) error {
 	service := factory.GetIAMAdminService(ctx)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Error(err)
+	}
 
 	usrs := []appuser.Appuser{
 		//---users
@@ -57,7 +66,7 @@ func CreateTestUsers(ctx context.Context) error {
 	}
 
 	for _, u := range usrs {
-		ur, err := service.CreateUser(ctx, &u)
+		ur, err := service.CreateUser(ctx, orgInfo.Info.Org.Realm, &u)
 		if err != nil {
 			log.Errorf("NewUser(%s): %s\n", u.Email, err)
 		}

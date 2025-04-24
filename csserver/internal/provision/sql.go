@@ -47,7 +47,7 @@ UPDATE organization
 SET is_provisioned = true,
     updated_at = CURRENT_TIMESTAMP,
     updated_by = $1
-WHERE id = $2;
+WHERE url_key = $2;
 `
 
 var createCSPlannerTableSQL = `

@@ -10,6 +10,7 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/common"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/utils"
@@ -21,7 +22,12 @@ import (
 // CurrentUser is the resolver for the currentUser field.
 func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 	service := factory.GetIAMAdminService(ctx)
-	obj, err := service.GetCurrentUser(ctx)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	obj, err := service.GetCurrentUser(ctx, orgInfo.Info.Org.Realm)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +40,12 @@ func (r *queryResolver) CurrentUser(ctx context.Context) (*idl.User, error) {
 // GetUser is the resolver for the getUser field.
 func (r *queryResolver) GetUser(ctx context.Context, id string) (*idl.User, error) {
 	service := factory.GetIAMAdminService(ctx)
-	obj, err := service.GetUser(ctx, id)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	obj, err := service.GetUser(ctx, orgInfo.Info.Org.Realm, id)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +69,7 @@ func (r *queryResolver) FindProjects(ctx context.Context, pageAndFilter idl.Page
 	out := idl.ProjectResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ConvertProjectResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
+		Results: csmap.ConvertProjectResultToEnvelopeSlice(ctx, utils.ValToRefSlice(results.Results)),
 	}
 
 	return &out, nil
@@ -74,7 +85,7 @@ func (r *queryResolver) GetProject(ctx context.Context, id string) (*idl.Project
 
 	service.GetStatusTransitionDetails(&obj.Data)
 
-	return csmap.ConvertProjectResultToEnvelope(obj), nil
+	return csmap.ConvertProjectResultToEnvelope(ctx, obj), nil
 }
 
 // CalculateProjectSchedule is the resolver for the calculateProjectSchedule field.
@@ -103,7 +114,7 @@ func (r *queryResolver) CalculateProjectSchedule(ctx context.Context, projectID 
 	}
 
 	schIdl := csmap.ScheduleScheduleToIdl(schedule)
-	csmap.AugmentSchedule(&schIdl)
+	csmap.AugmentSchedule(ctx, &schIdl)
 
 	out := idl.ProjectScheduleResult{
 		Schedule: &schIdl,
@@ -139,7 +150,7 @@ func (r *queryResolver) FindProjectComments(ctx context.Context, projectID strin
 	out := idl.CommentResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ConvertCommentResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
+		Results: csmap.ConvertCommentResultToEnvelopeSlice(ctx, utils.ValToRefSlice(results.Results)),
 	}
 
 	return &out, nil
@@ -153,7 +164,7 @@ func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.C
 		return nil, err
 	}
 
-	out := csmap.ConvertCommentResultToEnvelope(obj)
+	out := csmap.ConvertCommentResultToEnvelope(ctx, obj)
 	return out, nil
 }
 
@@ -228,7 +239,7 @@ func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error
 	}
 
 	for i := range out.Schedule {
-		csmap.AugmentSchedule(out.Schedule[i])
+		csmap.AugmentSchedule(ctx, out.Schedule[i])
 	}
 
 	csmap.AugmentPortfolio(&out, nil)
@@ -259,7 +270,7 @@ func (r *queryResolver) GetPortfolioForResource(ctx context.Context, resourceID 
 	}
 
 	for i := range out.Schedule {
-		csmap.AugmentSchedule(out.Schedule[i])
+		csmap.AugmentSchedule(ctx, out.Schedule[i])
 	}
 
 	csmap.AugmentPortfolio(&out, &resourceID)
@@ -275,13 +286,18 @@ func (r *queryResolver) GetResource(ctx context.Context, id string) (*idl.Resour
 		return nil, err
 	}
 
-	return csmap.ConvertResourceResultToEnvelope(obj), nil
+	return csmap.ConvertResourceResultToEnvelope(ctx, obj), nil
 }
 
 // FindAllUsers is the resolver for the findAllUsers field.
 func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, error) {
 	service := factory.GetIAMAdminService(ctx)
-	userResults, err := service.FindAllUsers(ctx)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userResults, err := service.FindAllUsers(ctx, orgInfo.Info.Org.Realm)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +326,7 @@ func (r *queryResolver) FindAllResources(ctx context.Context) (*idl.ResourceResu
 	out := idl.ResourceResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ConvertResourceResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
+		Results: csmap.ConvertResourceResultToEnvelopeSlice(ctx, utils.ValToRefSlice(results.Results)),
 	}
 
 	return &out, nil
@@ -328,7 +344,7 @@ func (r *queryResolver) FindAllRoles(ctx context.Context) (*idl.RoleResults, err
 	out := idl.RoleResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ConvertRoleResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
+		Results: csmap.ConvertRoleResultToEnvelopeSlice(ctx, utils.ValToRefSlice(results.Results)),
 	}
 
 	return &out, nil
@@ -347,7 +363,7 @@ func (r *queryResolver) FindResources(ctx context.Context, pageAndFilter *idl.Pa
 	out := idl.ResourceResults{
 		Paging:  &pg,
 		Filters: &fi,
-		Results: csmap.ConvertResourceResultToEnvelopeSlice(utils.ValToRefSlice(results.Results)),
+		Results: csmap.ConvertResourceResultToEnvelopeSlice(ctx, utils.ValToRefSlice(results.Results)),
 	}
 
 	return &out, nil

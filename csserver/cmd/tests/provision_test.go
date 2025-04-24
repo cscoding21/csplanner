@@ -11,8 +11,13 @@ import (
 	"github.com/gosimple/slug"
 )
 
-var name = "Jeph Test Org"
-var urlKey = "localhost"
+var (
+	orgName              = "Jeph Test Org"
+	urlKey               = "localhost"
+	genesisUserFirstName = "Jeph"
+	genesisUserLastName  = "Test"
+	genesisUserEmail     = "jeph@jmk21.com"
+)
 
 func init() {
 	config.InitConfig()
@@ -24,7 +29,13 @@ func TestProvisionNewOrganization(t *testing.T) {
 	ctx := getTestContext()
 	saasdb := factory.GetSaasDBClient()
 
-	provision.ProvisionNewOrganization(ctx, saasdb, name, urlKey)
+	provision.ProvisionNewOrganization(ctx,
+		saasdb,
+		orgName,
+		urlKey,
+		genesisUserFirstName,
+		genesisUserLastName,
+		genesisUserEmail)
 }
 
 // TEARDOWN
@@ -32,19 +43,19 @@ func TestTeardownOrgInfrastructure(t *testing.T) {
 	ctx := getTestContext()
 	saasdb := factory.GetSaasDBClient()
 
-	provision.TeardownOrgInfrastructure(ctx, saasdb, name)
+	provision.TeardownOrgInfrastructure(ctx, saasdb, orgName)
 }
 
 func TestCreateOrgDatabase(t *testing.T) {
 	ctx := config.NewContext()
 	saasdb := factory.GetSaasDBClient()
 
-	exists := provision.CheckDatabaseExits(ctx, saasdb, name)
-	fmt.Printf("database %s status - exist = %v\n", name, exists)
+	exists := provision.CheckDatabaseExits(ctx, saasdb, orgName)
+	fmt.Printf("database %s status - exist = %v\n", orgName, exists)
 	var creds config.DatabaseConfig
 
 	if !exists {
-		creds, err := provision.CreateOrgDatabase(ctx, saasdb, name)
+		creds, err := provision.CreateOrgDatabase(ctx, saasdb, orgName)
 		if err != nil {
 			t.Error(err)
 			return
@@ -60,7 +71,7 @@ func TestAddOrgToMasterDB(t *testing.T) {
 	ctx := config.NewContext()
 	saasdb := factory.GetSaasDBClient()
 
-	err := provision.AddOrgToMasterDB(ctx, saasdb, name)
+	err := provision.AddOrgToMasterDB(ctx, saasdb, orgName)
 	if err != nil {
 		t.Error(err)
 	}
@@ -70,7 +81,7 @@ func TestDeleteMasterDBRecords(t *testing.T) {
 	ctx := config.NewContext()
 	saasdb := factory.GetSaasDBClient()
 
-	err := provision.DeleteMasterDBRecords(ctx, saasdb, name)
+	err := provision.DeleteMasterDBRecords(ctx, saasdb, orgName)
 	if err != nil {
 		t.Error(err)
 	}
@@ -80,7 +91,7 @@ func TestSetOrgProvisioned(t *testing.T) {
 	ctx := config.NewContext()
 	saasdb := factory.GetSaasDBClient()
 
-	err := provision.SetOrgProvisioned(ctx, saasdb, name)
+	err := provision.SetOrgProvisioned(ctx, saasdb, orgName)
 	if err != nil {
 		t.Error(err)
 	}
@@ -88,7 +99,7 @@ func TestSetOrgProvisioned(t *testing.T) {
 
 func TestCreateTablesForPlanner(t *testing.T) {
 	ctx := config.NewContext()
-	creds := provision.GetDBCredsFromName(name)
+	creds := provision.GetDBCredsFromName(orgName)
 	creds.User = "postgres"
 	creds.Password = "postgres"
 	db, err := postgres.GetDBFromConfig(ctx, creds)
@@ -105,12 +116,12 @@ func TestCreateTablesForPlanner(t *testing.T) {
 
 func TestCreateDefaultOrg(t *testing.T) {
 	ctx := config.NewContext()
-	creds := provision.GetDBCredsFromName(name)
+	creds := provision.GetDBCredsFromName(orgName)
 	os := factory.GetOrganizationService(ctx)
-	url := provision.GenerateUrlKeyForOrg(name)
-	realm := provision.GenerateOrgKey(name)
+	url := provision.GenerateUrlKeyForOrg(orgName)
+	realm := provision.GenerateOrgKey(orgName)
 
-	err := provision.CreateDefaultOrg(ctx, name, url, realm, "localhost", creds.Database, os)
+	err := provision.CreateDefaultOrg(ctx, orgName, url, realm, "localhost", creds.Database, os)
 	if err != nil {
 		t.Error(err)
 	}
@@ -119,8 +130,9 @@ func TestCreateDefaultOrg(t *testing.T) {
 func TestCreateBotUser(t *testing.T) {
 	ctx := config.NewContext()
 	us := factory.GetIAMAdminService(ctx)
+	realm := "jeph_test_org"
 
-	err := provision.CreateBotUser(ctx, us)
+	err := provision.CreateBotUser(ctx, realm, us)
 	if err != nil {
 		t.Error(err)
 	}
@@ -148,7 +160,7 @@ func TestCreateInitialTemplates(t *testing.T) {
 
 func TestCreateNewOrgRealm(t *testing.T) {
 	ctx := config.NewContext()
-	realmName := slug.Make(name)
+	realmName := slug.Make(orgName)
 
 	result, err := provision.CreateNewOrgRealm(ctx, realmName)
 	if err != nil {
@@ -160,7 +172,7 @@ func TestCreateNewOrgRealm(t *testing.T) {
 
 func TestDeleteOrgRealm(t *testing.T) {
 	ctx := config.NewContext()
-	realmName := slug.Make(name)
+	realmName := slug.Make(orgName)
 
 	err := provision.DeleteOrgRealm(ctx, realmName)
 	if err != nil {

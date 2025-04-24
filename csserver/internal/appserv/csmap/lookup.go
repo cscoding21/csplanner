@@ -4,6 +4,7 @@ import (
 	"context"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/common"
 	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/list"
@@ -115,11 +116,11 @@ func getListById(lists []list.List, name string) *list.List {
 	return nil
 }
 
-func getResourceById(resources []resource.Resource, id string) *idl.Resource {
+func getResourceById(ctx context.Context, resources []resource.Resource, id string) *idl.Resource {
 	for _, r := range resources {
 		if r.ID == id {
 			out := ResourceResourceToIdl(r)
-			AugmentResource(&out)
+			AugmentResource(ctx, &out)
 
 			return &out
 		}
@@ -141,12 +142,12 @@ func getRoleById(id string) *idl.Role {
 	return nil
 }
 
-func getProjectById(projects []project.Project, id string) *idl.Project {
+func getProjectById(ctx context.Context, projects []project.Project, id string) *idl.Project {
 	for _, p := range projects {
 		if p.ID == id {
 			out := ProjectProjectToIdl(p)
 
-			AugmentProject(&p, &out)
+			AugmentProject(ctx, &p, &out)
 
 			return &out
 		}
@@ -199,7 +200,7 @@ func findResources() *[]resource.Resource {
 	return _resourceCache
 }
 
-func findUsers() *[]appuser.Appuser {
+func findUsers(ctx context.Context) *[]appuser.Appuser {
 	if _userCache != nil {
 		return _userCache
 	}
@@ -207,10 +208,14 @@ func findUsers() *[]appuser.Appuser {
 	_userCacheLock.Lock()
 	defer _userCacheLock.Unlock()
 
-	ctx := context.Background()
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Error(err)
+	}
+
 	us := factory.GetIAMAdminService(ctx)
 
-	users, err := us.FindAllUsers(ctx)
+	users, err := us.FindAllUsers(ctx, orgInfo.Info.Org.Realm)
 	if err != nil {
 		log.Error(err)
 		return nil
@@ -287,8 +292,8 @@ func findTemplates() *[]projecttemplate.Projecttemplate {
 	return _templateCache
 }
 
-func getUserByEmail(email string) *idl.User {
-	users := findUsers()
+func getUserByEmail(ctx context.Context, email string) *idl.User {
+	users := findUsers(ctx)
 
 	for _, u := range *users {
 		if u.Email == email {

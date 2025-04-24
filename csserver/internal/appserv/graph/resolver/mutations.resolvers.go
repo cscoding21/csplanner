@@ -10,6 +10,7 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/common"
 	"csserver/internal/services/comment"
 	"csserver/internal/services/project"
@@ -23,8 +24,12 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input idl.UpdateUser)
 	out := idl.CreateUserResult{}
 	service := factory.GetIAMAdminService(ctx)
 	user := csmap.UpdateUserIdlToAppuser(input)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	result, err := service.UpdateUser(ctx, user)
+	result, err := service.UpdateUser(ctx, orgInfo.Info.Org.Realm, user)
 	wrapperU := result.Object
 	u := *wrapperU
 	if err != nil {

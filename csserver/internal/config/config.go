@@ -48,14 +48,14 @@ func InitConfig() {
 	for _, p := range envPaths {
 		fp, err := filepath.Abs(p)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Cannot find .env.local.  Moving on...")
+			log.Debugf("Cannot find .env.local.  Moving on...")
 		} else {
 			err = godotenv.Load(fp)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Cannot load .env.local in %s.  Moving on...\n", fp)
+				log.Debugf("Cannot load .env.local in %s.  Moving on...\n", fp)
 			} else {
 				//---if we load an env file...no need to keep looking
-				fmt.Fprintf(os.Stderr, ".env.local loaded from %s.  test setttings applied\n", fp)
+				log.Infof(".env.local loaded from %s.  test setttings applied\n", fp)
 				break
 			}
 		}
@@ -161,7 +161,6 @@ type SecurityConfig struct {
 	JwtIssuer                       string
 	KeycloakURL                     string
 	KeycloakMasterRealmName         string
-	KeycloakRealm                   string
 	KeycloakAdminUser               string
 	KeycloakAdminPass               string
 	KeycloakClientID                string

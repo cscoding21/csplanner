@@ -778,7 +778,7 @@
         ]
       },
       {
-        "id": "4cb7ae55-6d74-4ca3-8658-dbc69f41f161",
+        "id": "{{.WebClientID}}",
         "clientId": "web-client",
         "name": "Web API Login",
         "description": "",
@@ -789,7 +789,7 @@
         "enabled": true,
         "alwaysDisplayInConsole": false,
         "clientAuthenticatorType": "client-secret",
-        "secret": "**********",
+        "secret": "{{.ClientSecret}}",
         "redirectUris": [
           "/*"
         ],

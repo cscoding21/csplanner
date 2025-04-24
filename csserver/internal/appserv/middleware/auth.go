@@ -11,6 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 
 	"csserver/internal/appserv/factory"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/config"
 
 	"encoding/json"
@@ -53,13 +54,20 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 		}
 
 		bctx := r.Context()
+
+		orgInfo, err := orgmap.GetSaaSOrg(bctx)
+		if err != nil {
+			log.Errorf("Error getting info from orgmap: %s", err)
+			http.Error(w, "Forbidden", http.StatusForbidden)
+		}
+
 		us := factory.GetIAMAdminService(bctx)
 
 		if allowAnonomousOperation(r) || bypassSecurity(r) {
 			anonEmail := config.Config.Default.BotUserEmail
 			log.Debugf("AI Bot credentials set for %s", anonEmail)
 
-			anonID, err := us.GetUser(bctx, anonEmail)
+			anonID, err := us.GetUser(bctx, orgInfo.Info.Org.Realm, anonEmail)
 			if err != nil {
 				log.Error(err)
 			} else {
@@ -77,9 +85,9 @@ func ValidationMiddleware(next http.Handler) http.Handler {
 		token := getTokenFromHeader(r)
 
 		authService := factory.GetAuthService(bctx)
-		result, err := authService.ValidateToken(bctx, token)
+		result, err := authService.ValidateToken(bctx, orgInfo.Info.Org.Realm, token)
 		if err != nil {
-			log.Errorf("error on validate: %s", err)
+			log.Errorf("error on validate (realm = %s): %s", orgInfo.Info.Org.Realm, err)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
@@ -136,7 +144,13 @@ func WebSocketInit(ctx context.Context, initPayload transport.InitPayload) (cont
 
 	authService := factory.GetAuthService(ctx)
 
-	result, _ := authService.ValidateToken(ctx, token)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Error(err)
+		return nil, &initPayload, fmt.Errorf("org info not available: %v", initPayload)
+	}
+
+	result, _ := authService.ValidateToken(ctx, orgInfo.Info.Org.Realm, token)
 	if result.Success {
 		log.Warnf("WebSocket authentication success for user %s", result.User.Email)
 

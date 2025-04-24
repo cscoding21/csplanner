@@ -42,7 +42,10 @@ func ProvisionNewOrganization(
 	ctx context.Context,
 	db *pgxpool.Pool,
 	name string,
-	urlKey string) error {
+	urlKey string,
+	genesisUserFirstName string,
+	genesisUserLastName string,
+	genesisUserEmail string) error {
 
 	existing := CheckDatabaseExits(ctx, db, name)
 	if !existing {
@@ -75,15 +78,24 @@ func ProvisionNewOrganization(
 		log.Errorf("CreateNewOrgRealm: %s\n", err)
 	}
 
+	log.Debugf("Realm %s created\n", realm)
+
 	pubSub, _ := factory.GetPubSubClient(ctx)
 	gk := getKeycloakClient()
 	appUserService := appuser.NewAppuserService(orgDBClient, pubSub)
-	us := auth.NewIAMAdminService(gk, pubSub, realm, config.Config.Security.KeycloakAdminUser, config.Config.Security.KeycloakAdminPass, *appUserService)
+	us := auth.NewIAMAdminService(gk, pubSub, config.Config.Security.KeycloakAdminUser, config.Config.Security.KeycloakAdminPass, *appUserService)
 
-	err = CreateBotUser(ctx, &us)
+	err = CreateBotUser(ctx, realm, &us)
 	if err != nil {
 		log.Errorf("CreateBotUser: %s\n", err)
 	}
+
+	initialPass, err := CreateGenesisUser(ctx, realm, genesisUserFirstName, genesisUserLastName, genesisUserEmail, &us)
+	if err != nil {
+		log.Errorf("CreateGenesisUser: %s\n", err)
+	}
+
+	log.Warnf("Genesis user initial password: %s", initialPass)
 
 	os := organization.NewOrganizationService(orgDBClient, pubSub)
 	//---TODO: change up DB host
@@ -105,7 +117,7 @@ func ProvisionNewOrganization(
 		log.Errorf("CreateInitialTemplates: %s\n", err)
 	}
 
-	err = SetOrgProvisioned(ctx, db, name)
+	err = SetOrgProvisioned(ctx, db, urlKey)
 	if err != nil {
 		log.Errorf("SetOrgProvisioned: %s\n", err)
 	}
@@ -145,7 +157,7 @@ func dropOrgDatabase(
 
 	newDBCreds := GetDBCredsFromName(name)
 
-	// 	var dropDatabaseSQL = `DROP DATABASE %s WITH(force);`
+	// var dropDatabaseSQL = `DROP DATABASE %s WITH(force);`
 	// var revokeTablePrivligesDatabaseSQL = `REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM %s;`
 	// var revokeSchemaPrivligesDatabaseSQL = `REVOKE USAGE ON SCHEMA public FROM %s;`
 	// var dropDatabaseUserSQL = `DROP USER %s;`
@@ -284,10 +296,9 @@ func getOrgIDFromName(name string) string {
 func SetOrgProvisioned(
 	ctx context.Context,
 	db *pgxpool.Pool,
-	name string) error {
+	orgID string) error {
 	opUser := "test:bot"
 
-	orgID := getOrgIDFromName(name)
 	sql := setProvisionedCompleteSQL
 	return postgres.Exec(ctx, db, sql, opUser, orgID)
 }
@@ -353,6 +364,7 @@ func CreateDefaultOrg(
 // CreateBotUser create the bot user account for a csPlanner instance
 func CreateBotUser(
 	ctx context.Context,
+	realm string,
 	userService *auth.IAMAdminService) error {
 
 	botUser := appuser.Appuser{
@@ -367,7 +379,7 @@ func CreateBotUser(
 		ProfileImage:    "/aibot.jpg",
 	}
 
-	_, err := userService.CreateUser(ctx, &botUser)
+	_, err := userService.CreateUser(ctx, realm, &botUser)
 	if err != nil {
 		log.Errorf("error creating user: %v", err)
 		return err
@@ -376,15 +388,47 @@ func CreateBotUser(
 	return nil
 }
 
+func CreateGenesisUser(
+	ctx context.Context,
+	realm string,
+	firstName string,
+	lastName string,
+	email string,
+	userService *auth.IAMAdminService) (string, error) {
+
+	initialPass := utils.GenerateBase64UUID()
+
+	botUser := appuser.Appuser{
+		ControlFields: common.ControlFields{
+			ID: fmt.Sprintf("user:%s", utils.GenerateBase64UUID()),
+		},
+		Email:           email,
+		FirstName:       firstName,
+		LastName:        lastName,
+		Password:        initialPass,
+		ConfirmPassword: initialPass,
+		ProfileImage:    "",
+	}
+
+	_, err := userService.CreateUser(ctx, realm, &botUser)
+	if err != nil {
+		log.Errorf("error creating genesis user: %v", err)
+		return initialPass, err
+	}
+
+	return initialPass, nil
+}
+
 // CreateInitialLists create all of the required list records needed for csPlanner
 func CreateInitialLists(
 	ctx context.Context,
 	listService *list.ListService) error {
 
 	existingList, err := listService.GetList(ctx, list.ListNameSkills)
-	if existingList == nil {
+	if err != nil {
 		log.Errorf("Error getting skills list: %v", err)
-
+	}
+	if existingList == nil {
 		ur, err := listService.CreateList(ctx, skillsList)
 		if err != nil {
 			log.Errorf("Error creating skills list: %v", err)
@@ -396,9 +440,10 @@ func CreateInitialLists(
 	}
 
 	existingList, err = listService.GetList(ctx, list.ListNameFundingSource)
-	if existingList == nil {
+	if err != nil {
 		log.Errorf("Error getting funding source list: %v", err)
-
+	}
+	if existingList == nil {
 		ur, err := listService.CreateList(ctx, fundingSourceList)
 		if err != nil {
 			log.Errorf("Error creating funding source list: %v", err)
@@ -410,9 +455,10 @@ func CreateInitialLists(
 	}
 
 	existingList, err = listService.GetList(ctx, list.ListNameValueCategory)
-	if existingList == nil {
+	if err != nil {
 		log.Errorf("Error getting value category list: %v", err)
-
+	}
+	if existingList == nil {
 		ur, err := listService.CreateList(ctx, valueCategoryList)
 		if err != nil {
 			log.Errorf("Error creating value category list: %v", err)

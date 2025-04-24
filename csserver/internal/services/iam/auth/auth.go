@@ -9,17 +9,21 @@ import (
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/golang-jwt/jwt/v5"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type AuthCredentials struct {
 	Token    string
 	Username string
 	Password string
+	Realm    string
 }
 
 type AuthResult struct {
 	Success      bool
 	Token        string
+	Realm        string
 	RefreshToken string
 	User         appuser.Appuser
 	Claims       interface{}
@@ -30,7 +34,6 @@ type AuthService struct {
 	KCClient       *gocloak.GoCloak
 	KCClientID     string
 	KCClientSecret string
-	KCRealm        string
 	PubSub         events.PubSubProvider
 }
 
@@ -38,26 +41,24 @@ type AuthService struct {
 func NewAuthService(client *gocloak.GoCloak,
 	PubSubProvider events.PubSubProvider,
 	clientID string,
-	clientSecret string,
-	realm string) *AuthService {
+	clientSecret string) *AuthService {
 	return &AuthService{
 		KCClient:       client,
 		KCClientID:     clientID,
 		KCClientSecret: clientSecret,
-		KCRealm:        realm,
 		PubSub:         PubSubProvider,
 	}
 }
 
 // ValidateToken returns a valid result if a token is active
-func (s *AuthService) ValidateToken(ctx context.Context, token string) (AuthResult, error) {
-	rptResult, err := s.KCClient.RetrospectToken(ctx, token, s.KCClientID, s.KCClientSecret, s.KCRealm)
+func (s *AuthService) ValidateToken(ctx context.Context, realm string, token string) (AuthResult, error) {
+	rptResult, err := s.KCClient.RetrospectToken(ctx, token, s.KCClientID, s.KCClientSecret, realm)
 	if err != nil {
 		return NewFailingAuthResult(token, err), err
 	}
 
 	if rptResult.Active != nil && *rptResult.Active {
-		ret := s.NewSuccessAuthResult(ctx, token, "")
+		ret := s.NewSuccessAuthResult(ctx, realm, token, "")
 
 		return ret, nil
 	}
@@ -67,31 +68,31 @@ func (s *AuthService) ValidateToken(ctx context.Context, token string) (AuthResu
 }
 
 // RefreshToken issue an updated authToken using the passed in refresh token
-func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (AuthResult, error) {
-	newAuthToken, err := s.KCClient.RefreshToken(ctx, refreshToken, s.KCClientID, s.KCClientSecret, s.KCRealm)
+func (s *AuthService) RefreshToken(ctx context.Context, realm string, refreshToken string) (AuthResult, error) {
+	newAuthToken, err := s.KCClient.RefreshToken(ctx, refreshToken, s.KCClientID, s.KCClientSecret, realm)
 	if err != nil {
 		return NewFailingAuthResult(refreshToken, err), err
 	}
 
-	return s.NewSuccessAuthResult(ctx, newAuthToken.AccessToken, newAuthToken.RefreshToken), nil
+	return s.NewSuccessAuthResult(ctx, realm, newAuthToken.AccessToken, newAuthToken.RefreshToken), nil
 }
 
 // Signout issue a signout command to the auth server which will invalidate the refresh token
-func (s *AuthService) Signout(ctx context.Context, refreshToken string) error {
-	return s.KCClient.Logout(ctx, s.KCClientID, s.KCClientSecret, s.KCRealm, refreshToken)
+func (s *AuthService) Signout(ctx context.Context, realm string, refreshToken string) error {
+	return s.KCClient.Logout(ctx, s.KCClientID, s.KCClientSecret, realm, refreshToken)
 }
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
-	// log.Warnf("CREDS: %v", creds)
-	// log.Warnf("ClientID: %v", s.KCClientID)
-	// log.Warnf("Client Secret: %v", s.KCClientSecret)
-	// log.Warnf("Realm: %v", s.KCRealm)
+	log.Warnf("CREDS: %v", creds)
+	log.Warnf("ClientID: %v", s.KCClientID)
+	log.Warnf("Client Secret: %v", s.KCClientSecret)
+	log.Warnf("Realm: %v", creds.Realm)
 
 	token, err := s.KCClient.Login(ctx,
 		s.KCClientID,
 		s.KCClientSecret,
-		s.KCRealm,
+		creds.Realm,
 		creds.Username,
 		creds.Password)
 
@@ -99,12 +100,12 @@ func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (
 		return NewFailingAuthResult("", err), err
 	}
 
-	return s.NewSuccessAuthResult(ctx, token.AccessToken, token.RefreshToken), nil
+	return s.NewSuccessAuthResult(ctx, creds.Realm, token.AccessToken, token.RefreshToken), nil
 }
 
 // NewSuccessAuthResult return a new AuthResult with a success flag set to true and the given token
-func (s *AuthService) NewSuccessAuthResult(ctx context.Context, token string, refreshToken string) AuthResult {
-	_, claims, err := s.KCClient.DecodeAccessToken(ctx, token, s.KCRealm)
+func (s *AuthService) NewSuccessAuthResult(ctx context.Context, realm string, token string, refreshToken string) AuthResult {
+	_, claims, err := s.KCClient.DecodeAccessToken(ctx, token, realm)
 	if err != nil {
 
 	}
@@ -112,6 +113,7 @@ func (s *AuthService) NewSuccessAuthResult(ctx context.Context, token string, re
 	return AuthResult{
 		Success:      true,
 		Token:        token,
+		Realm:        realm,
 		RefreshToken: refreshToken,
 		User: appuser.Appuser{
 			Email:        GetKeyFromClaims(*claims, "email").(string),

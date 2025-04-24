@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"csserver/internal/appserv/factory"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/services/iam/auth"
 	"encoding/json"
 	"fmt"
@@ -25,11 +26,19 @@ func (h LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	as := factory.GetAuthService(ctx)
 	var creds auth.AuthCredentials
 
-	err := json.NewDecoder(r.Body).Decode(&creds)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
 	if err != nil {
 		log.Error(err)
 	}
 
+	err = json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		log.Error(err)
+	}
+
+	creds.Realm = orgInfo.Info.Org.Realm
+
+	log.Warnf("Credentials : %v", creds)
 	resp, err := as.Authenticate(ctx, creds)
 	if err != nil {
 		log.Error(err)
@@ -71,8 +80,13 @@ func (h SignoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 	}
 
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Error(err)
+	}
+
 	status := `{"success": true }`
-	err = as.Signout(ctx, args.RefreshToken)
+	err = as.Signout(ctx, orgInfo.Info.Org.Realm, args.RefreshToken)
 	if err == nil {
 		http.SetCookie(w, GetAuthCookie("accessToken", ""))
 		http.SetCookie(w, GetAuthCookie("refreshToken", ""))
@@ -104,7 +118,12 @@ func (h RefreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 	}
 
-	resp, err := as.RefreshToken(ctx, args.RefreshToken)
+	orgInfo, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Error(err)
+	}
+
+	resp, err := as.RefreshToken(ctx, orgInfo.Info.Org.Realm, args.RefreshToken)
 	if err != nil {
 		log.Error(err)
 	}
