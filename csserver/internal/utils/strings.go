@@ -18,3 +18,15 @@ func GetTruncatedText(input string, max int) string {
 
 	return input
 }
+
+// CoalesceString return the first non-nil and non-empty string in the param array
+func CoalesceString(args ...*string) string {
+	for _, a := range args {
+		res := *a
+		if len(res) > 0 {
+			return res
+		}
+	}
+
+	return ""
+}

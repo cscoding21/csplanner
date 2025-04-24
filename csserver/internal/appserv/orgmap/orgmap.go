@@ -5,6 +5,7 @@ import (
 	"csserver/internal/config"
 	"csserver/internal/providers/postgres"
 	"csserver/internal/services/organization"
+	"csserver/internal/utils"
 	"fmt"
 	"sync"
 
@@ -30,9 +31,13 @@ func GetSaaSOrg(ctx context.Context) (*OrgResources, error) {
 	}
 
 	urlKey := config.GetOrgUrlKeyFromContext(ctx)
+	if len(urlKey) == 0 {
+		log.Errorf("GetOrgUrlKeyFromContext: no org key found in context")
+	}
 
 	outOrg, ok := orgmap[urlKey]
 	if ok {
+		log.Infof("returning org map from cache: %s", urlKey)
 		return outOrg, nil
 	}
 
@@ -42,8 +47,9 @@ func GetSaaSOrg(ctx context.Context) (*OrgResources, error) {
 		return nil, err
 	}
 
+	host := utils.CoalesceString(&so.Org.DBHost, &config.Config.Database.Host)
 	orgDBCreds := config.DatabaseConfig{
-		Host:     so.Org.DBHost,
+		Host:     host,
 		Database: so.Org.Database,
 		Port:     config.Config.Database.Port,
 		User:     config.Config.Database.User,

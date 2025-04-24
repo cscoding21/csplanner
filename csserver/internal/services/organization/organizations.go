@@ -140,7 +140,7 @@ func getSaaSOrg(ctx context.Context, db *pgxpool.Pool, key string) (*SaaSOrg, er
 	if len(output) > 0 {
 		org = output[0]
 	} else {
-		return &org, fmt.Errorf("organization %s not found", key)
+		return &org, fmt.Errorf("getSaaSOrg: organization %s not found", key)
 	}
 
 	return &org, nil

@@ -211,13 +211,13 @@ func (r *queryResolver) FindAllProjectTemplates(ctx context.Context) (*idl.Proje
 // GetOrganization is the resolver for the getOrganization field.
 func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization, error) {
 	service := factory.GetOrganizationService(ctx)
-	org, err := service.GetOrganizationByID(ctx, "organization:default")
+	org, err := service.GetDefaultOrganization(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	out := csmap.OrganizationOrganizationToIdl(org.Data)
-	csmap.AugmentOrganization(&out)
+	out := csmap.OrganizationOrganizationToIdl(*org)
+	csmap.AugmentOrganization(ctx, &out)
 	return &out, nil
 }
 
@@ -242,7 +242,7 @@ func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error
 		csmap.AugmentSchedule(ctx, out.Schedule[i])
 	}
 
-	csmap.AugmentPortfolio(&out, nil)
+	csmap.AugmentPortfolio(ctx, &out, nil)
 
 	return &out, nil
 }
@@ -273,7 +273,7 @@ func (r *queryResolver) GetPortfolioForResource(ctx context.Context, resourceID 
 		csmap.AugmentSchedule(ctx, out.Schedule[i])
 	}
 
-	csmap.AugmentPortfolio(&out, &resourceID)
+	csmap.AugmentPortfolio(ctx, &out, &resourceID)
 
 	return &out, nil
 }

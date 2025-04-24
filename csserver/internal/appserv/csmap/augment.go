@@ -39,15 +39,15 @@ func AugmentCommentSlice(comments *[]*idl.CommentEnvelope) {
 	}
 }
 
-func AugmentOrganization(org *idl.Organization) {
+func AugmentOrganization(ctx context.Context, org *idl.Organization) {
 	if org == nil {
 		return
 	}
 
-	templates := findTemplates()
-	roles := findRoles()
-	resources := findResources()
-	lists := findLists()
+	templates := findTemplates(ctx)
+	roles := findRoles(ctx)
+	resources := findResources(ctx)
+	lists := findLists(ctx)
 
 	sl := getListById(*lists, list.ListNameSkills)
 	fsl := getListById(*lists, list.ListNameFundingSource)
@@ -72,13 +72,13 @@ func AugmentOrganization(org *idl.Organization) {
 }
 
 // AugmentPortfolio enhance calculate and caches properties of a portfolio
-func AugmentPortfolio(port *idl.Portfolio, resourceID *string) {
+func AugmentPortfolio(ctx context.Context, port *idl.Portfolio, resourceID *string) {
 	//---exit conditions
 	if port == nil || port.Begin == nil || port.End == nil {
 		return
 	}
 
-	resourceList := findResources()
+	resourceList := findResources(ctx)
 
 	orgCapacity := 0
 
@@ -171,7 +171,7 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 	}
 
 	skillList := getSkills()
-	resourceList := findResources()
+	resourceList := findResources(ctx)
 
 	proj.ProjectBasics.Owner = getUserByEmail(ctx, model.ProjectBasics.OwnerID)
 
@@ -277,7 +277,7 @@ func AugmentResource(ctx context.Context, res *idl.Resource) {
 	}
 
 	if res.RoleID != nil {
-		res.Role = getRoleById(*res.RoleID)
+		res.Role = getRoleById(ctx, *res.RoleID)
 	}
 
 	if len(res.Skills) == 0 {
@@ -321,8 +321,8 @@ func AugmentSchedule(ctx context.Context, schedule *idl.Schedule) {
 		return
 	}
 
-	resourceList := findResources()
-	projectList := findProjects()
+	resourceList := findResources(ctx)
+	projectList := findProjects(ctx)
 
 	orgCapacity := 0
 

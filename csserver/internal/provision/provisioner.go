@@ -100,7 +100,7 @@ func ProvisionNewOrganization(
 	os := organization.NewOrganizationService(orgDBClient, pubSub)
 	//---TODO: change up DB host
 	err = CreateDefaultOrg(ctx,
-		name, urlKey, orgKey, "localhost", orgDBCreds.Database, os)
+		name, urlKey, orgKey, "", orgDBCreds.Database, os)
 	if err != nil {
 		log.Errorf("CreateDefaultOrg: %s\n", err)
 	}

@@ -129,8 +129,8 @@ func getResourceById(ctx context.Context, resources []resource.Resource, id stri
 	return nil
 }
 
-func getRoleById(id string) *idl.Role {
-	roles := findRoles()
+func getRoleById(ctx context.Context, id string) *idl.Role {
+	roles := findRoles(ctx)
 	for _, p := range *roles {
 		if p.ID == id {
 			out := RoleResourceToIdl(p)
@@ -156,7 +156,7 @@ func getProjectById(ctx context.Context, projects []project.Project, id string) 
 	return nil
 }
 
-func findProjects() *[]project.Project {
+func findProjects(ctx context.Context) *[]project.Project {
 	if _projectCache != nil {
 		return _projectCache
 	}
@@ -164,7 +164,6 @@ func findProjects() *[]project.Project {
 	_projectCacheLock.Lock()
 	defer _projectCacheLock.Unlock()
 
-	ctx := context.Background()
 	rs := factory.GetProjectService(ctx)
 
 	projects, err := rs.FindAllProjects(ctx)
@@ -178,7 +177,7 @@ func findProjects() *[]project.Project {
 	return _projectCache
 }
 
-func findResources() *[]resource.Resource {
+func findResources(ctx context.Context) *[]resource.Resource {
 	if _resourceCache != nil {
 		return _resourceCache
 	}
@@ -186,7 +185,6 @@ func findResources() *[]resource.Resource {
 	_resourceCacheLock.Lock()
 	defer _resourceCacheLock.Unlock()
 
-	ctx := context.Background()
 	rs := factory.GetResourceService(ctx)
 
 	resources, err := rs.FindAllResources(ctx)
@@ -226,7 +224,7 @@ func findUsers(ctx context.Context) *[]appuser.Appuser {
 	return _userCache
 }
 
-func findLists() *[]list.List {
+func findLists(ctx context.Context) *[]list.List {
 	if _listCache != nil {
 		return _listCache
 	}
@@ -234,7 +232,6 @@ func findLists() *[]list.List {
 	_listCacheLock.Lock()
 	defer _listCacheLock.Unlock()
 
-	ctx := context.Background()
 	us := factory.GetListService(ctx)
 
 	lists, err := us.FindAllLists(ctx)
@@ -248,7 +245,7 @@ func findLists() *[]list.List {
 	return _listCache
 }
 
-func findRoles() *[]resource.Role {
+func findRoles(ctx context.Context) *[]resource.Role {
 	if _roleCache != nil {
 		return _roleCache
 	}
@@ -256,7 +253,6 @@ func findRoles() *[]resource.Role {
 	_roleCacheLock.Lock()
 	defer _roleCacheLock.Unlock()
 
-	ctx := context.Background()
 	us := factory.GetResourceService(ctx)
 
 	roles, err := us.FindAllRoles(ctx)
@@ -270,7 +266,7 @@ func findRoles() *[]resource.Role {
 	return _roleCache
 }
 
-func findTemplates() *[]projecttemplate.Projecttemplate {
+func findTemplates(ctx context.Context) *[]projecttemplate.Projecttemplate {
 	if _templateCache != nil {
 		return _templateCache
 	}
@@ -278,7 +274,6 @@ func findTemplates() *[]projecttemplate.Projecttemplate {
 	_templateCacheLock.Lock()
 	defer _templateCacheLock.Unlock()
 
-	ctx := context.Background()
 	us := factory.GetProjectTemplateService(ctx)
 
 	templates, err := us.FindAllProjecttemplates(ctx)
