@@ -20,7 +20,7 @@
 	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import { PageMessages, CSNavItem, NotificationList } from '$lib/components';
+	import { PageMessages, CSNavItem, NotificationList, OrgStateChecker } from '$lib/components';
 	import { isDarkMode } from '$lib/utils/darkmode';
 	import type { Organization } from '$lib/graphql/generated/sdk';
 	import { getOrganization } from '$lib/services/organization';
@@ -61,6 +61,8 @@
 </script>
 
 <div class="w-full h-screen">
+
+	<OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
 <Navbar fluid={true}>
 	<NavBrand href="/">
 		{#if showDarkModeLogo}
@@ -123,6 +125,7 @@
 		</ul>
 	</div>	
 </Navbar>
+	</OrgStateChecker>	
 
 <div>
 	{@render children()}

@@ -10,6 +10,9 @@
 	import { ArrowLeftOutline, ArrowRightOutline } from "flowbite-svelte-icons";
 	import OrgSettings from "./setup/OrgSettings.svelte";
 	import Skills from "./setup/Skills.svelte";
+	import ValueCats from "./setup/valueCats.svelte";
+	import FundingSources from "./setup/FundingSources.svelte";
+	import Roles from "./setup/Roles.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -69,9 +72,11 @@
         {/if}
 
         {#snippet elseRender()}
-            <h1>Setup wizard</h1>
             <SetupWizard {org} bind:step={currentStep} />
 
+            <div class="p-4 grid grid-cols-4 gap-4">
+                <div></div>
+                <div class="col-span-2 p-6">
             {#if currentStep == 1}
                 <Welcome onDone={next} />
             {:else if currentStep == 2}
@@ -79,23 +84,26 @@
             {:else if currentStep == 3}
                 <Skills onDone={next} />
             {:else if currentStep == 4}
-                <b>4</b>
+                <ValueCats onDone={next} />
             {:else if currentStep == 5}
-                <b>5</b>
+                <FundingSources onDone={next} />
             {:else if currentStep == 6}
-                <b>6</b>
+                <Roles onDone={next} />
             {:else if currentStep == 7}
                 <b>7</b>
             {/if}
+            <div></div>
+                </div>
+            </div>
         
         
             
-            <div class="mt-4">
+            <!-- <div class="mt-4">
                 <ButtonGroup>
                     <Button onclick={() => { --currentStep }} disabled={currentStep == 1}><ArrowLeftOutline /> Previous</Button>
                     <Button onclick={() => { ++currentStep }} disabled={currentStep == 7}>Next <ArrowRightOutline /></Button>
                 </ButtonGroup>
-            </div>
+            </div> -->
         {/snippet}
     </OrgStateChecker>
 
