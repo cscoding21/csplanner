@@ -2,6 +2,9 @@
 # See https://www.keycloak.org/server/configuration
 # See https://www.keycloak.org/server/all-config
 # https://github.com/codecentric/helm-charts/blob/master/charts/keycloakx/values.yaml
+image:
+  tag: "26.2.1"
+
 command:
   - "/opt/keycloak/bin/kc.sh"
   - "--verbose"

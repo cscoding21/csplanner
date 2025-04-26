@@ -13,6 +13,7 @@
 	import ValueCats from "./setup/valueCats.svelte";
 	import FundingSources from "./setup/FundingSources.svelte";
 	import Roles from "./setup/Roles.svelte";
+	import Resources from "./setup/Resources.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -54,8 +55,6 @@
 </script>
 
 <div class="p-4">
-<PageHeading title={"Welcome " + user?.firstName} />
-
 <CSSection>
     {#await loadPage()}
         Loading...
@@ -78,7 +77,7 @@
                 <div></div>
                 <div class="col-span-2 p-6">
             {#if currentStep == 1}
-                <Welcome onDone={next} />
+                <Welcome onDone={next} {user} />
             {:else if currentStep == 2}
                 <OrgSettings onDone={next} />
             {:else if currentStep == 3}
@@ -90,7 +89,7 @@
             {:else if currentStep == 6}
                 <Roles onDone={next} />
             {:else if currentStep == 7}
-                <b>7</b>
+                <Resources onDone={next} />
             {/if}
             <div></div>
                 </div>

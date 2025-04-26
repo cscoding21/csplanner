@@ -130,20 +130,12 @@
 <p class="py-2 text-gray-200">
     Skills define the discrete capabilities needed to execute your organization's projects.
     The building block of a project is a task which maps to a single skill.  Allocating resources to 
-    a task requires a matching skill by the resource.        
-</p>
-<p class="py-2 text-gray-200">Skills can be added or modified at any time on the <a class="text-orange-300" href="/settings#lists">List</a> page.  To get started, we'll get you set up with a broadly scoped
-    set of skills.
+    a task requires a matching skill by the resource.  Skills can be updated at any time.
 </p>
 </section>
 
-
-<SectionSubHeading >Add Your Skills</SectionSubHeading>
-<div class="mb-4">
-    <Input bind:value={newSkill} onclick={addSkill} onkeypress={checkEnter} placeholder="Type a skill name. <enter> to add" />
-</div>
-
 <SectionSubHeading>Common Skill Groups</SectionSubHeading>
+<small>Here are some common groups of skills.</small>
 <div class="mb-4">
     <Button id="saasSkillButton" class="m-2" color="alternative" pill onclick={() => addSkillGroup(saasSkillGroup)}>SaaS</Button>
     <Popover triggeredBy="#saasSkillButton" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
@@ -182,6 +174,11 @@
         </div>
     </Popover>
 
+</div>
+
+<SectionSubHeading >Add Your Skills</SectionSubHeading>
+<div class="mb-4">
+    <Input bind:value={newSkill} onclick={addSkill} onkeypress={checkEnter} placeholder="Type a skill name. <enter> to add" />
 </div>
 
 <SectionSubHeading>Your Skills</SectionSubHeading>

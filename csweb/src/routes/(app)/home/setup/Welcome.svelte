@@ -1,15 +1,17 @@
 <script lang="ts">
+	import type { User } from "$lib/graphql/generated/sdk";
 	import { Button, P } from "flowbite-svelte";
 	import { CheckOutline } from "flowbite-svelte-icons";
 
     interface Props {
         onDone: Function
+        user?: User
     }
-    let { onDone }:Props = $props()
+    let { onDone, user }:Props = $props()
 </script>
 
 
-<h2 class="text-xl text-center text-gray-50 font-semibold">Welcome to csPlanner</h2>
+<h2 class="text-xl text-center text-gray-50 font-semibold">Howdy, {user?.firstName}, Welcome to csPlanner</h2>
 <p class="py-6 text-gray-200">
     In order to get the optimal planning outcomes, we'll need to gather some data about your organization,
     as well as introduce you to some key concepts within csPlanner.
@@ -38,7 +40,7 @@
 
     <li>
         <h3 class="text-gray-200"><CheckOutline class="float-left mr-2 text-green-400" /> Add Roles</h3>
-        <span>A bit of up-front work organizaing skills and costs into rolews can save time down the road.</span>
+        <span>A bit of up-front work organizaing skills and costs into roles can save time down the road.</span>
     </li>
 
     <li>
