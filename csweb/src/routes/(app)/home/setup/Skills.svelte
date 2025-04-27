@@ -137,43 +137,9 @@
 <SectionSubHeading>Common Skill Groups</SectionSubHeading>
 <small>Here are some common groups of skills.</small>
 <div class="mb-4">
-    <Button id="saasSkillButton" class="m-2" color="alternative" pill onclick={() => addSkillGroup(saasSkillGroup)}>SaaS</Button>
-    <Popover triggeredBy="#saasSkillButton" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-        <div class="p-3 space-y-2">
-            Add the following skills to your stack:
-            <ul class="list-disc pl-4">
-            {#each saasSkillGroup as sk}
-                <li>{sk}</li>
-            {/each}
-            </ul>
-        </div>
-    </Popover>
-
-
-    <Button id="projectSkillButton" class="m-2" color="alternative" pill onclick={() => addSkillGroup(projectSkillGroup)}>Project Management</Button>
-    <Popover triggeredBy="#projectSkillButton" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-        <div class="p-3 space-y-2">
-            Add the following skills to your stack:
-            <ul class="list-disc pl-4">
-            {#each projectSkillGroup as sk}
-                <li>{sk}</li>
-            {/each}
-            </ul>
-        </div>
-    </Popover>
-
-    <Button id="autonomySkillGroup" class="m-2" color="alternative" pill onclick={() => addSkillGroup(autonomySkillGroup)}>Autonomy</Button>
-    <Popover triggeredBy="#autonomySkillGroup" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-        <div class="p-3 space-y-2">
-            Add the following skills to your stack:
-            <ul class="list-disc pl-4">
-            {#each autonomySkillGroup as sk}
-                <li>{sk}</li>
-            {/each}
-            </ul>
-        </div>
-    </Popover>
-
+    {@render skillGroup("SaaS", "saasSkillGroup", saasSkillGroup)}
+    {@render skillGroup("Product Management", "projectSkillGroup", projectSkillGroup)}
+    {@render skillGroup("Autonomy", "autonomySkillGroup", autonomySkillGroup)}
 </div>
 
 <SectionSubHeading >Add Your Skills</SectionSubHeading>
@@ -201,3 +167,18 @@
 <div class="mt-12 text-center">
 <Button onclick={saveList}>I'm done with skills for now.  Let's keep going! >></Button>
 </div>
+
+
+{#snippet skillGroup(name:string, id:string, group:any)}
+<Button id={id} class="m-2" color="alternative" pill onclick={() => addSkillGroup(group)}>{name}</Button>
+<Popover triggeredBy={"#" + id} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
+    <div class="p-3 space-y-2">
+        Add the following roles to your organization:
+        <ul class="list-disc pl-4">
+        {#each group as sk}
+            <li>{sk}</li>
+        {/each}
+        </ul>
+    </div>
+</Popover>
+{/snippet}

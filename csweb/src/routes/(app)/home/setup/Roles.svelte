@@ -15,34 +15,111 @@
     let { onDone }:Props = $props()
 
     let roleList:string[] = $state([])
-    let roleSkill:any = $state({name: "", hourlyRate: 0.0, skills: []})
+    let newRole:any = $state({name: "", hourlyRate: 0.0, skills: []})
 
-    const addRoleGroup = (rg:string[]) => {
+    const addRoleGroup = (rg:any[]) => {
         roleList = [...new Set([...roleList, ...rg])]
     }
 
-    const saasSkillGroup = [
-        "Backend Development",
-        "Frontend Development",
-        "Data Architecture",
-        "DevOps / SRE",
-        "Data Science"
+    const saasRoleGroup = [
+        {
+           name: "Full Stack Engineer",
+           hourlyRate: 140.0,
+           skills: [
+            "Golang",
+            "Database",
+            "JavaScript",
+            "TypeScript"
+            ]
+        },
+        {
+           name: "Web Developer",
+           hourlyRate: 100.0,
+           skills: [
+            "Svelte",
+            "CSS",
+            "JavaScript",
+            "HTML"
+            ]
+        },
+        {
+           name: "DevOps Engineer/SRE",
+           hourlyRate: 140.0,
+           skills: [
+            "Kubernetes",
+            "AWS",
+            "Keycloak"
+            ]
+        },
+        {
+           name: "Engineering Manager",
+           hourlyRate: 180.0,
+           skills: [
+            "Golang",
+            "JavaScript",
+            "Leadership",
+            "Agile"
+            ]
+        },
     ]
 
-    const projectSkillGroup = [
-        "Project Management",
-        "Business Analysis",
-        "Agile Development",
-        "Scrum",
-        "Kanban"
+    const projectRoleGroup = [
+        {
+           name: "Project Manager",
+           hourlyRate: 120.0,
+           skills: [
+            "Business Analysis",
+            "Communications"
+            ]
+        },
+        {
+           name: "Product Manager",
+           hourlyRate: 100.0,
+           skills: [
+            "Business Analysis",
+            "Product Development"
+            ]
+        },
+        {
+           name: "Product Owner",
+           hourlyRate: 110.0,
+           skills: [
+            "Scrum",
+            "Agile"
+            ]
+        },
+        {
+           name: "Product Designer",
+           hourlyRate: 130.0,
+           skills: [
+            "UI",
+            "UX",
+            "Product Design"
+            ]
+        },
     ]
 
-    const autonomySkillGroup = [
-        "State Estimation",
-        "Scene Understanding",
-        "C++",
-        "Mapping",
-        "Foundations"
+    const autonomyRoleGroup = [
+        {
+           name: "AI Engineer",
+           hourlyRate: 140.0,
+           skills: [
+            "Golang",
+            "Database",
+            "JavaScript",
+            "TypeScript"
+            ]
+        },
+        {
+           name: "Autonomy Engineering Manager",
+           hourlyRate: 200.0,
+           skills: [
+            "Svelte",
+            "CSS",
+            "JavaScript",
+            "HTML"
+            ]
+        },
     ]
 
 </script>
@@ -59,44 +136,25 @@
 </p>
 </section>
 
-<SectionSubHeading>Common Skill Groups</SectionSubHeading>
-<small>Here are some common groups of skills.</small>
+<SectionSubHeading>Common Roles in Organizations</SectionSubHeading>
+<small>Here are some common groups of roles.</small>
 <div class="mb-4">
-    <Button id="saasSkillButton" class="m-2" color="alternative" pill onclick={() => addRoleGroup(saasSkillGroup)}>SaaS</Button>
-    <Popover triggeredBy="#saasSkillButton" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-        <div class="p-3 space-y-2">
-            Add the following roles to your stack:
-            <ul class="list-disc pl-4">
-            {#each saasSkillGroup as r}
-                <li>{r}</li>
-            {/each}
-            </ul>
-        </div>
-    </Popover>
-
-
-    <Button id="projectSkillButton" class="m-2" color="alternative" pill onclick={() => addRoleGroup(projectSkillGroup)}>Project Management</Button>
-    <Popover triggeredBy="#projectSkillButton" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-        <div class="p-3 space-y-2">
-            Add the following skills to your stack:
-            <ul class="list-disc pl-4">
-            {#each projectSkillGroup as sk}
-                <li>{sk}</li>
-            {/each}
-            </ul>
-        </div>
-    </Popover>
-
-    <Button id="autonomySkillGroup" class="m-2" color="alternative" pill onclick={() => addRoleGroup(autonomySkillGroup)}>Autonomy</Button>
-    <Popover triggeredBy="#autonomySkillGroup" class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
-        <div class="p-3 space-y-2">
-            Add the following skills to your stack:
-            <ul class="list-disc pl-4">
-            {#each autonomySkillGroup as sk}
-                <li>{sk}</li>
-            {/each}
-            </ul>
-        </div>
-    </Popover>
-
+    {@render roleGroup("SaaS Engineering", "saasRoleGroup", saasRoleGroup)}
+    {@render roleGroup("Product Management", "projectRoleGroup", projectRoleGroup)}
+    {@render roleGroup("Autonomy", "autonomyRoleGroup", autonomyRoleGroup)}
 </div>
+
+
+{#snippet roleGroup(name:string, id:string, group:any)}
+<Button id={id} class="m-2" color="alternative" pill onclick={() => addRoleGroup(group)}>{name}</Button>
+<Popover triggeredBy={"#" + id} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
+    <div class="p-3 space-y-2">
+        Add the following roles to your organization:
+        <ul class="list-disc pl-4">
+        {#each group as role}
+            <li>{role.name}</li>
+        {/each}
+        </ul>
+    </div>
+</Popover>
+{/snippet}

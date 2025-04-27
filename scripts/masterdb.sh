@@ -87,7 +87,7 @@ INSERT INTO organization (
 ) VALUES (
     'organization:jeph', 
     'Jeph Test Org', 
-    'localhost', 
+    '', 
     'csp_jeph_test_org', 
     'localhost', 
     'jeph_test_org', 
