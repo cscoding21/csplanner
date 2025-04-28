@@ -75,7 +75,9 @@ testdata:
 ## db-reset: delete all records from the csplanner database
 .PHONY: db-reset
 db-reset:
-	./scripts/db-reset.sh
+	cd ./csserver/cmd/cstools && \
+	go install cstools.go && \
+	cstools cleardata;
 
 ## genall: run gql and csmap in succession
 .PHONY: genall

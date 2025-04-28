@@ -63,23 +63,43 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("testdata called")
-
 		ctx := config.NewContext()
 
 		err := setup.SetupTestData(ctx)
 		if err != nil {
-			log.Error(err)
+			panic(err)
 		} else {
-			log.Info("Test data generation complete")
+			fmt.Println("Test data generation complete")
 		}
 
+	},
+}
+
+var cleardataCmd = &cobra.Command{
+	Use:   "cleardata",
+	Short: "An operation that will delete all test data from the local organization database",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		ctx := config.NewContext()
+
+		err := setup.DeleteAllData(ctx)
+		if err != nil {
+			panic(err)
+		} else {
+			fmt.Println("Test data deletion complete")
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(genCmd)
 	rootCmd.AddCommand(testdataCmd)
+	rootCmd.AddCommand(cleardataCmd)
 
 	// Here you will define your flags and configuration settings.
 

@@ -23,6 +23,7 @@ fragment scheduleFragment on Schedule {
         resourceID
         hoursSpent
         requiredSkillID
+        taskEndDate
         resource {
           ...resourceFragment
         }

@@ -335,6 +335,7 @@ type ComplexityRoot struct {
 		RequiredSkillID func(childComplexity int) int
 		Resource        func(childComplexity int) int
 		ResourceID      func(childComplexity int) int
+		TaskEndDate     func(childComplexity int) int
 		TaskID          func(childComplexity int) int
 		TaskName        func(childComplexity int) int
 	}
@@ -2193,6 +2194,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectActivity.ResourceID(childComplexity), true
+
+	case "ProjectActivity.taskEndDate":
+		if e.complexity.ProjectActivity.TaskEndDate == nil {
+			break
+		}
+
+		return e.complexity.ProjectActivity.TaskEndDate(childComplexity), true
 
 	case "ProjectActivity.taskID":
 		if e.complexity.ProjectActivity.TaskID == nil {
@@ -4510,6 +4518,7 @@ type ProjectActivity {
     resource: Resource
 	hoursSpent: Int!
     requiredSkillID: String!
+    taskEndDate: Time
 }
 
 type ScheduleException {
@@ -15533,6 +15542,47 @@ func (ec *executionContext) fieldContext_ProjectActivity_requiredSkillID(_ conte
 	return fc, nil
 }
 
+func (ec *executionContext) _ProjectActivity_taskEndDate(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectActivity_taskEndDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaskEndDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectActivity_taskEndDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectActivity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectActivityWeek_weekNumber(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivityWeek) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectActivityWeek_weekNumber(ctx, field)
 	if err != nil {
@@ -15809,6 +15859,8 @@ func (ec *executionContext) fieldContext_ProjectActivityWeek_activities(_ contex
 				return ec.fieldContext_ProjectActivity_hoursSpent(ctx, field)
 			case "requiredSkillID":
 				return ec.fieldContext_ProjectActivity_requiredSkillID(ctx, field)
+			case "taskEndDate":
+				return ec.fieldContext_ProjectActivity_taskEndDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectActivity", field.Name)
 		},
@@ -22683,6 +22735,8 @@ func (ec *executionContext) fieldContext_ResourceAllocationGrid_weekActivities(_
 				return ec.fieldContext_ProjectActivity_hoursSpent(ctx, field)
 			case "requiredSkillID":
 				return ec.fieldContext_ProjectActivity_requiredSkillID(ctx, field)
+			case "taskEndDate":
+				return ec.fieldContext_ProjectActivity_taskEndDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectActivity", field.Name)
 		},
@@ -30527,6 +30581,8 @@ func (ec *executionContext) _ProjectActivity(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "taskEndDate":
+			out.Values[i] = ec._ProjectActivity_taskEndDate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

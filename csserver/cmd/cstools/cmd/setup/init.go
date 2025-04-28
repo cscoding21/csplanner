@@ -3,14 +3,27 @@ package setup
 import (
 	"context"
 	"csserver/internal/appserv/factory"
+	"csserver/internal/appserv/orgmap"
 	"csserver/internal/config"
 	"errors"
+
+	log "github.com/sirupsen/logrus"
 )
 
-func SetupTestData(ctx context.Context) error {
-	ctx = GetBotContext(ctx)
+const TEST_KEY = "localhost"
 
-	err := errors.Join(nil, CreateTestUsers(ctx))
+func SetupTestData(ctx context.Context) error {
+	ctx = context.WithValue(ctx, config.OrgUrlKey, TEST_KEY)
+
+	ctx = GetBotContext(ctx)
+	org, err := orgmap.GetSaaSOrg(ctx)
+	if err != nil {
+		log.Fatalf("ERROR setting up test org: %s\n", err)
+	} else {
+		log.Infof("Setting up data for test org %s", org.Info.Org.Name)
+	}
+
+	err = errors.Join(nil, CreateTestUsers(ctx))
 	err = errors.Join(err, CreateDefaultOrganization(ctx))
 	err = errors.Join(err, CreateTestRoles(ctx))
 	err = errors.Join(err, CreateTestLists(ctx))

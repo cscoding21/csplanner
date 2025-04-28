@@ -275,16 +275,17 @@ type Project struct {
 }
 
 type ProjectActivity struct {
-	ProjectID       string    `json:"projectID"`
-	Project         *Project  `json:"project,omitempty"`
-	MilestoneID     string    `json:"milestoneID"`
-	MilestoneName   string    `json:"milestoneName"`
-	TaskID          string    `json:"taskID"`
-	TaskName        string    `json:"taskName"`
-	ResourceID      string    `json:"resourceID"`
-	Resource        *Resource `json:"resource,omitempty"`
-	HoursSpent      int       `json:"hoursSpent"`
-	RequiredSkillID string    `json:"requiredSkillID"`
+	ProjectID       string     `json:"projectID"`
+	Project         *Project   `json:"project,omitempty"`
+	MilestoneID     string     `json:"milestoneID"`
+	MilestoneName   string     `json:"milestoneName"`
+	TaskID          string     `json:"taskID"`
+	TaskName        string     `json:"taskName"`
+	ResourceID      string     `json:"resourceID"`
+	Resource        *Resource  `json:"resource,omitempty"`
+	HoursSpent      int        `json:"hoursSpent"`
+	RequiredSkillID string     `json:"requiredSkillID"`
+	TaskEndDate     *time.Time `json:"taskEndDate,omitempty"`
 }
 
 type ProjectActivityWeek struct {

@@ -297,7 +297,7 @@ func CreateTestProjects(ctx context.Context) error {
 		log.Errorf("Set Project Status Error (YTS): %s", err)
 	}
 
-	otherProjects := findPortfolioProjects()
+	otherProjects := findPortfolioProjects(ctx)
 
 	for _, otherProject := range otherProjects {
 		st := otherProject.ProjectStatusBlock.Status
@@ -317,7 +317,7 @@ func CreateTestProjects(ctx context.Context) error {
 	return nil
 }
 
-func findPortfolioProjects() []project.Project {
+func findPortfolioProjects(ctx context.Context) []project.Project {
 	outProjects := []project.Project{}
 
 	type PT struct {
@@ -342,7 +342,7 @@ func findPortfolioProjects() []project.Project {
 	}
 
 	for i, p := range names {
-		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(p.name, p.status, (i + 2)))
+		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(ctx, p.name, p.status, (i + 2)))
 
 		if p.startDate != nil {
 			proj.ProjectBasics.StartDate = p.startDate
@@ -360,9 +360,7 @@ func findPortfolioProjects() []project.Project {
 	return outProjects
 }
 
-func GetVideoProjectTemplate(name string, status projectstatus.ProjectState, id int) project.Project {
-	ctx := context.Background()
-
+func GetVideoProjectTemplate(ctx context.Context, name string, status projectstatus.ProjectState, id int) project.Project {
 	rs := factory.GetResourceService(ctx)
 	us := factory.GetAppuserService(ctx)
 

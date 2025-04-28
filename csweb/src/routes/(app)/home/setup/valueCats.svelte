@@ -70,7 +70,7 @@
 		updateList(list).then(res => {
 			if (res && res.status?.success) {
 				addToast({
-					message: 'List updated successfully',
+					message: 'Value categories updated successfully',
 					dismissible: true,
 					type: 'success'
 				});
@@ -78,7 +78,7 @@
                 callIf(onDone)
 			} else {
 				addToast({
-					message: 'Error updating list: ' + res.status?.message,
+					message: 'Error updating value categories: ' + res.status?.message,
 					dismissible: true,
 					type: 'error'
 				});

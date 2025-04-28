@@ -4101,6 +4101,18 @@
             "deprecationReason": null
           },
           {
+            "name": "taskEndDate",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Time",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "taskID",
             "description": null,
             "args": [],

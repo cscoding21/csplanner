@@ -70,7 +70,7 @@
 		updateList(list).then(res => {
 			if (res && res.status?.success) {
 				addToast({
-					message: 'List updated successfully',
+					message: 'Funding sources updated successfully',
 					dismissible: true,
 					type: 'success'
 				});
@@ -78,7 +78,7 @@
                 callIf(onDone)
 			} else {
 				addToast({
-					message: 'Error updating list: ' + res.status?.message,
+					message: 'Error updating funding sources: ' + res.status?.message,
 					dismissible: true,
 					type: 'error'
 				});
@@ -109,10 +109,10 @@
 
 <SectionSubHeading >Add Your Funding Sources</SectionSubHeading>
 <div class="mb-4">
-    <Input bind:value={newFS} onclick={addFS} onkeypress={checkEnter} placeholder="Type a value category name. <enter> to add" />
+    <Input bind:value={newFS} onclick={addFS} onkeypress={checkEnter} placeholder="Type a funding source name. <enter> to add" />
 </div>
 
-<SectionSubHeading>Your Value Categories</SectionSubHeading>
+<SectionSubHeading>Your Funding Sources</SectionSubHeading>
 <div class="p-4">
     {#if fsList.length > 0}
     {#each fsList as fundsrc, index}
@@ -120,12 +120,12 @@
             {fundsrc}
         <button slot="close-button" onclick={() => removeFS(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
             <CloseCircleSolid class="h-4 w-4" />
-            <span class="sr-only">Remove value category</span>
+            <span class="sr-only">Remove funding source</span>
         </button>
         </Badge>
     {/each}
     {:else}
-        <Alert>No value categories yet</Alert>
+        <Alert>No funding sources yet</Alert>
     {/if}
 </div>
 

@@ -156,7 +156,7 @@ func getProjectById(ctx context.Context, projects []project.Project, id string) 
 }
 
 func findProjects(ctx context.Context) *[]project.Project {
-	if _projectCache != nil {
+	if _projectCache != nil && len(*_projectCache) > 0 {
 		return _projectCache
 	}
 
@@ -177,7 +177,7 @@ func findProjects(ctx context.Context) *[]project.Project {
 }
 
 func findResources(ctx context.Context) *[]resource.Resource {
-	if _resourceCache != nil {
+	if _resourceCache != nil && len(*_resourceCache) > 0 {
 		return _resourceCache
 	}
 
@@ -198,7 +198,7 @@ func findResources(ctx context.Context) *[]resource.Resource {
 }
 
 func findUsers(ctx context.Context) *[]appuser.Appuser {
-	if _userCache != nil {
+	if _userCache != nil && len(*_userCache) > 0 {
 		return _userCache
 	}
 
@@ -224,7 +224,7 @@ func findUsers(ctx context.Context) *[]appuser.Appuser {
 }
 
 func findLists(ctx context.Context) *[]list.List {
-	if _listCache != nil {
+	if _listCache != nil && len(*_listCache) > 0 {
 		return _listCache
 	}
 
@@ -245,7 +245,7 @@ func findLists(ctx context.Context) *[]list.List {
 }
 
 func findRoles(ctx context.Context) *[]resource.Role {
-	if _roleCache != nil {
+	if _roleCache != nil && len(*_roleCache) > 0 {
 		return _roleCache
 	}
 
@@ -266,7 +266,7 @@ func findRoles(ctx context.Context) *[]resource.Role {
 }
 
 func findTemplates(ctx context.Context) *[]projecttemplate.Projecttemplate {
-	if _templateCache != nil {
+	if _templateCache != nil && len(*_templateCache) > 0 {
 		return _templateCache
 	}
 

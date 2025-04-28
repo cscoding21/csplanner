@@ -52,6 +52,7 @@ type ProjectActivity struct {
 	HoursSpent      int
 	HourlyRate      float64
 	RequiredSkillID string
+	TaskEndDate     *time.Time
 }
 
 type ScheduleBatch struct {

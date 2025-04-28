@@ -54,7 +54,7 @@ export const roleForm: any = {
 export const roleSchema = yup.object().shape({
 	id: yup.string(),
 	name: yup.string().required(),
-	description: yup.string().required(),
+	description: yup.string(),
 	hourlyRate: yup.number(),
 	defaultSkills: yup.array().of(yup.object({
 		resourceID: yup.string(),

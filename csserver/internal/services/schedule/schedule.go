@@ -60,6 +60,8 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 		return schedule, nil
 	}
 
+	//today := time.Now()
+
 	exceptions := validateProjectForScheduling(*p, ram)
 	schedule.Exceptions = append(schedule.Exceptions, exceptions...)
 

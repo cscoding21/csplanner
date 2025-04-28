@@ -1,24 +1,25 @@
 <script lang="ts">
 	import { SectionHeading } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
-	import type { UpdateList, UpdateListItem } from "$lib/graphql/generated/sdk";
+	import type { Role, Skill, UpdateList, UpdateListItem } from "$lib/graphql/generated/sdk";
 	import { getList, updateList } from "$lib/services/list";
 	import { addToast } from "$lib/stores/toasts";
 	import { formatCurrency, pluralize } from "$lib/utils/format";
 	import { callIf } from "$lib/utils/helpers";
 	import { nameToID } from "$lib/utils/id";
-	import { Alert, Badge, Button, ButtonGroup, Input, P, Popover, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
+	import { Alert, Badge, Button, ButtonGroup, Input, Modal, P, Popover, Rating, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
 	import { CloseCircleSolid, EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
 	import { RoleFormModal, DeleteRole } from "../../settings/components";
-    import { roleGroups, type RoleTemplate, type RoleGroup } from "./roleGroups";
+    import { roleGroups, type RoleGroup } from "./roleGroups";
 
     interface Props {
         onDone: Function
     }
     let { onDone }:Props = $props()
 
-    let roleList:RoleTemplate[] = $state([] as RoleTemplate[])
-    let newRole:any = $state({} as RoleTemplate)
+    let roleList:Role[] = $state([] as Role[])
+    let newRole:any = $state({} as Role)
+    let openModal:boolean = $state(false)
 
     const addRoleGroup = (rg:any[]) => {
         roleList = [...new Set([...roleList, ...rg])]
@@ -68,7 +69,7 @@
             <TableBodyCell>{r.name}</TableBodyCell>
             <TableBodyCell>{formatCurrency.format(r.hourlyRate || 0)}</TableBodyCell>
             <TableBodyCell>
-                    <Badge class="m-1">{r.skills.length} {pluralize("skill", r.skills.length)}</Badge>
+                {@render skillEditor(r.name, r.defaultSkills as Skill[])}
             </TableBodyCell>
             <TableBodyCell>
                 <ButtonGroup>
@@ -89,8 +90,8 @@
 
 
 {#snippet roleGroup(name:string, id:string, group:any)}
-<Button id={id} class="m-2" color="alternative" pill onclick={() => addRoleGroup(group)}>{name}</Button>
-<Popover triggeredBy={"#" + id} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
+<Button id={"rg_" + id} class="m-2" color="alternative" pill onclick={() => addRoleGroup(group)}>{name}</Button>
+<Popover triggeredBy={"#rg_" + id} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
     <div class="p-3 space-y-2">
         Add the following roles to your organization:
         <ul class="list-disc pl-4">
@@ -100,4 +101,31 @@
         </ul>
     </div>
 </Popover>
+{/snippet}
+
+
+{#snippet skillEditor(id:string, skills:Skill[])}
+<button id={nameToID(id)} class="m-1">{skills.length} {pluralize("skill", skills.length)}</button>
+<Popover trigger="click" triggeredBy={"#" + nameToID(id)} title="Edit Skills" bind:open={openModal}>
+
+    <Table>
+        <TableBody>
+            {#each skills as s, index}
+                <TableBodyRow>
+                    <TableBodyCell>{s.name}</TableBodyCell>
+                    <TableBodyCell
+                        ><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
+                    >
+                    <TableBodyCell tdClass="float-right pt-2">
+                        <Button color="dark" onclick={() => alert(s.name)}>
+                            <TrashBinOutline size="sm" />
+                        </Button>
+                    </TableBodyCell>
+                </TableBodyRow>
+            {/each}
+        </TableBody>
+        </Table>
+
+</Popover>
+
 {/snippet}

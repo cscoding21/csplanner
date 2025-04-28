@@ -1,16 +1,9 @@
+import type { UpdateRole } from "$lib/graphql/generated/sdk";
+
 export interface RoleGroup {
     name: string;
     id: string;
-    roles: RoleTemplate[]
-}
-export interface RoleTemplate {
-    name: string;
-    hourlyRate: number;
-    skills: SkillTemplate[]
-}
-export interface SkillTemplate {
-    name: string;
-    proficiency: number;
+    roles: UpdateRole[]
 }
 
 export const roleGroups:RoleGroup[] = [
@@ -19,42 +12,50 @@ export const roleGroups:RoleGroup[] = [
         id: "saasRoleGroup",
         roles: [
             {
+                id: "",
+                description: "",
                 name: "Full Stack Engineer",
                 hourlyRate: 140.0,
-                skills: [
-                 { name: "Golang", proficiency: 2.0 },
-                 { name: "Database", proficiency: 2.0 },
-                 { name: "JavaScript", proficiency: 2.0 },
-                 { name: "TypeScript", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "", proficiency: 2.0 },
+                 { id: "", resourceID: "", proficiency: 2.0 },
+                 { id: "", resourceID: "", proficiency: 2.0 },
+                 { id: "", resourceID: "", proficiency: 2.0 }
                  ]
              },
              {
+                id: "",
+                description: "",
                 name: "Web Developer",
                 hourlyRate: 100.0,
-                skills: [
-                 { name: "Svelte", proficiency: 2.0 },
-                 { name: "CSS", proficiency: 2.0 },
-                 { name: "JavaScript", proficiency: 2.0 },
-                 { name: "HTML", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "Svelte", proficiency: 2.0 },
+                 { id: "", resourceID: "CSS", proficiency: 2.0 },
+                 { id: "", resourceID: "JavaScript", proficiency: 2.0 },
+                 { id: "", resourceID: "HTML", proficiency: 2.0 }
                  ]
              },
              {
+                id: "",
+                description: "",
                 name: "DevOps Engineer/SRE",
                 hourlyRate: 140.0,
-                skills: [
-                 { name: "Kubernetes", proficiency: 2.0 },
-                 { name: "AWS", proficiency: 2.0 },
-                 { name: "Keycloak", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "Kubernetes", proficiency: 2.0 },
+                 { id: "", resourceID: "AWS", proficiency: 2.0 },
+                 { id: "", resourceID: "Keycloak", proficiency: 2.0 }
                  ]
              },
              {
+                id: "",
+                description: "",
                 name: "Engineering Manager",
                 hourlyRate: 180.0,
-                skills: [
-                 { name: "Golang", proficiency: 2.0 },
-                 { name: "JavaScript", proficiency: 2.0 },
-                 { name: "Leadership", proficiency: 2.0 },
-                 { name: "Agile", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "Golang", proficiency: 2.0 },
+                 { id: "", resourceID: "JavaScript", proficiency: 2.0 },
+                 { id: "", resourceID: "Leadership", proficiency: 2.0 },
+                 { id: "", resourceID: "Agile", proficiency: 2.0 }
                  ]
              },
         ]
@@ -64,36 +65,44 @@ export const roleGroups:RoleGroup[] = [
         id: "pdmRoleGroup",
         roles: [
             {
+                id: "",
+                description: "",
                 name: "Project Manager",
                 hourlyRate: 120.0,
-                skills: [
-                 { name: "Business Analysis", proficiency: 2.0 },
-                 { name: "Communications", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "Business Analysis", proficiency: 2.0 },
+                 { id: "", resourceID: "Communications", proficiency: 2.0 }
                  ]
              },
              {
+                id: "",
+                description: "",
                 name: "Product Manager",
                 hourlyRate: 100.0,
-                skills: [
-                 { name: "Business Analysis", proficiency: 2.0 },
-                 { name: "Product Development", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "Business Analysis", proficiency: 2.0 },
+                 { id: "", resourceID: "Product Development", proficiency: 2.0 }
                  ]
              },
              {
+                id: "",
+                description: "",
                 name: "Product Owner",
                 hourlyRate: 110.0,
-                skills: [
-                 { name: "Scrum", proficiency: 2.0 },
-                 { name: "Agile", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "Scrum", proficiency: 2.0 },
+                 { id: "", resourceID: "Agile", proficiency: 2.0 }
                  ]
              },
              {
+                id: "",
+                description: "",
                 name: "Product Designer",
                 hourlyRate: 130.0,
-                skills: [
-                 { name: "UI", proficiency: 2.0 },
-                 { name: "UX", proficiency: 2.0 },
-                 { name: "Product Design", proficiency: 2.0 }
+                defaultSkills: [
+                 { id: "", resourceID: "UI", proficiency: 2.0 },
+                 { id: "", resourceID: "UX", proficiency: 2.0 },
+                 { id: "", resourceID: "Product Design", proficiency: 2.0 }
                  ]
              },
         ]
