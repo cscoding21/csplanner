@@ -4,123 +4,30 @@
 	import type { UpdateList, UpdateListItem } from "$lib/graphql/generated/sdk";
 	import { getList, updateList } from "$lib/services/list";
 	import { addToast } from "$lib/stores/toasts";
+	import { formatCurrency, pluralize } from "$lib/utils/format";
 	import { callIf } from "$lib/utils/helpers";
 	import { nameToID } from "$lib/utils/id";
-	import { Alert, Badge, Button, Input, P, Popover } from "flowbite-svelte";
-	import { CloseCircleSolid } from "flowbite-svelte-icons";
+	import { Alert, Badge, Button, ButtonGroup, Input, P, Popover, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
+	import { CloseCircleSolid, EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
+	import { RoleFormModal, DeleteRole } from "../../settings/components";
+    import { roleGroups, type RoleTemplate, type RoleGroup } from "./roleGroups";
 
     interface Props {
         onDone: Function
     }
     let { onDone }:Props = $props()
 
-    let roleList:string[] = $state([])
-    let newRole:any = $state({name: "", hourlyRate: 0.0, skills: []})
+    let roleList:RoleTemplate[] = $state([] as RoleTemplate[])
+    let newRole:any = $state({} as RoleTemplate)
 
     const addRoleGroup = (rg:any[]) => {
         roleList = [...new Set([...roleList, ...rg])]
     }
 
-    const saasRoleGroup = [
-        {
-           name: "Full Stack Engineer",
-           hourlyRate: 140.0,
-           skills: [
-            "Golang",
-            "Database",
-            "JavaScript",
-            "TypeScript"
-            ]
-        },
-        {
-           name: "Web Developer",
-           hourlyRate: 100.0,
-           skills: [
-            "Svelte",
-            "CSS",
-            "JavaScript",
-            "HTML"
-            ]
-        },
-        {
-           name: "DevOps Engineer/SRE",
-           hourlyRate: 140.0,
-           skills: [
-            "Kubernetes",
-            "AWS",
-            "Keycloak"
-            ]
-        },
-        {
-           name: "Engineering Manager",
-           hourlyRate: 180.0,
-           skills: [
-            "Golang",
-            "JavaScript",
-            "Leadership",
-            "Agile"
-            ]
-        },
-    ]
-
-    const projectRoleGroup = [
-        {
-           name: "Project Manager",
-           hourlyRate: 120.0,
-           skills: [
-            "Business Analysis",
-            "Communications"
-            ]
-        },
-        {
-           name: "Product Manager",
-           hourlyRate: 100.0,
-           skills: [
-            "Business Analysis",
-            "Product Development"
-            ]
-        },
-        {
-           name: "Product Owner",
-           hourlyRate: 110.0,
-           skills: [
-            "Scrum",
-            "Agile"
-            ]
-        },
-        {
-           name: "Product Designer",
-           hourlyRate: 130.0,
-           skills: [
-            "UI",
-            "UX",
-            "Product Design"
-            ]
-        },
-    ]
-
-    const autonomyRoleGroup = [
-        {
-           name: "AI Engineer",
-           hourlyRate: 140.0,
-           skills: [
-            "Golang",
-            "Database",
-            "JavaScript",
-            "TypeScript"
-            ]
-        },
-        {
-           name: "Autonomy Engineering Manager",
-           hourlyRate: 200.0,
-           skills: [
-            "Svelte",
-            "CSS",
-            "JavaScript",
-            "HTML"
-            ]
-        },
-    ]
+    const removeRole = (i:number) => {
+        roleList.splice(i, 1)
+        roleList = roleList
+    }
 
 </script>
 
@@ -139,9 +46,45 @@
 <SectionSubHeading>Common Roles in Organizations</SectionSubHeading>
 <small>Here are some common groups of roles.</small>
 <div class="mb-4">
-    {@render roleGroup("SaaS Engineering", "saasRoleGroup", saasRoleGroup)}
-    {@render roleGroup("Product Management", "projectRoleGroup", projectRoleGroup)}
-    {@render roleGroup("Autonomy", "autonomyRoleGroup", autonomyRoleGroup)}
+    {#each roleGroups as rg, index}
+    {@render roleGroup(rg.name, rg.id, rg.roles)}
+    {/each}
+</div>
+
+
+<SectionSubHeading>Your Roles</SectionSubHeading>
+<div class="p-4">
+    {#if roleList.length > 0}
+    <Table hoverable={true}>
+        <TableHead>
+          <TableHeadCell>Role</TableHeadCell>
+          <TableHeadCell>Hourly rate</TableHeadCell>
+          <TableHeadCell>Skills</TableHeadCell>
+          <TableHeadCell>Actions</TableHeadCell>
+        </TableHead>
+        <TableBody tableBodyClass="divide-y">
+            {#each roleList as r, index}
+          <TableBodyRow>
+            <TableBodyCell>{r.name}</TableBodyCell>
+            <TableBodyCell>{formatCurrency.format(r.hourlyRate || 0)}</TableBodyCell>
+            <TableBodyCell>
+                    <Badge class="m-1">{r.skills.length} {pluralize("skill", r.skills.length)}</Badge>
+            </TableBodyCell>
+            <TableBodyCell>
+                <ButtonGroup>
+                    <button onclick={() => removeRole(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
+                    <TrashBinOutline size="sm" class="" />
+                    </button>   
+                </ButtonGroup>
+            </TableBodyCell>
+          </TableBodyRow>
+          {/each}
+        </TableBody>
+      </Table>
+      {:else}
+      <Alert>No roles yet</Alert>
+  {/if} 
+    
 </div>
 
 

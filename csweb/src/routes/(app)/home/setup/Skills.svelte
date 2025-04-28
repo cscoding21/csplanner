@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { SectionHeading } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
 	import type { UpdateList, UpdateListItem } from "$lib/graphql/generated/sdk";
 	import { getList, updateList } from "$lib/services/list";
@@ -8,6 +7,7 @@
 	import { nameToID } from "$lib/utils/id";
 	import { Alert, Badge, Button, Input, P, Popover } from "flowbite-svelte";
 	import { CloseCircleSolid } from "flowbite-svelte-icons";
+    import { skillGroups } from "./skillGroups";
 
     interface Props {
         onDone: Function
@@ -97,30 +97,6 @@
         })
     }
 
-    const saasSkillGroup = [
-        "Backend Development",
-        "Frontend Development",
-        "Data Architecture",
-        "DevOps / SRE",
-        "Data Science"
-    ]
-
-    const projectSkillGroup = [
-        "Project Management",
-        "Business Analysis",
-        "Agile Development",
-        "Scrum",
-        "Kanban"
-    ]
-
-    const autonomySkillGroup = [
-        "State Estimation",
-        "Scene Understanding",
-        "C++",
-        "Mapping",
-        "Foundations"
-    ]
-
     getExistingSkills()
 </script>
 
@@ -137,9 +113,9 @@
 <SectionSubHeading>Common Skill Groups</SectionSubHeading>
 <small>Here are some common groups of skills.</small>
 <div class="mb-4">
-    {@render skillGroup("SaaS", "saasSkillGroup", saasSkillGroup)}
-    {@render skillGroup("Product Management", "projectSkillGroup", projectSkillGroup)}
-    {@render skillGroup("Autonomy", "autonomySkillGroup", autonomySkillGroup)}
+    {#each skillGroups as sg, index}
+        {@render skillGroup(sg.name, sg.id, sg.skills)}
+    {/each}
 </div>
 
 <SectionSubHeading >Add Your Skills</SectionSubHeading>

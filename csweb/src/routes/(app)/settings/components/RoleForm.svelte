@@ -174,31 +174,31 @@
 				{/each}
 			</TableBody>
 			</Table>
-
-			<div class="grid grid-cols-5 gap-5 mt-4">
-				<span class="col-span-2">
-					<SelectInput
-						fieldName="Skill"
-						bind:value={sf.skillID}
-						error={errors.skillID}
-						options={availableSkillOpts}
-					/>
-				</span>
-				<span class="col-span-2">
-					<SelectInput
-						fieldName="Proficiency"
-						bind:value={sf.proficiency}
-						error={errors.proficiency}
-						options={proficiencyOpts}
-					/>
-				</span>
-				<span class="w-1/5 pt-8">
-					<Button onclick={addSkill}>Add</Button>
-				</span>
-			</div>
 		{:else}
 			<Alert>No default skills have been added for this role.</Alert>
 		{/if}
+
+		<div class="grid grid-cols-5 gap-5 mt-4">
+			<span class="col-span-2">
+				<SelectInput
+					fieldName="Skill"
+					bind:value={sf.skillID}
+					error={errors.skillID}
+					options={availableSkillOpts}
+				/>
+			</span>
+			<span class="col-span-2">
+				<SelectInput
+					fieldName="Proficiency"
+					bind:value={sf.proficiency}
+					error={errors.proficiency}
+					options={proficiencyOpts}
+				/>
+			</span>
+			<span class="w-1/5 pt-8">
+				<Button onclick={addSkill}>Add</Button>
+			</span>
+		</div>
 		</div>
 
 

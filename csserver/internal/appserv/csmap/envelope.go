@@ -41,7 +41,7 @@ func ConvertRoleResultToEnvelope(ctx context.Context, model *common.BaseModel[re
 	out.Data = utils.ValToRef(RoleResourceToIdl(model.Data))
 
 	AugmentBaseModel(ctx, out.Meta)
-	AugmentRole(out.Data)
+	AugmentRole(ctx, out.Data)
 
 	return &out
 }

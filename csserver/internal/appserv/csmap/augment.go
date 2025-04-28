@@ -170,7 +170,7 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 		return
 	}
 
-	skillList := getSkills()
+	skillList := getSkills(ctx)
 	resourceList := findResources(ctx)
 
 	proj.ProjectBasics.Owner = getUserByEmail(ctx, model.ProjectBasics.OwnerID)
@@ -284,7 +284,7 @@ func AugmentResource(ctx context.Context, res *idl.Resource) {
 		return
 	}
 
-	skills := getSkills()
+	skills := getSkills(ctx)
 
 	for i, s := range res.Skills {
 		li := getSkillById(*skills, s.ID)
@@ -298,12 +298,12 @@ func AugmentResource(ctx context.Context, res *idl.Resource) {
 }
 
 // AugmentRole ensure the the skill name is inluded in the role's default skills
-func AugmentRole(r *idl.Role) {
+func AugmentRole(ctx context.Context, r *idl.Role) {
 	if r == nil {
 		return
 	}
 
-	skills := getSkills()
+	skills := getSkills(ctx)
 
 	if len(r.DefaultSkills) == 0 {
 		return

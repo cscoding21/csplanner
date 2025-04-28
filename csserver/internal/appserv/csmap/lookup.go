@@ -73,7 +73,7 @@ func ExpireListCache() {
 	_listCache = nil
 }
 
-func getSkills() *[]list.ListItem {
+func getSkills(ctx context.Context) *[]list.ListItem {
 	if _skillCache != nil {
 		return _skillCache
 	}
@@ -81,7 +81,6 @@ func getSkills() *[]list.ListItem {
 	_skillCacheLock.Lock()
 	defer _skillCacheLock.Unlock()
 
-	ctx := context.Background()
 	ss := factory.GetListService(ctx)
 
 	skillList, err := ss.GetList(ctx, list.ListNameSkills)
