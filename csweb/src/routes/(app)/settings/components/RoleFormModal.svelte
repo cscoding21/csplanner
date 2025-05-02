@@ -13,7 +13,7 @@
 		size: 'xs' | 'sm' | 'lg' | 'xl' | 'md' | undefined;
 		update?: Function;
 	}
-	let { role, size, update = $bindable(), children }: Props = $props();
+	let { role = $bindable(), size, update = $bindable(), children }: Props = $props();
 
 	let formUpdated = () => {
 		popupModal = false

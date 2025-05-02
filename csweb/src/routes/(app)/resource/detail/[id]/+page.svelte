@@ -159,7 +159,7 @@
 
 					{#if resourcePromise.data?.type === "human"}
 					<SectionSubHeading>User skills</SectionSubHeading>
-					<SkillsTable resourceID={id} skills={resourceSkills} update={() => updateResource()} allowAdd={true} />
+					<SkillsTable parentID={id} skills={resourceSkills} update={() => updateResource()} allowAdd={true} />
 					{/if}
 				</Card>
 			</div>

@@ -200,8 +200,12 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 		for j, t := range m.Tasks {
 			if len(t.RequiredSkillID) > 0 {
 				skill := getSkillById(*skillList, t.RequiredSkillID)
-				idlSkill := idl.Skill{ID: skill.Value, Name: skill.Name}
-				proj.ProjectMilestones[i].Tasks[j].Skills = append(proj.ProjectMilestones[i].Tasks[j].Skills, &idlSkill)
+				if skill != nil {
+					idlSkill := idl.Skill{ID: skill.Value, Name: skill.Name}
+					proj.ProjectMilestones[i].Tasks[j].Skills = append(proj.ProjectMilestones[i].Tasks[j].Skills, &idlSkill)
+				} else {
+					log.Warnf("Skill %s not found when augmenting task %s", t.RequiredSkillID, t.Name)
+				}
 			}
 
 			if len(t.ResourceIDs) > 0 {
@@ -311,8 +315,12 @@ func AugmentRole(ctx context.Context, r *idl.Role) {
 
 	for j, sk := range r.DefaultSkills {
 		skill := getSkillById(*skills, sk.ID)
+		if skill != nil {
+			r.DefaultSkills[j].Name = skill.Name
+		} else {
+			log.Warnf("Skill %s not found when augmenting role %s", sk.ID, r.Name)
+		}
 
-		r.DefaultSkills[j].Name = skill.Name
 	}
 }
 

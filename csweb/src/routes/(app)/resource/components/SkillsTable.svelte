@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { decodeProficiency, deleteResourceSkill, updateResource, updateResourceSkill } from "$lib/services/resource";
-	import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Button, Alert, Range, Select, type SelectOptionType, Label } from "flowbite-svelte";
+	import { decodeProficiency, deleteResourceSkill, updateResourceSkill } from "$lib/services/resource";
+	import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Button, Alert, Range, Select, type SelectOptionType } from "flowbite-svelte";
 	import { TrashBinOutline } from "flowbite-svelte-icons";
 	import { AddSkill } from ".";
 	import type { Skill } from "$lib/graphql/generated/sdk";
@@ -13,15 +13,15 @@
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
 
     interface Props {
-		resourceID: string;
+		parentID: string;
         skills: Skill[]
 		update: Function;
         allowAdd?: Boolean
 	}
-	let { resourceID, update, skills, allowAdd }: Props = $props();
+	let { parentID, update, skills, allowAdd }: Props = $props();
 
     const deleteSkill = async (skillID: string) => {
-		deleteResourceSkill(resourceID, skillID).then((res) => {
+		deleteResourceSkill(parentID, skillID).then((res) => {
 			if (res.success) {
 				addToast({
 					message: 'Resource skill deleted successfully',
@@ -29,10 +29,10 @@
 					type: 'success'
 				});
 
-				update(resourceID)
+				update(parentID)
 			} else {
 				addToast({
-					message: 'Error updating resource: ' + res.message,
+					message: 'Error updating skill: ' + res.message,
 					dismissible: true,
 					type: 'error'
 				});
@@ -50,11 +50,11 @@
         const usf = {
             skillID: sid,
             proficiency: proficiency,
-            resourceID:resourceID
+            resourceID:parentID
         }
 
 		const parsedSkillForm = skillSchema.cast(usf);
-		parsedSkillForm.resourceID = resourceID;
+		parsedSkillForm.resourceID = parentID;
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
@@ -98,7 +98,7 @@
 				availableSkillOpts = findSelectOptsFromList(l);
 			})
 			.then(() => {
-				skillForm.resourceID = resourceID;
+				skillForm.resourceID = parentID;
 			});
 	};
 
@@ -164,7 +164,7 @@
 <Alert>No skills have been added for this resource.</Alert>
 {#if allowAdd}
     <hr class="my-4" />
-    <AddSkill resourceID={resourceID} update={() => update(resourceID)} />
+    <AddSkill resourceID={parentID} update={() => update(parentID)} />
 {/if}
 {/if}
 

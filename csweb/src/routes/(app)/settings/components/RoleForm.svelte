@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SectionHeading, TextInput, NumberInput, SectionSubHeading, SelectInput } from '$lib/components';
-	import { Alert, Button, Rating, Table, TableBody, TableBodyCell, TableBodyRow, type SelectOptionType } from 'flowbite-svelte';
+	import { Alert, Button, Range, Select, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, type SelectOptionType } from 'flowbite-svelte';
 	import { roleSchema, roleForm } from '$lib/forms/resource.validation';
 	import { findSelectOptsFromList, mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { onMount } from 'svelte';
@@ -8,10 +8,11 @@
 	import type { RoleEnvelope, UpdateRole, UpdateSkill } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf, deepCopy } from '$lib/utils/helpers';
-	import { updateRole } from '$lib/services/resource';
+	import { decodeProficiency, updateRole } from '$lib/services/resource';
 	import { TrashBinOutline } from 'flowbite-svelte-icons';
 	import { skillForm, skillSchema } from '$lib/forms/skill.validation';
 	import { getList } from '$lib/services/list';
+	import { newID } from '$lib/utils/id';
 
 	onMount(async () => {
 		if (role && role.meta.id) {
@@ -19,6 +20,7 @@
 			rf.id = role.meta.id;
 		} else {
 			rf = deepCopy(roleForm);
+			rf.id = newID()
 		}
 	});
 
@@ -38,12 +40,13 @@
 	}
 
 	const addSkill = () => {
+		sf.parentID = rf.id
 		const parsedSkillForm = skillSchema.cast(sf);
-		parsedSkillForm.resourceID = rf.id as string
+
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
-				rf.defaultSkills = [...rf.defaultSkills as UpdateSkill[], { resourceID: rf.id, id: sf.skillID, proficiency: sf.proficiency} as UpdateSkill]
+				rf.defaultSkills = [...rf.defaultSkills as UpdateSkill[], { parentID: rf.id, id: newID(), skillID: sf.skillID, proficiency: sf.proficiency} as UpdateSkill]
 			})
 			.catch((err) => {
 				alert(err)
@@ -58,7 +61,7 @@
 
 		if(roleFormParsed.defaultSkills) {
 			for(let i = 0; i < roleFormParsed.defaultSkills?.length; i++) {
-				roleFormParsed.defaultSkills[i].resourceID = rf.id as string
+				roleFormParsed.defaultSkills[i].parentID = rf.id as string
 
 				//@ts-expect-error
 				delete roleFormParsed.defaultSkills[i].name
@@ -156,49 +159,80 @@
 		<div class="col-span-4">
 		<SectionSubHeading>Default Skills</SectionSubHeading>
 
+		<!-- <code>{JSON.stringify(rf)}</code> -->
+
 		{#if rf?.defaultSkills && rf?.defaultSkills.length > 0}
-			<Table>
+		<Table>
+			<TableHead>
+				<TableHeadCell>Skill</TableHeadCell>
+				<TableHeadCell>Proficienty</TableHeadCell>
+				<TableHeadCell>
+					<span class="sr-only">Action</span>
+				</TableHeadCell>
+			</TableHead>
 			<TableBody>
 				{#each rf.defaultSkills as s, index}
 					<TableBodyRow>
-						<TableBodyCell>{s.id}</TableBodyCell>
-						<TableBodyCell
-							><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
-						>
+						<TableBodyCell>{rf.defaultSkills[index].skillID}</TableBodyCell>
+						<TableBodyCell>
+							<Range size="lg" id="range-steps" min="1" max="3" bind:value={rf.defaultSkills[index].proficiency as number} step="1" />
+							<br /><small>{decodeProficiency(rf.defaultSkills[index].proficiency as number)}</small>
+						</TableBodyCell>
 						<TableBodyCell tdClass="float-right pt-2">
-							<Button color="dark" onclick={() => delSkill(s.id)}>
+							<Button color="dark" onclick={() => delSkill(s.id as string)}>
 								<TrashBinOutline size="sm" />
 							</Button>
 						</TableBodyCell>
 					</TableBodyRow>
 				{/each}
 			</TableBody>
-			</Table>
+			<tfoot>
+				<tr>
+					<th class="px-6 pt-4" colspan={3}><SectionSubHeading>Add skill</SectionSubHeading></th>
+			</tr>    
+				<tr>
+					<th class="px-4">
+						<Select
+							bind:value={sf.skillID}
+							size="sm"
+							items={availableSkillOpts}
+						/>
+					</th>
+					<th class="px-6 py-4">
+						<Range size="lg" id="range-steps" min="1" max="3" bind:value={sf.proficiency} step="1" />
+						<br /><small>{decodeProficiency(sf.proficiency)}</small>
+					</th>
+					<th class="px-6 py-4">
+						<Button pill onclick={addSkill}>Add</Button>
+					</th>
+				</tr>
+			</tfoot>
+		</Table>
 		{:else}
 			<Alert>No default skills have been added for this role.</Alert>
+			<div class="grid grid-cols-5 gap-5 mt-4">
+				<span class="col-span-2">
+					<SelectInput
+						fieldName="Skill"
+						bind:value={sf.skillID}
+						error={errors.skillID}
+						options={availableSkillOpts}
+					/>
+				</span>
+				<span class="col-span-2">
+					<SelectInput
+						fieldName="Proficiency"
+						bind:value={sf.proficiency}
+						error={errors.proficiency}
+						options={proficiencyOpts}
+					/>
+				</span>
+				<span class="w-1/5 pt-8">
+					<Button onclick={addSkill}>Add</Button>
+				</span>
+			</div>
 		{/if}
 
-		<div class="grid grid-cols-5 gap-5 mt-4">
-			<span class="col-span-2">
-				<SelectInput
-					fieldName="Skill"
-					bind:value={sf.skillID}
-					error={errors.skillID}
-					options={availableSkillOpts}
-				/>
-			</span>
-			<span class="col-span-2">
-				<SelectInput
-					fieldName="Proficiency"
-					bind:value={sf.proficiency}
-					error={errors.proficiency}
-					options={proficiencyOpts}
-				/>
-			</span>
-			<span class="w-1/5 pt-8">
-				<Button onclick={addSkill}>Add</Button>
-			</span>
-		</div>
 		</div>
 
 

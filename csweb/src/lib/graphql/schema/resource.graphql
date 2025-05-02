@@ -26,6 +26,7 @@ fragment resourceFragment on Resource {
 
 fragment skillFragment on Skill {
 	id
+	skillID
 	name
 	proficiency
 }

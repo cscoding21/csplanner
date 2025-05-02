@@ -75,6 +75,7 @@ func (r *Resource) GetHourlyRate(roleMap map[string]Role, defaultRate float64, h
 // Skill for people resources...a skill and proficiency that they possess
 type Skill struct {
 	ID          string   `json:"id,omitempty"`
+	SkillID     string   `json:"skill_id,omitempty"`
 	Name        string   `json:"name"`
 	Proficiency *float64 `json:"proficiency"`
 }

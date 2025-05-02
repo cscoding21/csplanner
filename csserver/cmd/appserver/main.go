@@ -2,6 +2,7 @@ package main
 
 import (
 	"csserver/internal/appserv"
+	"csserver/internal/appserv/csmap"
 	"csserver/internal/config"
 
 	"github.com/cscoding21/csmig/shared"
@@ -12,6 +13,8 @@ import (
 func init() {
 	config.InitConfig()
 	config.InitLogger()
+
+	csmap.ClearAllCaches()
 
 	//migConfig := GetMigrationConfig()
 	//migrations.Apply(migConfig)

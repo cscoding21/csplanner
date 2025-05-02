@@ -551,6 +551,7 @@ type ScheduleException struct {
 
 type Skill struct {
 	ID          string   `json:"id"`
+	SkillID     *string  `json:"skillID,omitempty"`
 	Name        string   `json:"name"`
 	Proficiency *float64 `json:"proficiency,omitempty"`
 }
@@ -756,8 +757,9 @@ type UpdateRole struct {
 }
 
 type UpdateSkill struct {
-	ResourceID  string  `json:"resourceID"`
-	ID          string  `json:"id"`
+	ID          *string `json:"id,omitempty"`
+	ParentID    string  `json:"parentID"`
+	SkillID     string  `json:"skillID"`
 	Proficiency float64 `json:"proficiency"`
 }
 

@@ -626,6 +626,7 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Proficiency func(childComplexity int) int
+		SkillID     func(childComplexity int) int
 	}
 
 	Status struct {
@@ -3520,6 +3521,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Skill.Proficiency(childComplexity), true
 
+	case "Skill.skillID":
+		if e.complexity.Skill.SkillID == nil {
+			break
+		}
+
+		return e.complexity.Skill.SkillID(childComplexity), true
+
 	case "Status.message":
 		if e.complexity.Status.Message == nil {
 			break
@@ -4413,6 +4421,7 @@ type ResourceCalculatedData {
 
 type Skill {
   id: String!
+  skillID: String
   name: String!
   proficiency: Float
 }
@@ -4442,8 +4451,9 @@ input UpdateResource {
 }
 
 input UpdateSkill {
-  resourceID: String!
-  id: String!
+  id: String
+  parentID: String!
+  skillID: String!
   proficiency: Float!
 }
 
@@ -18093,6 +18103,8 @@ func (ec *executionContext) fieldContext_ProjectMilestoneTask_skills(_ context.C
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Skill_id(ctx, field)
+			case "skillID":
+				return ec.fieldContext_Skill_skillID(ctx, field)
 			case "name":
 				return ec.fieldContext_Skill_name(ctx, field)
 			case "proficiency":
@@ -22577,6 +22589,8 @@ func (ec *executionContext) fieldContext_Resource_skills(_ context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Skill_id(ctx, field)
+			case "skillID":
+				return ec.fieldContext_Skill_skillID(ctx, field)
 			case "name":
 				return ec.fieldContext_Skill_name(ctx, field)
 			case "proficiency":
@@ -23326,6 +23340,8 @@ func (ec *executionContext) fieldContext_Role_defaultSkills(_ context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Skill_id(ctx, field)
+			case "skillID":
+				return ec.fieldContext_Skill_skillID(ctx, field)
 			case "name":
 				return ec.fieldContext_Skill_name(ctx, field)
 			case "proficiency":
@@ -24151,6 +24167,47 @@ func (ec *executionContext) _Skill_id(ctx context.Context, field graphql.Collect
 }
 
 func (ec *executionContext) fieldContext_Skill_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Skill",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Skill_skillID(ctx context.Context, field graphql.CollectedField, obj *idl.Skill) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Skill_skillID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SkillID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Skill_skillID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Skill",
 		Field:      field,
@@ -28499,27 +28556,34 @@ func (ec *executionContext) unmarshalInputUpdateSkill(ctx context.Context, obj a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"resourceID", "id", "proficiency"}
+	fieldsInOrder := [...]string{"id", "parentID", "skillID", "proficiency"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "resourceID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resourceID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ResourceID = data
 		case "id":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.ID = data
+		case "parentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentID = data
+		case "skillID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("skillID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SkillID = data
 		case "proficiency":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("proficiency"))
 			data, err := ec.unmarshalNFloat2float64(ctx, v)
@@ -32837,6 +32901,8 @@ func (ec *executionContext) _Skill(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "skillID":
+			out.Values[i] = ec._Skill_skillID(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._Skill_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

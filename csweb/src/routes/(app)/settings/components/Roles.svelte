@@ -61,15 +61,18 @@
       <TableHeadCell>Actions</TableHeadCell>
     </TableHead>
     <TableBody tableBodyClass="divide-y">
-        {#each roles as role}
+        {#each roles as role, index}
       <TableBodyRow>
-        <TableBodyCell>{role.data.name}</TableBodyCell>
-        <TableBodyCell>{role.data.description}</TableBodyCell>
-        <TableBodyCell>{formatCurrency.format(role.data.hourlyRate || 0)}</TableBodyCell>
+        <TableBodyCell>{roles[index].data.name}</TableBodyCell>
+        <TableBodyCell>
+            {roles[index].data.description}<br />
+            <!-- <code>{JSON.stringify(roles[index].data)}</code> -->
+        </TableBodyCell>
+        <TableBodyCell>{formatCurrency.format(roles[index].data.hourlyRate || 0)}</TableBodyCell>
         <TableBodyCell>
             <ButtonGroup>
                 <RoleFormModal
-                        role={role}
+                        role={roles[index]}
                         size="md"
                         update={() => refresh()}>
                         <EditOutline size="sm" />

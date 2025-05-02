@@ -7488,6 +7488,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "skillID",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -9624,6 +9636,18 @@
             "name": "id",
             "description": null,
             "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "parentID",
+            "description": null,
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -9653,7 +9677,7 @@
             "deprecationReason": null
           },
           {
-            "name": "resourceID",
+            "name": "skillID",
             "description": null,
             "type": {
               "kind": "NON_NULL",

@@ -23,6 +23,7 @@ type ResourceCalculatedData {
 
 type Skill {
   id: String!
+  skillID: String
   name: String!
   proficiency: Float
 }
@@ -52,8 +53,9 @@ input UpdateResource {
 }
 
 input UpdateSkill {
-  resourceID: String!
-  id: String!
+  id: String
+  parentID: String!
+  skillID: String!
   proficiency: Float!
 }
 

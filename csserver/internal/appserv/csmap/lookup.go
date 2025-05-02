@@ -37,6 +37,16 @@ var (
 	_listCacheLock     sync.Mutex
 )
 
+func ClearAllCaches() {
+	ExpireProjectCache()
+	ExpireResourceCache()
+	ExpireTemplateCache()
+	ExpireRoleCache()
+	ExpireListCache()
+	ExpireUserCache()
+
+}
+
 func ExpireProjectCache() {
 	_projectCacheLock.Lock()
 	defer _projectCacheLock.Unlock()
@@ -74,7 +84,7 @@ func ExpireListCache() {
 }
 
 func getSkills(ctx context.Context) *[]list.ListItem {
-	if _skillCache != nil {
+	if _skillCache != nil && len(*_skillCache) > 0 {
 		return _skillCache
 	}
 

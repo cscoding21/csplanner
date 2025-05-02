@@ -491,7 +491,7 @@ func (r *mutationResolver) UpdateResourceSkill(ctx context.Context, input idl.Up
 	service := factory.GetResourceService(ctx)
 	skill := csmap.UpdateSkillIdlToResource(input)
 
-	_, err := service.UpdateSkillForResource(ctx, input.ResourceID, skill)
+	_, err := service.UpdateSkillForResource(ctx, input.ParentID, skill)
 	if err != nil {
 		return csmap.GetStatusFromError(err)
 	}

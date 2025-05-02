@@ -63,3 +63,12 @@ export const nameToID = (name:string):string => {
 
 	return normalizeID(str)
 }
+
+
+/**
+ * get a new ID
+ * @returns a string suitable for use as an ID
+ */
+export const newID = ():string => {
+	return normalizeGUID(crypto.randomUUID())
+}

@@ -57,8 +57,9 @@ export const roleSchema = yup.object().shape({
 	description: yup.string(),
 	hourlyRate: yup.number(),
 	defaultSkills: yup.array().of(yup.object({
-		resourceID: yup.string(),
-		id: yup.string().required(),
+		parentID: yup.string(),
+		id: yup.string(),
+		skillID: yup.string().required(),
 		proficiency: yup.number().required()
 	}))
 });

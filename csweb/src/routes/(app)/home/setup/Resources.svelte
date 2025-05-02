@@ -23,6 +23,6 @@
 <p class="py-2 text-gray-200">
     Resources are the staff, hardware, software, etc required to deliver on your project roadmap.
 </p>
-<p class="py-2 text-gray-200">Resourcescan be added or modified at any time on the <a class="text-orange-300" href="/resources">Resources</a> page.
+<p class="py-2 text-gray-200">Resources can be added or modified at any time on the <a class="text-orange-300" href="/resources">Resources</a> page.
 </p>
 </section>

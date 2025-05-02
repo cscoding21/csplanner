@@ -905,6 +905,7 @@ export type Skill = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   proficiency?: Maybe<Scalars['Float']['output']>;
+  skillID?: Maybe<Scalars['String']['output']>;
 };
 
 export type Status = {
@@ -1116,9 +1117,10 @@ export type UpdateRole = {
 };
 
 export type UpdateSkill = {
-  id: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  parentID: Scalars['String']['input'];
   proficiency: Scalars['Float']['input'];
-  resourceID: Scalars['String']['input'];
+  skillID: Scalars['String']['input'];
 };
 
 export type UpdateUser = {
@@ -1325,6 +1327,7 @@ export const UserFragmentFragmentDoc = gql`
 export const SkillFragmentFragmentDoc = gql`
     fragment skillFragment on Skill {
   id
+  skillID
   name
   proficiency
 }

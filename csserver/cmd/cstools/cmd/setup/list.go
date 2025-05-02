@@ -81,6 +81,11 @@ func CreateTestLists(ctx context.Context) error {
 		if !ur.ValidationResult.Pass {
 			log.Warn(ur.ValidationResult.Pass, ur.ValidationResult.Messages)
 		}
+	} else {
+		_, err := service.UpdateList(ctx, skillsList)
+		if err != nil {
+			log.Errorf("Error updating skills list: %v", err)
+		}
 	}
 
 	existingList, err = service.GetList(ctx, list.ListNameFundingSource)
@@ -95,6 +100,11 @@ func CreateTestLists(ctx context.Context) error {
 		if !ur.ValidationResult.Pass {
 			log.Warn(ur.ValidationResult.Pass, ur.ValidationResult.Messages)
 		}
+	} else {
+		_, err := service.UpdateList(ctx, fundingSourceList)
+		if err != nil {
+			log.Errorf("Error updating funding source list: %v", err)
+		}
 	}
 
 	existingList, err = service.GetList(ctx, list.ListNameValueCategory)
@@ -108,6 +118,11 @@ func CreateTestLists(ctx context.Context) error {
 
 		if !ur.ValidationResult.Pass {
 			log.Warn(ur.ValidationResult.Pass, ur.ValidationResult.Messages)
+		}
+	} else {
+		_, err := service.UpdateList(ctx, valueCategoryList)
+		if err != nil {
+			log.Errorf("Error updating value category list: %v", err)
 		}
 	}
 

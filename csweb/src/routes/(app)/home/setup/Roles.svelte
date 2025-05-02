@@ -1,16 +1,13 @@
 <script lang="ts">
 	import { SectionHeading } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
-	import type { Role, Skill, UpdateList, UpdateListItem } from "$lib/graphql/generated/sdk";
-	import { getList, updateList } from "$lib/services/list";
-	import { addToast } from "$lib/stores/toasts";
+	import type { Role } from "$lib/graphql/generated/sdk";
 	import { formatCurrency, pluralize } from "$lib/utils/format";
-	import { callIf } from "$lib/utils/helpers";
 	import { nameToID } from "$lib/utils/id";
-	import { Alert, Badge, Button, ButtonGroup, Input, Modal, P, Popover, Rating, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
-	import { CloseCircleSolid, EditOutline, TrashBinOutline } from "flowbite-svelte-icons";
-	import { RoleFormModal, DeleteRole } from "../../settings/components";
-    import { roleGroups, type RoleGroup } from "./roleGroups";
+	import { Alert, Button, ButtonGroup, Popover, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
+	import { TrashBinOutline } from "flowbite-svelte-icons";
+	import { RoleFormModal } from "../../settings/components";
+    import { roleGroups } from "./roleGroups";
 
     interface Props {
         onDone: Function
@@ -69,7 +66,7 @@
             <TableBodyCell>{r.name}</TableBodyCell>
             <TableBodyCell>{formatCurrency.format(r.hourlyRate || 0)}</TableBodyCell>
             <TableBodyCell>
-                {@render skillEditor(r.name, r.defaultSkills as Skill[])}
+                {@render skillEditor(r.name, r)}
             </TableBodyCell>
             <TableBodyCell>
                 <ButtonGroup>
@@ -104,28 +101,10 @@
 {/snippet}
 
 
-{#snippet skillEditor(id:string, skills:Skill[])}
-<button id={nameToID(id)} class="m-1">{skills.length} {pluralize("skill", skills.length)}</button>
-<Popover trigger="click" triggeredBy={"#" + nameToID(id)} title="Edit Skills" bind:open={openModal}>
+{#snippet skillEditor(id:string, role:Role)}
 
-    <Table>
-        <TableBody>
-            {#each skills as s, index}
-                <TableBodyRow>
-                    <TableBodyCell>{s.name}</TableBodyCell>
-                    <TableBodyCell
-                        ><Rating rating={s.proficiency?.valueOf() as number} total={3} /></TableBodyCell
-                    >
-                    <TableBodyCell tdClass="float-right pt-2">
-                        <Button color="dark" onclick={() => alert(s.name)}>
-                            <TrashBinOutline size="sm" />
-                        </Button>
-                    </TableBodyCell>
-                </TableBodyRow>
-            {/each}
-        </TableBody>
-        </Table>
-
-</Popover>
+<RoleFormModal size="md" update={() => console.log("update")}>
+    <button id={nameToID(id)} class="m-1">{role.defaultSkills?.length} {pluralize("skill", role.defaultSkills?.length as number)}</button>
+</RoleFormModal>
 
 {/snippet}
