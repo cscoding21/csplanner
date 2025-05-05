@@ -529,6 +529,25 @@ func (r *mutationResolver) UpdateRole(ctx context.Context, input idl.UpdateRole)
 	return &out, nil
 }
 
+// UpdateAllRoles is the resolver for the updateAllRoles field.
+func (r *mutationResolver) UpdateAllRoles(ctx context.Context, input []*idl.UpdateRole) (*idl.CreateRoleResult, error) {
+	defer csmap.ExpireRoleCache()
+
+	service := factory.GetResourceService(ctx)
+	out := idl.CreateRoleResult{}
+
+	roles := csmap.UpdateRoleIdlToResourceSlice(input)
+	result, err := service.UpdateAllRoles(ctx, roles)
+	if err != nil {
+		out.Status, _ = csmap.GetStatusFromError(err)
+		return &out, err
+	}
+
+	out.Status, _ = csmap.GetStatusFromUpdateResult(result)
+
+	return &out, nil
+}
+
 // DeleteRole is the resolver for the deleteRole field.
 func (r *mutationResolver) DeleteRole(ctx context.Context, id string) (*idl.Status, error) {
 	defer csmap.ExpireRoleCache()

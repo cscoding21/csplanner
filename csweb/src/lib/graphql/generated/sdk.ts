@@ -226,6 +226,7 @@ export type Mutation = {
   setProjectMilestonesFromTemplate: CreateProjectResult;
   setProjectStatus: CreateProjectResult;
   toggleEmote: Status;
+  updateAllRoles: CreateRoleResult;
   updateList: CreateListResult;
   updateOrganization: CreateOrganizationResult;
   updateProject: CreateProjectResult;
@@ -329,6 +330,11 @@ export type MutationSetProjectStatusArgs = {
 
 export type MutationToggleEmoteArgs = {
   input: UpdateCommentEmote;
+};
+
+
+export type MutationUpdateAllRolesArgs = {
+  input?: InputMaybe<Array<InputMaybe<UpdateRole>>>;
 };
 
 
@@ -2094,6 +2100,15 @@ export const UpdateRoleDocument = gql`
 }
     ${StatusFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}`;
+export const UpdateAllRolesDocument = gql`
+    mutation updateAllRoles($input: [UpdateRole]!) {
+  updateAllRoles(input: $input) {
+    status {
+      ...statusFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}`;
 export const DeleteRroleDocument = gql`
     mutation deleteRrole($id: String!) {
   deleteRole(id: $id) {
@@ -2295,6 +2310,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     updateRole(variables: UpdateRoleMutationVariables, options?: C): Promise<UpdateRoleMutation> {
       return requester<UpdateRoleMutation, UpdateRoleMutationVariables>(UpdateRoleDocument, variables, options) as Promise<UpdateRoleMutation>;
+    },
+    updateAllRoles(variables: UpdateAllRolesMutationVariables, options?: C): Promise<UpdateAllRolesMutation> {
+      return requester<UpdateAllRolesMutation, UpdateAllRolesMutationVariables>(UpdateAllRolesDocument, variables, options) as Promise<UpdateAllRolesMutation>;
     },
     deleteRrole(variables: DeleteRroleMutationVariables, options?: C): Promise<DeleteRroleMutation> {
       return requester<DeleteRroleMutation, DeleteRroleMutationVariables>(DeleteRroleDocument, variables, options) as Promise<DeleteRroleMutation>;

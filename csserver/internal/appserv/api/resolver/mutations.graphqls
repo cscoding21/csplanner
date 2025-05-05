@@ -25,6 +25,7 @@ type Mutation {
     updateResourceSkill(input: UpdateSkill!) : Status!
     deleteResourceSkill(resourceID: String!, skillID: String!) : Status!
     updateRole(input: UpdateRole!) : CreateRoleResult!
+    updateAllRoles(input: [UpdateRole]) : CreateRoleResult!
     deleteRole(id: String!) : Status!
 
     updateOrganization(input: UpdateOrganization!) : CreateOrganizationResult!

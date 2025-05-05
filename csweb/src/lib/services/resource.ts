@@ -22,7 +22,8 @@ import {
 	UpdateResourceDocument,
 	FindAllRolesDocument,
 	DeleteRroleDocument,
-	UpdateRoleDocument
+	UpdateRoleDocument,
+	UpdateAllRolesDocument
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 
@@ -190,6 +191,10 @@ export const deleteResourceSkill = async (resourceID: string, skillID: string): 
 };
 
 
+/**
+ * find all roles in the organization
+ * @returns a list of all roles for the organization
+ */
 export const findAllRoles = async ():Promise<RoleResults> => {
 	const client = getApolloClient();
 
@@ -205,7 +210,11 @@ export const findAllRoles = async ():Promise<RoleResults> => {
 		});
 }
 
-
+/**
+ * update the details of an individual role
+ * @param input the role to update
+ * @returns a result describing the success of the operation
+ */
 export const updateRole = async (input: UpdateRole): Promise<CreateRoleResult> => {
 	const client = getApolloClient();
 
@@ -214,6 +223,27 @@ export const updateRole = async (input: UpdateRole): Promise<CreateRoleResult> =
 		.then((res) => {
 			if (res) {
 				return res.data.updateRole;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+
+/**
+ * update all roles in the organization
+ * @param input an array of roles to update
+ * @returns a result describing the success of the operation
+ */
+export const updateAllRoles = async (input: UpdateRole[]): Promise<CreateRoleResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: UpdateAllRolesDocument, variables: { input } })
+		.then((res) => {
+			if (res) {
+				return res.data.updateAllRoles;
 			}
 		})
 		.catch((err) => {

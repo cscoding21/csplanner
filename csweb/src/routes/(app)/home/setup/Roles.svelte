@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { SectionHeading } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
-	import type { Role } from "$lib/graphql/generated/sdk";
+	import type { Role, RoleResults, UpdateRole, UpdateSkill } from "$lib/graphql/generated/sdk";
 	import { formatCurrency, pluralize } from "$lib/utils/format";
 	import { nameToID } from "$lib/utils/id";
 	import { Alert, Button, ButtonGroup, Popover, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
 	import { TrashBinOutline } from "flowbite-svelte-icons";
-	import { RoleFormModal } from "../../settings/components";
     import { roleGroups } from "./roleGroups";
+	import RoleModalSetup from "./RoleModalSetup.svelte";
+	import { findAllRoles, updateAllRoles } from "$lib/services/resource";
+	import { addToast } from "$lib/stores/toasts";
+	import { callIf } from "$lib/utils/helpers";
 
     interface Props {
         onDone: Function
@@ -19,13 +21,80 @@
     let openModal:boolean = $state(false)
 
     const addRoleGroup = (rg:any[]) => {
-        roleList = [...new Set([...roleList, ...rg])]
+        // roleList = [...new Set([...roleList, ...rg])]
+        for (let i = 0; i < rg.length; i++) {
+            const r = rg[i]
+            if(roleList.some(av => av.id === r.id)) {
+                continue
+            }
+
+            roleList.push(r)
+            roleList = roleList
+        }
     }
 
     const removeRole = (i:number) => {
         roleList.splice(i, 1)
         roleList = roleList
     }
+
+    const saveRoles = () => {
+        const updateRoleList = roleList.map(rl => { 
+            return { 
+                id: rl.id, 
+                name: rl.name, 
+                description: rl.description, 
+                defaultSkills: rl.defaultSkills?.map(s => { return { id: s.id, skillID: s.skillID, proficiency: s.proficiency, parentID: rl.id } as UpdateSkill }), 
+                hourlyRate: rl.hourlyRate
+            } as UpdateRole } 
+        )
+
+		updateAllRoles(updateRoleList).then(res => {
+			if (res && res.status?.success) {
+				addToast({
+					message: 'Roles updated successfully',
+					dismissible: true,
+					type: 'success'
+				});
+
+                callIf(onDone)
+			} else {
+				addToast({
+					message: 'Error updating roles: ' + res.status?.message,
+					dismissible: true,
+					type: 'error'
+				});
+			}
+		});
+	}
+
+    function refresh() {
+		load().then(l => {
+            roleList = l.results?.map(r => r.data) as Role[]
+        });
+	}
+
+	const load = async ():Promise<RoleResults> => {
+		return await findAllRoles()
+			.then(r => {
+				return r
+			})
+			.catch((err) => {
+				addToast({
+					message: 'Error loading roles (Roles): ' + err,
+					dismissible: true,
+					type: 'error'
+				});
+
+				return err
+			});
+	};
+
+	const loadPage = async () => {
+        refresh()
+	};
+
+    loadPage()
 
 </script>
 
@@ -51,6 +120,9 @@
 
 
 <SectionSubHeading>Your Roles</SectionSubHeading>
+{#await loadPage()}
+    Loading...
+{:then pageData} 
 <div class="p-4">
     {#if roleList.length > 0}
     <Table hoverable={true}>
@@ -66,7 +138,7 @@
             <TableBodyCell>{r.name}</TableBodyCell>
             <TableBodyCell>{formatCurrency.format(r.hourlyRate || 0)}</TableBodyCell>
             <TableBodyCell>
-                {@render skillEditor(r.name, r)}
+                {@render skillEditor(r.id, r)}
             </TableBodyCell>
             <TableBodyCell>
                 <ButtonGroup>
@@ -82,11 +154,17 @@
       {:else}
       <Alert>No roles yet</Alert>
   {/if} 
-    
-</div>
+
+  <div class="mt-12 text-center">
+    <Button onclick={saveRoles}>I'm done with roles for now.  Let's keep going! >></Button>
+    </div>
+</div>    
+{/await}
+
 
 
 {#snippet roleGroup(name:string, id:string, group:any)}
+
 <Button id={"rg_" + id} class="m-2" color="alternative" pill onclick={() => addRoleGroup(group)}>{name}</Button>
 <Popover triggeredBy={"#rg_" + id} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
     <div class="p-3 space-y-2">
@@ -98,13 +176,14 @@
         </ul>
     </div>
 </Popover>
+
 {/snippet}
 
 
 {#snippet skillEditor(id:string, role:Role)}
 
-<RoleFormModal size="md" update={() => console.log("update")}>
-    <button id={nameToID(id)} class="m-1">{role.defaultSkills?.length} {pluralize("skill", role.defaultSkills?.length as number)}</button>
-</RoleFormModal>
+<RoleModalSetup {role} update={() => refresh()}>
+    <span id={nameToID(id)} class="m-1">{role.defaultSkills?.length} {pluralize("skill", role.defaultSkills?.length as number)}</span>
+</RoleModalSetup>
 
 {/snippet}

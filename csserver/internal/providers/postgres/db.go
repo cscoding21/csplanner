@@ -230,6 +230,45 @@ func SoftDelete(
 	return nil
 }
 
+// UndoSoftDelete remove the delete attributes of a record
+func UndoSoftDelete(
+	ctx context.Context,
+	db *pgxpool.Pool,
+	table TableName,
+	id string) error {
+
+	usr := config.GetUserEmailFromContext(ctx)
+
+	sql := fmt.Sprintf(`
+			UPDATE %s 
+			SET updated_at = $1,
+				updated_by = $2,
+				deleted_at = null,
+				deleted_by = null
+			WHERE true
+				AND id = $3;
+			`, table)
+
+	tx, err := db.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(ctx, sql,
+		time.Now(),
+		usr,
+		id)
+	defer func() {
+		if err != nil {
+			tx.Rollback(ctx)
+		} else {
+			tx.Commit(ctx)
+		}
+	}()
+
+	return nil
+}
+
 // Delete hard-delete an object from the database
 func Delete(
 	ctx context.Context,

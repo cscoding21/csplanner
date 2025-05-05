@@ -1,4 +1,5 @@
 import type { UpdateRole } from "$lib/graphql/generated/sdk";
+import { newID } from "$lib/utils/id";
 
 export interface RoleGroup {
     name: string;
@@ -12,97 +13,97 @@ export const roleGroups:RoleGroup[] = [
         id: "saasRoleGroup",
         roles: [
             {
-                id: "",
+                id: "role:fse",
                 description: "",
                 name: "Full Stack Engineer",
                 hourlyRate: 140.0,
                 defaultSkills: [
-                 { id: "", resourceID: "", proficiency: 2.0 },
-                 { id: "", resourceID: "", proficiency: 2.0 },
-                 { id: "", resourceID: "", proficiency: 2.0 },
-                 { id: "", resourceID: "", proficiency: 2.0 }
+                 { id: newID(), skillID: "Golang", parentID: "role:fse", proficiency: 2.0 },
+                 { id: newID(), skillID: "GraphQL", parentID: "role:fse", proficiency: 2.0 },
+                 { id: newID(), skillID: "Python", parentID: "role:fse", proficiency: 2.0 },
+                 { id: newID(), skillID: "Database", parentID: "role:fse", proficiency: 2.0 }
                  ]
              },
              {
-                id: "",
+                id: "role:webdev",
                 description: "",
                 name: "Web Developer",
                 hourlyRate: 100.0,
                 defaultSkills: [
-                 { id: "", resourceID: "Svelte", proficiency: 2.0 },
-                 { id: "", resourceID: "CSS", proficiency: 2.0 },
-                 { id: "", resourceID: "JavaScript", proficiency: 2.0 },
-                 { id: "", resourceID: "HTML", proficiency: 2.0 }
+                 { id: newID(), skillID: "Svelte", parentID: "role:webdev", proficiency: 2.0 },
+                 { id: newID(), skillID: "CSS", parentID: "role:webdev", proficiency: 2.0 },
+                 { id: newID(), skillID: "JavaScript", parentID: "role:webdev", proficiency: 2.0 },
+                 { id: newID(), skillID: "HTML", parentID: "role:webdev", proficiency: 2.0 }
                  ]
              },
              {
-                id: "",
+                id: "role:devops",
                 description: "",
                 name: "DevOps Engineer/SRE",
                 hourlyRate: 140.0,
                 defaultSkills: [
-                 { id: "", resourceID: "Kubernetes", proficiency: 2.0 },
-                 { id: "", resourceID: "AWS", proficiency: 2.0 },
-                 { id: "", resourceID: "Keycloak", proficiency: 2.0 }
+                 { id: newID(), skillID: "Kubernetes", parentID: "role:devops", proficiency: 2.0 },
+                 { id: newID(), skillID: "AWS", parentID: "role:devops", proficiency: 2.0 },
+                 { id: newID(), skillID: "Keycloak", parentID: "role:devops", proficiency: 2.0 }
                  ]
              },
              {
-                id: "",
+                id: "role:em",
                 description: "",
                 name: "Engineering Manager",
                 hourlyRate: 180.0,
                 defaultSkills: [
-                 { id: "", resourceID: "Golang", proficiency: 2.0 },
-                 { id: "", resourceID: "JavaScript", proficiency: 2.0 },
-                 { id: "", resourceID: "Leadership", proficiency: 2.0 },
-                 { id: "", resourceID: "Agile", proficiency: 2.0 }
+                 { id: newID(), skillID: "Golang", parentID: "role:em", proficiency: 2.0 },
+                 { id: newID(), skillID: "JavaScript", parentID: "role:em", proficiency: 2.0 },
+                 { id: newID(), skillID: "Leadership", parentID: "role:em", proficiency: 2.0 },
+                 { id: newID(), skillID: "Agile", parentID: "role:em", proficiency: 2.0 }
                  ]
              },
         ]
     },
     {
         name: "Product Management" ,
-        id: "pdmRoleGroup",
+        id: "projectManagementRoleGroup",
         roles: [
             {
-                id: "",
+                id: "role:pm",
                 description: "",
                 name: "Project Manager",
                 hourlyRate: 120.0,
                 defaultSkills: [
-                 { id: "", resourceID: "Business Analysis", proficiency: 2.0 },
-                 { id: "", resourceID: "Communications", proficiency: 2.0 }
+                 { id: newID(), skillID: "Business Analysis", parentID: "role:pm", proficiency: 2.0 },
+                 { id: newID(), skillID: "Communications", parentID: "role:pm", proficiency: 2.0 }
                  ]
              },
              {
-                id: "",
+                id: "role:pdm",
                 description: "",
                 name: "Product Manager",
                 hourlyRate: 100.0,
                 defaultSkills: [
-                 { id: "", resourceID: "Business Analysis", proficiency: 2.0 },
-                 { id: "", resourceID: "Product Development", proficiency: 2.0 }
+                 { id: newID(), skillID: "Business Analysis", parentID: "role:pdm", proficiency: 2.0 },
+                 { id: newID(), skillID: "Product Development", parentID: "role:pdm", proficiency: 2.0 }
                  ]
              },
              {
-                id: "",
+                id: "role:po",
                 description: "",
                 name: "Product Owner",
                 hourlyRate: 110.0,
                 defaultSkills: [
-                 { id: "", resourceID: "Scrum", proficiency: 2.0 },
-                 { id: "", resourceID: "Agile", proficiency: 2.0 }
+                 { id: newID(), skillID: "Scrum", parentID: "role:po", proficiency: 2.0 },
+                 { id: newID(), skillID: "Agile", parentID: "role:po", proficiency: 2.0 }
                  ]
              },
              {
-                id: "",
+                id: "role:pd",
                 description: "",
                 name: "Product Designer",
                 hourlyRate: 130.0,
                 defaultSkills: [
-                 { id: "", resourceID: "UI", proficiency: 2.0 },
-                 { id: "", resourceID: "UX", proficiency: 2.0 },
-                 { id: "", resourceID: "Product Design", proficiency: 2.0 }
+                 { id: newID(), skillID: "UI", parentID: "role:pd", proficiency: 2.0 },
+                 { id: newID(), skillID: "UX", parentID: "role:pd", proficiency: 2.0 },
+                 { id: newID(), skillID: "Product Design", parentID: "role:pd", proficiency: 2.0 }
                  ]
              },
         ]

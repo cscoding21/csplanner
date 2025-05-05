@@ -12,6 +12,48 @@ import (
 // ---This is the name of the object in the database
 const RoleIdentifier = postgres.TableName("role")
 
+func (s *ResourceService) UpdateAllRoles(ctx context.Context, roles []*Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
+	results := []common.UpdateResult[*common.BaseModel[Role]]{}
+	toDeleteMap := make(map[string]bool)
+
+	allRoles, err := s.FindAllRoles(ctx)
+	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Role]](nil, err)
+	}
+
+	for _, ar := range allRoles.Results {
+		toDeleteMap[ar.Data.ID] = true
+	}
+
+	for _, r := range roles {
+		toDeleteMap[r.ID] = false
+		result, err := s.UpsertRole(ctx, *r)
+		if err != nil {
+			return common.NewFailingUpdateResult[*common.BaseModel[Role]](nil, err)
+		}
+
+		results = append(results, result)
+	}
+
+	for k, v := range toDeleteMap {
+		if v {
+			err = s.DeleteRole(ctx, k)
+			if err != nil {
+				return common.NewFailingUpdateResult[*common.BaseModel[Role]](nil, err)
+			}
+		} else {
+			err = postgres.UndoSoftDelete(ctx, s.db, RoleIdentifier, k)
+			if err != nil {
+				return common.NewFailingUpdateResult[*common.BaseModel[Role]](nil, err)
+			}
+		}
+	}
+
+	out, err := common.MergeUpdateResults(results)
+
+	return out, err
+}
+
 // GetRoleByID gets a Role by its ID.
 func (s *ResourceService) GetRoleByID(ctx context.Context, id string) (*common.BaseModel[Role], error) {
 	return postgres.GetObjectByID[Role](ctx, s.db, RoleIdentifier, id)

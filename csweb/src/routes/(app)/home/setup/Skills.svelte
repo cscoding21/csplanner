@@ -83,7 +83,7 @@
                 callIf(onDone)
 			} else {
 				addToast({
-					message: 'Error updating siills: ' + res.status?.message,
+					message: 'Error updating skills: ' + res.status?.message,
 					dismissible: true,
 					type: 'error'
 				});

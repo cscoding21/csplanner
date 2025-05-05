@@ -154,6 +154,14 @@ mutation updateRole($input: UpdateRole!) {
 	}
 }
 
+mutation updateAllRoles($input: [UpdateRole]!) {
+	updateAllRoles(input: $input) {
+		status {
+			...statusFragment
+		}
+	}
+}
+
 mutation deleteRrole($id: String!) {
 	deleteRole(id: $id) {
 		...statusFragment
