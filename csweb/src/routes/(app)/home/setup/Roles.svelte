@@ -4,7 +4,7 @@
 	import { formatCurrency, pluralize } from "$lib/utils/format";
 	import { nameToID } from "$lib/utils/id";
 	import { Alert, Button, ButtonGroup, Popover, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
-	import { TrashBinOutline } from "flowbite-svelte-icons";
+	import { PlusOutline, TrashBinOutline } from "flowbite-svelte-icons";
     import { roleGroups } from "./roleGroups";
 	import RoleModalSetup from "./RoleModalSetup.svelte";
 	import { findAllRoles, updateAllRoles } from "$lib/services/resource";
@@ -17,11 +17,8 @@
     let { onDone }:Props = $props()
 
     let roleList:Role[] = $state([] as Role[])
-    let newRole:any = $state({} as Role)
-    let openModal:boolean = $state(false)
 
     const addRoleGroup = (rg:any[]) => {
-        // roleList = [...new Set([...roleList, ...rg])]
         for (let i = 0; i < rg.length; i++) {
             const r = rg[i]
             if(roleList.some(av => av.id === r.id)) {
@@ -116,10 +113,16 @@
     {#each roleGroups as rg, index}
     {@render roleGroup(rg.name, rg.id, rg.roles)}
     {/each}
+
+    <RoleModalSetup update={() => refresh()}>
+    <Button color="blue" class="m-2" pill>Create Role</Button>
+    </RoleModalSetup>   
 </div>
 
 
-<SectionSubHeading>Your Roles</SectionSubHeading>
+<SectionSubHeading>
+    Your Roles
+</SectionSubHeading>
 {#await loadPage()}
     Loading...
 {:then pageData} 

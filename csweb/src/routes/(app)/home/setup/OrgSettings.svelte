@@ -32,7 +32,7 @@
 			});
 	};
 
-    let of = $state({} as typeof orgForm);
+  let of = $state({} as typeof orgForm);
 	let org = $state({} as Organization)
 </script>
 

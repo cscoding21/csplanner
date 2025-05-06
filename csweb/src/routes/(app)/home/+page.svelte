@@ -36,6 +36,8 @@
         getOrganization().then(o => {
             org = o
 
+            currentStep = getStartingStep(org)
+
             return o
         }).then(r => {
             findProjects(getFilters())
@@ -47,7 +49,25 @@
 
     let org = $state({} as Organization)
     let myProjects = $state({} as ProjectResults)
-    let currentStep = $state(1)
+    let currentStep = $state(0)
+
+    const getStartingStep = (o:Organization):number => {
+        let out = 1;
+
+        if(o.setup.hasResources) {
+            out = 7
+        } else if (o.setup.hasRoles) {
+            out = 6
+        } else if (o.setup.hasFundingSources) {
+            out = 5
+        } else if (o.setup.hasValueCategories) {
+            out = 4
+        } else if (o.setup.hasSkills) {
+            out = 3
+        } 
+
+        return out
+    }
 
     const next = () => {
         ++currentStep
