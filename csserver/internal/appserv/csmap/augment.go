@@ -53,6 +53,8 @@ func AugmentOrganization(ctx context.Context, org *idl.Organization) {
 	fsl := getListById(*lists, list.ListNameFundingSource)
 	vcl := getListById(*lists, list.ListNameValueCategory)
 
+	log.Warnf("Skill List: %v", sl)
+
 	org.Setup = &idl.OrganizationSetup{
 		HasRoles:           len(*roles) > 0,
 		HasTemplates:       len(*templates) > 0,
@@ -291,10 +293,10 @@ func AugmentResource(ctx context.Context, res *idl.Resource) {
 	skills := getSkills(ctx)
 
 	for i, s := range res.Skills {
-		li := getSkillById(*skills, s.ID)
+		li := getSkillById(*skills, *s.SkillID)
 
 		if li == nil {
-			log.Warnf("skill not found: %s", s.ID)
+			log.Warnf("skill not found: %s", *s.SkillID)
 		} else {
 			res.Skills[i].Name = li.Name
 		}

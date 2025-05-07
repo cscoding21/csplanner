@@ -5,7 +5,10 @@
 	import { addToast } from "$lib/stores/toasts";
 	import { newID } from "$lib/utils/id";
 	import { Alert, Button, ButtonGroup, Input, Select, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, type SelectOptionType } from "flowbite-svelte";
-	import { TrashBinOutline } from "flowbite-svelte-icons";
+	import { PenNibOutline, TrashBinOutline } from "flowbite-svelte-icons";
+	import UpdateResourceModal from "../../resource/components/UpdateResourceModal.svelte";
+	import { formatCurrency } from "$lib/utils/format";
+	import { goto } from "$app/navigation";
 
     interface Props {
         onDone: Function
@@ -66,6 +69,9 @@
 					type: 'success'
 				});
 
+				newResourceName = ""
+				newResourceRoleID = ""
+
 				refresh()
 			} else {
 				addToast({
@@ -78,6 +84,7 @@
 	}
 
 	const saveResources = () => {
+		goto("/")
 		onDone()
 	}
 
@@ -136,6 +143,8 @@
         <TableHead>
           <TableHeadCell>Name</TableHeadCell>
           <TableHeadCell>Role</TableHeadCell>
+		  <TableHeadCell>Hours/Week</TableHeadCell>
+		  <TableHeadCell>Hourly Rate</TableHeadCell>
           <TableHeadCell>Actions</TableHeadCell>
         </TableHead>
         <TableBody tableBodyClass="divide-y">
@@ -146,11 +155,16 @@
             <TableBodyCell>
                 {r.role?.name}
             </TableBodyCell>
-            <TableBodyCell>
+			<TableBodyCell class="text-right">{r.availableHoursPerWeek}</TableBodyCell>
+			<TableBodyCell class="text-right">{formatCurrency.format(r.calculated.hourlyCost as number)}</TableBodyCell>
+            <TableBodyCell class="text-right">
                 <ButtonGroup>
-                    <button onclick={() => removeRes(r.id as string)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
-                    <TrashBinOutline size="sm" class="" />
-                    </button>   
+                    <Button onclick={() => removeRes(r.id as string)} type="button" aria-label="Remove">
+                    	<TrashBinOutline size="sm" class="" />
+					</Button>   
+					<UpdateResourceModal update={() => console.log("update")} id={r.id as string}>
+						<PenNibOutline />
+					</UpdateResourceModal>
                 </ButtonGroup>
             </TableBodyCell>
           </TableBodyRow>
@@ -161,24 +175,17 @@
 			</TableBodyRow>
   		  {/if} 
         </TableBody>
-		<tfoot>
-			<tr>
-				<th class="pr-2">
-					<Input bind:value={newResourceName} />
-				</th>
-				<th class="pr-2">
-					<Select bind:value={newResourceRoleID} items={roleOpts} />
-				</th>
-				<th>
-					<Button onclick={addRes}>Add</Button>	
-				</th>
-			</tr>
-		</tfoot>
       </Table>
+
+	  <div class="grid mt-4 grid-cols-5 gap-4 w-full px-2">
+		<div class="col-span-2"><Input bind:value={newResourceName} placeholder="Resource name" /></div>
+		<div class="col-span-2"><Select bind:value={newResourceRoleID} items={roleOpts} placeholder="Role" /></div>
+		<div class="text-center"><Button onclick={addRes}>Add</Button>	</div>
+	  </div>
       
 
   <div class="mt-12 text-center">
-    <Button onclick={saveResources}>I'm done with resource for now.  Let's wrap up! >></Button>
+    <Button onclick={saveResources}>I'm done with resource for now.  Let's me in!</Button>
   </div>
 </div>  
 	

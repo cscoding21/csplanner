@@ -12,7 +12,10 @@
         onDone: Function
     }
     let { onDone }:Props = $props()
-    let fsList:string[] = $state([])
+    let fsList:any[] = $state([
+        { name: "Internal", value: "internal"},
+        { name: "External", value: "external"},
+    ])
     let newFS:string = $state("")
 
     const listName = "list:funding-source"
@@ -22,7 +25,9 @@
             return
         }
 
-        fsList = [...new Set([...fsList, newFS])]
+        const toAdd = { name: newFS, value: nameToID(newFS) }
+
+        fsList = [...new Set([...fsList, toAdd])]
         newFS = ""
     }
 
@@ -38,7 +43,7 @@
     })
 
     const okToAdd = (fs:string):boolean => {
-        const sk = fsList.filter(s => fs.toLocaleLowerCase() === s.toLocaleLowerCase())
+        const sk = fsList.filter(s => fs.toLocaleLowerCase() === s.name.toLocaleLowerCase())
 
         return sk.length === 0
     }
@@ -53,8 +58,8 @@
         for(let i = 0; i < fsList.length; i++) {
             const sk = fsList[i]
             const listItem:UpdateListItem = {
-                name: sk,
-                value: nameToID(sk),
+                name: sk.name,
+                value: sk.value,
                 sortOrder: 0,
             }
 
@@ -88,7 +93,9 @@
 
     const getExistingFSs = async () => {
         getList(listName).then(sk => {
-            fsList = sk.values.map(s => s.name)
+            if(sk.values && sk.values.length > 0) {
+                fsList = sk.values.map(s => { return { name: s.name, value: s.value }})
+            }
         })
     }
 
@@ -117,7 +124,7 @@
     {#if fsList.length > 0}
     {#each fsList as fundsrc, index}
         <Badge color="blue" class="m-2" dismissable>
-            {fundsrc}
+            {fundsrc.name}
         <button slot="close-button" onclick={() => removeFS(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
             <CloseCircleSolid class="h-4 w-4" />
             <span class="sr-only">Remove funding source</span>

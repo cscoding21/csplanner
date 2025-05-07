@@ -15,6 +15,7 @@
             _ms = step
         }
 
+        console.log("max step", _ms)
         return _ms
     })
 
@@ -42,7 +43,7 @@
     </svg>
     {/if}
 </li>
-{:else if step > number}
+{:else if step == number}
 <li class="flex items-center text-green-600 dark:text-green-500 text-nowrap">
     <span class="flex items-center justify-center w-5 h-5 me-2 text-xs border border-gray-500 rounded-full shrink-0 dark:border-gray-400">{number}</span> <button onclick={() => { step = number}}>{name}</button>
     <CheckCircleSolid class="ml-2" />
@@ -73,11 +74,3 @@
 </li>
 {/if}
 {/snippet}
-
-
-<!-- <div class="mt-4">
-    <ButtonGroup>
-        <Button onclick={() => { setStep(--step) }} disabled={step == 1}><ArrowLeftOutline /> Previous</Button>
-        <Button onclick={() => { setStep(++step) }} disabled={step == 7}>Next <ArrowRightOutline /></Button>
-    </ButtonGroup>
-</div> -->

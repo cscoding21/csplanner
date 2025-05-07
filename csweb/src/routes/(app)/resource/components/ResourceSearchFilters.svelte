@@ -81,7 +81,7 @@
         }
 
         if (skills) {
-            const skfil = { key: 'data.skills.id', value: skills, operation: 'ct' }
+            const skfil = { key: 'data.skills.skill_id', value: skills, operation: 'ct' }
             filterArray = [...filterArray, skfil]
         }
 

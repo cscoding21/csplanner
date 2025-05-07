@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { CSSection, OrgStateChecker, PageHeading } from "$lib/components";
+	import { CSSection, OrgStateChecker } from "$lib/components";
 	import type { Organization, PageAndFilter, ProjectResults } from "$lib/graphql/generated/sdk";
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
 	import { findProjects } from "$lib/services/project";
-	import { Button, ButtonGroup } from "flowbite-svelte";
 	import SetupWizard from "./setup/SetupWizard.svelte";
 	import Welcome from "./setup/Welcome.svelte";
-	import { ArrowLeftOutline, ArrowRightOutline } from "flowbite-svelte-icons";
 	import OrgSettings from "./setup/OrgSettings.svelte";
 	import Skills from "./setup/Skills.svelte";
 	import ValueCats from "./setup/valueCats.svelte";
@@ -37,6 +35,8 @@
             org = o
 
             currentStep = getStartingStep(org)
+
+            console.log(org)
 
             return o
         }).then(r => {
@@ -108,21 +108,12 @@
                 <FundingSources onDone={next} />
             {:else if currentStep == 6}
                 <Roles onDone={next} />
-            {:else if currentStep == 7}
+            {:else if currentStep >= 7}
                 <Resources onDone={next} />
             {/if}
             <div></div>
                 </div>
             </div>
-        
-        
-            
-            <!-- <div class="mt-4">
-                <ButtonGroup>
-                    <Button onclick={() => { --currentStep }} disabled={currentStep == 1}><ArrowLeftOutline /> Previous</Button>
-                    <Button onclick={() => { ++currentStep }} disabled={currentStep == 7}>Next <ArrowRightOutline /></Button>
-                </ButtonGroup>
-            </div> -->
         {/snippet}
     </OrgStateChecker>
 

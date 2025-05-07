@@ -13,7 +13,7 @@
         onDone: Function
     }
     let { onDone }:Props = $props()
-    let skillList:string[] = $state([])
+    let skillList:any[] = $state([])
     let newSkill:string = $state("")
 
     const listName = "list:skills"
@@ -23,7 +23,9 @@
             return
         }
 
-        skillList = [...new Set([...skillList, newSkill])]
+        const toAdd = {name:newSkill, value: nameToID("skill:" + newSkill)}
+
+        skillList = [...new Set([...skillList, toAdd])]
         newSkill = ""
     }
 
@@ -43,7 +45,7 @@
     })
 
     const okToAdd = (skill:string):boolean => {
-        const sk = skillList.filter(s => skill.toLocaleLowerCase() === s.toLocaleLowerCase())
+        const sk = skillList.filter(s => skill.toLocaleLowerCase() === s.name.toLocaleLowerCase())
 
         return sk.length === 0
     }
@@ -58,8 +60,8 @@
         for(let i = 0; i < skillList.length; i++) {
             const sk = skillList[i]
             const listItem:UpdateListItem = {
-                name: sk,
-                value: nameToID(sk),
+                name: sk.name,
+                value: sk.value,
                 sortOrder: 0,
             }
 
@@ -93,7 +95,7 @@
 
     const getExistingSkills = async () => {
         getList(listName).then(sk => {
-            skillList = sk.values.map(s => s.name)
+            skillList = sk.values.map(s => { return { name: s.name, value: s.value } })
         })
     }
 
@@ -128,7 +130,7 @@
     {#if skillList.length > 0}
     {#each skillList as skill, index}
         <Badge color="yellow" class="m-2" dismissable>
-            {skill}
+            {skill.name}
         <button slot="close-button" onclick={() => removeSkill(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
             <CloseCircleSolid class="h-4 w-4" />
             <span class="sr-only">Remove skill</span>
@@ -152,7 +154,7 @@
         Add the following roles to your organization:
         <ul class="list-disc pl-4">
         {#each group as sk}
-            <li>{sk}</li>
+            <li>{sk.name}</li>
         {/each}
         </ul>
     </div>

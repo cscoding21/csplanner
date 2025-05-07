@@ -18,10 +18,10 @@ export const roleGroups:RoleGroup[] = [
                 name: "Full Stack Engineer",
                 hourlyRate: 140.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Golang", parentID: "role:fse", proficiency: 2.0 },
-                 { id: newID(), skillID: "GraphQL", parentID: "role:fse", proficiency: 2.0 },
-                 { id: newID(), skillID: "Python", parentID: "role:fse", proficiency: 2.0 },
-                 { id: newID(), skillID: "Database", parentID: "role:fse", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:go", parentID: "role:fse", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:graphql", parentID: "role:fse", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:python", parentID: "role:fse", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:db", parentID: "role:fse", proficiency: 2.0 }
                  ]
              },
              {
@@ -30,10 +30,10 @@ export const roleGroups:RoleGroup[] = [
                 name: "Web Developer",
                 hourlyRate: 100.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Svelte", parentID: "role:webdev", proficiency: 2.0 },
-                 { id: newID(), skillID: "CSS", parentID: "role:webdev", proficiency: 2.0 },
-                 { id: newID(), skillID: "JavaScript", parentID: "role:webdev", proficiency: 2.0 },
-                 { id: newID(), skillID: "HTML", parentID: "role:webdev", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:svelte", parentID: "role:webdev", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:css", parentID: "role:webdev", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:js", parentID: "role:webdev", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:html", parentID: "role:webdev", proficiency: 2.0 }
                  ]
              },
              {
@@ -42,9 +42,9 @@ export const roleGroups:RoleGroup[] = [
                 name: "DevOps Engineer/SRE",
                 hourlyRate: 140.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Kubernetes", parentID: "role:devops", proficiency: 2.0 },
-                 { id: newID(), skillID: "AWS", parentID: "role:devops", proficiency: 2.0 },
-                 { id: newID(), skillID: "Keycloak", parentID: "role:devops", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:k8s", parentID: "role:devops", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:aws", parentID: "role:devops", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:keycloak", parentID: "role:devops", proficiency: 2.0 }
                  ]
              },
              {
@@ -53,10 +53,10 @@ export const roleGroups:RoleGroup[] = [
                 name: "Engineering Manager",
                 hourlyRate: 180.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Golang", parentID: "role:em", proficiency: 2.0 },
-                 { id: newID(), skillID: "JavaScript", parentID: "role:em", proficiency: 2.0 },
-                 { id: newID(), skillID: "Leadership", parentID: "role:em", proficiency: 2.0 },
-                 { id: newID(), skillID: "Agile", parentID: "role:em", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:go", parentID: "role:em", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:js", parentID: "role:em", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:leadership", parentID: "role:em", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:agile", parentID: "role:em", proficiency: 2.0 }
                  ]
              },
         ]
@@ -71,8 +71,8 @@ export const roleGroups:RoleGroup[] = [
                 name: "Project Manager",
                 hourlyRate: 120.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Business Analysis", parentID: "role:pm", proficiency: 2.0 },
-                 { id: newID(), skillID: "Communications", parentID: "role:pm", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:ba", parentID: "role:pm", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:comms", parentID: "role:pm", proficiency: 2.0 }
                  ]
              },
              {
@@ -81,8 +81,8 @@ export const roleGroups:RoleGroup[] = [
                 name: "Product Manager",
                 hourlyRate: 100.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Business Analysis", parentID: "role:pdm", proficiency: 2.0 },
-                 { id: newID(), skillID: "Product Development", parentID: "role:pdm", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:ba", parentID: "role:pdm", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:pdm", parentID: "role:pdm", proficiency: 2.0 }
                  ]
              },
              {
@@ -91,8 +91,8 @@ export const roleGroups:RoleGroup[] = [
                 name: "Product Owner",
                 hourlyRate: 110.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "Scrum", parentID: "role:po", proficiency: 2.0 },
-                 { id: newID(), skillID: "Agile", parentID: "role:po", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:scrum", parentID: "role:po", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:agile", parentID: "role:po", proficiency: 2.0 }
                  ]
              },
              {
@@ -101,9 +101,9 @@ export const roleGroups:RoleGroup[] = [
                 name: "Product Designer",
                 hourlyRate: 130.0,
                 defaultSkills: [
-                 { id: newID(), skillID: "UI", parentID: "role:pd", proficiency: 2.0 },
-                 { id: newID(), skillID: "UX", parentID: "role:pd", proficiency: 2.0 },
-                 { id: newID(), skillID: "Product Design", parentID: "role:pd", proficiency: 2.0 }
+                 { id: newID(), skillID: "skill:ui", parentID: "role:pd", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:ux", parentID: "role:pd", proficiency: 2.0 },
+                 { id: newID(), skillID: "skill:proddes", parentID: "role:pd", proficiency: 2.0 }
                  ]
              },
         ]

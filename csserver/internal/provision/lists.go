@@ -20,9 +20,9 @@ var fundingSourceList = list.List{
 	},
 	Name:        list.ListNameFundingSource,
 	Description: "Funding sources are used to identify where a projects value comes from.  This list appears when assigning a projects value.",
-	Values: []*list.ListItem{
-		{Value: "internal", Name: "Internal"},
-		{Value: "external", Name: "External"},
+	Values:      []*list.ListItem{
+		// {Value: "internal", Name: "Internal"},
+		// {Value: "external", Name: "External"},
 	},
 }
 
@@ -32,10 +32,10 @@ var valueCategoryList = list.List{
 	},
 	Name:        list.ListNameValueCategory,
 	Description: "Value categories are used to characterize the nature of a projects value.  This information informs decisions about priority.",
-	Values: []*list.ListItem{
-		{Value: "revenue", Name: "Revenue increase"},
-		{Value: "tax-benefit", Name: "Tax write-off"},
-		{Value: "risk-mitigation", Name: "Risk mitigation"},
-		{Value: "cost-reduction", Name: "Cost reduction"},
+	Values:      []*list.ListItem{
+		// {Value: "revenue", Name: "Revenue increase"},
+		// {Value: "tax-benefit", Name: "Tax write-off"},
+		// {Value: "risk-mitigation", Name: "Risk mitigation"},
+		// {Value: "cost-reduction", Name: "Cost reduction"},
 	},
 }
