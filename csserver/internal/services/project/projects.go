@@ -7,6 +7,7 @@ import (
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
+	"csserver/internal/utils"
 
 	"github.com/cscoding21/csval/validate"
 
@@ -57,6 +58,7 @@ func (s *ProjectService) newProject(
 	val validate.ValidationResult) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
 	pro.ProjectStatusBlock.Status = projectstatus.NewProject
+
 	updateResult, err := s.CreateProject(ctx, pro)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
@@ -78,7 +80,13 @@ func (s *ProjectService) CreateNewProject(
 	rm map[string]resource.Resource,
 	roleMap map[string]resource.Role,
 	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
+
+	newID := utils.GenerateBase64UUID()
+
 	newProj := Project{
+		ControlFields: common.ControlFields{
+			ID: newID,
+		},
 		ProjectBasics: &basics,
 		ProjectStatusBlock: &ProjectStatusBlock{
 			Status: projectstatus.NewProject,
@@ -106,6 +114,7 @@ func (s *ProjectService) CreateNewProject(
 	}
 
 	pro := common.UpwrapFromUpdateResult(updateResult)
+
 	updateResultWithMS, err := s.SetProjectMilestonesFromTemplate(ctx, pro.ID, template)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)

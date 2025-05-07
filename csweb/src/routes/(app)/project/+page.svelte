@@ -88,7 +88,7 @@
 			{/each}
 		</div>
 	{:else}
-		<NoResults title="No Projects" newUrl="/resource/new">No projects...create one now.</NoResults>
+		<NoResults title="No Projects" newUrl="/project/new">No projects...create one now.</NoResults>
 	{/if}
 {/await}
 </div>
