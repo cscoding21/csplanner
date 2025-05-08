@@ -53,8 +53,6 @@ func AugmentOrganization(ctx context.Context, org *idl.Organization) {
 	fsl := getListById(*lists, list.ListNameFundingSource)
 	vcl := getListById(*lists, list.ListNameValueCategory)
 
-	log.Warnf("Skill List: %v", sl)
-
 	org.Setup = &idl.OrganizationSetup{
 		HasRoles:           len(*roles) > 0,
 		HasTemplates:       len(*templates) > 0,

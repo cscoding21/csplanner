@@ -7,7 +7,7 @@
 	import { is } from '$lib/utils/check';
 	import type { RoleEnvelope, UpdateRole, UpdateSkill } from '$lib/graphql/generated/sdk';
 	import { addToast } from '$lib/stores/toasts';
-	import { callIf, deepCopy } from '$lib/utils/helpers';
+	import { callIf, coalesce, deepCopy } from '$lib/utils/helpers';
 	import { decodeProficiency, updateRole } from '$lib/services/resource';
 	import { TrashBinOutline } from 'flowbite-svelte-icons';
 	import { skillForm, skillSchema } from '$lib/forms/skill.validation';
@@ -108,6 +108,16 @@
 		{ value: 3, name: 'Expert' }
 	];
 
+	const getSkillName = (skillID:string):string => {
+		const sk = availableSkillOpts.filter(o => o.value === skillID)
+
+		if (sk && sk.length > 0) {
+			return sk[0].name as string
+		}
+
+		return ""
+	}
+
 	const loadPage = async () => {
 		getList('Skills')
 			.then((l) => {
@@ -173,7 +183,9 @@
 			<TableBody>
 				{#each rf.defaultSkills as s, index}
 					<TableBodyRow>
-						<TableBodyCell>{rf.defaultSkills[index].skillID}</TableBodyCell>
+						<TableBodyCell>
+							{getSkillName(rf.defaultSkills[index].skillID)}
+						</TableBodyCell>
 						<TableBodyCell>
 							<Range size="lg" id="range-steps" min="1" max="3" bind:value={rf.defaultSkills[index].proficiency as number} step="1" />
 							<br /><small>{decodeProficiency(rf.defaultSkills[index].proficiency as number)}</small>

@@ -112,4 +112,19 @@ export const csGroupBy = (groupByArray:any[], groupByLabel:string, valueField:st
 		return result;
 };
 
+/**
+ * return the first meaningful value in the args array
+ * @param args a list of values to evaluate
+ * @returns the first non null|undefined|empty value
+ */
+export const coalesce = (...args:any):any => {
+	for (let i = 0; i < args.length; i++) {
+		if (args[i]) {
+			return args[i];
+		}
+	}
+
+	return "";
+}
+
 

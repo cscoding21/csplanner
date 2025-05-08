@@ -11,6 +11,7 @@
 	import { getList } from "$lib/services/list";
 	import { SelectInput } from "$lib/components";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
+	import { newID } from "$lib/utils/id";
 
     interface Props {
 		parentID: string;
@@ -41,26 +42,29 @@
 	};
 
     const addSkill = () => {
-        upsertSkill(newSkill.skillID, newSkill.proficiency)
+		const id = newID();
+        upsertSkill(id, newSkill.skillID, newSkill.proficiency)
     }
 
-    const upsertSkill = (sid:string, proficiency:number) => {
+    const upsertSkill = (id:string, sid:string, proficiency:number) => {
 		errors = {};
 
         const usf = {
+			id: id,
             skillID: sid,
             proficiency: proficiency,
-            resourceID:parentID
+            parentID:parentID
         }
 
 		const parsedSkillForm = skillSchema.cast(usf);
-		parsedSkillForm.resourceID = parentID;
+		parsedSkillForm.parentID = parentID;
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
 				updateResourceSkill({
-					resourceID: parsedSkillForm.resourceID,
-					id: parsedSkillForm.skillID,
+					id: parsedSkillForm.id,
+					parentID: parsedSkillForm.parentID,
+					skillID: parsedSkillForm.skillID,
 					proficiency: parsedSkillForm.proficiency as number
 				}).then((res) => {
 					if (res.success) {
@@ -70,7 +74,7 @@
 							type: 'success'
 						});
 
-						newSkill.id = undefined;
+						newSkill.skillID = undefined;
 						newSkill.proficiency = 2;
 
 						update()
@@ -125,7 +129,7 @@
             <TableBodyRow>
                 <TableBodyCell>{s.name}</TableBodyCell>
                 <TableBodyCell>
-                    <Range size="lg" id="range-steps" min="1" max="3" bind:value={updateSkills[index].proficiency as number} onchange={e => upsertSkill(s.id, updateSkills[index].proficiency as number)} step="1" />
+                    <Range size="lg" id="range-steps" min="1" max="3" bind:value={updateSkills[index].proficiency as number} onchange={e => upsertSkill(s.id, s.skillID, updateSkills[index].proficiency as number)} step="1" />
                     <br /><small>{decodeProficiency(s.proficiency as number)}</small>
                 </TableBodyCell>
                 <TableBodyCell tdClass="float-right pt-2">

@@ -12,6 +12,7 @@ export const resetFormValues = (form: any) => {
 };
 
 export const skillSchema = yup.object().shape({
+	id: yup.string().required(),
 	parentID: yup.string().required(),
 	skillID: yup.string().required('Skill is required'),
 	proficiency: yup.number().min(1).max(3).required('Proficiency is required')

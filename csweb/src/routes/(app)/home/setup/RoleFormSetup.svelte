@@ -40,12 +40,13 @@
 
 	const addSkill = () => {
 		sf.parentID = rf.id
+		sf.id = newID()
 		const parsedSkillForm = skillSchema.cast(sf);
 
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
-				rf.defaultSkills = [...rf.defaultSkills as UpdateSkill[], { parentID: rf.id, id: newID(), skillID: sf.skillID, proficiency: sf.proficiency} as UpdateSkill]
+				rf.defaultSkills = [...rf.defaultSkills as UpdateSkill[], { parentID: rf.id, id: sf.id, skillID: sf.skillID, proficiency: sf.proficiency} as UpdateSkill]
 			})
 			.catch((err) => {
 				alert(err)
@@ -107,6 +108,16 @@
 		{ value: 3, name: 'Expert' }
 	];
 
+	const getSkillName = (skillID:string):string => {
+		const sk = availableSkillOpts.filter(o => o.value === skillID)
+
+		if (sk && sk.length > 0) {
+			return sk[0].name as string
+		}
+
+		return ""
+	}
+
 	const loadPage = async () => {
 		getList('Skills')
 			.then((l) => {
@@ -161,7 +172,7 @@
 			<TableBody>
 				{#each rf.defaultSkills as s, index}
 					<TableBodyRow>
-						<TableBodyCell>{rf.defaultSkills[index].skillID}</TableBodyCell>
+						<TableBodyCell>{getSkillName(rf.defaultSkills[index].skillID)}</TableBodyCell>
 						<TableBodyCell>
 							<Range size="lg" id="range-steps" min="1" max="3" bind:value={rf.defaultSkills[index].proficiency as number} step="1" />
 							<br /><small>{decodeProficiency(rf.defaultSkills[index].proficiency as number)}</small>
