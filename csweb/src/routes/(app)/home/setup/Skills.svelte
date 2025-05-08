@@ -23,7 +23,7 @@
             return
         }
 
-        const toAdd = {name:newSkill, value: nameToID("skill:" + newSkill)}
+        const toAdd = {name:newSkill, value: "skill:" + nameToID(newSkill)}
 
         skillList = [...new Set([...skillList, toAdd])]
         newSkill = ""

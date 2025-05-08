@@ -16,8 +16,7 @@
             {value: "revenue", name: "Revenue increase"},
             {value: "tax-benefit", name: "Tax write-off"},
             {value: "risk-mitigation", name: "Risk mitigation"},
-            {value: "cost-reduction", name: "Cost reduction"},
-        {}
+            {value: "cost-reduction", name: "Cost reduction"}
     ])
     let newVC:string = $state("")
 

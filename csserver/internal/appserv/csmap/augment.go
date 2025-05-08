@@ -316,11 +316,11 @@ func AugmentRole(ctx context.Context, r *idl.Role) {
 	}
 
 	for j, sk := range r.DefaultSkills {
-		skill := getSkillById(*skills, sk.ID)
+		skill := getSkillById(*skills, *sk.SkillID)
 		if skill != nil {
 			r.DefaultSkills[j].Name = skill.Name
 		} else {
-			log.Warnf("Skill %s not found when augmenting role %s", sk.ID, r.Name)
+			log.Warnf("Skill %s not found when augmenting role %s", *sk.SkillID, r.Name)
 		}
 
 	}
