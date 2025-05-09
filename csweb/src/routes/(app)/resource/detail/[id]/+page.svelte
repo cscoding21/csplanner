@@ -42,9 +42,7 @@
 	const updateResource = () => {
 		refresh().then((r) => {
 			resourcePromise = r as ResourceEnvelope;
-			resourceSkills = r.data?.skills as Skill[] 
-
-			console.log("updateResource", resourceSkills)
+			resourceSkills = r.data?.skills as Skill[];
 
 			return r
 		}).then(p => {
@@ -166,13 +164,13 @@
 
 			<div class="col-span-2">
 				<CSSection>
-					<SectionSubHeading>Project Allocation: {formatDate(startDate)} - {formatDate(endDate)}</SectionSubHeading>
+				<SectionSubHeading>Project Allocation: {formatDate(startDate)} - {formatDate(endDate)}</SectionSubHeading>
 
-					{#if portfolio && portfolio.schedule}
-					<div class="mb-2">
-						<PortfolioTable {portfolio} {startDate} {endDate}></PortfolioTable>
-					</div>
-					{/if}
+				{#if portfolio && portfolio.schedule}
+				<div class="mb-2">
+					<PortfolioTable {portfolio} {startDate} {endDate}></PortfolioTable>
+				</div>
+					
 
 				<div class="mt-8 grid grid-cols-2">
 					<div class="p-4">
@@ -189,7 +187,15 @@
 							<PieChart labels={Object.keys(skillPieData)} values={Object.values(skillPieData)} />
 						{/if}
 					</div>
+
 				</div>
+				{:else}
+
+				<div class="p-16 text-center text-lg">
+					{resourcePromise.data?.name} has not been allocated to any project
+				</div>
+
+				{/if}
 				</CSSection>
 			</div>
 		</div>

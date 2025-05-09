@@ -14,7 +14,6 @@ export const findAllUsers = async (): Promise<UserResults> => {
 		.query({ query: FindAllUsersDocument  })
 		.then((userResults) => {
 			if (userResults) {
-                console.log("users(res)", userResults.data.findAllUsers)
 				return userResults.data.findAllUsers;
 			}
 		})

@@ -47,8 +47,6 @@
     const reloadPage = () => {
         const thisPage = window.location.pathname;
 
-        console.log('goto ' + thisPage);
-
         window.location.reload()
     }
 
@@ -75,7 +73,7 @@
 
     const getStatusContent = (type:string):StatusPageContent => {
         let def = {
-            currentTitle: "Not et",
+            currentTitle: "Not set",
             currentDesc: "Not set",
             buttonDisplay: "",
             transitionWarning: "",

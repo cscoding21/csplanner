@@ -190,6 +190,10 @@ export const findWeekRisks = (activities:ProjectActivity[], resourceID: string|u
 export const flattenPortfolio = (port:Portfolio, startDate:Date, endDate:Date):FlatPortfolioItem[] => {
     let out:FlatPortfolioItem[] = []
 
+    if(!port || !port.schedule) {
+        return out;
+    }
+
     for(let i = 0; i < port.schedule.length; i++) {
         let thisSchedule:Schedule = port.schedule[i]
 

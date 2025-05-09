@@ -62,9 +62,10 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNe
 	}
 
 	basics := project.ProjectBasics{
-		Name:        input.Name,
-		Description: input.Description,
-		OwnerID:     input.OwnerID,
+		Name:          input.Name,
+		Description:   input.Description,
+		OwnerID:       input.OwnerID,
+		IsCapitalized: input.IsCapitalized,
 	}
 
 	template, err := ts.GetProjecttemplateByID(ctx, input.TemplateID)

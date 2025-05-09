@@ -25,7 +25,6 @@
     newProjectForm.ownerID = as.currentUser()?.email as string
 
     const showTemplateDetails = () => {
-		console.log(newProjectForm.templateID);
 		currentTemplate = getTemplate(newProjectForm.templateID);
 	};
 
@@ -36,7 +35,6 @@
 	};
 
     const createProj = () => {
-        console.log(newProjectForm)
         errors = {};
 
 		const newProjectFormParsed = newProjectSchema.cast(newProjectForm);
