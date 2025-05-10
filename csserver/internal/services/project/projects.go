@@ -10,8 +10,6 @@ import (
 	"csserver/internal/utils"
 
 	"github.com/cscoding21/csval/validate"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // SaveProject saves a project in the system and updates all stored calculations
@@ -167,7 +165,6 @@ func (s *ProjectService) CheckProjectStatusChange(ctx context.Context, projectID
 func (s *ProjectService) GetStatusTransitionDetails(p *Project) {
 	stateInfo := stateMachineMap[p.ProjectStatusBlock.Status]
 
-	log.Warn(stateInfo)
 	for _, si := range stateInfo.NextValidStates {
 		pst := ProjectStatusTransition{
 			NextState: si,
@@ -177,8 +174,6 @@ func (s *ProjectService) GetStatusTransitionDetails(p *Project) {
 		result := potentialStateInfo.Can(p)
 		pst.CheckResults = result
 		pst.CanEnter = result.Pass
-
-		log.Warn(pst)
 
 		p.ProjectStatusBlock.AllowedNextStates = append(p.ProjectStatusBlock.AllowedNextStates, &pst)
 	}

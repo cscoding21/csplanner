@@ -2,8 +2,14 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { CSPageSidebar, CSSidebarItem } from '$lib/components';
+	import type { Project } from '$lib/graphql/generated/sdk';
 
 	let hash = $state(page.url.hash);
+
+	interface Props {
+		project:Project
+	}
+	let { project }:Props = $props()
 
 	import {
 		ChartPieOutline,
@@ -31,6 +37,7 @@
 />
 
 <CSPageSidebar>
+
 	<CSSidebarItem href="#snapshot" label="Snapshot" active={hash === "#snapshot"}> 
 		{#snippet icon()}
 			<ChartPieOutline />
@@ -39,6 +46,7 @@
 			<CheckCircleOutline color="green" />
 		{/snippet} -->
 	</CSSidebarItem>
+
 	<CSSidebarItem href="#basics" label="Basics" active={hash === "#basics"}> 
 		{#snippet icon()}
 			<ScaleBalancedOutline />

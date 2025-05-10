@@ -10,6 +10,7 @@
 	import { BadgeProjectStatus, DeleteProjectValueLine, ProjectValueChart, ProjectValueCategoryDistributionChart } from '.';
 	import { formatCurrency, formatPercent } from '$lib/utils/format';
 	import { ProjectValueLineFormModal } from '.';
+	import ProjectValueLineForm from './ProjectValueLineForm.svelte';
 
 	interface Props {
 		id: string;
@@ -59,9 +60,9 @@
 		Value Proposition: {project.data?.projectBasics.name}
 		<span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 	</SectionHeading>
-	{/if}
+	
 
-	{#if project.data?.projectValue.projectValueLines}
+	{#if project.data?.projectValue.projectValueLines && project.data?.projectValue.projectValueLines.length > 0}
 	<div class="flex mb-8">
 		<div class="flex-1 px-4">
 			<ul class="list mb-6 col-span-2 p-2 text-sm space-y-3">
@@ -112,6 +113,16 @@
 
 	<SectionSubHeading>
 		Revenue Items
+
+		<span class="float-right">
+			<ProjectValueLineFormModal
+				valueItem={undefined}
+				projectID={id}
+				size="md"
+				update={() => refresh()}>
+				Add Value Line
+			</ProjectValueLineFormModal>
+		</span>
 	</SectionSubHeading>
 	<Table hoverable={true}>
 		<TableHead>
@@ -170,17 +181,12 @@
 			</tr>
 		  </tfoot>
 	  </Table>
+
 	  {:else}
-	  	No Value here
+	  	<ProjectValueLineForm projectID={id} valueItem={undefined} update={refresh} />
+	  {/if}
 	  {/if}
 {/await}
 
-<Hr />
-<ProjectValueLineFormModal
-	valueItem={undefined}
-	projectID={id}
-	size="md"
-	update={() => refresh()}>
-	Add Value Line
-</ProjectValueLineFormModal>
+
 

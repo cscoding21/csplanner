@@ -1,12 +1,9 @@
 <script lang="ts">
     import { 
         SectionHeading,
-        MoneyDisplay,
-        ResourceList,
-        UserCard,
         SectionSubHeading
     } from "$lib/components";
-    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ProjectStatusUpdate, ProjectStatusBanner, ShowIfStatus } from ".";
+    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ShowIfStatus } from ".";
     import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover, Hr } from "flowbite-svelte";
     import { QuestionCircleSolid } from "flowbite-svelte-icons";
     import type { ProjectEnvelope } from '$lib/graphql/generated/sdk'
@@ -14,6 +11,7 @@
     import { getDefaultProject } from "$lib/forms/project.validation";
     import { normalizeGUID } from "$lib/utils/id";
 	import Draft from "./snapshots/Draft.svelte";
+	import New from "./snapshots/New.svelte";
 
     interface Props {
         id: string
@@ -40,8 +38,6 @@
 
 </script>
 
-<div class="grid grid-cols-3 gap-8">
-
 
 {#await loadPage()}
 	Loading...
@@ -52,28 +48,31 @@
 <!-- col span 3 -->
 <div class="col-span-3">
 <SectionHeading>
-    Financials: {project.data?.projectBasics.name}
+    Snapshot: {project.data?.projectBasics.name}
     <span class="float-right"><BadgeProjectStatus status={project.data?.projectStatusBlock?.status} /></span>
 </SectionHeading>
 </div>
 
 
 
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["new"]}>
+    <New project={project.data} />
+</ShowIfStatus>
+
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["draft"]}>
     <Draft project={project.data} />
 </ShowIfStatus>
 
-<div class="col-span-1">
-    <!-- col span 1 -->
+
+<!-- <div class="col-span-1">
     <SectionSubHeading>Executive Summary</SectionSubHeading>
     <p class="mb-6 text-sm">{project.data?.projectBasics?.description}</p>
-</div>
+</div> -->
 
 
 
 
-<div class="col-span-2">
-    <!-- col span 2 -->
+<!-- <div class="col-span-2">
     <SectionSubHeading>Features</SectionSubHeading>
     <Table>
         <TableHead>
@@ -104,10 +103,8 @@
         {/if}
         </TableBody>
     </Table>
-</div>
+</div> -->
 
 {/if}
 
 {/await}
-
-</div>

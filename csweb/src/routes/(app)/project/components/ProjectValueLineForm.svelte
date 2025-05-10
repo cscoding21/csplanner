@@ -93,59 +93,29 @@
 {:then promiseData}
 
 {#if valueItemForm}
-<SelectInput
-    bind:value={valueItemForm.fundingSource as string}
-    fieldName="Funding Source"
-    error={errors.fundingSource}
-    options={fundingSourceOpts}
-    update={() => callIf(update)}
-/>
+<div class="grid grid-cols-2 gap-4">
 
+    <div>
+    <SelectInput
+        bind:value={valueItemForm.valueCategory as string}
+        fieldName="Value Category"
+        error={errors.valueCategory}
+        options={valueCategoryOpts}
+        update={() => callIf(update)}
+    />
+    </div>
 
-<SelectInput
-    bind:value={valueItemForm.valueCategory as string}
-    fieldName="Value Category"
-    error={errors.valueCategory}
-    options={valueCategoryOpts}
-    update={() => callIf(update)}
-/>
+    <div>
+    <SelectInput
+        bind:value={valueItemForm.fundingSource as string}
+        fieldName="Funding Source"
+        error={errors.fundingSource}
+        options={fundingSourceOpts}
+        update={() => callIf(update)}
+    />
+    </div>
 
-<Heading tag="h6">Five Year Forecast</Heading>
-
-<MoneyInput
-    bind:value={valueItemForm.yearOneValue as number}
-    fieldName="Estimated Year One Returns"
-    error={errors.yearOneValue}
-    update={() => callIf(update)}
-/>
-
-<MoneyInput
-    bind:value={valueItemForm.yearTwoValue as number}
-    fieldName="Estimated Year Two Returns"
-    error={errors.yearTwoValue}
-    update={() => callIf(update)}
-/>
-
-<MoneyInput
-    bind:value={valueItemForm.yearThreeValue as number}
-    fieldName="Estimated Year Tnree Returns"
-    error={errors.yearThreeValue}
-    update={() => callIf(update)}
-/>
-
-<MoneyInput
-    bind:value={valueItemForm.yearFourValue as number}
-    fieldName="Estimated Year Four Returns"
-    error={errors.yearFourValue}
-    update={() => callIf(update)}
-/>
-
-<MoneyInput
-    bind:value={valueItemForm.yearFiveValue as number}
-    fieldName="Estimated Year Five Returns"
-    error={errors.yearFiveValue}
-    update={() => callIf(update)}
-/>
+</div>
 
 <TextAreaInput
     bind:value={valueItemForm.description as string}
@@ -154,6 +124,56 @@
     rows={3}
     update={() => callIf(update)}
 />
+
+<Heading tag="h6">Five Year Forecast Estimated Returns</Heading>
+
+<div class="flex">
+<div class="pr-2">
+<MoneyInput
+    bind:value={valueItemForm.yearOneValue as number}
+    fieldName="Year One"
+    error={errors.yearOneValue}
+    update={() => callIf(update)}
+/>
+</div>
+
+<div class="pr-2">
+<MoneyInput
+    bind:value={valueItemForm.yearTwoValue as number}
+    fieldName="Year Two"
+    error={errors.yearTwoValue}
+    update={() => callIf(update)}
+/>
+</div>
+
+<div class="pr-2">
+<MoneyInput
+    bind:value={valueItemForm.yearThreeValue as number}
+    fieldName="Year Tnree"
+    error={errors.yearThreeValue}
+    update={() => callIf(update)}
+/>
+</div>
+
+<div class="pr-2">
+<MoneyInput
+    bind:value={valueItemForm.yearFourValue as number}
+    fieldName="Year Four"
+    error={errors.yearFourValue}
+    update={() => callIf(update)}
+/>
+</div>
+
+<div class="pr-2">
+<MoneyInput
+    bind:value={valueItemForm.yearFiveValue as number}
+    fieldName="Year Five"
+    error={errors.yearFiveValue}
+    update={() => callIf(update)}
+/>
+</div>
+
+</div>
 
 <div class="col-span-4">
     <span class="float-right">

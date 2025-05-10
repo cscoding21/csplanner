@@ -64,8 +64,8 @@ var simpleTemplate = &projecttemplate.Projecttemplate{
 			Description: "A single-phase project plan suitable for smaller initiatives.",
 			PhaseOrder:  1,
 			Tasks: []*projecttemplate.ProjectTemplateTask{
-				{Name: "Backend development", Description: "Engineering work that takes place in the server-side components", RequiredSkillID: "backend"},
-				{Name: "Testing", Description: "Complete testing of the new features as well as regression", RequiredSkillID: "product-management"},
+				{Name: "Backend development", Description: "Engineering work that takes place in the server-side components", RequiredSkillID: "skill:be"},
+				{Name: "Testing", Description: "Complete testing of the new features as well as regression", RequiredSkillID: "skill:pdm"},
 			},
 		},
 	},

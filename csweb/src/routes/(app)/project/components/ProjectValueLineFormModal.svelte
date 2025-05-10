@@ -20,6 +20,6 @@
 	{@render children()}
 </Button>
 
-<Modal bind:open={popupModal} size="sm" autoclose>
+<Modal bind:open={popupModal} {size} autoclose>
 	<ProjectValueLineForm projectID={projectID} valueItem={valueItem} update={update} />
 </Modal>
