@@ -12,7 +12,10 @@
 		ProjectMilestones,
 		ProjectValue,
 		ProjectCost,
-		ProjectSchedule
+		ProjectSchedule,
+
+		ProjectNavBar
+
 	} from '../../components';
 	import { CommentList, CSSection } from "$lib/components";
 	import { TrashBinOutline, MessagesOutline, ArrowRightToBracketOutline } from 'flowbite-svelte-icons';
@@ -52,9 +55,18 @@
 	}}
 />
 
+
+
 {#await loadPage()}
 	<div>Loading...</div>
 {:then promiseData}
+
+<div class="flex w-full">
+	<div class=""><ProjectNavBar project={project.data} /></div>
+    <div class="w-full p-4">
+        
+    
+
 	<ProjectActionBar pageDetail={project.data?.projectBasics?.name}>
 		<ButtonGroup>
 			<ProjectStatusUpdate id={id} update={() => { goto("/project/detail/" + id + "#snapshot", { invalidateAll: true }) }}>
@@ -98,6 +110,9 @@
 	</div>
 	
 	</div>
+
+</div>
+</div> 
 {/await}
 
 <Drawer 

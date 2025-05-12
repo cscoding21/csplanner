@@ -40,7 +40,7 @@
 	};
 </script>
 
-<Button on:click={() => (popupModal = true)}>{@render children()}</Button>
+<Button onclick={() => (popupModal = true)}>{@render children()}</Button>
 
 <Modal bind:open={popupModal} size="xs" autoclose>
 	<div class="text-center">

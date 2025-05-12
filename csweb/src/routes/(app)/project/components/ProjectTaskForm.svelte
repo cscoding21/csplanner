@@ -58,6 +58,10 @@
 			outTask.milestoneID = milestoneID;
 			outTask.projectID = projectID;
 
+			if(!outTask.resourceIDs) {
+				outTask.resourceIDs = []
+			}
+
 			return outTask;
 		}
 
@@ -114,9 +118,12 @@
 			resourceOpts = resourceRoster
 				.filter((res) => {
 					if (res.data?.skills && res.data?.skills.length > 0) {
-						console.log(taskForm.requiredSkillID)
-						const val = res.data?.skills?.map((rs) => rs.id).includes(taskForm.requiredSkillID);
-						return val;
+						console.log("required skill id", taskForm.requiredSkillID)
+
+						if(res.data?.skills) {
+							const val = res.data?.skills?.map((rs) => rs.skillID).includes(taskForm.requiredSkillID);
+							return val;
+						}
 					} else {
 						return false;
 					}

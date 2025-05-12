@@ -52,11 +52,15 @@
 			<ScaleBalancedOutline />
 		{/snippet}
 	</CSSidebarItem>
-	<CSSidebarItem href="#daci" label="DACI" active={hash === "#daci"}> 
+
+	
+	<!-- <CSSidebarItem href="#daci" label="DACI" active={hash === "#daci"}> 
 		{#snippet icon()}
 			<CalendarMonthOutline />
 		{/snippet}
-	</CSSidebarItem>
+	</CSSidebarItem> -->
+
+
 	<CSSidebarItem href="#value" label="Value Prop" active={hash === "#value"}> 
 		{#snippet icon()}
 			<DollarOutline />

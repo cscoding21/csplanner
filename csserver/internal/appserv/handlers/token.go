@@ -108,7 +108,6 @@ func GetSignoutHandler() SignoutHandler {
 
 // ServeHTTP handles refresh functionality
 func (h RefreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Info("RefreshHandler")
 	ctx := r.Context()
 	as := factory.GetAuthService(ctx)
 	var args RefreshArgs

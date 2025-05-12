@@ -133,7 +133,7 @@
                     <br /><small>{decodeProficiency(s.proficiency as number)}</small>
                 </TableBodyCell>
                 <TableBodyCell tdClass="float-right pt-2">
-                    <Button color="dark" onclick={() => deleteSkill(s.id)}>
+                    <Button color="dark" onclick={() => deleteSkill(s.skillID)}>
                         <TrashBinOutline size="sm" />
                     </Button>
                 </TableBodyCell>

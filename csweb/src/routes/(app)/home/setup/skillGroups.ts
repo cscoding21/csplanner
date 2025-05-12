@@ -33,7 +33,7 @@ export const skillGroups =  [
             {value: "skill:scrum", name: "Scrum" },
             {value: "skill:kanban", name: "Kanban" },
             {value: "skill:comms", name: "Communications" },
-            {value: "skill:pdm", name: "Project Management"},
+            {value: "skill:pdm", name: "Product Management"},
             {value: "skill:proddes", name: "Project Design"},
             {value: "skill:leadership", name: "Leadership"},
             {value: "skill:ui", name: "UI"},

@@ -6,6 +6,8 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/resource/rtypes/resourcetype"
 	"slices"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -128,8 +130,10 @@ func (s *ResourceService) RemoveSkillFromResource(ctx context.Context, resourceI
 	if skillsContain(res.Data.Skills, skillID) {
 		//---update the existing skill
 		for i, s := range res.Data.Skills {
-			if s.ID == skillID {
+			log.Warnf("SkillID: %s | %v", skillID, s)
+			if s.SkillID == skillID {
 				res.Data.Skills = slices.Delete(res.Data.Skills, i, i+1)
+				break
 			}
 		}
 	}
@@ -185,13 +189,13 @@ func (s *ResourceService) GetRoleMap(ctx context.Context, force bool) (map[strin
 }
 
 // skillsContain return true is a skill with the corresponging ID already exists
-func skillsContain(skills []*Skill, id string) bool {
+func skillsContain(skills []*Skill, skillID string) bool {
 	if len(skills) == 0 {
 		return false
 	}
 
 	for _, s := range skills {
-		if s.ID == id {
+		if s.SkillID == skillID {
 			return true
 		}
 	}

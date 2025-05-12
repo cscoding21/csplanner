@@ -20,11 +20,16 @@
 		value = $bindable(),
 		options = $bindable()
 	}: Props = $props();
+
+
+	console.log(options)
 </script>
 
 <div class="mb-6">
 	<Label>
 		{fieldName}
+
+		{#if options && options.length > 0}
 		<MultiSelect
 			class="mt-2"
 			items={options}
@@ -33,6 +38,7 @@
 				callIf(update)
 			}}
 		/>
+		{/if}
 	</Label>
 	<FormErrorMessage message={error} />
 

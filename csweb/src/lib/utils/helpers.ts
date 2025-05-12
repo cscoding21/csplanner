@@ -127,4 +127,11 @@ export const coalesce = (...args:any):any => {
 	return "";
 }
 
+/**
+ * reload the current page
+ */
+export const reloadPage = () => {
+	const thisPage = window.location.pathname;
 
+	window.location.reload()
+}

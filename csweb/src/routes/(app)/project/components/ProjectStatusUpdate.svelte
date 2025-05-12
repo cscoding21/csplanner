@@ -4,7 +4,7 @@
 	import { setProjectStatus, getProject } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
     import { Button, Modal, Hr } from "flowbite-svelte";
-    import { callIf } from "$lib/utils/helpers";
+    import { callIf, reloadPage } from "$lib/utils/helpers";
 	import { getDefaultProject } from "$lib/forms/project.validation";
 	import { SectionHeading } from "$lib/components";
 	import { ChevronDoubleRightOutline, InfoCircleOutline } from "flowbite-svelte-icons";
@@ -43,12 +43,6 @@
 				return err;
 			});
 	};
-
-    const reloadPage = () => {
-        const thisPage = window.location.pathname;
-
-        window.location.reload()
-    }
 
     const setStatus = async (status: string) => {
 		setProjectStatus(id, status).then((res) => {
@@ -169,7 +163,7 @@
 
 {#if project}
 
-<Button on:click={() => (popupModal = true)}>{@render children()}</Button>
+<Button onclick={() => (popupModal = true)}>{@render children()}</Button>
 
 <Modal bind:open={popupModal} size="md" autoclose>
     <div class="">
