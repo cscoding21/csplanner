@@ -3870,6 +3870,18 @@
         "isOneOf": null,
         "fields": [
           {
+            "name": "calculated",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ProjectCalculatedData",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "args": [],
@@ -4381,6 +4393,34 @@
               "kind": "SCALAR",
               "name": "Time",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ProjectCalculatedData",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "team",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Resource",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

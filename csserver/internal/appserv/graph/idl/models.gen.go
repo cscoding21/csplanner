@@ -264,14 +264,15 @@ type PortfolioWeekSummary struct {
 }
 
 type Project struct {
-	ID                 *string             `json:"id,omitempty"`
-	ProjectBasics      *ProjectBasics      `json:"projectBasics"`
-	ProjectStatusBlock *ProjectStatusBlock `json:"projectStatusBlock"`
-	ProjectValue       *ProjectValue       `json:"projectValue"`
-	ProjectCost        *ProjectCost        `json:"projectCost"`
-	ProjectDaci        *ProjectDaci        `json:"projectDaci"`
-	ProjectFeatures    []*ProjectFeature   `json:"projectFeatures,omitempty"`
-	ProjectMilestones  []*ProjectMilestone `json:"projectMilestones,omitempty"`
+	ID                 *string                `json:"id,omitempty"`
+	ProjectBasics      *ProjectBasics         `json:"projectBasics"`
+	ProjectStatusBlock *ProjectStatusBlock    `json:"projectStatusBlock"`
+	ProjectValue       *ProjectValue          `json:"projectValue"`
+	ProjectCost        *ProjectCost           `json:"projectCost"`
+	ProjectDaci        *ProjectDaci           `json:"projectDaci"`
+	ProjectFeatures    []*ProjectFeature      `json:"projectFeatures,omitempty"`
+	ProjectMilestones  []*ProjectMilestone    `json:"projectMilestones,omitempty"`
+	Calculated         *ProjectCalculatedData `json:"calculated,omitempty"`
 }
 
 type ProjectActivity struct {
@@ -304,6 +305,10 @@ type ProjectBasics struct {
 	OwnerID       *string    `json:"ownerID,omitempty"`
 	Owner         *User      `json:"owner,omitempty"`
 	IsCapitalized bool       `json:"isCapitalized"`
+}
+
+type ProjectCalculatedData struct {
+	Team []*Resource `json:"team,omitempty"`
 }
 
 type ProjectCost struct {

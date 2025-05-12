@@ -317,6 +317,7 @@ type ComplexityRoot struct {
 	}
 
 	Project struct {
+		Calculated         func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		ProjectBasics      func(childComplexity int) int
 		ProjectCost        func(childComplexity int) int
@@ -357,6 +358,10 @@ type ComplexityRoot struct {
 		Owner         func(childComplexity int) int
 		OwnerID       func(childComplexity int) int
 		StartDate     func(childComplexity int) int
+	}
+
+	ProjectCalculatedData struct {
+		Team func(childComplexity int) int
 	}
 
 	ProjectCost struct {
@@ -2098,6 +2103,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PortfolioWeekSummary.Year(childComplexity), true
 
+	case "Project.calculated":
+		if e.complexity.Project.Calculated == nil {
+			break
+		}
+
+		return e.complexity.Project.Calculated(childComplexity), true
+
 	case "Project.id":
 		if e.complexity.Project.ID == nil {
 			break
@@ -2314,6 +2326,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectBasics.StartDate(childComplexity), true
+
+	case "ProjectCalculatedData.team":
+		if e.complexity.ProjectCalculatedData.Team == nil {
+			break
+		}
+
+		return e.complexity.ProjectCalculatedData.Team(childComplexity), true
 
 	case "ProjectCost.blendedRate":
 		if e.complexity.ProjectCost.BlendedRate == nil {
@@ -4146,6 +4165,11 @@ type Project {
   projectDaci: ProjectDaci!
   projectFeatures: [ProjectFeature!]
   projectMilestones: [ProjectMilestone!]
+  calculated: ProjectCalculatedData
+}
+
+type ProjectCalculatedData {
+  team: [Resource]
 }
 
 
@@ -9184,6 +9208,8 @@ func (ec *executionContext) fieldContext_CreateProjectResult_project(_ context.C
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
 				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Project_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -15174,6 +15200,51 @@ func (ec *executionContext) fieldContext_Project_projectMilestones(_ context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_calculated(ctx context.Context, field graphql.CollectedField, obj *idl.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_calculated(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Calculated, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*idl.ProjectCalculatedData)
+	fc.Result = res
+	return ec.marshalOProjectCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectCalculatedData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_calculated(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "team":
+				return ec.fieldContext_ProjectCalculatedData_team(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectCalculatedData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectActivity_projectID(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectActivity) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectActivity_projectID(ctx, field)
 	if err != nil {
@@ -15270,6 +15341,8 @@ func (ec *executionContext) fieldContext_ProjectActivity_project(_ context.Conte
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
 				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Project_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -16249,6 +16322,77 @@ func (ec *executionContext) fieldContext_ProjectBasics_isCapitalized(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _ProjectCalculatedData_team(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCalculatedData_team(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Team, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*idl.Resource)
+	fc.Result = res
+	return ec.marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectCalculatedData_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Resource_id(ctx, field)
+			case "type":
+				return ec.fieldContext_Resource_type(ctx, field)
+			case "status":
+				return ec.fieldContext_Resource_status(ctx, field)
+			case "name":
+				return ec.fieldContext_Resource_name(ctx, field)
+			case "roleID":
+				return ec.fieldContext_Resource_roleID(ctx, field)
+			case "role":
+				return ec.fieldContext_Resource_role(ctx, field)
+			case "userEmail":
+				return ec.fieldContext_Resource_userEmail(ctx, field)
+			case "user":
+				return ec.fieldContext_Resource_user(ctx, field)
+			case "profileImage":
+				return ec.fieldContext_Resource_profileImage(ctx, field)
+			case "initialCost":
+				return ec.fieldContext_Resource_initialCost(ctx, field)
+			case "annualizedCost":
+				return ec.fieldContext_Resource_annualizedCost(ctx, field)
+			case "skills":
+				return ec.fieldContext_Resource_skills(ctx, field)
+			case "availableHoursPerWeek":
+				return ec.fieldContext_Resource_availableHoursPerWeek(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Resource_calculated(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectCost_ongoing(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCost) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectCost_ongoing(ctx, field)
 	if err != nil {
@@ -16914,6 +17058,8 @@ func (ec *executionContext) fieldContext_ProjectEnvelope_data(_ context.Context,
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
 				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Project_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -23868,6 +24014,8 @@ func (ec *executionContext) fieldContext_Schedule_project(_ context.Context, fie
 				return ec.fieldContext_Project_projectFeatures(ctx, field)
 			case "projectMilestones":
 				return ec.fieldContext_Project_projectMilestones(ctx, field)
+			case "calculated":
+				return ec.fieldContext_Project_calculated(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -30678,6 +30826,8 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Project_projectFeatures(ctx, field, obj)
 		case "projectMilestones":
 			out.Values[i] = ec._Project_projectMilestones(ctx, field, obj)
+		case "calculated":
+			out.Values[i] = ec._Project_calculated(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -30874,6 +31024,42 @@ func (ec *executionContext) _ProjectBasics(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectCalculatedDataImplementors = []string{"ProjectCalculatedData"}
+
+func (ec *executionContext) _ProjectCalculatedData(ctx context.Context, sel ast.SelectionSet, obj *idl.ProjectCalculatedData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectCalculatedDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectCalculatedData")
+		case "team":
+			out.Values[i] = ec._ProjectCalculatedData_team(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -35700,6 +35886,13 @@ func (ec *executionContext) marshalOProjectActivityWeek2ᚕᚖcsserverᚋinterna
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalOProjectCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectCalculatedData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectCalculatedData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProjectCostCalculatedData2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐProjectCostCalculatedData(ctx context.Context, sel ast.SelectionSet, v *idl.ProjectCostCalculatedData) graphql.Marshaler {

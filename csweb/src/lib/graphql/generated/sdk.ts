@@ -496,6 +496,7 @@ export type PortfolioWeekSummary = {
 
 export type Project = {
   __typename?: 'Project';
+  calculated?: Maybe<ProjectCalculatedData>;
   id?: Maybe<Scalars['String']['output']>;
   projectBasics: ProjectBasics;
   projectCost: ProjectCost;
@@ -539,6 +540,11 @@ export type ProjectBasics = {
   owner?: Maybe<User>;
   ownerID?: Maybe<Scalars['String']['output']>;
   startDate?: Maybe<Scalars['Time']['output']>;
+};
+
+export type ProjectCalculatedData = {
+  __typename?: 'ProjectCalculatedData';
+  team?: Maybe<Array<Maybe<Resource>>>;
 };
 
 export type ProjectCost = {
@@ -1500,6 +1506,11 @@ export const ProjectFragmentFragmentDoc = gql`
         averageHourlyRate
         exceptions
       }
+    }
+  }
+  calculated {
+    team {
+      ...resourceFragment
     }
   }
 }

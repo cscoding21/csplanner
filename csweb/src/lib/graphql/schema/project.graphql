@@ -124,6 +124,11 @@ fragment projectFragment on Project {
 			}
 		}
 	}
+	calculated {
+		team {
+			...resourceFragment
+		}
+	}
 }
 
 query findProjects($input: PageAndFilter!) {

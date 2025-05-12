@@ -66,6 +66,7 @@ func (s *ProjectService) UpdateProjectTask(
 	updatedProject.CalculateProjectMilestoneStats()
 
 	updatedProject.CalculateProjectTaskStats(org, resourceMap, roleMap)
+	updatedProject.CalculateProjectTeam()
 
 	return s.UpdateProject(ctx, updatedProject)
 }

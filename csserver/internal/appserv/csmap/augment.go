@@ -175,6 +175,8 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 
 	proj.ProjectBasics.Owner = getUserByEmail(ctx, model.ProjectBasics.OwnerID)
 
+	team := make(map[string]idl.Resource)
+
 	for i, s := range proj.ProjectStatusBlock.AllowedNextStates {
 		tra := getStateTransition(*model, projectstatus.ProjectState(s.NextState))
 		messages := []*idl.ValidationMessage{}
@@ -211,6 +213,7 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			if len(t.ResourceIDs) > 0 {
 				for _, r := range t.ResourceIDs {
 					resource := getResourceById(ctx, *resourceList, r)
+					team[r] = *resource
 					proj.ProjectMilestones[i].Tasks[j].Resources = append(proj.ProjectMilestones[i].Tasks[j].Resources, resource)
 				}
 			}
@@ -222,7 +225,8 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			for _, r := range model.ProjectDaci.DriverIDs {
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
-					AugmentResource(ctx, resource)
+					// AugmentResource(ctx, resource)
+					team[*r] = *resource
 					proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
 				}
 			}
@@ -232,7 +236,8 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			for _, r := range model.ProjectDaci.ApproverIDs {
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
-					AugmentResource(ctx, resource)
+					// AugmentResource(ctx, resource)
+					team[*r] = *resource
 					proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
 				}
 			}
@@ -242,7 +247,8 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			for _, r := range model.ProjectDaci.ContributorIDs {
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
-					AugmentResource(ctx, resource)
+					// AugmentResource(ctx, resource)
+					team[*r] = *resource
 					proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
 				}
 			}
@@ -252,12 +258,23 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			for _, r := range model.ProjectDaci.InformedIDs {
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
-					AugmentResource(ctx, resource)
+					// AugmentResource(ctx, resource)
+					team[*r] = *resource
 					proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
 				}
 			}
 		}
 	}
+
+	pcd := idl.ProjectCalculatedData{
+		Team: []*idl.Resource{},
+	}
+
+	for _, v := range team {
+		pcd.Team = append(pcd.Team, &v)
+	}
+
+	proj.Calculated = &pcd
 }
 
 func getStateTransition(model project.Project, status projectstatus.ProjectState) *project.ProjectStatusTransition {

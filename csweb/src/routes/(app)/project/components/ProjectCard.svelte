@@ -36,12 +36,7 @@
 		<span>
 			<ResourceList
 				maxSize={4}
-				resources={[
-					...safeArray(project.data?.projectDaci?.driver as Resource[]),
-					...safeArray(project.data?.projectDaci?.approver as Resource[]),
-					...safeArray(project.data?.projectDaci?.contributor as Resource[]),
-					...safeArray(project.data?.projectDaci?.informed as Resource[])
-				]}
+				resources={safeArray(project.data.calculated?.team as Resource[])}
 				size="sm"
 			/>
 		</span>
