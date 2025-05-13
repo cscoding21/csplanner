@@ -79,8 +79,8 @@ k8s_resource(
   labels=["Keycloak"]
 )
 
-local_resource(
-  'database_setup',
-  cmd='sh -c "tilt_lib/postgres/setup.sh"',
-  resource_deps=['postgres']
-)
+# local_resource(
+#   'database_setup',
+#   cmd='sh -c "tilt_lib/postgres/setup.sh"',
+#   resource_deps=['postgres']
+# )

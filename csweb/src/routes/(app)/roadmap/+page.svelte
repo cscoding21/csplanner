@@ -8,6 +8,7 @@
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
 	import { DollarOutline } from "flowbite-svelte-icons";
+	import { RoadmapActionBar } from "./components";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
 
@@ -37,10 +38,9 @@
 	};
 </script>
 
+<RoadmapActionBar pageDetail="" />
+
 <div class="p-4">
-
-
-	<SectionHeading>Current Roadmap</SectionHeading>
 
 {#await loadPage()}
 	<div>Loading...</div>
