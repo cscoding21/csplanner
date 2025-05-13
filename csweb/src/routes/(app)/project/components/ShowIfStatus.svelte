@@ -18,7 +18,7 @@
 </script>
 
 
-{#if scope.includes(status)}
+{#if scope.includes(status) && !invert}
     {@render children()}
 {:else if !scope.includes(status) && invert }
     {@render children()}

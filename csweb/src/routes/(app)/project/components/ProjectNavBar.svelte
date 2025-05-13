@@ -24,6 +24,8 @@
 
 	} from 'flowbite-svelte-icons';
 	import { scrollTop } from 'svelte-scrolling';
+	import ShowIfStatus from './ShowIfStatus.svelte';
+	import { Badge } from 'flowbite-svelte';
 
 	afterNavigate((navigation) => {
 		scrollTop()
@@ -36,15 +38,16 @@
 	}}
 />
 
+{#if project}
 <CSPageSidebar>
-
 	<CSSidebarItem href="#snapshot" label="Snapshot" active={hash === "#snapshot"}> 
 		{#snippet icon()}
 			<ChartPieOutline />
 		{/snippet}
-		<!-- {#snippet tail()}
-			<CheckCircleOutline color="green" />
-		{/snippet} -->
+		{#snippet tail()}
+			<!-- <CheckCircleOutline color="green" /> -->
+			<!-- <Badge>5</Badge> -->
+		{/snippet}
 	</CSSidebarItem>
 
 	<CSSidebarItem href="#basics" label="Basics" active={hash === "#basics"}> 
@@ -54,13 +57,16 @@
 	</CSSidebarItem>
 
 	
-	<!-- <CSSidebarItem href="#daci" label="DACI" active={hash === "#daci"}> 
+	{#if false}
+	<CSSidebarItem href="#daci" label="DACI" active={hash === "#daci"}> 
 		{#snippet icon()}
 			<CalendarMonthOutline />
 		{/snippet}
-	</CSSidebarItem> -->
+	</CSSidebarItem>
+	{/if}
 
 
+	<ShowIfStatus status={project.projectStatusBlock?.status} invert={true} scope={['new']}>
 	<CSSidebarItem href="#value" label="Value Prop" active={hash === "#value"}> 
 		{#snippet icon()}
 			<DollarOutline />
@@ -81,9 +87,15 @@
 			<CalendarMonthOutline />
 		{/snippet}
 	</CSSidebarItem>
+	</ShowIfStatus>
+
+	<ShowIfStatus status={project.projectStatusBlock?.status} scope={['approved', 'scheduled', 'inflight']}>
 	<CSSidebarItem href="#schedule" label="Schedule" active={hash === "#schedule"}> 
 		{#snippet icon()}
 			<CalendarWeekOutline />
 		{/snippet}
 	</CSSidebarItem>
+	</ShowIfStatus>
+	
 </CSPageSidebar>
+{/if}

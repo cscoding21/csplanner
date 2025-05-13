@@ -7,7 +7,7 @@
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
-	import { DollarOutline } from "flowbite-svelte-icons";
+	import { CalendarWeekOutline, DollarOutline } from "flowbite-svelte-icons";
 	import { RoadmapActionBar } from "./components";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
@@ -46,6 +46,8 @@
 	<div>Loading...</div>
 {:then promiseData}
 	<CSSection>
+
+		{#if portfolio && portfolio.schedule && portfolio.schedule.length > 0}
 		<div class="flex mb-4">
 			<div class="flex-1 pr-2">
 				<DataCard health={getHealth(portfolio.calculated?.totalValue)} dataPoint={formatCurrency.format(portfolio.calculated?.totalValue as number)} indicatorClass="text-green-500 dark:text-green-500">
@@ -79,7 +81,6 @@
 			</div>
 		</div>
 
-	{#if portfolio.schedule != null}
 
 	<SectionSubHeading>Project Schedule</SectionSubHeading>
 		<Table divClass="h-full">
@@ -135,8 +136,12 @@
 			<RiskLegend />
 		</div>
 	{:else}
-		<NoResults title="No Projects" newUrl="">
+		<NoResults title="No Scheduled Projects" newUrl="">
+
+			<div class="text-center p-8">
 			No projects have been scheduled.  
+			</div>
+
 		</NoResults>
 	{/if}
 

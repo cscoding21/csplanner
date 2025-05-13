@@ -215,6 +215,12 @@ func (s *IAMAdminService) GetUser(ctx context.Context, realm string, idOrEmail s
 		return nil, err
 	}
 
+	//---here in case DB values are needed
+	_, err = s.UserService.GetAppuser(ctx, *u.Email)
+	if err != nil {
+		return nil, err
+	}
+
 	user := appuser.Appuser{
 		ControlFields: common.ControlFields{
 			ID: *u.ID,

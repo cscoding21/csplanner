@@ -76,6 +76,7 @@
 		<NotificationList />
 		<span class="ml-4">{org.name}</span>
 		
+		<code>{cu?.lastName}</code>
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
 		>
