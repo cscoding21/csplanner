@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/services/comment"
@@ -11,7 +12,7 @@ import (
 func TestFindProjectComments(t *testing.T) {
 	ctx := getTestContext()
 	service := factory.GetCommentService(ctx)
-	idUnderTest := "project:1"
+	idUnderTest := "Tb6EXS4fTQ6kyEcZhKo_Sw"
 
 	comments, err := service.FindProjectComments(ctx, idUnderTest)
 	if err != nil {
@@ -20,6 +21,11 @@ func TestFindProjectComments(t *testing.T) {
 	}
 
 	for _, c := range comments.Results {
+		base := csmap.GetDataEnvelope(&c)
+		csmap.AugmentBaseModel(ctx, base)
+		cut := csmap.CommentCommentToIdl(c.Data)
+		fmt.Println(cut)
+
 		drawCommentThread(c)
 	}
 }

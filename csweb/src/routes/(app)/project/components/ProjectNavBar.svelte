@@ -67,26 +67,30 @@
 
 
 	<ShowIfStatus status={project.projectStatusBlock?.status} invert={true} scope={['new']}>
-	<CSSidebarItem href="#value" label="Value Prop" active={hash === "#value"}> 
-		{#snippet icon()}
-			<DollarOutline />
-		{/snippet}
-	</CSSidebarItem>
-	<CSSidebarItem href="#costs" label="Costs" active={hash === "#costs"}> 
-		{#snippet icon()}
-			<CashOutline />
-		{/snippet}
-	</CSSidebarItem>
 	<CSSidebarItem href="#features" label="Features" active={hash === "#features"}> 
 		{#snippet icon()}
 			<RectangleListOutline />
 		{/snippet}
 	</CSSidebarItem>
+
+	<CSSidebarItem href="#value" label="Value Prop" active={hash === "#value"}> 
+		{#snippet icon()}
+			<DollarOutline />
+		{/snippet}
+	</CSSidebarItem>
+
 	<CSSidebarItem href="#milestones" label="Milestones" active={hash === "#milestones"}> 
 		{#snippet icon()}
 			<CalendarMonthOutline />
 		{/snippet}
 	</CSSidebarItem>
+	
+	<CSSidebarItem href="#costs" label="Costs" active={hash === "#costs"}> 
+		{#snippet icon()}
+			<CashOutline />
+		{/snippet}
+	</CSSidebarItem>
+	
 	</ShowIfStatus>
 
 	<ShowIfStatus status={project.projectStatusBlock?.status} scope={['approved', 'scheduled', 'inflight']}>

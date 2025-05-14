@@ -6,19 +6,13 @@ fragment controlFieldsFragment on ControlFields {
 	deletedAt
 	deletedBy
 	createByUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 	updateByUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 	deleteByUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 }
 
@@ -31,19 +25,13 @@ fragment baseModelFragment on BaseModel {
 	deletedAt
 	deletedBy
 	createByUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 	updateByUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 	deleteByUser {
-		firstName
-		lastName
-		email
+		...userFragment
 	}
 }
 

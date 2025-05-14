@@ -1171,6 +1171,15 @@ export type ValidationResult = {
   pass: Scalars['Boolean']['output'];
 };
 
+export const UserFragmentFragmentDoc = gql`
+    fragment userFragment on User {
+  id
+  firstName
+  lastName
+  email
+  profileImage
+}
+    `;
 export const BaseModelFragmentFragmentDoc = gql`
     fragment baseModelFragment on BaseModel {
   id
@@ -1181,22 +1190,16 @@ export const BaseModelFragmentFragmentDoc = gql`
   deletedAt
   deletedBy
   createByUser {
-    firstName
-    lastName
-    email
+    ...userFragment
   }
   updateByUser {
-    firstName
-    lastName
-    email
+    ...userFragment
   }
   deleteByUser {
-    firstName
-    lastName
-    email
+    ...userFragment
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 export const CommentFragmentFragmentDoc = gql`
     fragment commentFragment on Comment {
   id
@@ -1235,22 +1238,16 @@ export const ControlFieldsFragmentFragmentDoc = gql`
   deletedAt
   deletedBy
   createByUser {
-    firstName
-    lastName
-    email
+    ...userFragment
   }
   updateByUser {
-    firstName
-    lastName
-    email
+    ...userFragment
   }
   deleteByUser {
-    firstName
-    lastName
-    email
+    ...userFragment
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 export const StatusFragmentFragmentDoc = gql`
     fragment statusFragment on Status {
   success
@@ -1325,15 +1322,6 @@ export const OrganizationFragmentFragmentDoc = gql`
     hasReviewedOrgSettings
     isReadyForProjects
   }
-}
-    `;
-export const UserFragmentFragmentDoc = gql`
-    fragment userFragment on User {
-  id
-  firstName
-  lastName
-  email
-  profileImage
 }
     `;
 export const SkillFragmentFragmentDoc = gql`
