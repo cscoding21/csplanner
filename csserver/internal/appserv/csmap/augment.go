@@ -161,6 +161,7 @@ func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData
 	return out
 }
 
+// AugmentProject add extra details to the properties of a project
 func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Project) {
 	if proj == nil || model == nil {
 		return

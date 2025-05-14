@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/config"
@@ -50,7 +51,7 @@ func TestSaveProject(t *testing.T) {
 }
 
 func TestGetProject(t *testing.T) {
-	projectUnderTest := "project:1"
+	projectUnderTest := "zYfB9fG-SICFXH-ZpCV9vA"
 
 	ctx := getTestContext()
 
@@ -60,6 +61,10 @@ func TestGetProject(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	put := csmap.ProjectProjectToIdl(pro.Data)
+
+	csmap.AugmentProject(ctx, &pro.Data, &put)
 
 	fmt.Println(pro.Data.ProjectBasics.Name)
 }
