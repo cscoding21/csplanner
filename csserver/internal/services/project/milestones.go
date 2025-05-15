@@ -63,10 +63,7 @@ func (s *ProjectService) UpdateProjectTask(
 
 	//---DO THE UPDATE
 	updatedProject := UpdateTaskFromProjectGraph(project.Data, milestoneID, task)
-	updatedProject.CalculateProjectMilestoneStats()
-
-	updatedProject.CalculateProjectTaskStats(org, resourceMap, roleMap)
-	updatedProject.CalculateProjectTeam()
+	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
 
 	return s.UpdateProject(ctx, updatedProject)
 }
