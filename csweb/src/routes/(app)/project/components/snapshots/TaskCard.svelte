@@ -7,9 +7,23 @@ import type { Snippet } from "svelte";
     interface Props {
         task:string
         link:string
-        children:Snippet
+        children?:Snippet
+        priority?:"high"|"med"|"low"
     }
-    let { task, link, children }:Props = $props()
+    let { task, link, priority, children }:Props = $props()
+
+    let colorClass = $state("text-red-600 dark:text-red-500")
+
+    switch(priority){
+        case("low"):
+            colorClass = "text-green-600 dark:text-green-500"
+            break;
+        case("med"):
+            colorClass = "text-yellow-600 dark:text-yellow-500"
+            break;
+        default:
+            colorClass = "text-red-600 dark:text-red-500"
+    }
 </script>
 
 
@@ -19,7 +33,7 @@ import type { Snippet } from "svelte";
     <div class="flex items-center justify-between">
     <div class="me-4 flex items-center sm:me-0">
     <svg
-        class="me-1.5 hidden h-6 w-6 shrink-0 text-red-600 dark:text-red-500 sm:flex"
+        class="me-1.5 hidden h-6 w-6 shrink-0 {colorClass} sm:flex"
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -43,6 +57,8 @@ import type { Snippet } from "svelte";
     </div>
     </div>
     <div class="py-4 px-8">
+        {#if children}
         {@render children()}
+        {/if}
     </div>
 </div>
