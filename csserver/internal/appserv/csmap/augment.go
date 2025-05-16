@@ -268,11 +268,11 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 	}
 
 	pcd := idl.ProjectCalculatedData{
-		Team: []*idl.Resource{},
+		TeamMembers: []*idl.Resource{},
 	}
 
 	for _, v := range team {
-		pcd.Team = append(pcd.Team, &v)
+		pcd.TeamMembers = append(pcd.TeamMembers, &v)
 	}
 
 	proj.Calculated = &pcd

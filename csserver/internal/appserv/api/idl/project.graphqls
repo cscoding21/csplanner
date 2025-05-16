@@ -15,7 +15,7 @@ type Project {
 }
 
 type ProjectCalculatedData {
-  team: [Resource]
+  teamMembers: [Resource]
 }
 
 

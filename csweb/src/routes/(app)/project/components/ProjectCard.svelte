@@ -36,7 +36,7 @@
 		<span>
 			<ResourceList
 				maxSize={4}
-				resources={safeArray(project.data.calculated?.team as Resource[])}
+				resources={safeArray(project.data.calculated?.teamMembers as Resource[])}
 				size="sm"
 			/>
 		</span>

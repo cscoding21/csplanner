@@ -544,7 +544,7 @@ export type ProjectBasics = {
 
 export type ProjectCalculatedData = {
   __typename?: 'ProjectCalculatedData';
-  team?: Maybe<Array<Maybe<Resource>>>;
+  teamMembers?: Maybe<Array<Maybe<Resource>>>;
 };
 
 export type ProjectCost = {
@@ -1497,7 +1497,7 @@ export const ProjectFragmentFragmentDoc = gql`
     }
   }
   calculated {
-    team {
+    teamMembers {
       ...resourceFragment
     }
   }

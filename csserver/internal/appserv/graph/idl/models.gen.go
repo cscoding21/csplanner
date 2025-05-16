@@ -308,7 +308,7 @@ type ProjectBasics struct {
 }
 
 type ProjectCalculatedData struct {
-	Team []*Resource `json:"team,omitempty"`
+	TeamMembers []*Resource `json:"teamMembers,omitempty"`
 }
 
 type ProjectCost struct {

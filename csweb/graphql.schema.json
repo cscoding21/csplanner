@@ -4410,7 +4410,7 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "team",
+            "name": "teamMembers",
             "description": null,
             "args": [],
             "type": {

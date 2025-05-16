@@ -361,7 +361,7 @@ type ComplexityRoot struct {
 	}
 
 	ProjectCalculatedData struct {
-		Team func(childComplexity int) int
+		TeamMembers func(childComplexity int) int
 	}
 
 	ProjectCost struct {
@@ -2327,12 +2327,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectBasics.StartDate(childComplexity), true
 
-	case "ProjectCalculatedData.team":
-		if e.complexity.ProjectCalculatedData.Team == nil {
+	case "ProjectCalculatedData.teamMembers":
+		if e.complexity.ProjectCalculatedData.TeamMembers == nil {
 			break
 		}
 
-		return e.complexity.ProjectCalculatedData.Team(childComplexity), true
+		return e.complexity.ProjectCalculatedData.TeamMembers(childComplexity), true
 
 	case "ProjectCost.blendedRate":
 		if e.complexity.ProjectCost.BlendedRate == nil {
@@ -4169,7 +4169,7 @@ type Project {
 }
 
 type ProjectCalculatedData {
-  team: [Resource]
+  teamMembers: [Resource]
 }
 
 
@@ -15236,8 +15236,8 @@ func (ec *executionContext) fieldContext_Project_calculated(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_ProjectCalculatedData_team(ctx, field)
+			case "teamMembers":
+				return ec.fieldContext_ProjectCalculatedData_teamMembers(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectCalculatedData", field.Name)
 		},
@@ -16322,8 +16322,8 @@ func (ec *executionContext) fieldContext_ProjectBasics_isCapitalized(_ context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectCalculatedData_team(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCalculatedData) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectCalculatedData_team(ctx, field)
+func (ec *executionContext) _ProjectCalculatedData_teamMembers(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCalculatedData_teamMembers(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16336,7 +16336,7 @@ func (ec *executionContext) _ProjectCalculatedData_team(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.TeamMembers, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16350,7 +16350,7 @@ func (ec *executionContext) _ProjectCalculatedData_team(ctx context.Context, fie
 	return ec.marshalOResource2ᚕᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐResource(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectCalculatedData_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectCalculatedData_teamMembers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectCalculatedData",
 		Field:      field,
@@ -31058,8 +31058,8 @@ func (ec *executionContext) _ProjectCalculatedData(ctx context.Context, sel ast.
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ProjectCalculatedData")
-		case "team":
-			out.Values[i] = ec._ProjectCalculatedData_team(ctx, field, obj)
+		case "teamMembers":
+			out.Values[i] = ec._ProjectCalculatedData_teamMembers(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
