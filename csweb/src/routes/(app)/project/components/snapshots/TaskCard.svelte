@@ -1,29 +1,26 @@
 <script lang="ts">
-	import { DirectiveLocation } from "graphql";
-import type { Snippet } from "svelte";
-
-
+    import type { Snippet } from "svelte";
 
     interface Props {
         task:string
         link:string
         children?:Snippet
-        priority?:"high"|"med"|"low"
+        priority?:"high"|"med"|"low"|"notset"
     }
     let { task, link, priority, children }:Props = $props()
 
-    let colorClass = $state("text-red-600 dark:text-red-500")
-
-    switch(priority){
-        case("low"):
-            colorClass = "text-green-600 dark:text-green-500"
-            break;
-        case("med"):
-            colorClass = "text-yellow-600 dark:text-yellow-500"
-            break;
-        default:
-            colorClass = "text-red-600 dark:text-red-500"
+    const setColorClass = (p:any):string => {
+        switch(priority){
+            case("low"):
+                return "text-green-600 dark:text-green-500"
+            case("med"):
+                return "text-yellow-600 dark:text-yellow-500"
+            default:
+                return "text-red-600 dark:text-red-500"
+        }
     }
+
+    let colorClass = $derived(setColorClass(priority))
 </script>
 
 

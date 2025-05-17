@@ -23,6 +23,7 @@ func (p *Project) PerformAllCalcs(org organization.Organization, resourceMap map
 	p.GetProjectIRR()
 
 	p.CalculateProjectTeam()
+	p.CalculateFeatureStatistics()
 }
 
 func (p *Project) AggregateProjectValueLines() {
@@ -179,11 +180,29 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 	return hours, cost
 }
 
+// CalculateFeatureStatistics aggregate numbers related to project features
+func (p *Project) CalculateFeatureStatistics() {
+	for _, f := range p.ProjectFeatures {
+		switch f.Status {
+		case "accepted":
+			p.Calculated.FeatureStatusAcceptedCount++
+		case "proposed":
+			p.Calculated.FeatureStatusProposedCount++
+		case "removed":
+			p.Calculated.FeatureStatusRemovedCount++
+		case "done":
+			p.Calculated.FeatureStatusDoneCount++
+		}
+	}
+}
+
 // CalculateProjectMilestoneStats iterate the milestones and calculate summary information
 func (p *Project) CalculateProjectMilestoneStats() {
 	if len(p.ProjectMilestones) == 0 {
 		return
 	}
+
+	projectUnhealthyTasks := 0
 
 	for i, m := range p.ProjectMilestones {
 		totalHours := 0
@@ -191,6 +210,7 @@ func (p *Project) CalculateProjectMilestoneStats() {
 		removedHours := 0
 		hoursRemaining := 0
 		completedTasks := 0
+		unhealthyTasks := 0
 		isComplete := true
 
 		for _, t := range m.Tasks {
@@ -204,6 +224,11 @@ func (p *Project) CalculateProjectMilestoneStats() {
 			} else {
 				hoursRemaining += t.HourEstimate
 				isComplete = false
+
+				if len(t.ResourceIDs) == 0 || len(t.RequiredSkillID) == 0 || t.HourEstimate == 0 {
+					unhealthyTasks++
+					projectUnhealthyTasks++
+				}
 			}
 		}
 
@@ -213,8 +238,11 @@ func (p *Project) CalculateProjectMilestoneStats() {
 		p.ProjectMilestones[i].Calculated.HoursRemaining = hoursRemaining
 		p.ProjectMilestones[i].Calculated.RemovedHours = removedHours
 		p.ProjectMilestones[i].Calculated.IsComplete = isComplete
+		p.ProjectMilestones[i].Calculated.UnhealthyTasks = unhealthyTasks
 		p.ProjectMilestones[i].Calculated.IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
 	}
+
+	p.Calculated.UnhealthyTasks = projectUnhealthyTasks
 }
 
 // CalculateProjectTasksStats update the calculated fields in a project task

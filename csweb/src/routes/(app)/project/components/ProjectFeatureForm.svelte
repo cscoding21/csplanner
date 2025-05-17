@@ -42,6 +42,13 @@
 		{ value: 'low', name: 'Low' }
 	];
 
+	const statusOpts: SelectOptionType<string>[] = [
+		{ value: 'proposed', name: 'Proposed' },
+		{ value: 'accepted', name: 'Accepted' },
+		{ value: 'removed', name: 'Removed' },
+		{ value: 'done', name: 'Done' }
+	];
+
 	const submitForm = () => {
 		errors = {};
 
@@ -87,7 +94,7 @@
 </SectionHeading>
 <form>
 	<div class="grid grid-cols-4 gap-4">
-		<div class="col-span-3">
+		<div class="col-span-2">
 			<TextInput
 				bind:value={featureForm.name}
 				placeholder="Feature name"
@@ -101,6 +108,14 @@
 				bind:value={featureForm.priority}
 				error={errors.priority}
 				options={priorityOpts}
+			/>
+		</div>
+		<div class="col-span-1">
+			<SelectInput
+				fieldName="Status"
+				bind:value={featureForm.status}
+				error={errors.status}
+				options={statusOpts}
 			/>
 		</div>
 		<div class="col-span-4">

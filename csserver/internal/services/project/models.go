@@ -109,6 +109,13 @@ type ProjectMilestoneTask struct {
 
 type ProjectCalculatedData struct {
 	Team []string `json:"team"`
+
+	FeatureStatusProposedCount int `json:"feature_status_proposed_count"`
+	FeatureStatusAcceptedCount int `json:"feature_status_accepted_count"`
+	FeatureStatusRemovedCount  int `json:"feature_status_removed_count"`
+	FeatureStatusDoneCount     int `json:"feature_status_done_count"`
+
+	UnhealthyTasks int `json:"unhealthy_tasks"`
 }
 
 type ProjectCostCalculatedData struct {
@@ -136,6 +143,7 @@ type ProjectMilestoneCalculatedData struct {
 	TotalTasks     int  `json:"total_tasks"`
 	CompletedTasks int  `json:"completed_tasks"`
 	RemovedHours   int  `json:"removed_hours"`
+	UnhealthyTasks int  `json:"unhealthy_tasks"`
 }
 
 type ProjectTaskCalculatedData struct {

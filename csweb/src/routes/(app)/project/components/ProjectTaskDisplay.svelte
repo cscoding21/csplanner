@@ -36,13 +36,13 @@
 
 </script>
 
-
+<div class="mb-2 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-900 sm:p-6">
 <div>
-    <Heading tag="h5" class="text-lg dark:text-white">{task.name}</Heading>
-    <small>({task.hourEstimate} {pluralize("hour", task.hourEstimate)})</small>
-    <BadgeMilestoneStatus status={task.status} />
-    <P class="mb-3" weight="light" color="text-gray-500 dark:text-gray-100 float-right">
-        <ShowIfStatus scope={["new", "draft"]} status={projectStatus}>
+    <Heading tag="h5" class="text-lg dark:text-white">
+        {task.name}
+
+        <span class="float-right">
+            <ShowIfStatus scope={["new", "draft"]} status={projectStatus}>
             <ButtonGroup>
             <Button
                 size="sm"
@@ -65,7 +65,13 @@
             </DeleteProjectTask>
         </ButtonGroup>
     </ShowIfStatus>
-    </P>
+        </span>
+    
+    </Heading>
+    <div class="my-2">
+    <small>({task.hourEstimate} {pluralize("hour", task.hourEstimate)})</small>
+    <BadgeMilestoneStatus status={task.status} />
+    </div>
 </div>
 <div>
     <div class="text-sm text-gray-400">{task.description}</div>
@@ -77,8 +83,7 @@
         <ResourceList maxSize={4} size="sm" resources={task.resources || []} />
     </div>
 </div>
-<div class="mt-2">
-    
+
 </div>
 <br class="clear-both" />
 

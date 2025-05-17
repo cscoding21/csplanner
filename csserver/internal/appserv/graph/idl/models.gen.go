@@ -308,7 +308,12 @@ type ProjectBasics struct {
 }
 
 type ProjectCalculatedData struct {
-	TeamMembers []*Resource `json:"teamMembers,omitempty"`
+	TeamMembers                []*Resource `json:"teamMembers,omitempty"`
+	FeatureStatusProposedCount *int        `json:"featureStatusProposedCount,omitempty"`
+	FeatureStatusAcceptedCount *int        `json:"featureStatusAcceptedCount,omitempty"`
+	FeatureStatusRemovedCount  *int        `json:"featureStatusRemovedCount,omitempty"`
+	FeatureStatusDoneCount     *int        `json:"featureStatusDoneCount,omitempty"`
+	UnhealthyTasks             *int        `json:"unhealthyTasks,omitempty"`
 }
 
 type ProjectCost struct {
@@ -364,6 +369,7 @@ type ProjectMilestoneCalculatedData struct {
 	TotalTasks         *int       `json:"totalTasks,omitempty"`
 	CompletedTasks     *int       `json:"completedTasks,omitempty"`
 	RemovedHours       *int       `json:"removedHours,omitempty"`
+	UnhealthyTasks     *int       `json:"unhealthyTasks,omitempty"`
 }
 
 type ProjectMilestonePhase struct {

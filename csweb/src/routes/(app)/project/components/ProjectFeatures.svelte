@@ -65,7 +65,6 @@
 		{#each project.data?.projectFeatures as feature (feature.id)}
 			{#if feature && feature.id}
 				<ProjectFeatureDisplay {feature} update={refresh} projectStatus={project.data?.projectStatusBlock.status} projectID={project.meta?.id as string} />
-				<Hr hrClass="h-px my-3 bg-gray-200 border-0 dark:bg-gray-700" />
 			{/if}
 		{/each}
 	{:else}

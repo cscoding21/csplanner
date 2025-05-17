@@ -89,6 +89,8 @@ fragment projectFragment on Project {
 			totalTasks
 			isComplete
 			isInFlight
+
+			unhealthyTasks
 		}
 
 		phase {
@@ -128,6 +130,12 @@ fragment projectFragment on Project {
 		teamMembers {
 			...resourceFragment
 		}
+		featureStatusAcceptedCount
+		featureStatusProposedCount
+		featureStatusDoneCount
+		featureStatusRemovedCount
+
+		unhealthyTasks
 	}
 }
 

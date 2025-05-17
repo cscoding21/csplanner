@@ -9,7 +9,6 @@
 	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus, BadgeProjectStatus, ShowIfStatus } from '.';
 	import { getProject } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
-	import { getDefaultProject } from '$lib/forms/project.validation';
 	import { callIf } from '$lib/utils/helpers';
 
 	interface Props {
@@ -92,17 +91,15 @@
 							{#if milestone.tasks}
 								{#each milestone.tasks as task, tindex}
 									{#if editTask === task.id} 
-									<div class="my-3">
+									<div class="my-4 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-900 sm:p-6">
 									<ProjectTaskForm {task} milestoneID={milestone.id} projectID={id} update={() => editTaskComplete()} />
 									</div>
-										<Hr />
 									{:else}
 									<ProjectTaskDisplay projectStatus={project.data?.projectStatusBlock.status} projectID={id} milestoneID={milestone.id} editClick={() => editTask = task.id} update={() => editTaskComplete()} task={project.data?.projectMilestones[index].tasks[tindex]} />
 									{/if}
 								{/each}
 							{/if}
 							<ShowIfStatus scope={["new", "draft"]} status={project.data?.projectStatusBlock?.status}>
-								<Hr />
 								<SectionHeading>Add New Task to Milestone {milestone.phase.name}</SectionHeading>
 								<ProjectTaskForm milestoneID={milestone.id} projectID={id} update={() => refresh()} />
 							</ShowIfStatus>

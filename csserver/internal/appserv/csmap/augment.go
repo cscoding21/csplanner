@@ -267,15 +267,9 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 		}
 	}
 
-	pcd := idl.ProjectCalculatedData{
-		TeamMembers: []*idl.Resource{},
-	}
-
 	for _, v := range team {
-		pcd.TeamMembers = append(pcd.TeamMembers, &v)
+		proj.Calculated.TeamMembers = append(proj.Calculated.TeamMembers, &v)
 	}
-
-	proj.Calculated = &pcd
 }
 
 func getStateTransition(model project.Project, status projectstatus.ProjectState) *project.ProjectStatusTransition {

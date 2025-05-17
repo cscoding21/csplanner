@@ -544,7 +544,12 @@ export type ProjectBasics = {
 
 export type ProjectCalculatedData = {
   __typename?: 'ProjectCalculatedData';
+  featureStatusAcceptedCount?: Maybe<Scalars['Int']['output']>;
+  featureStatusDoneCount?: Maybe<Scalars['Int']['output']>;
+  featureStatusProposedCount?: Maybe<Scalars['Int']['output']>;
+  featureStatusRemovedCount?: Maybe<Scalars['Int']['output']>;
   teamMembers?: Maybe<Array<Maybe<Resource>>>;
+  unhealthyTasks?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProjectCost = {
@@ -608,6 +613,7 @@ export type ProjectMilestoneCalculatedData = {
   removedHours?: Maybe<Scalars['Int']['output']>;
   totalHours?: Maybe<Scalars['Int']['output']>;
   totalTasks?: Maybe<Scalars['Int']['output']>;
+  unhealthyTasks?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProjectMilestonePhase = {
@@ -1463,6 +1469,7 @@ export const ProjectFragmentFragmentDoc = gql`
       totalTasks
       isComplete
       isInFlight
+      unhealthyTasks
     }
     phase {
       name
@@ -1500,6 +1507,11 @@ export const ProjectFragmentFragmentDoc = gql`
     teamMembers {
       ...resourceFragment
     }
+    featureStatusAcceptedCount
+    featureStatusProposedCount
+    featureStatusDoneCount
+    featureStatusRemovedCount
+    unhealthyTasks
   }
 }
     ${UserFragmentFragmentDoc}

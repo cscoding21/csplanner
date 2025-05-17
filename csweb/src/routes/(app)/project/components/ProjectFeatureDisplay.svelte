@@ -8,7 +8,7 @@
 	} from 'flowbite-svelte';
 	import { EditOutline, TrashBinOutline } from 'flowbite-svelte-icons';
 	import type { ProjectFeature } from '$lib/graphql/generated/sdk';
-	import { DeleteProjectFeature, ProjectFeatureForm, BadgeFeaturePriority, ShowIfStatus } from '.';
+	import { DeleteProjectFeature, ProjectFeatureForm, BadgeFeaturePriority, ShowIfStatus, BadgeFeatureStatus } from '.';
 	import { callIf } from '$lib/utils/helpers';
 
 	interface Props {
@@ -28,12 +28,11 @@
 
 </script>
 
+<div class="mb-2 rounded-lg bg-white p-4 shadow-sm dark:bg-gray-900 sm:p-6">
 <Heading tag="h5" class="text-lg dark:text-white">
 	{feature.name}
 
 	<span class="float-right">
-		<BadgeFeaturePriority priority={feature.priority} />
-
 		<ShowIfStatus scope={["new", "draft"]} status={projectStatus}>
 		<ButtonGroup>
 		<Button
@@ -58,8 +57,12 @@
 		</ShowIfStatus>
 	</span>
 </Heading>
-<div class="my-2 text-xs text-gray-100">Status: <b>{feature.status}</b></div>
+<div class="my-3">
+<BadgeFeatureStatus status={feature.status} />
+<BadgeFeaturePriority priority={feature.priority} />
+</div>
 <P weight="light" color="text-gray-300 dark:text-gray-200 text-sm">{feature.description}</P>
+</div>
 
 
 <Modal bind:open={modalState} size="xl">

@@ -2,6 +2,7 @@
 	import { SectionSubHeading, UserCard } from "$lib/components";
 	import type { Project, User } from "$lib/graphql/generated/sdk";
 	import { formatCurrency, formatPercent, pluralize } from "$lib/utils/format";
+	import { onMount } from "svelte";
 	import TaskCard from "./TaskCard.svelte";
 
     interface Props {
@@ -9,11 +10,61 @@
     }
     let { project }:Props = $props()
 
-    let featurePriority = $state("high" as "high"|"med"|"low")
-    let valuePriority = $state("med" as "high"|"med"|"low")
-    let milestonePriority = $state("low" as "high"|"med"|"low")
+    let featurePriority = $state("high" as "high"|"med"|"low"|"notset")
+    let valuePriority = $state("med" as "high"|"med"|"low"|"notset")
+    let milestonePriority = $state("low" as "high"|"med"|"low"|"notset")
 
+    const getFeaturePriority = ():"high"|"med"|"low"|"notset" => {
+        if(!project) {
+            console.log("feature unset")
+            return "notset"
+        }
 
+        if(!project.projectFeatures || project.projectFeatures.length === 0) {
+            console.log("feature high")
+            return "high"
+        }
+
+        if(project.projectFeatures.length > 0 && project.projectFeatures.length < 10) {
+            console.log("feature med")
+            return "med"
+        }
+
+        console.log("feature low")
+        return "low"
+    }
+
+    const getValuePriority = ():"high"|"med"|"low"|"notset" => {
+        if(!project) {
+            return "notset"
+        }
+
+        if(!project.projectValue || !project.projectValue.calculated?.netPresentValue || project.projectValue.calculated?.netPresentValue < 0.0) {
+            return "high"
+        }
+
+        return "low"
+    }
+
+    const getMilestonePriority = ():"high"|"med"|"low"|"notset" => {
+        if(!project) {
+            return "notset"
+        }
+
+        if(project.calculated?.unhealthyTasks && project.calculated?.unhealthyTasks > 0) {
+            return "high"
+        }
+
+        return "low"
+    }
+
+    onMount(() => {
+        featurePriority = getFeaturePriority()
+        valuePriority = getValuePriority()
+        milestonePriority = getMilestonePriority()
+
+        console.log("onmount", featurePriority)
+    })
 </script>
 
 
@@ -42,8 +93,14 @@
             <b>{formatPercent.format(project.projectValue.calculated?.internalRateOfReturn as number)}</b>
         </TaskCard>
 
-        <TaskCard task="Create tasks and assign resources" link="#value" priority={milestonePriority}>
-            This project currently has <b>{project.projectMilestones?.length}</b> {pluralize("feature", project.projectMilestones?.length as number)}
+        <TaskCard task="Create tasks and assign resources" link="#milestones" priority={milestonePriority}>
+            This project currently has <b>{project.projectMilestones?.length}</b> {pluralize("milestone", project.projectMilestones?.length as number)}
+            
+            {#if project.calculated?.unhealthyTasks}
+            <div>
+                Unhealthy tasks {project.calculated?.unhealthyTasks}
+            </div>
+            {/if}
         </TaskCard>
 
     </div>

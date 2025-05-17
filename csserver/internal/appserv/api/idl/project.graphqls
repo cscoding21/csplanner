@@ -16,6 +16,13 @@ type Project {
 
 type ProjectCalculatedData {
   teamMembers: [Resource]
+
+  featureStatusProposedCount: Int
+	featureStatusAcceptedCount: Int
+	featureStatusRemovedCount: Int
+	featureStatusDoneCount: Int
+
+  unhealthyTasks: Int
 }
 
 
@@ -162,6 +169,8 @@ type ProjectMilestoneCalculatedData {
 	totalTasks: Int
 	completedTasks: Int
 	removedHours: Int
+
+  unhealthyTasks: Int
 }
 
 type ProjectTaskCalculatedData {
