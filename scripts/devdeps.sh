@@ -6,7 +6,7 @@ YELLOW='\033[0;33m'
 NC='\033[0m'
 CHECKMARK="\xE2\x9C\x94"
 
-dependencies=("go" "npm" "python" "node" "docker" "kubectl" "minikube" "helm" "tilt" "surreal" "pnpm" "poetry" "make" "ollama" "terraform" "linkerd" "pyenv")
+dependencies=("go" "npm" "python" "node" "docker" "kubectl" "minikube" "helm" "tilt" "psql" "cz" "pnpm" "poetry" "make" "ollama" "terraform" "linkerd" "pyenv")
 
 
 for i in ${!dependencies[@]};

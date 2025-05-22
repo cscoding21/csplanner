@@ -96,7 +96,7 @@ dbsetup:
 	./scripts/db.sh;
 
 
-## saasdbsetup: creates the database and user for the csPlanner PG instance
+## saasdbsetup: creates the database and user for the SaaS master database
 .PHONY: saasdbsetup
 saasdbsetup:
 	./scripts/masterdb.sh;
