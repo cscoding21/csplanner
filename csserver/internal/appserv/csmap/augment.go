@@ -214,8 +214,11 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			if len(t.ResourceIDs) > 0 {
 				for _, r := range t.ResourceIDs {
 					resource := getResourceById(ctx, *resourceList, r)
-					team[r] = *resource
-					proj.ProjectMilestones[i].Tasks[j].Resources = append(proj.ProjectMilestones[i].Tasks[j].Resources, resource)
+
+					if resource != nil {
+						team[r] = *resource
+						proj.ProjectMilestones[i].Tasks[j].Resources = append(proj.ProjectMilestones[i].Tasks[j].Resources, resource)
+					}
 				}
 			}
 		}
