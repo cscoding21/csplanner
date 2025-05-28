@@ -52,6 +52,9 @@ func Serve() error {
 	//	file handler
 	router.Handle("/files/*", http.StripPrefix("/files/", handlers.GetTusdHandler()))
 
+	//	mcp handler
+	//router.Handle("/mcp", handlers.GetMCPServer())
+
 	//---start web server
 	return http.ListenAndServe(fmt.Sprintf(":%v", config.Config.Server.ServerPort), router)
 }

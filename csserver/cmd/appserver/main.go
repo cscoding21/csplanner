@@ -15,9 +15,6 @@ func init() {
 	config.InitLogger()
 
 	csmap.ClearAllCaches()
-
-	//migConfig := GetMigrationConfig()
-	//migrations.Apply(migConfig)
 }
 
 // run the web server

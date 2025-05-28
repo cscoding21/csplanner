@@ -1,0 +1,23 @@
+# -*- mode: Python -*-
+
+load('ext://namespace', 'namespace_create')
+load('ext://helm_resource', 'helm_resource')
+
+NAMESPACE = 'app'
+
+def setup_csservermcp():
+    namespace_create(NAMESPACE, allow_duplicates=True)
+
+    docker_build(
+        'csservermcp', 
+        './csserver', 
+        dockerfile = 'csserver/DockerMCP'
+    )
+
+    k8s_yaml(
+        helm(
+            './deploy/helm/csmcp',
+            name = 'csmcp',
+            namespace = NAMESPACE
+        ),
+    )
