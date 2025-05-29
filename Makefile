@@ -101,3 +101,9 @@ dbsetup:
 saasdbsetup:
 	./scripts/masterdb.sh;
 
+
+## mcp: runs the MCP inspector
+.PHONY: mcp
+mcp:
+	npx @modelcontextprotocol/inspector
+

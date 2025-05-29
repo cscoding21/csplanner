@@ -51,7 +51,7 @@ k8s_resource(
 
 k8s_resource(
   workload='csmcp',
-  port_forwards="6000:6000",
+  port_forwards="6002:6002",
   labels=["csPlanner"] 
 )
 

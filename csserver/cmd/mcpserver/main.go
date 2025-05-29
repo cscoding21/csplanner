@@ -21,7 +21,7 @@ func init() {
 
 // run the MCP server
 func main() {
-	port := 6000
+	port := 6002
 
 	log.Infof("Starting MCP server listening on port %v", port)
 
