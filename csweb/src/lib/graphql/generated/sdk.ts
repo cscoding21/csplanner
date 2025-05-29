@@ -548,7 +548,9 @@ export type ProjectCalculatedData = {
   featureStatusDoneCount?: Maybe<Scalars['Int']['output']>;
   featureStatusProposedCount?: Maybe<Scalars['Int']['output']>;
   featureStatusRemovedCount?: Maybe<Scalars['Int']['output']>;
+  healthyTasks?: Maybe<Scalars['Int']['output']>;
   teamMembers?: Maybe<Array<Maybe<Resource>>>;
+  totalTasks?: Maybe<Scalars['Int']['output']>;
   unhealthyTasks?: Maybe<Scalars['Int']['output']>;
 };
 
@@ -1512,6 +1514,8 @@ export const ProjectFragmentFragmentDoc = gql`
     featureStatusDoneCount
     featureStatusRemovedCount
     unhealthyTasks
+    healthyTasks
+    totalTasks
   }
 }
     ${UserFragmentFragmentDoc}

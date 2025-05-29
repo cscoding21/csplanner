@@ -101,7 +101,7 @@
 
 		<div class="flex-1 px-2">
 			<SectionSubHeading>Five Year Outlook</SectionSubHeading>
-			<ProjectValueChart {project}></ProjectValueChart>
+			<ProjectValueChart project={project.data}></ProjectValueChart>
 		</div>
 
 		<div class="flex-1 px-2">

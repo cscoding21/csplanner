@@ -5,13 +5,23 @@ import (
 	"slices"
 
 	"csserver/internal/common"
+	"csserver/internal/services/organization"
+	"csserver/internal/services/resource"
 
 	"github.com/cscoding21/csmap/utils"
 	"github.com/google/uuid"
 )
 
 // DeleteTaskFromProject if the feature exists in the project object graph...remove it
-func (s *ProjectService) DeleteFeatureFromProject(ctx context.Context, projectID string, featureID string) (common.UpdateResult[*common.BaseModel[Project]], error) {
+func (s *ProjectService) DeleteFeatureFromProject(
+	ctx context.Context,
+	projectID string,
+	featureID string,
+	resourceMap map[string]resource.Resource,
+	roleMap map[string]resource.Role,
+	org organization.Organization,
+) (common.UpdateResult[*common.BaseModel[Project]], error) {
+
 	result, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
@@ -20,6 +30,8 @@ func (s *ProjectService) DeleteFeatureFromProject(ctx context.Context, projectID
 	project := result.Data
 
 	updatedProject := DeleteFeatureFromProjectGraph(project, featureID)
+	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
+
 	return s.UpdateProject(ctx, updatedProject)
 }
 
@@ -37,7 +49,14 @@ func DeleteFeatureFromProjectGraph(project Project, featureID string) Project {
 }
 
 // UpdateProjectFeature if the feature exists in the project object graph...update it.  Otherwise, add it
-func (s *ProjectService) UpdateProjectFeature(ctx context.Context, projectID string, feature ProjectFeature) (common.UpdateResult[*common.BaseModel[Project]], error) {
+func (s *ProjectService) UpdateProjectFeature(
+	ctx context.Context,
+	projectID string,
+	feature ProjectFeature,
+	resourceMap map[string]resource.Resource,
+	roleMap map[string]resource.Role,
+	org organization.Organization,
+) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	projectResult, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
@@ -45,6 +64,7 @@ func (s *ProjectService) UpdateProjectFeature(ctx context.Context, projectID str
 
 	project := projectResult.Data
 	updatedProject := UpdateProjectFeatureGraph(project, feature)
+	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
 	return s.UpdateProject(ctx, updatedProject)
 }
 

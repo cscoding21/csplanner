@@ -182,6 +182,11 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 
 // CalculateFeatureStatistics aggregate numbers related to project features
 func (p *Project) CalculateFeatureStatistics() {
+	p.Calculated.FeatureStatusAcceptedCount = 0
+	p.Calculated.FeatureStatusProposedCount = 0
+	p.Calculated.FeatureStatusRemovedCount = 0
+	p.Calculated.FeatureStatusDoneCount = 0
+
 	for _, f := range p.ProjectFeatures {
 		switch f.Status {
 		case "accepted":
@@ -203,6 +208,8 @@ func (p *Project) CalculateProjectMilestoneStats() {
 	}
 
 	projectUnhealthyTasks := 0
+	projectHealthyTasks := 0
+	totalProjectTasks := 0
 
 	for i, m := range p.ProjectMilestones {
 		totalHours := 0
@@ -215,6 +222,7 @@ func (p *Project) CalculateProjectMilestoneStats() {
 
 		for _, t := range m.Tasks {
 			totalHours += t.HourEstimate
+			totalProjectTasks++
 
 			if t.Status == milestonestatus.Done {
 				completedHours += t.HourEstimate
@@ -228,6 +236,8 @@ func (p *Project) CalculateProjectMilestoneStats() {
 				if len(t.ResourceIDs) == 0 || len(t.RequiredSkillID) == 0 || t.HourEstimate == 0 {
 					unhealthyTasks++
 					projectUnhealthyTasks++
+				} else {
+					projectHealthyTasks++
 				}
 			}
 		}
@@ -243,6 +253,8 @@ func (p *Project) CalculateProjectMilestoneStats() {
 	}
 
 	p.Calculated.UnhealthyTasks = projectUnhealthyTasks
+	p.Calculated.HealthyTasks = projectHealthyTasks
+	p.Calculated.TotalTasks = totalProjectTasks
 }
 
 // CalculateProjectTasksStats update the calculated fields in a project task

@@ -176,12 +176,28 @@ func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.Upda
 }
 
 // DeleteProjectTask is the resolver for the deleteProjectTask field.
-func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID string, milestoneID string, taskID string) (*idl.CreateProjectResult, error) {
+func (r *mutationResolver) DeleteProjectTask(
+	ctx context.Context,
+	projectID string,
+	milestoneID string,
+	taskID string) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
 	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
+	org, _ := factory.GetDefaultOrganization(ctx)
 
-	result, err := service.DeleteTaskFromProject(ctx, projectID, milestoneID, taskID)
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := service.DeleteTaskFromProject(ctx, projectID, milestoneID, taskID, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}
@@ -204,10 +220,22 @@ func (r *mutationResolver) UpdateProjectFeature(ctx context.Context, input idl.U
 	defer csmap.ExpireProjectCache()
 
 	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
+	org, _ := factory.GetDefaultOrganization(ctx)
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
 
 	feature := csmap.UpdateProjectFeatureIdlToProject(input)
 
-	result, err := service.UpdateProjectFeature(ctx, input.ProjectID, feature)
+	result, err := service.UpdateProjectFeature(ctx, input.ProjectID, feature, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}
@@ -230,8 +258,20 @@ func (r *mutationResolver) DeleteProjectFeature(ctx context.Context, projectID s
 	defer csmap.ExpireProjectCache()
 
 	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
+	org, _ := factory.GetDefaultOrganization(ctx)
 
-	result, err := service.DeleteFeatureFromProject(ctx, projectID, featureID)
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := service.DeleteFeatureFromProject(ctx, projectID, featureID, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}
@@ -641,8 +681,21 @@ func (r *mutationResolver) SetProjectMilestonesFromTemplate(ctx context.Context,
 		return nil, err
 	}
 
+	rs := factory.GetResourceService(ctx)
+	org, _ := factory.GetDefaultOrganization(ctx)
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
 	//---update the project with the template structure
-	result, err := service.SetProjectMilestonesFromTemplate(ctx, input.ProjectID, template.Data)
+	result, err := service.SetProjectMilestonesFromTemplate(ctx, input.ProjectID, template.Data, resourceMap, roleMap, *org)
 	if err != nil {
 		return nil, err
 	}

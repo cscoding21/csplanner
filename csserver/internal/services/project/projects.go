@@ -113,7 +113,7 @@ func (s *ProjectService) CreateNewProject(
 
 	pro := common.UpwrapFromUpdateResult(updateResult)
 
-	updateResultWithMS, err := s.SetProjectMilestonesFromTemplate(ctx, pro.ID, template)
+	updateResultWithMS, err := s.SetProjectMilestonesFromTemplate(ctx, pro.ID, template, rm, roleMap, org)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}

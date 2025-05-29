@@ -314,6 +314,8 @@ type ProjectCalculatedData struct {
 	FeatureStatusRemovedCount  *int        `json:"featureStatusRemovedCount,omitempty"`
 	FeatureStatusDoneCount     *int        `json:"featureStatusDoneCount,omitempty"`
 	UnhealthyTasks             *int        `json:"unhealthyTasks,omitempty"`
+	HealthyTasks               *int        `json:"healthyTasks,omitempty"`
+	TotalTasks                 *int        `json:"totalTasks,omitempty"`
 }
 
 type ProjectCost struct {

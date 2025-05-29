@@ -365,7 +365,9 @@ type ComplexityRoot struct {
 		FeatureStatusDoneCount     func(childComplexity int) int
 		FeatureStatusProposedCount func(childComplexity int) int
 		FeatureStatusRemovedCount  func(childComplexity int) int
+		HealthyTasks               func(childComplexity int) int
 		TeamMembers                func(childComplexity int) int
+		TotalTasks                 func(childComplexity int) int
 		UnhealthyTasks             func(childComplexity int) int
 	}
 
@@ -2361,12 +2363,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProjectCalculatedData.FeatureStatusRemovedCount(childComplexity), true
 
+	case "ProjectCalculatedData.healthyTasks":
+		if e.complexity.ProjectCalculatedData.HealthyTasks == nil {
+			break
+		}
+
+		return e.complexity.ProjectCalculatedData.HealthyTasks(childComplexity), true
+
 	case "ProjectCalculatedData.teamMembers":
 		if e.complexity.ProjectCalculatedData.TeamMembers == nil {
 			break
 		}
 
 		return e.complexity.ProjectCalculatedData.TeamMembers(childComplexity), true
+
+	case "ProjectCalculatedData.totalTasks":
+		if e.complexity.ProjectCalculatedData.TotalTasks == nil {
+			break
+		}
+
+		return e.complexity.ProjectCalculatedData.TotalTasks(childComplexity), true
 
 	case "ProjectCalculatedData.unhealthyTasks":
 		if e.complexity.ProjectCalculatedData.UnhealthyTasks == nil {
@@ -4225,6 +4241,8 @@ type ProjectCalculatedData {
 	featureStatusDoneCount: Int
 
   unhealthyTasks: Int
+  healthyTasks: Int
+  totalTasks: Int
 }
 
 
@@ -15305,6 +15323,10 @@ func (ec *executionContext) fieldContext_Project_calculated(_ context.Context, f
 				return ec.fieldContext_ProjectCalculatedData_featureStatusDoneCount(ctx, field)
 			case "unhealthyTasks":
 				return ec.fieldContext_ProjectCalculatedData_unhealthyTasks(ctx, field)
+			case "healthyTasks":
+				return ec.fieldContext_ProjectCalculatedData_healthyTasks(ctx, field)
+			case "totalTasks":
+				return ec.fieldContext_ProjectCalculatedData_totalTasks(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ProjectCalculatedData", field.Name)
 		},
@@ -16653,6 +16675,88 @@ func (ec *executionContext) _ProjectCalculatedData_unhealthyTasks(ctx context.Co
 }
 
 func (ec *executionContext) fieldContext_ProjectCalculatedData_unhealthyTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectCalculatedData_healthyTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCalculatedData_healthyTasks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HealthyTasks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectCalculatedData_healthyTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectCalculatedData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectCalculatedData_totalTasks(ctx context.Context, field graphql.CollectedField, obj *idl.ProjectCalculatedData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectCalculatedData_totalTasks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalTasks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectCalculatedData_totalTasks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectCalculatedData",
 		Field:      field,
@@ -31385,6 +31489,10 @@ func (ec *executionContext) _ProjectCalculatedData(ctx context.Context, sel ast.
 			out.Values[i] = ec._ProjectCalculatedData_featureStatusDoneCount(ctx, field, obj)
 		case "unhealthyTasks":
 			out.Values[i] = ec._ProjectCalculatedData_unhealthyTasks(ctx, field, obj)
+		case "healthyTasks":
+			out.Values[i] = ec._ProjectCalculatedData_healthyTasks(ctx, field, obj)
+		case "totalTasks":
+			out.Values[i] = ec._ProjectCalculatedData_totalTasks(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

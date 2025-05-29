@@ -116,6 +116,8 @@ type ProjectCalculatedData struct {
 	FeatureStatusDoneCount     int `json:"feature_status_done_count"`
 
 	UnhealthyTasks int `json:"unhealthy_tasks"`
+	HealthyTasks   int `json:"healthy_tasks"`
+	TotalTasks     int `json:"total_tasks"`
 }
 
 type ProjectCostCalculatedData struct {

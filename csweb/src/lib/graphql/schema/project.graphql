@@ -136,6 +136,8 @@ fragment projectFragment on Project {
 		featureStatusRemovedCount
 
 		unhealthyTasks
+		healthyTasks
+		totalTasks
 	}
 }
 

@@ -16,7 +16,16 @@ import (
 )
 
 // DeleteTaskFromProject if the tasks exists in the project object graph...remove it
-func (s *ProjectService) DeleteTaskFromProject(ctx context.Context, projectID string, milestoneID string, taskID string) (common.UpdateResult[*common.BaseModel[Project]], error) {
+func (s *ProjectService) DeleteTaskFromProject(
+	ctx context.Context,
+	projectID string,
+	milestoneID string,
+	taskID string,
+	resourceMap map[string]resource.Resource,
+	roleMap map[string]resource.Role,
+	org organization.Organization,
+) (common.UpdateResult[*common.BaseModel[Project]], error) {
+
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
@@ -24,7 +33,8 @@ func (s *ProjectService) DeleteTaskFromProject(ctx context.Context, projectID st
 
 	updatedProject := deleteTaskFromProjectGraph(project.Data, milestoneID, taskID)
 
-	updatedProject.CalculateProjectMilestoneStats()
+	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
+
 	return s.UpdateProject(ctx, updatedProject)
 }
 
@@ -104,7 +114,14 @@ func UpdateTaskFromProjectGraph(project Project, milestoneID string, task Projec
 
 // SetProjectMilestonesFromTemplate assign the details of a project plan to a specific project
 func (s *ProjectService) SetProjectMilestonesFromTemplate(
-	ctx context.Context, projectID string, template projecttemplate.Projecttemplate) (common.UpdateResult[*common.BaseModel[Project]], error) {
+	ctx context.Context,
+	projectID string,
+	template projecttemplate.Projecttemplate,
+	resourceMap map[string]resource.Resource,
+	roleMap map[string]resource.Role,
+	org organization.Organization,
+) (common.UpdateResult[*common.BaseModel[Project]], error) {
+
 	project, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
@@ -139,6 +156,6 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 		project.Data.ProjectMilestones = append(project.Data.ProjectMilestones, &milestone)
 	}
 
-	project.Data.CalculateProjectMilestoneStats()
+	project.Data.PerformAllCalcs(org, resourceMap, roleMap)
 	return s.UpdateProject(ctx, project.Data)
 }

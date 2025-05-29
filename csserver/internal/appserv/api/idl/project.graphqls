@@ -23,6 +23,8 @@ type ProjectCalculatedData {
 	featureStatusDoneCount: Int
 
   unhealthyTasks: Int
+  healthyTasks: Int
+  totalTasks: Int
 }
 
 
