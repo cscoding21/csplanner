@@ -65,6 +65,7 @@
 	{#if project.data?.projectValue.projectValueLines && project.data?.projectValue.projectValueLines.length > 0}
 	<div class="flex mb-8">
 		<div class="flex-1 px-4">
+			<SectionSubHeading>Details</SectionSubHeading>
 			<ul class="list mb-6 col-span-2 p-2 text-sm space-y-3">
 				<li>
 					<span>Five Year Gross</span>

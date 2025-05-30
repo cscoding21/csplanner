@@ -30,4 +30,4 @@
 	getChartData(project)
 </script>
 
-<PieChart {values} {labels} />
+<PieChart {values} {labels} format="currency" />

@@ -1,17 +1,16 @@
 <script lang="ts">
     import { 
-        SectionHeading,
-        SectionSubHeading
+        SectionHeading
     } from "$lib/components";
-    import { BadgeFeaturePriority, BadgeProjectStatus, BadgeFeatureStatus, ShowIfStatus } from ".";
-    import { Table, TableBody, TableHead, TableBodyRow, TableHeadCell, TableBodyCell, Popover, Hr } from "flowbite-svelte";
-    import { QuestionCircleSolid } from "flowbite-svelte-icons";
+    import { BadgeProjectStatus, ShowIfStatus } from ".";
     import type { ProjectEnvelope } from '$lib/graphql/generated/sdk'
     import { getProject } from "$lib/services/project";
     import { getDefaultProject } from "$lib/forms/project.validation";
-    import { normalizeGUID } from "$lib/utils/id";
 	import Draft from "./snapshots/Draft.svelte";
 	import New from "./snapshots/New.svelte";
+    import Proposed from "./snapshots/Proposed.svelte";
+    import Exception from "./snapshots/Exception.svelte";
+	import Shelved from "./snapshots/Shelved.svelte";
 
     interface Props {
         id: string
@@ -63,47 +62,29 @@
     <Draft project={project.data} />
 </ShowIfStatus>
 
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["proposed"]}>
+    <Proposed project={project.data} />
+</ShowIfStatus>
 
-<!-- <div class="col-span-1">
-    <SectionSubHeading>Executive Summary</SectionSubHeading>
-    <p class="mb-6 text-sm">{project.data?.projectBasics?.description}</p>
-</div> -->
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["scheduled"]}>
+    Scheduled
+</ShowIfStatus>
+
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["inflight"]}>
+    In Flight
+</ShowIfStatus>
+
+
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["deferred", "abandoned", "rejected", "backlogged", "complete"]}>
+    <Shelved project={project.data} />
+</ShowIfStatus>
 
 
 
 
-<!-- <div class="col-span-2">
-    <SectionSubHeading>Features</SectionSubHeading>
-    <Table>
-        <TableHead>
-          <TableHeadCell>Feature</TableHeadCell>
-          <TableHeadCell>Priority</TableHeadCell>
-          <TableHeadCell>Status</TableHeadCell>
-        </TableHead>
-        <TableBody tableBodyClass="divide-y">
-        {#if project.data?.projectFeatures}
-            {#each project.data?.projectFeatures as feature}
-          <TableBodyRow>
-            <TableBodyCell>
-                {feature.name}
-                <button id={'feat' + normalizeGUID(feature.id)}>
-                    <QuestionCircleSolid class="w-3 h-3 ms-1.5" />
-                    <span class="sr-only">Show information</span>
-                </button>
-                  <Popover triggeredBy={'#feat' + normalizeGUID(feature.id)} class="w-72 text-sm font-light text-gray-500 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400" placement="bottom-start">
-                    <div class="p-3 space-y-2">
-                      {feature.description}
-                    </div>
-                  </Popover>
-            </TableBodyCell>
-            <TableBodyCell><BadgeFeaturePriority priority={feature.priority} /></TableBodyCell>
-            <TableBodyCell><BadgeFeatureStatus status={feature.status} /></TableBodyCell>
-          </TableBodyRow>
-          {/each}
-        {/if}
-        </TableBody>
-    </Table>
-</div> -->
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["exception"]}>
+    <Exception project={project.data} />
+</ShowIfStatus>
 
 {/if}
 
