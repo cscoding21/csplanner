@@ -40,7 +40,7 @@ type ResourceCalculatedData struct {
 // GetSkill return a skill by its name for a given resource if it exists
 func (r *Resource) GetSkill(id string) *Skill {
 	for _, s := range r.Skills {
-		if strings.EqualFold(s.ID, id) {
+		if strings.EqualFold(s.SkillID, id) {
 			return s
 		}
 	}

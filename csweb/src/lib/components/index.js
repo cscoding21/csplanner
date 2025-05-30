@@ -59,6 +59,7 @@ export { default as OrgStateChecker } from './widgets/OrgStateChecker.svelte';
 export { default as PortfolioTable } from './widgets/PortfolioTable.svelte';
 export { default as ResourceCard } from './widgets/ResourceCard.svelte';
 export { default as ResourceSkillsList } from './widgets/ResourceSkillsList.svelte';
+export { default as ScheduleTable } from './widgets/ScheduleTable.svelte';
 export { default as UserCard } from './widgets/UserCard.svelte';
 export { default as UserDisplay } from './widgets/UserDisplay.svelte';
 export { default as ResourceList } from './widgets/ResourceList.svelte';

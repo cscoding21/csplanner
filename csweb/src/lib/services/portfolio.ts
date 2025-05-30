@@ -1,9 +1,8 @@
 import { GetPortfolioDocument, GetPortfolioForResourceDocument} from "$lib/graphql/generated/sdk";
 import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, ProjectActivity, Project} from "$lib/graphql/generated/sdk";
 import { getApolloClient } from "$lib/graphql/gqlclient";
-import { deepCopy } from "$lib/utils/helpers";
 import { dateCompare } from "$lib/utils/check";
-import { formatDate, formatDateNoYear } from "$lib/utils/format";
+import { formatDateNoYear } from "$lib/utils/format";
 
 
 /**

@@ -2,7 +2,7 @@
 	import type { Project, Schedule } from "$lib/graphql/generated/sdk";
     import { Alert, Button } from "flowbite-svelte";
     import { InfoCircleSolid } from "flowbite-svelte-icons";
-    import { formatDate } from "$lib/utils/format";
+    import { formatDate, titleCase } from "$lib/utils/format";
 
     interface Props {
 		project: Project;
@@ -30,7 +30,7 @@
 {:else}
     <Alert border color="red" class="mt-2 mb-6">
         <InfoCircleSolid slot="icon" class="w-5 h-5" />
-        <span class="font-medium">{project.projectStatusBlock.status}</span>
+        <span class="font-medium">{titleCase(project.projectStatusBlock.status)}</span>
         <Button slot="close-button" size="xs" let:close on:click={close} class="ms-auto">Dismiss</Button>
     </Alert>
 {/if}

@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { PieChart } from '$lib/components';
-	import type { ProjectEnvelope, ProjectValueLine } from '$lib/graphql/generated/sdk';
+	import type { Project, ProjectValueLine } from '$lib/graphql/generated/sdk';
 	import { deepCopy } from '$lib/utils/helpers';
 
 	interface Props {
-		project: ProjectEnvelope;
+		project: Project;
+        height?: number|undefined
 	}
-	let { project }: Props = $props();
+	let { project, height }: Props = $props();
 
 	let values = $state([] as number[])
     let labels = $state([] as string[])
 
-	let getChartData = (p: ProjectEnvelope) => {
-        const lines = deepCopy (project.data?.projectValue.projectValueLines) as ProjectValueLine[]
+	let getChartData = (p: Project) => {
+        const lines = deepCopy (project.projectValue.projectValueLines) as ProjectValueLine[]
 
         for (let i = 0; i < lines.length; i++) {
             const l = lines[i]
@@ -30,4 +31,4 @@
 	getChartData(project)
 </script>
 
-<PieChart {values} {labels} format="currency" />
+<PieChart {height} {values} {labels} format="currency" />

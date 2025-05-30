@@ -8,8 +8,9 @@
 		values: number[];
         labels: string[];
         format?: "none"|"currency"|undefined;
+		height?: number|undefined
 	}
-	let { values = $bindable(), labels = $bindable(), format }: Props = $props();
+	let { values = $bindable(), labels = $bindable(), format, height }: Props = $props();
 
     const formatSelector = (val:any, f:"none"|"currency"|undefined) => {
         switch(f) {
@@ -26,7 +27,7 @@
 			series: v,
 			colors: [getPrimaryColor(), getTertiaryColor(), getQuaternaryColor()],
 			chart: {
-				height: 240,
+				height: height || 160,
 				width: "100%",
 				type: "pie",
 			},

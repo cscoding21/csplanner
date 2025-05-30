@@ -9,6 +9,8 @@
     import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
 	import { InfoCircleSolid } from "flowbite-svelte-icons";
+    import { getScheduleTableByResource, getScheduleTableByTask, type ProjectScheduleTable } from "$lib/services/schedule"
+	import ScheduleTable from "$lib/components/widgets/ScheduleTable.svelte";
 
     interface ScheduleRow {
         label: string
@@ -23,8 +25,9 @@
     let { id, update }: Props = $props();
 
     let result:Schedule = $state({} as Schedule)
-    let scheduleTable = $state({header: [] as string[], body:[] as ScheduleRow[]})
+    let scheduleTable = $state({} as ProjectScheduleTable)
     let startDate = $state(new Date()) 
+    let view = $state("task")
 
 
     function refresh() {
@@ -37,124 +40,14 @@
 	}
 
 
-    const getScheduleTableByResource = (r: Schedule) => {
-        let table = {header: [] as string[], body: [] as ScheduleRow[]}
-        let head = []
-        let resourceSet = new Set<Resource>()
-
-        head.push("Resources")
-
-        if (!r.projectActivityWeeks) {
-            return {}
-        }
-
-        for (let i = 0; i < r.projectActivityWeeks.length; i++) {
-            const week = r.projectActivityWeeks[i]
-            head.push(formatDateNoYear(week.end))
-
-            if (week.activities) {
-                for (let j = 0; j < week.activities?.length; j++) {
-                    const act = week.activities[j]
-                    resourceSet.add(act.resource as Resource)
-                }
-            }
-        }
-
-        table.header = head as string[]
-        table.body = [] as ScheduleRow[]
-        const resourceArray = [...resourceSet]
-
-        for (let x = 0; x < resourceArray.length; x++) {
-            const thisResource = resourceArray[x] as Resource
-            let row:ScheduleRow = {label: thisResource.name, resource: thisResource, weeks: [] as Week[]}
-
-            for (let i = 0; i < r.projectActivityWeeks.length; i++) {
-                const week = r.projectActivityWeeks[i]
-                let weeksActivities = { 
-                    showTasks: true,
-                    weekEnding: formatDate(week.end),
-                    activities: [] as ProjectActivity[], 
-                    risks: [] as string[]
-                }
-
-                if (week.activities) {
-                    for(let j = 0; j < week.activities.length; j++) {
-                        const activity = week.activities[j]
-                    
-                        if (thisResource.name == activity.resource?.name) {
-                            weeksActivities.activities.push(activity)
-                            weeksActivities.risks = findWeekRisks(week.activities, activity.resourceID)
-                        }
-                    }
-                }
-            
-                row.weeks.push(weeksActivities)
-            }
-            
-            table.body.push(row)
-        }
-
-        scheduleTable = table
+    const getTableByResource = (r: Schedule) => {
+        scheduleTable = getScheduleTableByResource(r)
         return scheduleTable
     }
 
 
-    const getScheduleTableByTask = (r: Schedule) => {
-        let table = {header: [] as string[], body: [] as ScheduleRow[]}
-        let taskSet = new Set<string>()
-
-        table.header.push("Task")
-
-        if (!r.projectActivityWeeks) {
-            return {}
-        }
-
-        for (let i = 0; i < r.projectActivityWeeks.length; i++) {
-            const week = r.projectActivityWeeks[i]
-            table.header.push(formatDateNoYear(week.end))
-
-            if (week.activities) {
-                for (let j = 0; j < week.activities?.length; j++) {
-                    const act = week.activities[j]
-                    taskSet.add(act.taskName as string)
-                }
-            }
-        }
-
-        const taskArray = [...taskSet]
-
-        for (let x = 0; x < taskArray.length; x++) {
-            const thisTask = taskArray[x] as string
-            let row:ScheduleRow = {label: thisTask, resource: undefined, weeks: [] as Week[]}
-
-            for (let i = 0; i < r.projectActivityWeeks.length; i++) {
-                const week = r.projectActivityWeeks[i]
-                let weeksActivities = { 
-                    showTasks: false,
-                    weekEnding: formatDate(week.end), 
-                    activities: [] as ProjectActivity[],
-                    risks: [] as string[]
-                }
-
-                if (week.activities) {
-                    for(let j = 0; j < week.activities.length; j++) {
-                        const activity = week.activities[j]
-                    
-                        if (thisTask == activity.taskName) {
-                            weeksActivities.activities.push(activity)
-                        }
-                    }
-
-                    weeksActivities.risks = findWeekRisks(weeksActivities.activities, undefined)
-                }
-            
-                row.weeks.push(weeksActivities)
-            }
-            
-            table.body.push(row)
-        }
-
-        scheduleTable = table
+    const getTableByTask = (r: Schedule) => {
+        scheduleTable = getScheduleTableByTask(r)
         return scheduleTable
     }
 
@@ -190,19 +83,15 @@
 	    });
     }
 
-    const setView = (view:string) => {
-        if (view === "resource") {
-            getScheduleTableByResource(result)
-        } else {
-            getScheduleTableByTask(result)
-        }
+    const setView = (v:string) => {
+       view = v
     }
 
     const loadPage = async () => {
         load().then(s => {
             result = s
 
-            getScheduleTableByResource(s)
+            getTableByResource(s)
         });
 	};
 
@@ -265,45 +154,8 @@
         <Button onclick={() => { setView("task") }}>Task view</Button>
     </ButtonGroup>
     <Hr />
-    
-    <Table>
-        <TableHead>
-            {#each scheduleTable.header as head, index}
-            {#if index === 0}
-                <TableHeadCell>{head}</TableHeadCell>
-            {:else}
-                <TableHeadCell class="text-center">{head}</TableHeadCell>
-            {/if}
-            {/each}
-        </TableHead>
-        <TableBody tableBodyClass="divide-y">
-            {#each scheduleTable.body as row}
-                <TableBodyRow>
-                <TableBodyCell>
-                    <div>
-                    {#if row.resource}
-                    <span class="float-left mr-2">
-                            <ResourceList resources={[row.resource]} size="sm" maxSize={1} />
-                    </span>      
-                    <a href="/resource/detail/{row.resource.id}">{row.label}</a>
-                    {:else}
-                        {row.label} 
-                    {/if}
-                </div>
-                </TableBodyCell>
-                {#each row.weeks as week}
-                <TableBodyCell tdClass="text-center">
-                    <ProjectScheduleCell week={week} />
-                </TableBodyCell>
-                {/each}
-                </TableBodyRow>
-            {/each}
-        </TableBody>
-    </Table>
 
-    <div class="mt-4">
-        <RiskLegend />
-    </div>
+    <ScheduleTable schedule={result} view={view as "task"|"resource"|undefined} />
 {/if}
 {/if}
 

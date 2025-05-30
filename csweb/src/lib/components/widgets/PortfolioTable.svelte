@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { Heading, Popover } from "flowbite-svelte";
+    import { Popover } from "flowbite-svelte";
 	import type { Portfolio } from "$lib/graphql/generated/sdk";
     import { buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
     import { getID } from "$lib/utils/id";
-    import { pluralize, formatDate, formatPercent } from "$lib/utils/format";
+    import { formatDate, formatPercent } from "$lib/utils/format";
 	import { RiskLegend } from "../../../routes/(app)/project/components";
 	import WeekPopupSummary from "./WeekPopupSummary.svelte";
 

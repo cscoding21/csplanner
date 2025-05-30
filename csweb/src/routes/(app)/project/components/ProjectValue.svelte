@@ -107,7 +107,7 @@
 
 		<div class="flex-1 px-2">
 			<SectionSubHeading>Category Distribution</SectionSubHeading>
-			<ProjectValueCategoryDistributionChart {project}></ProjectValueCategoryDistributionChart>
+			<ProjectValueCategoryDistributionChart height={160} project={project.data}></ProjectValueCategoryDistributionChart>
 		</div>
 		
 	</div>
