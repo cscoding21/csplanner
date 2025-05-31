@@ -130,37 +130,37 @@
 
 	<div class="flex mb-8">
 		<div class="flex-1 px-r">
-	<DataCard dataPoint={formatCurrency.format(project.data?.projectCost.calculated?.initialCost as number)} indicatorClass="text-green-500 dark:text-green-500">
-		{#snippet description()}
-			Implementation costs
-		{/snippet}
-		{#snippet indicator()}
-			<DollarOutline />
-		{/snippet}
-	</DataCard>
-</div>
+			<DataCard dataPoint={formatCurrency.format(project.data?.projectCost.calculated?.initialCost as number)} indicatorClass="text-green-500 dark:text-green-500">
+				{#snippet description()}
+					Implementation cost
+				{/snippet}
+				{#snippet indicator()}
+					<DollarOutline />
+				{/snippet}
+			</DataCard>
+		</div>
 
-	<div class="flex-1 px-2">
-<DataCard dataPoint={project.data?.projectCost.calculated?.hourEstimate + ""} indicatorClass="text-yellow-500 dark:text-yellow-500">
-	{#snippet description()}
-		Estimated hours
-	{/snippet}
-	{#snippet indicator()}
-		<ClockOutline />
-	{/snippet}
-</DataCard>
-</div>
+		<div class="flex-1 px-2">
+			<DataCard dataPoint={project.data?.projectCost.calculated?.hourEstimate + ""} indicatorClass="text-yellow-500 dark:text-yellow-500">
+				{#snippet description()}
+					Estimated hours
+				{/snippet}
+				{#snippet indicator()}
+					<ClockOutline />
+				{/snippet}
+			</DataCard>
+		</div>
 
-	<div class="flex-1 pl-2">
-<DataCard dataPoint={project.data?.projectCost.calculated?.hoursActualized+ ""} indicatorClass="text-orange-500 dark:text-orange-500">
-	{#snippet description()}
-		Adjusted hours
-	{/snippet}
-	{#snippet indicator()}
-		<ClockSolid />
-	{/snippet}
-</DataCard>
-</div>
+		<div class="flex-1 pl-2">
+			<DataCard dataPoint={project.data?.projectCost.calculated?.hoursActualized+ ""} indicatorClass="text-orange-500 dark:text-orange-500">
+				{#snippet description()}
+					Adjusted hours
+				{/snippet}
+				{#snippet indicator()}
+					<ClockSolid />
+				{/snippet}
+			</DataCard>
+		</div>
 
 </div>
 

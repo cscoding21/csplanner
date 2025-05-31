@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Project, Resource, Schedule, User } from "$lib/graphql/generated/sdk";
-	import { CalendarWeekOutline, DollarOutline, SalePercentOutline } from "flowbite-svelte-icons";
+	import { CalendarWeekOutline, ClockSolid, DollarOutline, SalePercentOutline } from "flowbite-svelte-icons";
 	import { Button } from "flowbite-svelte";
 	import { calculateProjectSchedule, setProjectStatus } from "$lib/services/project";
 	import { addToast } from "$lib/stores/toasts";
@@ -100,12 +100,11 @@
 			</div>
         </div>
 
-		<div class="flex mb-8">
+		<div class="flex mb-8">			
 			<div class="flex-1 px-2">
-			<SectionSubHeading>Five Year Outlook</SectionSubHeading>
-			<ProjectValueChart project={project}></ProjectValueChart>
-		</div>
-
+				<SectionSubHeading>Five Year Outlook</SectionSubHeading>
+				<ProjectValueChart project={project}></ProjectValueChart>
+			</div>
         </div>
 
 		
@@ -113,6 +112,17 @@
 			Loading schedule...
 		{:then promiseData} 
 			<div class="flex mb-8">
+				<div class="flex-1 px-r mr-2">
+				<DataCard dataPoint={formatCurrency.format(project.projectCost.calculated?.initialCost as number)} indicatorClass="text-green-500 dark:text-green-500">
+					{#snippet description()}
+						Implementation cost
+					{/snippet}
+					{#snippet indicator()}
+						<DollarOutline />
+					{/snippet}
+				</DataCard>
+			</div>
+
 			<div class="flex-1 px-r mr-2">
 				<DataCard dataPoint={schedule.projectActivityWeeks?.length + "" || ""} indicatorClass="text-green-500 dark:text-green-500">
 					{#snippet description()}
@@ -123,9 +133,17 @@
 					{/snippet}
 				</DataCard>
 			</div>
-			<div class="flex-1 px-r ">
-				
+			<div class="flex-1 px-r">
+				<DataCard dataPoint={project.projectCost.calculated?.hoursActualized + ""} indicatorClass="text-orange-500 dark:text-orange-500">
+					{#snippet description()}
+						Adjusted {pluralize("hour", project.projectCost.calculated?.hoursActualized as number)}
+					{/snippet}
+					{#snippet indicator()}
+						<ClockSolid />
+					{/snippet}
+				</DataCard>
 			</div>
+
 			</div>
 
 			<!-- <div class="mb-8">
