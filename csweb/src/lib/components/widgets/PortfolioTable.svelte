@@ -11,10 +11,11 @@
 		portfolio: Portfolio;
         startDate?: Date;
         endDate?: Date;
+        highlightProjectID: string
 	}
-	let { portfolio, startDate, endDate }: Props = $props();
+	let { portfolio, startDate, endDate, highlightProjectID }: Props = $props();
 
-    let portfolioTable:ScheduleTable = $state(buildPortfolioTable(portfolio, startDate, endDate))
+    let portfolioTable:ScheduleTable = $derived(buildPortfolioTable(portfolio, startDate, endDate, highlightProjectID))
 </script>
 
 {#if portfolioTable.body.length > 0}
@@ -24,28 +25,38 @@
         {#each portfolioTable.header as head, index}
         
         {#if index === 0}
-            <th class="text-xs text-left py-2 px-1">{head}</th>
+            <th class="text-xs text-left py-2">{head}</th>
         {:else}
-            <th class="text-center text-xs  py-2 px-1">{head}</th>
+            <th class="text-center text-xs  py-2">{head}</th>
         {/if}
         {/each}
     </tr>
     </thead>
     <tbody class="">
         {#each portfolioTable.body as row}
+        {@const highlightClass = row.highlight ? "text-gray-100 text-sm" : "text-gray-500" }
         <tr class="border-separate">
-            <td class="text-xs whitespace-nowrap py-2"><a href="/project/detail/{row.project.id}#schedule">{row.label}</a></td>
+            <td class="text-xs whitespace-nowrap">
+                <div class="pr-2 py-1">
+                <a href="/project/detail/{row.project.id}#schedule" class={highlightClass}>{row.label}</a>
+                </div>
+            </td>
 
             {#each row.weeks as week}
                 {@const cellColor = week.risks.length > 0 ? "bg-yellow-400" : "bg-green-600 " }
                 {@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
                 {#if week.active}
-                <td class="text-center text-xs p-1 text-gray-100 {cellColor}">
-                    <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}
-                        <Popover class="text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
+                <td class="text-center text-xs text-gray-100 py-1">
+                    <div class="px-0 {cellColor}">
+                    <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>
+                        <!-- {week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)} -->
+                         &nbsp;&nbsp;&nbsp;&nbsp;
+                        <Popover class="text-sm font-light {popWidth}" trigger="click" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
                             <WeekPopupSummary activities={week.activities} risks={week.risks} />
                         </Popover>
                     </button> 
+                    </div>
+                    
                 </td>
             {:else}
                 <td></td>
@@ -55,7 +66,8 @@
         </tr>
         {/each}
         </tbody>
-        <tfoot>
+
+        <!-- <tfoot>
             <tr class="font-semibold text-sm text-gray-900 dark:text-white">
             <th scope="row" class="py-3 px-6 text-sm">Capacity</th>
             {#each portfolioTable.footer as sum}
@@ -68,7 +80,8 @@
             {/if}
             {/each} 
             </tr>
-        </tfoot>
+        </tfoot> -->
+
     </table>
 
     <div class="mt-4">

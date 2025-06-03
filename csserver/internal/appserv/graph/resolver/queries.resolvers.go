@@ -223,9 +223,14 @@ func (r *queryResolver) GetOrganization(ctx context.Context) (*idl.Organization,
 
 // GetPortfolio is the resolver for the getPortfolio field.
 func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error) {
+	return r.GetDraftPortfolio(ctx, "")
+}
+
+// GetDraftPortfolio is the resolver for the getDraftPortfolio field.
+func (r *queryResolver) GetDraftPortfolio(ctx context.Context, additionalID string) (*idl.Portfolio, error) {
 	portfolioService := factory.GetPortfolioService(ctx)
 
-	port, err := portfolioService.GetBalancedPortfolio(ctx)
+	port, err := portfolioService.GetBalancedPortfolio(ctx, additionalID)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +256,7 @@ func (r *queryResolver) GetPortfolio(ctx context.Context) (*idl.Portfolio, error
 func (r *queryResolver) GetPortfolioForResource(ctx context.Context, resourceID string) (*idl.Portfolio, error) {
 	portfolioService := factory.GetPortfolioService(ctx)
 
-	port, err := portfolioService.GetBalancedPortfolio(ctx)
+	port, err := portfolioService.GetBalancedPortfolio(ctx, "")
 	if err != nil {
 		return nil, err
 	}

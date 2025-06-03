@@ -176,11 +176,7 @@ func (r *mutationResolver) UpdateProjectTask(ctx context.Context, input idl.Upda
 }
 
 // DeleteProjectTask is the resolver for the deleteProjectTask field.
-func (r *mutationResolver) DeleteProjectTask(
-	ctx context.Context,
-	projectID string,
-	milestoneID string,
-	taskID string) (*idl.CreateProjectResult, error) {
+func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID string, milestoneID string, taskID string) (*idl.CreateProjectResult, error) {
 	defer csmap.ExpireProjectCache()
 
 	service := factory.GetProjectService(ctx)

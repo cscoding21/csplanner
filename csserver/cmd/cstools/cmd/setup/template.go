@@ -26,8 +26,8 @@ func CreateTestTemplates(ctx context.Context) error {
 				Description: "The project initiation phase is the first stage of turning an abstract idea into a meaningful goal. In this stage, you need to develop a business case and define the project on a broad level. In order to do that, you have to determine the need for the project and create a project charter",
 				PhaseOrder:  1,
 				Tasks: []*projecttemplate.ProjectTemplateTask{
-					{Name: "Requirements gathering", Description: "Gather the requirements", RequiredSkillID: "requirements-gathering"},
-					{Name: "Resource planning", Description: "Figure out who can do the thing", RequiredSkillID: "product-management"},
+					{Name: "Requirements gathering", Description: "Gather the requirements", RequiredSkillID: "td:requirements-gathering"},
+					{Name: "Resource planning", Description: "Figure out who can do the thing", RequiredSkillID: "td:product-management"},
 				},
 			},
 			{
@@ -76,8 +76,8 @@ func CreateTestTemplates(ctx context.Context) error {
 				Description: "A single-phase project plan suitable for smaller initiatives.",
 				PhaseOrder:  1,
 				Tasks: []*projecttemplate.ProjectTemplateTask{
-					{Name: "Backend development", Description: "Engineering work that takes place in the server-side components", RequiredSkillID: "backend"},
-					{Name: "Testing", Description: "Complete testing of the new features as well as regression", RequiredSkillID: "product-management"},
+					{Name: "Backend development", Description: "Engineering work that takes place in the server-side components", RequiredSkillID: "td:backend"},
+					{Name: "Testing", Description: "Complete testing of the new features as well as regression", RequiredSkillID: "td:product-management"},
 				},
 			},
 		},

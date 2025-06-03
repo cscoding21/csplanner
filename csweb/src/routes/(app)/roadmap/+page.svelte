@@ -15,10 +15,7 @@
 	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
 
-		const startDate = new Date()
-		const endDate = new Date(startDate.setDate(startDate.getDate() + 100))
-
-		portfolioTable = buildPortfolioTable(res, undefined, undefined)
+		portfolioTable = buildPortfolioTable(res, undefined, undefined, "")
 
 		return res;
 	};

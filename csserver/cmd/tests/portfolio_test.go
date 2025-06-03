@@ -54,7 +54,7 @@ func TestGetPortfolio(t *testing.T) {
 
 	portfolioService := factory.GetPortfolioService(ctx)
 
-	result, err := portfolioService.GetUnbalancedPortfolio(ctx)
+	result, err := portfolioService.GetUnbalancedPortfolio(ctx, "")
 	if err != nil {
 		t.Error(err)
 		return
@@ -78,7 +78,7 @@ func TestBalancePortfolio(t *testing.T) {
 	ctx := getTestContext()
 	ps := factory.GetPortfolioService(ctx)
 
-	port, err := ps.GetUnbalancedPortfolio(ctx)
+	port, err := ps.GetUnbalancedPortfolio(ctx, "")
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,7 +97,7 @@ func TestGetPortfolioForResource(t *testing.T) {
 	ctx := getTestContext()
 	ps := factory.GetPortfolioService(ctx)
 
-	port, err := ps.GetBalancedPortfolio(ctx)
+	port, err := ps.GetBalancedPortfolio(ctx, "")
 	if err != nil {
 		t.Error(err)
 	}

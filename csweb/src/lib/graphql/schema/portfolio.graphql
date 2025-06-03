@@ -28,6 +28,12 @@ query getPortfolio {
   }
 }
 
+query getDraftPortfolio($additionalID: String!) {
+	getDraftPortfolio(additionalID: $additionalID) {
+    ...portfolioFragment
+  }
+}
+
 query getPortfolioForResource($resourceID: String!) {
 	getPortfolioForResource(resourceID: $resourceID) {
     ...portfolioFragment

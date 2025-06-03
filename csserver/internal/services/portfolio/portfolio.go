@@ -48,11 +48,13 @@ func NewPortfolioService(
 }
 
 // GetUnbalancedPortfolio retrieves the currently scheduled projects
-func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfolio, error) {
+func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context, additionalProjectID string) (*Portfolio, error) {
 	pf := common.NewPagedResultsForAllRecords[project.Project]()
 
 	pf.Filters.AddFilter(common.Filter{Key: "status1", Value: "scheduled", Operation: common.FilterOperationIn})
 	pf.Filters.AddFilter(common.Filter{Key: "status2", Value: "inflight", Operation: common.FilterOperationIn})
+
+	pf.Filters.AddFilter(common.Filter{Key: "additionalID", Value: additionalProjectID, Operation: common.FilterOperationEqual})
 
 	rm, err := ps.ResourceService.GetResourceMap(ctx, false)
 	if err != nil {
@@ -64,7 +66,15 @@ func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfo
 		return nil, err
 	}
 
-	sql := fmt.Sprintf("select * from %s where data->'status'->>'status' IN ($1, $2) ORDER BY data->'basics'->>'start_time'", project.ProjectIdentifier)
+	sql := fmt.Sprintf(`
+		SELECT * 
+		FROM %s 
+		WHERE true 
+			and (
+				data->'status'->>'status' IN ($1, $2) 
+				or id = $3
+		)
+		ORDER BY data->'basics'->>'start_time'`, project.ProjectIdentifier)
 	response, err := postgres.FindPagedObjects[project.Project](ctx, ps.DBClient, sql, pf.Pagination, pf.Filters, pf.Filters.GetFiltersOrderedValues())
 	if err != nil {
 		return nil, err
@@ -95,8 +105,8 @@ func (ps *PortfolioService) GetUnbalancedPortfolio(ctx context.Context) (*Portfo
 }
 
 // GetBalancedPortfolio returns a portfolio that has been run through the balancing process
-func (ps *PortfolioService) GetBalancedPortfolio(ctx context.Context) (*Portfolio, error) {
-	ubp, err := ps.GetUnbalancedPortfolio(ctx)
+func (ps *PortfolioService) GetBalancedPortfolio(ctx context.Context, additionalProjectID string) (*Portfolio, error) {
+	ubp, err := ps.GetUnbalancedPortfolio(ctx, additionalProjectID)
 	if err != nil {
 		return nil, nil
 	}

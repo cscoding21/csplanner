@@ -1,20 +1,27 @@
 <script lang="ts">
-	import { PortfolioTable, SectionSubHeading, UserCard } from "$lib/components";
-	import type { Portfolio, Project, Schedule, User } from "$lib/graphql/generated/sdk";
-	import { type ProjectRow, getPortfolio, buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
+	import { PortfolioTable, SectionSubHeading } from "$lib/components";
+	import type { Portfolio, Project } from "$lib/graphql/generated/sdk";
+	import { buildPortfolioTable, getDraftPortfolio, getPortfolio, type ScheduleTable } from "$lib/services/portfolio";
+	import { callIf } from "$lib/utils/helpers";
+	import { ProjectStartDateSet } from "..";
+	import BasicsSummary from "./BasicsSummary.svelte";
 
     interface Props {
         project:Project
+        update?:Function
     }
-    let { project }:Props = $props()
+    let { project, update }:Props = $props()
 
     let portfolioTable:ScheduleTable = $state({} as ScheduleTable)
     let portfolio:Portfolio = $state({} as Portfolio)
 
     const refresh = async (): Promise<Portfolio> => {
-		const res = await getPortfolio();
+		const res = await getDraftPortfolio(project.id as string);
 
-		portfolioTable = buildPortfolioTable(res, undefined, undefined)
+        portfolio = res
+		portfolioTable = buildPortfolioTable(res, new Date(2025, 5, 1), new Date(2025, 8, 30), project.id as string)
+
+        console.log("portfolio", portfolio)
 
 		return res;
 	};
@@ -29,25 +36,28 @@
 
 <div class="grid grid-cols-3 gap-16">
     <div>
-        <SectionSubHeading>{project.projectBasics.name}</SectionSubHeading>
-
-        <h3 class="text-gray-100 font-semibold">Owner</h3>
-        <UserCard user={project.projectBasics.owner as User} />
-
-        <h3 class="text-gray-100 font-semibold mt-6">Executive Summary</h3>
-        <p class="py-2 text-gray-200">{@html project.projectBasics.description.replaceAll(/[\n]/g, "<br />")}</p>
+        <BasicsSummary {project} />
     </div>
 
     <div class="col-span-2">
 
-        This project is approved and needs to be scheduled.
-
-        {#if portfolio}
+        <SectionSubHeading>Current Roadmap</SectionSubHeading>
+        {#await load()}
+            Loading...
+        {:then promiseData} 
+            {#if portfolio}
 				<div class="mb-2">
-					<PortfolioTable {portfolio}></PortfolioTable>
+					<PortfolioTable {portfolio} highlightProjectID={project.id as string}></PortfolioTable>
 				</div>
+            {/if}
+        {/await}
+
+        <SectionSubHeading cssClass="mt-8">Set Start Date </SectionSubHeading>
+        {#if project.projectBasics.startDate}
+            <h1 class="mb-4">Current start date is week of <b>{new Date(project.projectBasics.startDate).toLocaleDateString()}</b></h1>
         {/if}
-        
+
+        <ProjectStartDateSet {project} update={() => { refresh(); callIf(update)} } />
     </div>
 </div>
 

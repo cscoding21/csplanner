@@ -1,4 +1,4 @@
-import { GetPortfolioDocument, GetPortfolioForResourceDocument} from "$lib/graphql/generated/sdk";
+import { GetDraftPortfolioDocument, GetPortfolioDocument, GetPortfolioForResourceDocument} from "$lib/graphql/generated/sdk";
 import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, ProjectActivity, Project} from "$lib/graphql/generated/sdk";
 import { getApolloClient } from "$lib/graphql/gqlclient";
 import { dateCompare } from "$lib/utils/check";
@@ -16,6 +16,25 @@ export const getPortfolio = async (): Promise<Portfolio> => {
         .then((res) => {
             if (res) {
                 return res.data.getPortfolio;
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+};
+
+
+/**
+ * get a list of all projects that are currently scheduled or in-flight
+ * @returns a portfolio consisting of all currently scheduled projects
+ */
+export const getDraftPortfolio = async (additionalID:string): Promise<Portfolio> => {
+    const client = getApolloClient();
+    return client
+        .query({ query: GetDraftPortfolioDocument, variables: { additionalID } })
+        .then((res) => {
+            if (res) {
+                return res.data.getDraftPortfolio;
             }
         })
         .catch(err => {
@@ -90,10 +109,8 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
  * @param res the portfolio to transform
  * @returns a portfolio table
  */
-export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, endDate: Date|undefined):ScheduleTable => {
+export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, endDate: Date|undefined, highlightProjectID:string):ScheduleTable => {
     let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: [], footer: []} as ScheduleTable
-
-    console.log("weekSummary", res.weekSummary)
 
     if (!res || !res.weekSummary) {
         return portfolioTable
@@ -135,6 +152,7 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, end
 
         row.label = schedule.project.projectBasics.name
         row.project = schedule.project
+        row.highlight = (row.project.id === highlightProjectID)
 
         for (let j = 0; j < res.weekSummary.length; j++) {
             const thisWeek = res.weekSummary[j] 
@@ -250,6 +268,7 @@ export interface ScheduleTable {
 }
 export interface ProjectRow {
     label: string
+    highlight: Boolean
     project: Project
     weeks: ProjectRowCell[]
 }

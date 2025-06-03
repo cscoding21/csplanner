@@ -755,6 +755,7 @@ export type Query = {
   findResources: ResourceResults;
   findUserNotifications: NotificationResults;
   getCommentThread: CommentEnvelope;
+  getDraftPortfolio: Portfolio;
   getList?: Maybe<List>;
   getOrganization: Organization;
   getPortfolio: Portfolio;
@@ -804,6 +805,11 @@ export type QueryFindUserNotificationsArgs = {
 
 export type QueryGetCommentThreadArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryGetDraftPortfolioArgs = {
+  additionalID: Scalars['String']['input'];
 };
 
 
@@ -1789,6 +1795,13 @@ export const GetPortfolioDocument = gql`
   }
 }
     ${PortfolioFragmentFragmentDoc}`;
+export const GetDraftPortfolioDocument = gql`
+    query getDraftPortfolio($additionalID: String!) {
+  getDraftPortfolio(additionalID: $additionalID) {
+    ...portfolioFragment
+  }
+}
+    ${PortfolioFragmentFragmentDoc}`;
 export const GetPortfolioForResourceDocument = gql`
     query getPortfolioForResource($resourceID: String!) {
   getPortfolioForResource(resourceID: $resourceID) {
@@ -2247,6 +2260,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     getPortfolio(variables?: GetPortfolioQueryVariables, options?: C): Promise<GetPortfolioQuery> {
       return requester<GetPortfolioQuery, GetPortfolioQueryVariables>(GetPortfolioDocument, variables, options) as Promise<GetPortfolioQuery>;
+    },
+    getDraftPortfolio(variables: GetDraftPortfolioQueryVariables, options?: C): Promise<GetDraftPortfolioQuery> {
+      return requester<GetDraftPortfolioQuery, GetDraftPortfolioQueryVariables>(GetDraftPortfolioDocument, variables, options) as Promise<GetDraftPortfolioQuery>;
     },
     getPortfolioForResource(variables: GetPortfolioForResourceQueryVariables, options?: C): Promise<GetPortfolioForResourceQuery> {
       return requester<GetPortfolioForResourceQuery, GetPortfolioForResourceQueryVariables>(GetPortfolioForResourceDocument, variables, options) as Promise<GetPortfolioForResourceQuery>;
