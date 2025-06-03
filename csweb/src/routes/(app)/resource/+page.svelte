@@ -12,6 +12,10 @@
 	const refresh = async (): Promise<ResourceResults> => {
 		const res = await findResources(getFilters());
 
+		resources = res as ResourceResults;
+		pagingDisplay = res.paging as Pagination
+		filterDisplay = res.filters
+
 		return res;
 	};
 
@@ -48,9 +52,9 @@
 	let resources = $state({} as ResourceResults);
 	const loadPage = async () => {
 		refresh().then((r) => {
-			resources = r as ResourceResults;
-			pagingDisplay = r.paging as Pagination
-			filterDisplay = r.filters
+			// resources = r as ResourceResults;
+			// pagingDisplay = r.paging as Pagination
+			// filterDisplay = r.filters
 
 			// for(let i = 0; i < resources.results[1].skills.length; i++) {
 			// 	console.log(resources.results[1].skills[i].name)

@@ -5,6 +5,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/services/organization"
 	"csserver/internal/services/resource/rtypes/resourcetype"
+	"csserver/internal/utils"
 	"slices"
 )
 
@@ -35,6 +36,10 @@ func (s *ResourceService) SaveResource(ctx context.Context, res Resource, org or
 }
 
 func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (common.UpdateResult[*common.BaseModel[Resource]], error) {
+	if len(res.ID) == 0 {
+		res.ID = utils.GenerateBase64UUID()
+	}
+
 	if res.Type == resourcetype.Human {
 		if len(res.Skills) == 0 {
 			roleMap, err := s.GetRoleMap(ctx, true)

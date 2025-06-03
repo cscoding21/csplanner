@@ -37,17 +37,17 @@
     <div class="p-4">
     <ul>
         <li class="flex items-center">
-            Number of Tasks: <span class="text-white"> {milestone.calculated?.totalTasks}</span>
+            Number of Tasks: <span class="text-white ml-2"> {milestone.calculated?.totalTasks}</span>
         </li>
         <li class="flex items-center">
-            Completed Tasks: <span class="text-white"> {milestone.calculated?.completedTasks}</span>
+            Completed Tasks: <span class="text-white ml-2"> {milestone.calculated?.completedTasks}</span>
         </li>
 
         <li class="flex items-center mb-1">
-            Total Hours: <span class="text-white"> {milestone.calculated?.totalHours}</span>
+            Total Hours: <span class="text-white ml-2"> {milestone.calculated?.totalHours}</span>
         </li>
         <li class="flex items-center mb-1">
-            Remaining Hours: <span class="text-white"> {milestone.calculated?.hoursRemaining}</span>
+            Remaining Hours: <span class="text-white ml-2"> {milestone.calculated?.hoursRemaining}</span>
         </li>
       </ul>
     </div>

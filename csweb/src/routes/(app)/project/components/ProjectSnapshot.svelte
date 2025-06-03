@@ -11,6 +11,7 @@
     import Proposed from "./snapshots/Proposed.svelte";
     import Exception from "./snapshots/Exception.svelte";
 	import Shelved from "./snapshots/Shelved.svelte";
+	import Approved from "./snapshots/Approved.svelte";
 
     interface Props {
         id: string
@@ -64,6 +65,10 @@
 
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["proposed"]}>
     <Proposed project={project.data} />
+</ShowIfStatus>
+
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["approved"]}>
+    <Approved project={project.data} />
 </ShowIfStatus>
 
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["scheduled"]}>

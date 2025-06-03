@@ -2,6 +2,7 @@
 	import { SectionSubHeading, UserCard } from "$lib/components";
 	import type { Project, User } from "$lib/graphql/generated/sdk";
 	import ProjectStatusBanner from "../ProjectStatusBanner.svelte";
+	import FinancialSummary from "./FinancialSummary.svelte";
 
     interface Props {
         project:Project
@@ -27,6 +28,8 @@
     <div class="col-span-2">
 
         <ProjectStatusBanner project={project} />
+
+        <FinancialSummary {project} />
         
     </div>
 </div>

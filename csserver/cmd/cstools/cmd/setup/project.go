@@ -103,7 +103,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Hob-nobbing the stakeholders",
 						HourEstimate:    120,
 						Status:          "new",
-						RequiredSkillID: "project-management",
+						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 					{
@@ -112,7 +112,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Get out your pen and sign off on the project charter",
 						HourEstimate:    40,
 						Status:          "new",
-						RequiredSkillID: "project-management",
+						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 				},
@@ -132,7 +132,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Gather the requirements for the technical implementation of the project",
 						HourEstimate:    120,
 						Status:          "new",
-						RequiredSkillID: "requirements-gathering",
+						RequiredSkillID: "td:requirements-gathering",
 						ResourceIDs:     []string{"resource:yuffie"},
 					},
 					{
@@ -141,7 +141,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Assign resources tentatively throughout the project lifecycle",
 						HourEstimate:    40,
 						Status:          "new",
-						RequiredSkillID: "project-management",
+						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:biggs"},
 					},
 					{
@@ -150,7 +150,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Full mockups for the user interface",
 						HourEstimate:    160,
 						Status:          "new",
-						RequiredSkillID: "ux",
+						RequiredSkillID: "td:ux",
 						ResourceIDs:     []string{"resource:aerith"},
 					},
 					{
@@ -159,7 +159,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Design the system components and integrations",
 						HourEstimate:    120,
 						Status:          "new",
-						RequiredSkillID: "technical-architecture",
+						RequiredSkillID: "td:technical-architecture",
 						ResourceIDs:     []string{"resource:cid", "resource:zack"},
 					},
 				},
@@ -180,7 +180,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Write the schema, tables, and database objects",
 						HourEstimate:    120,
 						Status:          "new",
-						RequiredSkillID: "database",
+						RequiredSkillID: "td:database",
 						ResourceIDs:     []string{"resource:zack"},
 					},
 					{
@@ -189,7 +189,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Write the backend coding artifacts",
 						HourEstimate:    120,
 						Status:          "new",
-						RequiredSkillID: "backend",
+						RequiredSkillID: "td:backend",
 						ResourceIDs:     []string{"resource:cloud"},
 					},
 					{
@@ -198,7 +198,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Write the frontend coding artifacts",
 						HourEstimate:    40,
 						Status:          "new",
-						RequiredSkillID: "frontend",
+						RequiredSkillID: "td:frontend",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
 					{
@@ -207,7 +207,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Make sure all of the code works",
 						HourEstimate:    40,
 						Status:          "new",
-						RequiredSkillID: "ui",
+						RequiredSkillID: "td:ui",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 				},
@@ -228,7 +228,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Make sure the project is moving forward",
 						HourEstimate:    120,
 						Status:          "new",
-						RequiredSkillID: "project-management",
+						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 					{
@@ -237,7 +237,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Write the project diary",
 						HourEstimate:    40,
 						Status:          "new",
-						RequiredSkillID: "technical-writing",
+						RequiredSkillID: "td:technical-writing",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
 				},
@@ -258,7 +258,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Get the approvals",
 						HourEstimate:    16,
 						Status:          "new",
-						RequiredSkillID: "project-management",
+						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 					{
@@ -267,7 +267,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Write the project diary",
 						HourEstimate:    8,
 						Status:          "new",
-						RequiredSkillID: "project-management",
+						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 					{
@@ -276,7 +276,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Description:     "Let everybody know of your triumph",
 						HourEstimate:    160,
 						Status:          "new",
-						RequiredSkillID: "marketing",
+						RequiredSkillID: "td:marketing",
 						ResourceIDs:     []string{"resource:tifa"},
 					},
 				},
@@ -342,7 +342,7 @@ func findPortfolioProjects(ctx context.Context) []project.Project {
 	}
 
 	for i, p := range names {
-		proj, _ := utils.DeepCopy[project.Project](GetVideoProjectTemplate(ctx, p.name, p.status, (i + 2)))
+		proj, _ := utils.DeepCopy(GetVideoProjectTemplate(ctx, p.name, p.status, (i + 2)))
 
 		if p.startDate != nil {
 			proj.ProjectBasics.StartDate = p.startDate
@@ -426,7 +426,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						HourEstimate:    2 + rand.Intn(10),
 						Status:          "new",
 						Description:     "do the research",
-						RequiredSkillID: "business-analysis",
+						RequiredSkillID: "td:business-analysis",
 						ResourceIDs:     []string{"resource:yuffie"},
 					},
 					{
@@ -435,7 +435,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						HourEstimate:    2 + rand.Intn(11),
 						Status:          "new",
 						Description:     "make the outline",
-						RequiredSkillID: "content-writing",
+						RequiredSkillID: "td:content-writing",
 						ResourceIDs:     []string{"resource:tifa"},
 					},
 					{
@@ -444,7 +444,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						HourEstimate:    2 + rand.Intn(14),
 						Status:          "new",
 						Description:     "shoot the video",
-						RequiredSkillID: "communications",
+						RequiredSkillID: "td:communications",
 						ResourceIDs:     []string{"resource:barret"},
 					},
 					{
@@ -453,7 +453,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						HourEstimate:    2 + rand.Intn(6),
 						Status:          "new",
 						Description:     "edit the video",
-						RequiredSkillID: "video-editing",
+						RequiredSkillID: "td:video-editing",
 						ResourceIDs:     []string{"resource:jessie"},
 					},
 					{
@@ -462,7 +462,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						HourEstimate:    2 + rand.Intn(3),
 						Status:          "new",
 						Description:     "upload to the places",
-						RequiredSkillID: "frontend",
+						RequiredSkillID: "td:frontend",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
 					{
@@ -471,7 +471,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						HourEstimate:    2 + rand.Intn(3),
 						Status:          "new",
 						Description:     "tell the world",
-						RequiredSkillID: "marketing",
+						RequiredSkillID: "td:marketing",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
 				},

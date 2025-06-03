@@ -55,9 +55,9 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 32,
 			Skills: []*resource.Skill{
-				{ID: "marketing", Proficiency: utils.ValToRef(3.0)},
-				{ID: "content-writing", Proficiency: utils.ValToRef(2.0)},
-				{ID: "video-editing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:marketing", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:content-writing", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:video-editing", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -73,9 +73,9 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "devops", Proficiency: utils.ValToRef(1.0)},
-				{ID: "backend", Proficiency: utils.ValToRef(3.0)},
-				{ID: "database", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:devops", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:backend", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:database", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
 
@@ -93,9 +93,9 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "ui", Proficiency: utils.ValToRef(3.0)},
-				{ID: "ux", Proficiency: utils.ValToRef(2.0)},
-				{ID: "frontend", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ui", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ux", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:frontend", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -110,11 +110,11 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "project-management", Proficiency: utils.ValToRef(3.0)},
-				{ID: "product-management", Proficiency: utils.ValToRef(1.0)},
-				{ID: "requirements-gathering", Proficiency: utils.ValToRef(2.0)},
-				{ID: "communications", Proficiency: utils.ValToRef(3.0)},
-				{ID: "ui", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:project-management", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:product-management", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:requirements-gathering", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:communications", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ui", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -130,9 +130,9 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "marketing", Proficiency: utils.ValToRef(2.0)},
-				{ID: "content-writing", Proficiency: utils.ValToRef(2.0)},
-				{ID: "video-editing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:marketing", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:content-writing", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:video-editing", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -147,8 +147,8 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 32,
 			Skills: []*resource.Skill{
-				{ID: "project-management", Proficiency: utils.ValToRef(2.0)},
-				{ID: "requirements-gathering", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:project-management", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:requirements-gathering", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
 		{
@@ -163,10 +163,10 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "marketing", Proficiency: utils.ValToRef(3.0)},
-				{ID: "content-writing", Proficiency: utils.ValToRef(1.0)},
-				{ID: "frontend", Proficiency: utils.ValToRef(1.0)},
-				{ID: "technical-writing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:marketing", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:content-writing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:frontend", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:technical-writing", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -181,10 +181,10 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 20,
 			Skills: []*resource.Skill{
-				{ID: "devops", Proficiency: utils.ValToRef(3.0)},
-				{ID: "security", Proficiency: utils.ValToRef(1.0)},
-				{ID: "technical-architecture", Proficiency: utils.ValToRef(3.0)},
-				{ID: "backend", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:devops", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:security", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:technical-architecture", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:backend", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
 		{
@@ -199,8 +199,8 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Inhouse,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "security", Proficiency: utils.ValToRef(1.0)},
-				{ID: "frontend", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:security", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:frontend", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
 		{
@@ -216,8 +216,8 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Proposed,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "business-analysis", Proficiency: utils.ValToRef(2.0)},
-				{ID: "requirements-gathering", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:business-analysis", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:requirements-gathering", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
 		{
@@ -232,8 +232,8 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Proposed,
 			AvailableHoursPerWeek: 40,
 			Skills: []*resource.Skill{
-				{ID: "business-analysis", Proficiency: utils.ValToRef(2.0)},
-				{ID: "requirements-gathering", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:business-analysis", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:requirements-gathering", Proficiency: utils.ValToRef(2.0)},
 			},
 		},
 		{
@@ -248,10 +248,10 @@ func CreateTestResources(ctx context.Context) error {
 			Status:                resourcestatus.Proposed,
 			AvailableHoursPerWeek: 32,
 			Skills: []*resource.Skill{
-				{ID: "technical-architecture", Proficiency: utils.ValToRef(3.0)},
-				{ID: "devops", Proficiency: utils.ValToRef(2.0)},
-				{ID: "backend", Proficiency: utils.ValToRef(2.0)},
-				{ID: "database", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:technical-architecture", Proficiency: utils.ValToRef(3.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:devops", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:backend", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:database", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { Project, Resource, Schedule, User } from "$lib/graphql/generated/sdk";
-	import { CalendarWeekOutline, ClockSolid, DollarOutline, SalePercentOutline } from "flowbite-svelte-icons";
+	import { CalendarWeekOutline, ClockSolid, DollarOutline } from "flowbite-svelte-icons";
 	import { Button } from "flowbite-svelte";
 	import { calculateProjectSchedule, setProjectStatus } from "$lib/services/project";
 	import { addToast } from "$lib/stores/toasts";
 	import { reloadPage } from "$lib/utils/helpers";
-	import { DataCard, SectionSubHeading, UserCard, ResourceCard, ScheduleTable } from "$lib/components";
-	import { formatCurrency, formatPercent, pluralize } from "$lib/utils/format";
-	import { ProjectValueCategoryDistributionChart, ProjectValueChart } from "..";
+	import { DataCard, SectionSubHeading, UserCard, ResourceCard } from "$lib/components";
+	import { formatCurrency, pluralize } from "$lib/utils/format";
+	import FinancialSummary from "./FinancialSummary.svelte";
 
 
     interface Props {
@@ -71,43 +71,9 @@
     </div>
 
     <div class="col-span-2">
-        <SectionSubHeading>Financials</SectionSubHeading>
-        <div class="flex mb-8">
-			<div class="flex-1 px-r mr-2">
-				<DataCard dataPoint={formatCurrency.format(project.projectValue.calculated?.netPresentValue as number)} indicatorClass="text-green-500 dark:text-green-500">
-					{#snippet description()}
-						Net Present Value
-					{/snippet}
-					{#snippet indicator()}
-						<DollarOutline />
-					{/snippet}
-				</DataCard>
-			</div>
-
-			<div class="flex-1 px-r">
-				<DataCard dataPoint={formatPercent.format(project.projectValue.calculated?.internalRateOfReturn as number)} indicatorClass="text-green-500 dark:text-green-500">
-					{#snippet description()}
-						Internal Rate of Return
-					{/snippet}
-					{#snippet indicator()}
-						<SalePercentOutline />
-					{/snippet}
-				</DataCard>
-			</div>
-
-			<div class="flex-1 px-2">
-				<ProjectValueCategoryDistributionChart height={110} {project}></ProjectValueCategoryDistributionChart>
-			</div>
-        </div>
-
-		<div class="flex mb-8">			
-			<div class="flex-1 px-2">
-				<SectionSubHeading>Five Year Outlook</SectionSubHeading>
-				<ProjectValueChart project={project}></ProjectValueChart>
-			</div>
-        </div>
-
+        <FinancialSummary {project} />
 		
+		<SectionSubHeading>Cost/Schedule</SectionSubHeading>
 		{#await load()}
 			Loading schedule...
 		{:then promiseData} 
@@ -154,8 +120,7 @@
 		{/await}
 		
 
-        <SectionSubHeading>Implementation Team</SectionSubHeading>
-		
+        <SectionSubHeading>Implementation Team</SectionSubHeading>		
         <div>
 			<div class="flex">
 				{#each project.calculated?.teamMembers as Resource[] as tm}
@@ -167,8 +132,8 @@
 
 		<div class="text-center mt-8">
 			<Button onclick={() => setStatus("draft")} color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>
-			<Button onclick={() => setStatus("reject")} color="red" class="px-8 m-2 w-64">Reject</Button>
-			<Button onclick={() => setStatus("approve")} color="green" class="px-8 m-2 w-64">Approve</Button>
+			<Button onclick={() => setStatus("rejected")} color="red" class="px-8 m-2 w-64">Reject</Button>
+			<Button onclick={() => setStatus("approved")} color="green" class="px-8 m-2 w-64">Approve</Button>
 		</div>
     </div>
 </div>

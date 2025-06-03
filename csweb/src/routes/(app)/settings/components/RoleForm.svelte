@@ -41,12 +41,13 @@
 
 	const addSkill = () => {
 		sf.parentID = rf.id
+		sf.id = newID()
 		const parsedSkillForm = skillSchema.cast(sf);
 
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
-				rf.defaultSkills = [...rf.defaultSkills as UpdateSkill[], { parentID: rf.id, id: newID(), skillID: sf.skillID, proficiency: sf.proficiency} as UpdateSkill]
+				rf.defaultSkills = [...rf.defaultSkills as UpdateSkill[], { parentID: rf.id, id: sf.id, skillID: sf.skillID, proficiency: sf.proficiency} as UpdateSkill]
 			})
 			.catch((err) => {
 				alert(err)

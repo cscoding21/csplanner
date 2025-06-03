@@ -59,13 +59,13 @@
 					if (res.status?.success.valueOf()) {
 						editModalOpen = false;
 
-						update();
-
 						addToast({
 							message: 'Resource ' + rf.name + ' updated successfully',
 							dismissible: true,
 							type: 'success'
 						});
+
+						update();
 					} else {
 						addToast({
 							message: 'Error updating resource: ' + res.status?.message,

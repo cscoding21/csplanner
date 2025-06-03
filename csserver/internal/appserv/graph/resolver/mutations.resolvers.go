@@ -625,6 +625,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 // UpdateList is the resolver for the updateList field.
 func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList) (*idl.CreateListResult, error) {
 	defer csmap.ExpireListCache()
+	defer csmap.ExpireRoleCache()
 
 	service := factory.GetListService(ctx)
 	out := idl.CreateListResult{}

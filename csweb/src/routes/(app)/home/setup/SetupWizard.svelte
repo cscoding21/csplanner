@@ -15,7 +15,6 @@
             _ms = step
         }
 
-        console.log("max step", _ms)
         return _ms
     })
 

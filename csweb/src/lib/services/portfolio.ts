@@ -93,6 +93,8 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
 export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, endDate: Date|undefined):ScheduleTable => {
     let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: [], footer: []} as ScheduleTable
 
+    console.log("weekSummary", res.weekSummary)
+
     if (!res || !res.weekSummary) {
         return portfolioTable
     }

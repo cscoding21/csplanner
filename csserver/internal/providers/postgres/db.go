@@ -7,6 +7,7 @@ import (
 
 	"csserver/internal/common"
 	"csserver/internal/config"
+	"csserver/internal/utils"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -60,7 +61,7 @@ func UpdateObjectWithParent[T any](
 	usr := config.GetUserEmailFromContext(ctx)
 
 	if len(id) == 0 {
-		id = common.GetDBID()
+		id = utils.GenerateBase64UUID()
 	}
 
 	dbObj := common.BaseModel[T]{

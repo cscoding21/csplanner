@@ -2,18 +2,21 @@
     import type { Portfolio } from "$lib/graphql/generated/sdk";
 	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
 	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
-    import { NoResults, CSSection, SectionHeading, DataCard, WeekPopupSummary, SectionSubHeading } from "$lib/components";
+    import { NoResults, CSSection, DataCard, WeekPopupSummary, SectionSubHeading } from "$lib/components";
     import { formatDate, formatPercent, formatCurrency } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
-	import { CalendarWeekOutline, DollarOutline } from "flowbite-svelte-icons";
+	import { DollarOutline } from "flowbite-svelte-icons";
 	import { RoadmapActionBar } from "./components";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
 
 	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
+
+		const startDate = new Date()
+		const endDate = new Date(startDate.setDate(startDate.getDate() + 100))
 
 		portfolioTable = buildPortfolioTable(res, undefined, undefined)
 
@@ -23,11 +26,9 @@
 	const getHealth = (data:number) => {
 		if(data < 0) {
 			return "bad"
-		} else {
-			return "good"
 		}
-
-		return undefined
+		
+		return "good"
 	}
 
 	let portfolio = $state({} as Portfolio);
@@ -48,7 +49,7 @@
 	<CSSection>
 
 		{#if portfolio && portfolio.schedule && portfolio.schedule.length > 0}
-		<div class="flex mb-4">
+		<div class="flex mb-8">
 			<div class="flex-1 pr-2">
 				<DataCard health={getHealth(portfolio.calculated?.totalValue)} dataPoint={formatCurrency.format(portfolio.calculated?.totalValue as number)} indicatorClass="text-green-500 dark:text-green-500">
 					{#snippet description()}
@@ -81,8 +82,7 @@
 			</div>
 		</div>
 
-
-	<SectionSubHeading>Project Schedule</SectionSubHeading>
+		<SectionSubHeading>Portfolio Schedule</SectionSubHeading>
 		<Table divClass="h-full">
 			<TableHead>
 				{#each portfolioTable.header as head, index}

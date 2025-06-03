@@ -29,6 +29,7 @@ export const skillGroups =  [
         skills: [
             {value: "skill:pm", name: "Project Management" },
             {value: "skill:ba", name: "Business Analysis" },
+            {value: "skill:rg", name: "Requirements Gathering" },
             {value: "skill:agile", name: "Agile Development" },
             {value: "skill:scrum", name: "Scrum" },
             {value: "skill:kanban", name: "Kanban" },

@@ -20,8 +20,8 @@ var projectTemplate = &projecttemplate.Projecttemplate{
 			Description: "The project initiation phase is the first stage of turning an abstract idea into a meaningful goal. In this stage, you need to develop a business case and define the project on a broad level. In order to do that, you have to determine the need for the project and create a project charter",
 			PhaseOrder:  1,
 			Tasks: []*projecttemplate.ProjectTemplateTask{
-				{Name: "Requirements gathering", Description: "Gather the requirements", RequiredSkillID: "requirements-gathering"},
-				{Name: "Resource planning", Description: "Figure out who can do the thing", RequiredSkillID: "product-management"},
+				{Name: "Requirements gathering", Description: "Gather the requirements", RequiredSkillID: "skill:rg"},
+				{Name: "Resource planning", Description: "Figure out who can do the thing", RequiredSkillID: "skill:pdm"},
 			},
 		},
 		{

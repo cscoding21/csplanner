@@ -20,8 +20,8 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Creates delightful interfaces",
 			HourlyRate:  utils.ValToRef(150.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "frontend", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "ui", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:frontend", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ui", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -32,9 +32,9 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Creates bug-free backends",
 			HourlyRate:  utils.ValToRef(200.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "backend", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "database", Proficiency: utils.ValToRef(1.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "technical-writing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:backend", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:database", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:technical-writing", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -45,9 +45,9 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Imagines the user experience and interface",
 			HourlyRate:  utils.ValToRef(150.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "ux", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "ui", Proficiency: utils.ValToRef(1.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "content-writing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ux", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ui", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:content-writing", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -58,8 +58,8 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Manages the project",
 			HourlyRate:  utils.ValToRef(160.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "project-management", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "business-analysis", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:project-management", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:business-analysis", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -70,8 +70,8 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Manages the product",
 			HourlyRate:  utils.ValToRef(170.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "product-management", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "requirements-gathering", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:product-management", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:requirements-gathering", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -82,10 +82,10 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Drives software design",
 			HourlyRate:  utils.ValToRef(250.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "security", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "technical-architecture", Proficiency: utils.ValToRef(1.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "database", Proficiency: utils.ValToRef(1.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "devops", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:security", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:technical-architecture", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:database", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:devops", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -96,8 +96,8 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Ensures product quality",
 			HourlyRate:  utils.ValToRef(120.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "testing", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "ui", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:testing", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:ui", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 		{
@@ -108,8 +108,8 @@ func CreateTestRoles(ctx context.Context) error {
 			Description: "Tells theh world",
 			HourlyRate:  utils.ValToRef(150.0),
 			DefaultSkills: []*resource.Skill{
-				{ID: utils.GenerateBase64UUID(), SkillID: "marketing", Proficiency: utils.ValToRef(2.0)},
-				{ID: utils.GenerateBase64UUID(), SkillID: "content-writing", Proficiency: utils.ValToRef(1.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:marketing", Proficiency: utils.ValToRef(2.0)},
+				{ID: utils.GenerateBase64UUID(), SkillID: "td:content-writing", Proficiency: utils.ValToRef(1.0)},
 			},
 		},
 	}

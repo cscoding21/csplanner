@@ -309,7 +309,7 @@ func AugmentResource(ctx context.Context, res *idl.Resource) {
 		li := getSkillById(*skills, *s.SkillID)
 
 		if li == nil {
-			log.Warnf("skill not found: %s", *s.SkillID)
+			log.Warnf("skill not found: %s for resource %s", *s.SkillID, res.Name)
 		} else {
 			res.Skills[i].Name = li.Name
 		}
