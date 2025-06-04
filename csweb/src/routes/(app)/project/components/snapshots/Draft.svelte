@@ -6,6 +6,11 @@
 	import TaskCard from "./TaskCard.svelte";
 	import ProjectValueChart from "../ProjectValueChart.svelte";
 	import BasicsSummary from "./BasicsSummary.svelte";
+	import { Button } from "flowbite-svelte";
+	import { canEnterStatus, setProjectStatus } from "$lib/services/project";
+	import { addToast } from "$lib/stores/toasts";
+	import { reloadPage } from "$lib/utils/helpers";
+	import UpdateStatusButtons from "./UpdateStatusButtons.svelte";
 
     interface Props {
         project:Project
@@ -15,6 +20,28 @@
     let featurePriority = $state("high" as "high"|"med"|"low"|"notset")
     let valuePriority = $state("med" as "high"|"med"|"low"|"notset")
     let milestonePriority = $state("low" as "high"|"med"|"low"|"notset")
+    let showNextStatus = $derived(featurePriority === "low" && valuePriority === "low" && milestonePriority === "low")
+
+
+    const setStatus = async (s:string) => {
+		setProjectStatus(project.id as string, s).then((res) => {
+			if (res.status?.success) {
+				addToast({
+					message: 'Project set to ' + s,
+					dismissible: true,
+					type: 'success'
+				});
+
+                reloadPage()
+			} else {
+				addToast({
+					message: 'Error setting project status to ' + s + ': ' + res.status?.message,
+					dismissible: true,
+					type: 'error'
+				});
+			}
+		});
+	};
 
     const getFeaturePriority = ():"high"|"med"|"low"|"notset" => {
         if(!project) {
@@ -121,5 +148,18 @@
             {/if}
         </TaskCard>
 
+
+        {#if showNextStatus}
+        <div class="text-center mt-8">
+        <UpdateStatusButtons {project} />
+        <!-- 
+			{#if canEnterStatus(project, "proposed")}
+				<Button onclick={() => setStatus("proposed")} color="green" class="px-8 m-2 w-64">Propose this Project</Button>
+			{:else}
+				<Button disabled color="green" class="px-8 m-2 w-64">Propose this Project</Button>
+			{/if}
+		-->
+        </div>
+        {/if}
     </div>
 </div>

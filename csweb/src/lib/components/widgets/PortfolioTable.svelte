@@ -11,7 +11,7 @@
 		portfolio: Portfolio;
         startDate?: Date;
         endDate?: Date;
-        highlightProjectID: string
+        highlightProjectID?: string
 	}
 	let { portfolio, startDate, endDate, highlightProjectID }: Props = $props();
 
@@ -67,20 +67,20 @@
         {/each}
         </tbody>
 
-        <!-- <tfoot>
-            <tr class="font-semibold text-sm text-gray-900 dark:text-white">
-            <th scope="row" class="py-3 px-6 text-sm">Capacity</th>
+        <tfoot>
+            <tr class="font-semibold text-sm text-gray-900 dark:text-gray-300">
+            <th scope="row" class="py-3  pr-4 text-xs text-right">Capacity</th>
             {#each portfolioTable.footer as sum}
             {#if sum && sum.orgCapacity > 0}
-            <td class="py-3 px-6 text-center" title={sum.allocatedHours + " / " + sum.orgCapacity}>
+            <td class="py-3 text-center" title={sum.allocatedHours + " / " + sum.orgCapacity}>
                 {formatPercent.format(sum.allocatedHours / sum.orgCapacity)}
             </td>
             {:else}
-                <td class="py-3 px-6 text-center text-gray-500" title={sum.allocatedHours + " / " + sum.orgCapacity}>n/a</td>
+                <td class="py-3 text-center text-gray-700" title={sum.allocatedHours + " / " + sum.orgCapacity}>n/a</td>
             {/if}
             {/each} 
             </tr>
-        </tfoot> -->
+        </tfoot>
 
     </table>
 

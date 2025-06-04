@@ -2,13 +2,14 @@
 	import type { Project, Resource, Schedule, User } from "$lib/graphql/generated/sdk";
 	import { CalendarWeekOutline, ClockSolid, DollarOutline } from "flowbite-svelte-icons";
 	import { Button } from "flowbite-svelte";
-	import { calculateProjectSchedule, setProjectStatus } from "$lib/services/project";
+	import { calculateProjectSchedule, canEnterStatus, setProjectStatus } from "$lib/services/project";
 	import { addToast } from "$lib/stores/toasts";
 	import { reloadPage } from "$lib/utils/helpers";
 	import { DataCard, SectionSubHeading, UserCard, ResourceCard } from "$lib/components";
 	import { formatCurrency, pluralize } from "$lib/utils/format";
 	import FinancialSummary from "./FinancialSummary.svelte";
 	import BasicsSummary from "./BasicsSummary.svelte";
+	import UpdateStatusButtons from "./UpdateStatusButtons.svelte";
 
 
     interface Props {
@@ -66,6 +67,7 @@
     </div>
 
     <div class="col-span-2">
+		<SectionSubHeading>Financials</SectionSubHeading>
         <FinancialSummary {project} />
 		
 		<SectionSubHeading>Cost/Schedule</SectionSubHeading>
@@ -106,29 +108,37 @@
 			</div>
 
 			</div>
-
-			<!-- <div class="mb-8">
-				<div>
-				<ScheduleTable view="task" schedule={schedule} />
-				</div>
-			</div> -->
 		{/await}
 		
 
         <SectionSubHeading>Implementation Team</SectionSubHeading>		
         <div>
-			<div class="flex">
+			<div class="grid grid-cols-4">
 				{#each project.calculated?.teamMembers as Resource[] as tm}
-					<div class="w-1/3 p-2"><ResourceCard resource={tm} /></div>
+					<div class="p-2"><ResourceCard resource={tm} /></div>
 				{/each}
 			</div>
             
         </div>
 
 		<div class="text-center mt-8">
-			<Button onclick={() => setStatus("draft")} color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>
-			<Button onclick={() => setStatus("rejected")} color="red" class="px-8 m-2 w-64">Reject</Button>
-			<Button onclick={() => setStatus("approved")} color="green" class="px-8 m-2 w-64">Approve</Button>
+			<UpdateStatusButtons {project} />
+
+			<!-- {#if canEnterStatus(project, "draft")}
+				<Button onclick={() => setStatus("draft")} color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>
+			{:else}
+				<Button disabled color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>
+			{/if}
+			{#if canEnterStatus(project, "rejected")}
+				<Button onclick={() => setStatus("rejected")} color="red" class="px-8 m-2 w-64">Reject</Button>
+			{:else}
+				<Button disabled color="yellow" class="px-8 m-2 w-64">Reject</Button>
+			{/if}
+			{#if canEnterStatus(project, "approved")}
+				<Button onclick={() => setStatus("approved")} color="green" class="px-8 m-2 w-64">Approve</Button>
+			{:else}
+				<Button disabled color="yellow" class="px-8 m-2 w-64">Approve</Button>
+			{/if} -->
 		</div>
     </div>
 </div>

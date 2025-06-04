@@ -25,7 +25,7 @@
     let { id, update }: Props = $props();
 
     let result:Schedule = $state({} as Schedule)
-    let scheduleTable = $state({} as ProjectScheduleTable)
+    let scheduleTable = $state({} as ProjectScheduleTable|undefined)
     let startDate = $state(new Date()) 
     let view = $state("task")
 

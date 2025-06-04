@@ -12,7 +12,6 @@
 </script>
 
 
-<SectionSubHeading>Financials</SectionSubHeading>
 <div class="flex mb-8">
     <div class="flex-1 px-r mr-2">
         <DataCard dataPoint={formatCurrency.format(project.projectValue.calculated?.netPresentValue as number)} indicatorClass="text-green-500 dark:text-green-500">

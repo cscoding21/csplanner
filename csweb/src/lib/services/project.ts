@@ -16,7 +16,8 @@ import type {
 	ProjecttemplateResults,
 	ProjectScheduleResult,
 	ValidationResult,
-	UpdateNewProject
+	UpdateNewProject,
+	Project
 } from '$lib/graphql/generated/sdk';
 import { getApolloClient } from '$lib/graphql/gqlclient';
 import {
@@ -473,3 +474,26 @@ export const convertProjectToUpdateProject = (project: ProjectEnvelope): UpdateP
 
 	return up;
 };
+
+
+/**
+ * check a project to see if it can enter a given state
+ * @param project the project to evaluate
+ * @param status the state to evalutate
+ * @returns a boolean if the state is allowed
+ */
+export const canEnterStatus = (project: Project, status: string):boolean => {
+	if (!project.projectStatusBlock.allowedNextStates) {
+		return false
+	}
+
+	for (let i = 0; i < project.projectStatusBlock.allowedNextStates.length; i++) {
+		const next = project.projectStatusBlock.allowedNextStates[i]
+
+		if(next.nextState === status) {
+			return next.canEnter
+		}
+	}
+
+	return false
+}

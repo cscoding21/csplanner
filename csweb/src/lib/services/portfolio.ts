@@ -109,7 +109,7 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
  * @param res the portfolio to transform
  * @returns a portfolio table
  */
-export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, endDate: Date|undefined, highlightProjectID:string):ScheduleTable => {
+export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, endDate: Date|undefined, highlightProjectID:string|undefined):ScheduleTable => {
     let portfolioTable = {startDate: startDate, endDate: endDate, header: [], body: [], footer: []} as ScheduleTable
 
     if (!res || !res.weekSummary) {

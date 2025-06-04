@@ -20,6 +20,17 @@ export const getCSWeeks = (start:Date, end:Date):Date[] =>  {
 	return out;
 }
 
+/**
+ * get the earliest possible date that can be scheduled
+ * @returns the earliest possible date that can be scheduled
+ */
+export const getEarliestScheduleDate = ():Date => {
+    const earliest = new Date()
+    earliest.setDate(earliest.getDate() + 7)
+
+    return startOfWeek(earliest)
+}
+
 
 function startOfWeek(date:Date):Date {
     var diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);

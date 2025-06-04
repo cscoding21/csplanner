@@ -7,15 +7,13 @@
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
 	import { coalesceToType } from '$lib/forms/helpers';
-	import { getCSWeeks } from '$lib/utils/cscal';
+	import { getCSWeeks, getEarliestScheduleDate } from '$lib/utils/cscal';
 
 	interface Props {
 		project: Project;
 		update?: Function;
 	}
 	let { project = $bindable(), update }: Props = $props();
-
-    let startDate = $state(new Date(project.projectBasics.startDate).toLocaleDateString())
 
 	const getYearOpts = ():SelectOptionType<number>[] => {
 		let opts:SelectOptionType<number>[] = [] 
@@ -32,8 +30,12 @@
 
 	const getWeekOpts = (year:number):SelectOptionType<string>[] => {
 		let opts:SelectOptionType<string>[] = []
+		let startDate = new Date(year, 0, 1)
 
-		const startDate = new Date(year, 0, 1)
+		if(year === new Date().getFullYear()) {
+			startDate = getEarliestScheduleDate()
+		}
+
 		const endDate = new Date(year, 11, 31)
 		const weeks = getCSWeeks(startDate, endDate)
 		
@@ -100,11 +102,12 @@
 	let yearOpts:SelectOptionType<number>[] = $state(getYearOpts())
 	let selectedYear = $state(new Date().getFullYear())
 	let weekOpts:SelectOptionType<string>[] = $derived(getWeekOpts(selectedYear))
+	let startDate = $state(project.projectBasics.startDate ? new Date(project.projectBasics.startDate).toLocaleDateString() : "")
 </script>
 
 <div class="flex">
 	<div class="flex-1 mr-2"><Select items={yearOpts} bind:value={selectedYear} /></div>
-	<div class="flex-1 mr-2"><Select items={weekOpts} bind:value={startDate} /></div>
+	<div class="flex-1 mr-2"><Select items={weekOpts} bind:value={startDate} placeholder="Select start week" /></div>
 	<div class="flex-1">
 	<span class="float-right">
 		<Button onclick={updateStartDate}>Set start date</Button>

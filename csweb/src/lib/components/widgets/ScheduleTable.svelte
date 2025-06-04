@@ -15,7 +15,7 @@
     let scheduleTable = $derived(view === "task" ? getScheduleTableByTask(schedule) : getScheduleTableByResource(schedule))
 </script>
 
-
+{#if scheduleTable}
 <Table class="w-full">
     <TableHead>
         {#each scheduleTable.header as head, index}
@@ -54,5 +54,6 @@
 <div class="mt-4">
     <RiskLegend />
 </div>
+{/if}
 
 

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { SectionSubHeading, UserCard } from "$lib/components";
-	import type { Project, User } from "$lib/graphql/generated/sdk";
+	import type { Project } from "$lib/graphql/generated/sdk";
 	import BasicsSummary from "./BasicsSummary.svelte";
 
     interface Props {

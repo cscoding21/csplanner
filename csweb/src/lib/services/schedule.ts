@@ -87,7 +87,11 @@ export const getScheduleTableByResource = (r: Schedule):ProjectScheduleTable => 
     }
 
 
-    export const getScheduleTableByTask = (r: Schedule):ProjectScheduleTable => {
+    export const getScheduleTableByTask = (r: Schedule):ProjectScheduleTable|undefined => {
+        if(!r || !r.projectActivityWeeks) {
+            return undefined
+        }
+
         let table = {header: [] as string[], body: [] as ProjectScheduleRow[]} as ProjectScheduleTable
         let taskSet = new Set<string>()
 
