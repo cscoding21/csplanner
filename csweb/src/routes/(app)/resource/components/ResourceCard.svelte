@@ -16,9 +16,7 @@
 >
 	<div class="mx-4 my-2 justify-start">
 		<a href="/resource/detail/{resource.meta.id}">
-			<Avatar size="lg" src={resource.data.profileImage || ''} rounded
-				>{getInitialsFromName(resource.data?.name || '')}</Avatar
-			>
+			<Avatar size="lg" src={resource.data.profileImage || ''}>{getInitialsFromName(resource.data?.name || '')}</Avatar>
 		</a>
 	</div>
 	<div class="p-5">

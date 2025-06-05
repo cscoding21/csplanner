@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Search, type SelectOptionType } from 'flowbite-svelte';
+    import { Input, Search, type SelectOptionType } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
 	import { CSMultiFilter } from '$lib/components';
     import { getList } from '$lib/services/list';
@@ -110,7 +110,7 @@
 
 <div class="flex">
     <div class="mr-4 text-nowrap">
-        <Search slot="search" size="md" class="w-80" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
+        <Input slot="search" size="md" class="w-80" placeholder="Filter by name" bind:value={searchInput} onkeyup={searchChange} />
     </div>
 
     <div class="mr-4  text-nowrap">

@@ -62,8 +62,8 @@
 
 <div class="w-full h-screen">
 
-	<OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
-<Navbar fluid={true}>
+<OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
+<Navbar class="dark:bg-gray-800 bg-gray-100" fluid={true}>
 	<NavBrand href="/">
 		{#if showDarkModeLogo}
 		<enhanced:img src={logoImage} width="141" alt="csPlanner" />
@@ -74,7 +74,7 @@
 	<div class="flex items-center md:order-3">
 		<DarkMode class="mr-2 text-2xl" />
 		<NotificationList />
-		<span class="ml-4">{org.name}</span>
+		<span class="ml-4 text-gray-800 dark:text-gray-200">{org.name}</span>
 		
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
@@ -97,9 +97,9 @@
 		</DropdownItem>
 	</Dropdown>
 
-	<div class="flex md:order-2">
+	<!-- <div class="flex md:order-2">
+		<!-- color="none" ->
 		<Button
-			color="none"
 			data-collapse-toggle="mobile-menu-3"
 			aria-controls="mobile-menu-3"
 			aria-expanded="false"
@@ -113,7 +113,7 @@
 			</div>
 			<Input id="search-navbar" class="pl-10" placeholder="Search..." />
 		</div>
-	</div>
+	</div> -->
 
 	<div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1">
 		<ul class="flex flex-col mt-4 space-x-6 font-medium lg:flex-row xl:space-x-8 lg:mt-0">
@@ -125,7 +125,7 @@
 		</ul>
 	</div>	
 </Navbar>
-	</OrgStateChecker>	
+</OrgStateChecker>	
 
 <div>
 	{@render children()}

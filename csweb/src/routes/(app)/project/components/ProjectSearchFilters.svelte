@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Search, Select } from 'flowbite-svelte';
+    import { Input, Search, Select } from 'flowbite-svelte';
     import type { SelectOptionType } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
     import { CheckBoxFilter, CSMultiFilter } from '$lib/components';
@@ -41,6 +41,7 @@
     }
 
     const searchChange = () => {
+        console.log("searchChange")
         clearTimeout(clearHandle)
 
         clearHandle = setTimeout(() => {
@@ -99,7 +100,7 @@
 
 <div class="flex">
     <div class="mr-4 text-nowrap">
-        <Search slot="search" size="md" class="w-80" placeholder="Filter by name" bind:value={searchInput} on:keyup={searchChange} />
+        <Input slot="search" size="md" class="w-80" placeholder="Filter by name" bind:value={searchInput} onkeyup={searchChange} />
     </div>
 
     <div class="mr-4 text-nowrap">

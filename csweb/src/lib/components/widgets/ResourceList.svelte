@@ -63,7 +63,7 @@
 	{/each}
 
 	{#if more > 0}
-		<span class="ml-1 p-1">+{more}</span>
+		<span class="ml-1 p-1 text-gray-800 dark:text-gray-200 text-xs">+{more}</span>
 	{/if}
 </div>
 {:else}

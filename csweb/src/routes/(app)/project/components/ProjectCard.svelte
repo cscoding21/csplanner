@@ -2,7 +2,7 @@
 	import { Card, Heading, Hr, P } from 'flowbite-svelte';
 	import type { ProjectEnvelope, Resource } from '$lib/graphql/generated/sdk';
 	import { formatDate } from '$lib/utils/format';
-	import { ResourceList, MoneyDisplay } from '$lib/components';
+	import { ResourceList, MoneyDisplay, CSHR } from '$lib/components';
 	import { safeArray } from '$lib/utils/helpers';
 	import { BadgeProjectStatus } from '.';
 
@@ -12,11 +12,9 @@
 	let { project }: Props = $props();
 </script>
 
-<Card size="xl">
+<a href="project/detail/{project.meta?.id}#snapshot" class="p-4 m-1 dark:bg-gray-800 bg-gray-100">
 	<Heading tag="h6">
-		<a href="project/detail/{project.meta?.id}#snapshot">
 			{project.data?.projectBasics?.name}
-		</a>
 		<BadgeProjectStatus status={project.data?.projectStatusBlock?.status}  />
 		{#if project.data?.projectValue?.calculated?.netPresentValue}
 			<span class="float-right text-lg">
@@ -31,7 +29,7 @@
 	{#if project.data?.projectBasics.startDate}
 	<span class="text-xs text-yellow-200">Start date: <b>{formatDate(project.data?.projectBasics?.startDate)}</b></span>
 	{/if}
-	<Hr classHr="mt-2 mb-4" />
+	 <CSHR />
 	<div class="px-4">
 		<span>
 			<ResourceList
@@ -41,4 +39,4 @@
 			/>
 		</span>
 	</div>
-</Card>
+</a>
