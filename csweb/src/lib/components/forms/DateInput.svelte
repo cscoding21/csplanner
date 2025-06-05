@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { FormErrorMessage } from '$lib/components';
 	import { formatDate } from '$lib/utils/format';
-	import { DatePicker } from '@svelte-plugins/datepicker';
+  import { Datepicker } from "flowbite-svelte";
 	import { CalendarMonthOutline } from 'flowbite-svelte-icons';
 	import { type Snippet } from 'svelte';
     import { isDarkMode } from '$lib/utils/darkmode';
@@ -41,13 +41,8 @@
     >
     {/if}
 
-    <DatePicker 
-        bind:isOpen={isOpen}
-        bind:startDate={value}
-        theme={theme}
-        enablePastDates={false}
-        enableFutureDates={true}
-        onDateChange={() => onChange()}
+    <Datepicker 
+        onchange={() => onChange()}
         >
         <div class="flex">
         <span
@@ -62,7 +57,7 @@
             value={formattedValue} 
             onclick={toggleDatePicker} />
         </div>
-    </DatePicker>
+    </Datepicker>
 
 	<FormErrorMessage message={error} />
 

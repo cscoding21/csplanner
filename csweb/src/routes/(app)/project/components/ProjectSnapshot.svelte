@@ -13,6 +13,7 @@
 	import Shelved from "./snapshots/Shelved.svelte";
 	import Approved from "./snapshots/Approved.svelte";
 	import Scheduled from "./snapshots/Scheduled.svelte";
+	import InFlight from "./snapshots/InFlight.svelte";
 
     interface Props {
         id: string
@@ -77,7 +78,7 @@
 </ShowIfStatus>
 
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["inflight"]}>
-    In Flight
+    <InFlight project={project.data} />
 </ShowIfStatus>
 
 
