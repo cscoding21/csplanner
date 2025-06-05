@@ -14,7 +14,10 @@
 		DropdownDivider,
 		DarkMode,
 		Button,
-		Input
+		Input,
+
+		DropdownGroup
+
 	} from 'flowbite-svelte';
 	import { authService } from '$lib/services/auth';
 	import { SearchOutline } from 'flowbite-svelte-icons';
@@ -80,11 +83,13 @@
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
 		>
 	</div>
+
 	<Dropdown placement="bottom" triggeredBy="#avatar-menu">
 		<DropdownHeader>
 			<span class="block text-sm">{cu?.firstName}</span>
 			<span class="block truncate text-sm font-medium">{cu?.email}</span>
 		</DropdownHeader>
+		<DropdownGroup>
 		<DropdownItem>
 			<a href="http://localhost:3006" target="_blank">Account</a>
 		</DropdownItem>
@@ -95,6 +100,7 @@
 		<DropdownItem>
 			<button class="gb-initial" onclick={logoutUser}>Sign out</button>
 		</DropdownItem>
+		</DropdownGroup>
 	</Dropdown>
 
 	<!-- <div class="flex md:order-2">

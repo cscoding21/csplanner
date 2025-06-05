@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Pagination } from "$lib/graphql/generated/sdk";
-    import { Dropdown, DropdownItem } from "flowbite-svelte";
+    import { Dropdown, DropdownGroup, DropdownItem } from "flowbite-svelte";
     import { ChevronDownOutline } from "flowbite-svelte-icons";
 
     interface Props {
@@ -48,7 +48,8 @@
             class="mt-0.5 inline-flex gap-1 rounded-lg p-2 text-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
             >{rangeBegin} - {rangeEnd} of {totalResults} <ChevronDownOutline size="lg" /></button
         >
-        <Dropdown class="min-w-48" bind:open={dropdownOpen}>
+        <Dropdown class="min-w-48">
+          <DropdownGroup>
             {#each rppOpts as opt}
                 {#if opt === rpp}
                 <DropdownItem class="font-bold" href="#">
@@ -60,6 +61,7 @@
                 </DropdownItem>
                 {/if}
             {/each}
+            </DropdownGroup>
         </Dropdown>
     </div>
 </div>
@@ -78,7 +80,7 @@
         {@const thisPage = (index + 1 )}
         {#if paging.pageNumber === thisPage}
           <li>
-              <span aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{thisPage}</span>
+              <span aria-current="page" class="flex items-center justify-center px-3 h-8 text-gray-600 border border-gray-300 bg-blue-50 hover:bg-gray-600 hover:text-gray-100 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{thisPage}</span>
           </li>
         {:else}
         <li>

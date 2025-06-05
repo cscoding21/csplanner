@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Avatar, Button, Dropzone, Hr, Modal, type SelectOptionType } from 'flowbite-svelte';
-	import { TextInput, MoneyInput, SelectInput } from '$lib/components';
+	import { TextInput, MoneyInput, SelectInput, CSHR } from '$lib/components';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import { resourceSchema, resourceForm } from '$lib/forms/resource.validation';
 	import { findAllRoles, getResource, updateResource } from '$lib/services/resource';
@@ -120,8 +120,8 @@
 	{#if isUpdate}
 		<div class="flex items-center space-x-4 rtl:space-x-reverse">
 			<div>
-				<Dropzone id="dropzone" defaultClass="float-left mr-4" on:change={handleChange}>
-					<Avatar size="xl" src={rf.profileImage || ''} rounded class="hover:cursor-pointer"
+				<Dropzone id="dropzone" onchange={handleChange}>
+					<Avatar size="xl" src={rf.profileImage || ''} class="hover:cursor-pointer"
 						>{getInitialsFromName(rf.name)}</Avatar
 					>
 				</Dropzone>
@@ -129,7 +129,7 @@
 			</div>
 		</div>
 
-		<Hr />
+		<CSHR />
 	{/if}
 
 	<TextInput

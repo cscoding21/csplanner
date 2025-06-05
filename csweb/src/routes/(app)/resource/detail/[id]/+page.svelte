@@ -86,9 +86,9 @@
 
 		<div class="grid grid-cols-3 w-full">
 			<div class="mr-4 col-span-1">
-				<Card padding="sm" size="xl">
+				<CSSection cssClass="p-4">
 					<div class="flex flex-col items-center pb-4">
-						<Avatar size="lg" src={resourcePromise.data?.profileImage as string} rounded
+						<Avatar size="lg" src={resourcePromise.data?.profileImage as string}
 							>{getInitialsFromName(resourcePromise.data?.name)}</Avatar
 						>
 						<h5 class="mb-1 mt-2 text-xl font-medium text-gray-900 dark:text-white">
@@ -96,44 +96,46 @@
 						</h5>
 						<span class="text-sm text-gray-500 dark:text-gray-400">{resourcePromise.data?.role?.name}</span>
 					</div>
-					<hr class="mb-4 mt-2" />
+					
+					<CSHR />
+					
 					<div class="mb-6">
-						<ul class="list">
+						<ul class="list text-sm">
 							<li>
-								<span>Type</span>
-								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data?.type)}</span>
+								<span class="dark:text-gray-200 text-gray-800">Type</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{titleCase(resourcePromise.data?.type)}</span>
 							</li>
 							<li>
-								<span>Status</span>
-								<span class="float-right flex-auto font-semibold">{titleCase(resourcePromise.data?.status)}</span>
+								<span class="dark:text-gray-200 text-gray-800">Status</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{titleCase(resourcePromise.data?.status)}</span>
 							</li>
 							<li>
-								<span>Role</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.data?.role?.name}</span>
+								<span class="dark:text-gray-200 text-gray-800">Role</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{resourcePromise.data?.role?.name}</span>
 							</li>
 							<li>
-								<span>User</span>
+								<span class="dark:text-gray-200 text-gray-800">User</span>
 								{#if resourcePromise.data?.user}
-									<span class="float-right flex-auto font-semibold">{resourcePromise.data?.user.email}</span>
+									<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{resourcePromise.data?.user.email}</span>
 								{:else}
-									<span class="float-right flex-auto font-semibold">No User Account</span>
+									<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">No User Account</span>
 								{/if}
 							</li>
 							<li>
-								<span>Hours per Week</span>
-								<span class="float-right flex-auto font-semibold">{resourcePromise.data?.availableHoursPerWeek}</span>
+								<span class="dark:text-gray-200 text-gray-800">Hours per Week</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{resourcePromise.data?.availableHoursPerWeek}</span>
 							</li>
 							<li>
-								<span>Onboarding Cost</span>
-								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data?.initialCost as number)}</span>
+								<span class="dark:text-gray-200 text-gray-800">Onboarding Cost</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{formatCurrency.format(resourcePromise.data?.initialCost as number)}</span>
 							</li>
 							<li>
-								<span>Annualized Cost</span>
-								<span class="float-right flex-auto font-semibold">{formatCurrency.format(resourcePromise.data?.annualizedCost as number)}</span>
+								<span class="dark:text-gray-200 text-gray-800">Annualized Cost</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800">{formatCurrency.format(resourcePromise.data?.annualizedCost as number)}</span>
 							</li>
 							<li>
-								<span>Created Date</span>
-								<span class="float-right flex-auto font-semibold"
+								<span class="dark:text-gray-200 text-gray-800">Created Date</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800"
 									>{formatDate(resourcePromise.meta?.createdAt)}</span
 								>
 							</li>
@@ -141,14 +143,14 @@
 							<CSHR />
 
 							<li>
-								<span>Hourly Rate</span>
-								<span class="float-right flex-auto font-semibold"
+								<span class="dark:text-gray-200 text-gray-800">Hourly Rate</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800"
 									>{formatCurrency.format(resourcePromise.data?.calculated?.hourlyCost as number)}</span
 								>
 							</li>
 							<li>
-								<span>Rate Determination Method</span>
-								<span class="float-right flex-auto font-semibold"
+								<span class="dark:text-gray-200 text-gray-800">Rate Determination Method</span>
+								<span class="float-right flex-auto font-semibold dark:text-gray-200 text-gray-800"
 									>{resourcePromise.data?.calculated?.hourlyCostMethod}</span
 								>
 							</li>
@@ -159,7 +161,7 @@
 					<SectionSubHeading>User skills</SectionSubHeading>
 					<SkillsTable parentID={id} skills={resourceSkills} update={() => updateResource()} allowAdd={true} />
 					{/if}
-				</Card>
+				</CSSection>
 			</div>
 
 			<div class="col-span-2">

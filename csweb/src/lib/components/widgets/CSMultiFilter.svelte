@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Dropdown, DropdownItem, type SelectOptionType } from "flowbite-svelte";
+    import { Dropdown, DropdownGroup, DropdownHeader, DropdownItem, type SelectOptionType } from "flowbite-svelte";
     import { CheckCircleOutline, ChevronDownOutline, CircleMinusOutline } from "flowbite-svelte-icons";
 
     interface Props {
@@ -86,14 +86,19 @@
             
         <ChevronDownOutline size="lg" /></button
         >
-        <Dropdown class="min-w-48" bind:open={dropdownOpen}>
+        <Dropdown class="min-w-48">
+            
             {#if hasValues}
+            <DropdownGroup>
             <div role="none">
                 <DropdownItem class="font-normal border-b border-gray-200 dark:border-gray-600" href="#" onclick={() => clearAll()}>
                     Clear selection <span class="float-right"><CircleMinusOutline size="sm" /></span>
                 </DropdownItem>
             </div>
+            </DropdownGroup>
             {/if}
+            
+            <DropdownGroup>
             {#each filterOpts as opt}
                 {#if filterValue.includes(opt.value)}
                 <DropdownItem class="font-bold" href="#" onclick={() => dropDownChange(opt.value)}>
@@ -105,6 +110,7 @@
                 </DropdownItem>
                 {/if}
             {/each}
+            </DropdownGroup>
         </Dropdown>
     </div>
 </div>
