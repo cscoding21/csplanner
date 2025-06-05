@@ -102,10 +102,10 @@ func (s *ResourceService) UpdateSkillForResource(ctx context.Context, id string,
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	if skillsContain(res.Data.Skills, skill.ID) {
+	if skillsContain(res.Data.Skills, skill.SkillID) {
 		//---update the existing skill
 		for i, s := range res.Data.Skills {
-			if s.ID == skill.ID {
+			if s.SkillID == skill.SkillID {
 				res.Data.Skills[i].Proficiency = skill.Proficiency
 			}
 		}
