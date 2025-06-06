@@ -622,6 +622,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, input idl.Upd
 func (r *mutationResolver) UpdateList(ctx context.Context, input idl.UpdateList) (*idl.CreateListResult, error) {
 	defer csmap.ExpireListCache()
 	defer csmap.ExpireRoleCache()
+	defer csmap.ExpireResourceCache()
 
 	service := factory.GetListService(ctx)
 	out := idl.CreateListResult{}
