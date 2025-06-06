@@ -132,7 +132,7 @@
                     <Range size="lg" id="range-steps" min="1" max="3" bind:value={updateSkills[index].proficiency as number} onchange={e => upsertSkill(s.id, s.skillID, updateSkills[index].proficiency as number)} step="1" />
                     <br /><small>{decodeProficiency(s.proficiency as number)}</small>
                 </TableBodyCell>
-                <TableBodyCell tdClass="float-right pt-2">
+                <TableBodyCell class="float-right pt-2">
                     <Button color="dark" onclick={() => deleteSkill(s.skillID)}>
                         <TrashBinOutline size="sm" />
                     </Button>

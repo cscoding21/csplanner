@@ -32,7 +32,7 @@
 <Dropdown class="w-44 p-3 space-y-3 text-sm">
 {#each opts as opt(opt)}
 <li>
-    <Checkbox bind:group={group} value={opt.value} bind:checked={opt.checked} on:change={e => change(e)}>{opt.name}</Checkbox>
+    <Checkbox bind:group={group} value={opt.value} bind:checked={opt.checked} onchange={e => change(e)}>{opt.name}</Checkbox>
 </li>
 {/each}
 </Dropdown>

@@ -117,10 +117,9 @@
 
 <Drawer 
 	placement="right" 
-	width="w-1/3" 
-	transitionType="fly" 
 	transitionParams={transitionParamsRight} 
 	bind:hidden={chatBarHidden} 
-	backdrop={false} id="chatbar">
+	backdrop={false} 
+	id="chatbar">
 	<CommentList {id} />
 </Drawer>

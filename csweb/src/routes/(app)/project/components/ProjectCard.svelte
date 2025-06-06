@@ -12,7 +12,7 @@
 	let { project }: Props = $props();
 </script>
 
-<a href="project/detail/{project.meta?.id}#snapshot" class="p-4 m-1 dark:bg-gray-800 bg-gray-100">
+<a href="project/detail/{project.meta?.id}#snapshot" class="p-4 m-1 rounded-lg dark:bg-gray-800 bg-gray-100">
 	<Heading tag="h6">
 			{project.data?.projectBasics?.name}
 		<BadgeProjectStatus status={project.data?.projectStatusBlock?.status}  />

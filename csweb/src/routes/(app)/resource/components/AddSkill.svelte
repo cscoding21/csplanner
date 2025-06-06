@@ -21,12 +21,13 @@
 		errors = {};
 
 		const parsedSkillForm = skillSchema.cast(sf);
-		parsedSkillForm.resourceID = resourceID;
+		parsedSkillForm.parentID = resourceID;
 		skillSchema
 			.validate(parsedSkillForm, { abortEarly: false })
 			.then(() => {
 				updateResourceSkill({
-					resourceID: parsedSkillForm.resourceID,
+					parentID: parsedSkillForm.parentID,
+					skillID: parsedSkillForm.skillID,
 					id: parsedSkillForm.skillID,
 					proficiency: parsedSkillForm.proficiency as number
 				}).then((res) => {

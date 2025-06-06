@@ -147,7 +147,7 @@
 		  <TableHeadCell>Hourly Rate</TableHeadCell>
           <TableHeadCell>Actions</TableHeadCell>
         </TableHead>
-        <TableBody tableBodyClass="divide-y">
+        <TableBody class="divide-y">
 			{#if resourceList.length > 0}
             {#each resourceList as r, index}
           <TableBodyRow>

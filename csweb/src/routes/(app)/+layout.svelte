@@ -13,14 +13,11 @@
 		DropdownHeader,
 		DropdownDivider,
 		DarkMode,
-		Button,
-		Input,
 
 		DropdownGroup
 
 	} from 'flowbite-svelte';
 	import { authService } from '$lib/services/auth';
-	import { SearchOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
 	import { getInitialsFromName } from '$lib/utils/format';
 	import { PageMessages, CSNavItem, NotificationList, OrgStateChecker } from '$lib/components';

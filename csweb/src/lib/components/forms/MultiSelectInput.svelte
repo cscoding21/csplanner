@@ -34,7 +34,7 @@
 			class="mt-2"
 			items={options}
 			bind:value
-			on:change={() => {
+			onchange={() => {
 				callIf(update)
 			}}
 		/>

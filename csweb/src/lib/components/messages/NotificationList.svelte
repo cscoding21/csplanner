@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { Dropdown, DropdownItem, Avatar } from 'flowbite-svelte';
+	import { Dropdown, DropdownItem, Avatar, DropdownHeader, DropdownGroup } from 'flowbite-svelte';
 	import { BellOutline, CheckCircleOutline, EyeOutline } from 'flowbite-svelte-icons';
 	import {
 		subscribeToUpdates,
@@ -69,11 +69,12 @@
 		triggeredBy="#bell"
 		class="w-full max-w-sm divide-y divide-gray-100 rounded shadow dark:divide-gray-700 dark:bg-gray-800"
 	>
-		<div slot="header" class="py-2 text-center font-bold">Notifications</div>
+		<DropdownHeader>Notifications</DropdownHeader>
+		<DropdownGroup>
 		{#if promiseData && promiseData.length > 0}
 			{#each promiseData as n (n)}
 				<DropdownItem class="flex space-x-4 rtl:space-x-reverse">
-					<Avatar src={n.initiatorProfileImage || ''} dot={{ color: 'bg-gray-300' }} rounded />
+					<Avatar src={n.initiatorProfileImage || ''} dot={{ color: 'bg-gray-300' }} />
 					<div class="w-full ps-3">
 						<div class="mb-1.5 text-sm text-gray-500 dark:text-gray-400">
 							{@html getNotificationHeadline(n)}
@@ -103,8 +104,9 @@
 				</div>
 			</DropdownItem>
 		{/if}
+		</DropdownGroup>
+		<DropdownHeader>
 		<a
-			slot="footer"
 			href="/"
 			class="-my-1 block bg-gray-50 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
 		>
@@ -113,5 +115,6 @@
 				View all
 			</div>
 		</a>
+		</DropdownHeader>
 	</Dropdown>
 {/await}

@@ -191,7 +191,7 @@
 			  <TableHeadCell>Cost per Hour</TableHeadCell>
 			  <TableHeadCell>Cost</TableHeadCell>
 			</TableHead>
-			<TableBody tableBodyClass="divide-y">
+			<TableBody class="divide-y">
 				{#each costTable as line}
 			  <TableBodyRow>
 				<TableBodyCell>{line.milestoneName}</TableBodyCell>
@@ -207,8 +207,8 @@
 				</TableBodyCell>
 				<TableBodyCell>{line.estimatedHours}</TableBodyCell>
 				<TableBodyCell>{line.actualizedHours}</TableBodyCell>
-				<TableBodyCell tdClass="text-right">{formatCurrency.format(line.costPerHour || 0)}</TableBodyCell>
-				<TableBodyCell tdClass="text-right">{formatCurrency.format(line.cost || 0)}</TableBodyCell>
+				<TableBodyCell class="text-right">{formatCurrency.format(line.costPerHour || 0)}</TableBodyCell>
+				<TableBodyCell class="text-right">{formatCurrency.format(line.cost || 0)}</TableBodyCell>
 			  </TableBodyRow>
 			  {/each}
 			</TableBody>

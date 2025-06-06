@@ -92,8 +92,8 @@
 <div class="flex">
     <div class="flex-none pr-6 items-center space-x-4 rtl:space-x-reverse">
         <div>
-            <Dropzone id="dropzone" defaultClass="" on:change={handleChange}>
-                <Avatar size="xl" src={uf.profileImage || ''} rounded class="hover:cursor-pointer"
+            <Dropzone id="dropzone" class="" onchange={handleChange}>
+                <Avatar size="xl" src={uf.profileImage || ''} class="hover:cursor-pointer"
                     >{getInitialsFromName(uf.firstName + " " + uf.lastName)}</Avatar
                 >
             </Dropzone>

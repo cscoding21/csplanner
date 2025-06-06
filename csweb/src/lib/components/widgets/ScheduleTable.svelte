@@ -26,7 +26,7 @@
         {/if}
         {/each}
     </TableHead>
-    <TableBody tableBodyClass="divide-y">
+    <TableBody>
         {#each scheduleTable.body as row}
             <TableBodyRow>
             <TableBodyCell>
@@ -42,7 +42,7 @@
             </div>
             </TableBodyCell>
             {#each row.weeks as week}
-            <TableBodyCell tdClass="text-center">
+            <TableBodyCell class="text-center">
                 <ProjectScheduleCell week={week} />
             </TableBodyCell>
             {/each}

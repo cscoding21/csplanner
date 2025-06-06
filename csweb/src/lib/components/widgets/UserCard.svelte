@@ -11,7 +11,7 @@
 
 {#if user}
 <div class="p-2">
-	<Avatar src={user.profileImage || ''} class="float-left mr-3 h-16 w-16" rounded
+	<Avatar src={user.profileImage || ''} class="float-left mr-3 h-16 w-16"
 		>{getInitialsFromName(user.firstName + " " + user.lastName)}</Avatar
 	>
 	<div class="text-left">

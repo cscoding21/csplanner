@@ -40,7 +40,7 @@
 	};
 </script>
 
-<Button {size} color="dark" on:click={() => (popupModal = true)}>
+<Button {size} color="dark" onclick={() => (popupModal = true)}>
 	{@render children()}
 </Button>
 

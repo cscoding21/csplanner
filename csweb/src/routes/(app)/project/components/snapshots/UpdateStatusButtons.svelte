@@ -16,7 +16,7 @@
         currentDesc: string;
         buttonDisplay?: string;
         transitionWarning?: string;
-        buttonColor: "none" | "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined;
+        buttonColor: "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined;
     }
 
     const setStatus = async (status: string) => {
@@ -46,7 +46,7 @@
             currentDesc: "Not set",
             buttonDisplay: "",
             transitionWarning: "",
-            buttonColor: "none" as "none" | "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined
+            buttonColor: undefined as "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined
         }
 
         switch(type) {

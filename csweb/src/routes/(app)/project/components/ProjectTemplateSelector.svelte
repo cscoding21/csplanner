@@ -92,7 +92,7 @@
 					</ul>
 				{:else}
 					<Alert border color="blue" class="mt-2 mb-6">
-						<InfoCircleSolid slot="icon" class="w-5 h-5" />
+						{#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
 						<span class="font-medium">No tasks</span>
 						No tasks will be created for this milestone
 					</Alert>

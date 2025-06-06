@@ -103,7 +103,7 @@
 {:then promiseData}
 	{#if of}
 		<SectionHeading>
-			Organization Settings: {org.name} ({org.url}.csplanner.io)
+			Organization Settings: {org.name} ({org.urlKey}.csplanner.io)
 		</SectionHeading>
 	{/if}
 

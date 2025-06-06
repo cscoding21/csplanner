@@ -81,10 +81,12 @@
 				<Tabs tabStyle="underline">
 					{#each project.data?.projectMilestones as milestone, index}
 					<TabItem open={index === 0}>
-						<div slot="title" class="flex items-center gap-2">
+						{#snippet titleSlot()}
+						<div class="flex items-center gap-2">
 						  <ChevronRightOutline size="md" />
 						  {milestone.phase.name}
-						</div>
+						  </div>
+						{/snippet}
 						<div class="text-sm text-gray-500 dark:text-gray-400">
 							<ProjectMilestoneStatus milestone={project.data?.projectMilestones[index]} />
 							<Hr />

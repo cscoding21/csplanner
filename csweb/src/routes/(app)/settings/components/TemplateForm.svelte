@@ -132,7 +132,7 @@
 {#each templateForm.phases as phase, i}
 <Accordion>
     <AccordionItem>
-        <span slot="header">Milestone Phase: {phase.name}</span>
+        {#snippet header()}Milestone Phase: {phase.name}{/snippet}
         <TextInput
             bind:value={templateForm.phases[i].name}
             placeholder="Phase name"
@@ -162,7 +162,7 @@
         <Accordion flush>
         {#each templateForm.phases[i].tasks as task, j}
             <AccordionItem>
-            <span slot="header" ><ToolsOutline size="sm" class="float-left mr-3" /> {task.name}</span>
+                {#snippet header()}<ToolsOutline size="sm" class="float-left mr-3" /> {task.name}{/snippet}
                 <TextInput
                     bind:value={templateForm.phases[i].tasks[j].name}
                     placeholder="Task name"

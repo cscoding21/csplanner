@@ -1,7 +1,6 @@
 <script lang="ts">
 	import {
 		Avatar,
-		Card,
 		ButtonGroup
 	} from 'flowbite-svelte';
 	import { TrashBinOutline, PenOutline } from 'flowbite-svelte-icons';

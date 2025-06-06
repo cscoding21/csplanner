@@ -15,10 +15,7 @@
 
 {#if errors.inner && errors.inner.length > 0}
 <Alert class="items-start! mb-6" border color="red">
-    <span slot="icon">
-      <InfoCircleSolid class="w-5 h-5" />
-      <span class="sr-only">Info</span>
-    </span>
+    {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
     <p class="font-medium">There was a problem processing the form:</p>
     <ul class="mt-1.5 ms-4 list-disc list-inside">
         {#each errors.inner as err}

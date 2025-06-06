@@ -60,8 +60,7 @@
 
 		return o;
 	};
-	let chart = new ApexCharts(document.querySelector('#chartPlaceholder'), getChartOptions());
 </script>
 
-<Chart options={getChartOptions() as ApexOptions} chart={chart} />
+<Chart options={getChartOptions() as ApexOptions} />
 <div id="chartPlaceholder"></div>

@@ -90,7 +90,7 @@
 				{/if}
 				{/each}
 			</TableHead>
-			<TableBody tableBodyClass="divide-y">
+			<TableBody class="divide-y">
 				{#each portfolioTable.body as row}
 					<TableBodyRow>
 					<TableBodyCell>
@@ -100,7 +100,7 @@
 					</TableBodyCell>
 					{#each row.weeks as week}
 					
-					<TableBodyCell tdClass="text-center">
+					<TableBodyCell class="text-center">
 						{#if week.active}
 						{@const cellColor = week.risks.length > 0 ? "yellow" : "green" }
 						{@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }

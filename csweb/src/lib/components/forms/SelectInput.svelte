@@ -28,7 +28,7 @@
 			class="mt-2"
 			items={options}
 			bind:value
-			on:change={() => {
+			onchange={() => {
 				if (update) {
 					update();
 				}

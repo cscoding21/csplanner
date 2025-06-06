@@ -129,12 +129,8 @@
 <div class="p-4">
     {#if skillList.length > 0}
     {#each skillList as skill, index}
-        <Badge color="yellow" class="m-2" dismissable>
+        <Badge color="yellow" class="m-2" dismissable onclose={() => removeSkill(index)}>
             {skill.name}
-        <button slot="close-button" onclick={() => removeSkill(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
-            <CloseCircleSolid class="h-4 w-4" />
-            <span class="sr-only">Remove skill</span>
-        </button>
         </Badge>
     {/each}
     {:else}

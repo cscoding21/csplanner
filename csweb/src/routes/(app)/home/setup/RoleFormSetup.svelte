@@ -177,7 +177,7 @@
 							<Range size="lg" id="range-steps" min="1" max="3" bind:value={rf.defaultSkills[index].proficiency as number} step="1" />
 							<br /><small>{decodeProficiency(rf.defaultSkills[index].proficiency as number)}</small>
 						</TableBodyCell>
-						<TableBodyCell tdClass="float-right pt-2">
+						<TableBodyCell class="float-right pt-2">
 							<Button color="dark" onclick={() => delSkill(s.id as string)}>
 								<TrashBinOutline size="sm" />
 							</Button>

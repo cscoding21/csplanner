@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Heading, Hr } from 'flowbite-svelte';
 	import type { Snippet } from 'svelte';
+	import { CSHR } from '..';
 
 	interface Props {
 		children?: Snippet;
@@ -14,4 +15,4 @@
 		{@render children()}
 	{/if}
 </Heading>
-<Hr hrClass="h-px mt-2 mb-4 bg-gray-200 border-0 dark:bg-gray-700" />
+<CSHR />

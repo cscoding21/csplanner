@@ -53,7 +53,6 @@
 				hover: {
 					filter: {
 						type: 'darken',
-						value: 1
 					}
 				}
 			},
@@ -110,8 +109,7 @@
 			}
 		};
 	};
-	let chart = new ApexCharts(document.querySelector('#chartPlaceholder'), getChartOptions(project));
 </script>
 
-<Chart options={getChartOptions(project)} {chart} />
+<Chart options={getChartOptions(project)} />
 <div id="chartPlaceholder"></div>

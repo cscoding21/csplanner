@@ -58,7 +58,7 @@
 		<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
 			Are you sure you want to delete the resource, {name}?
 		</h3>
-		<Button color="red" class="mr-2" on:click={deleteItem}>Yes, I'm sure</Button>
+		<Button color="red" class="mr-2" onclick={deleteItem}>Yes, I'm sure</Button>
 		<Button color="alternative">No, cancel</Button>
 	</div>
 </Modal>

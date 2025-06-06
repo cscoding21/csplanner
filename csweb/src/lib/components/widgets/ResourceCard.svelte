@@ -14,7 +14,7 @@
 
 {#if resource}
 <div class="p-2">
-	<Avatar src={resource.profileImage || ''} class="float-left mr-3 mb-1 h-16 w-16" rounded
+	<Avatar src={resource.profileImage || ''} class="float-left mr-3 mb-1 h-16 w-16"
 		>{getInitialsFromName(resource.name)}</Avatar
 	>
 	<div class="text-left">

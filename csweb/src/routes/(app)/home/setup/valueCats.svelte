@@ -125,12 +125,8 @@
 <div class="p-4">
     {#if vcList.length > 0}
     {#each vcList as valcat, index}
-        <Badge color="green" class="m-2" dismissable>
+        <Badge color="green" class="m-2" dismissable onclose={() => removeVC(index)}>
             {valcat.name}
-        <button slot="close-button" onclick={() => removeVC(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
-            <CloseCircleSolid class="h-4 w-4" />
-            <span class="sr-only">Remove value category</span>
-        </button>
         </Badge>
     {/each}
     {:else}

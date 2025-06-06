@@ -6,7 +6,7 @@
     import { Button, Modal, Hr } from "flowbite-svelte";
     import { callIf, reloadPage } from "$lib/utils/helpers";
 	import { getDefaultProject } from "$lib/forms/project.validation";
-	import { SectionHeading } from "$lib/components";
+	import { CSHR, SectionHeading } from "$lib/components";
 	import { ChevronDoubleRightOutline, InfoCircleOutline } from "flowbite-svelte-icons";
 
     interface Props {
@@ -22,7 +22,7 @@
         currentDesc: string;
         buttonDisplay?: string;
         transitionWarning?: string;
-        buttonColor: "none" | "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined;
+        buttonColor: "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined;
     }
 
 
@@ -71,7 +71,7 @@
             currentDesc: "Not set",
             buttonDisplay: "",
             transitionWarning: "",
-            buttonColor: "none" as "none" | "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined
+            buttonColor: undefined as "red" | "yellow" | "green" | "purple" | "blue" | "light" | "dark" | "primary" | "alternative" | undefined
         }
 
         switch(type) {
@@ -213,7 +213,7 @@
                 {/if}
             </div>
             {#if index + 1 < project.data?.projectStatusBlock.allowedNextStates.length}
-            <Hr hrClass="h-px mt-2 mb-2 bg-gray-200 border-0 dark:bg-gray-700" />
+            <CSHR />
             {/if}
         {/each}
         {/if}

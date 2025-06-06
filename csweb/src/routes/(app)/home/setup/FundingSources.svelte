@@ -123,12 +123,9 @@
 <div class="p-4">
     {#if fsList.length > 0}
     {#each fsList as fundsrc, index}
+    <Badge dismissable large onclose={() => removeFS(index)}>Default</Badge>
         <Badge color="blue" class="m-2" dismissable>
             {fundsrc.name}
-        <button slot="close-button" onclick={() => removeFS(index)} type="button" class="inline-flex items-center rounded-full p-0.5 my-0.5 ms-1.5 -me-1.5 text-sm text-white dark:text-primary-80 hover:text-whit dark:hover:text-white" aria-label="Remove">
-            <CloseCircleSolid class="h-4 w-4" />
-            <span class="sr-only">Remove funding source</span>
-        </button>
         </Badge>
     {/each}
     {:else}

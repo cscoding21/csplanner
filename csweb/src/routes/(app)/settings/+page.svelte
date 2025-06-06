@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { page } from "$app/stores";
+    import { page } from "$app/state";
     import { CSSection } from "$lib/components";
     import { OrgSettings, Lists, Roles, MyInfo, Templates } from "./components";
 
-    let hash = $state($page.url.hash);
+    let hash = $state(page.url.hash);
 </script>
 
 <svelte:window
 	on:hashchange={() => {
-		hash = $page.url.hash
+		hash = page.url.hash
 	}}
 />
 

@@ -32,10 +32,7 @@
     {#if risks && risks.length > 0}
     <div class="flex-1 ml-8">
     <Alert class="items-start! text-left" color="yellow" border>
-        <span slot="icon">
-        <InfoCircleSolid class="w-5 h-5" />
-        <span class="sr-only">Warning</span>
-        </span>
+       {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <ul class="mt-1.5 ms-4 list-disc list-inside">
             {#each risks as risk}
                 <li>{risk}</li>
@@ -43,5 +40,6 @@
         </ul>
     </Alert> 
     </div>
+    <br class="clear-both" />
     {/if}
 </div>

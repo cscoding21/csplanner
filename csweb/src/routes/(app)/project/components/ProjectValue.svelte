@@ -136,7 +136,7 @@
 		  <TableHeadCell>Year Two</TableHeadCell>
 		  <TableHeadCell>Actions</TableHeadCell>
 		</TableHead>
-		<TableBody tableBodyClass="divide-y">
+		<TableBody class="divide-y">
 			{#each project.data?.projectValue.projectValueLines as line}
 		  <TableBodyRow>
 			<TableBodyCell>{line.fundingSource}</TableBodyCell>

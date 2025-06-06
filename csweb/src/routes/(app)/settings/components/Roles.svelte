@@ -60,7 +60,7 @@
       <TableHeadCell>Hourly rate</TableHeadCell>
       <TableHeadCell>Actions</TableHeadCell>
     </TableHead>
-    <TableBody tableBodyClass="divide-y">
+    <TableBody class="divide-y">
         {#each roles as role, index}
       <TableBodyRow>
         <TableBodyCell>{roles[index].data.name}</TableBodyCell>

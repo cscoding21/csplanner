@@ -176,7 +176,7 @@
 		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.data?.projectStatusBlock?.status}>
 		<div class="col-span-4">
 			<span class="float-right">
-				<Button on:click={updateDACI}>Update Team</Button>
+				<Button onclick={updateDACI}>Update Team</Button>
 			</span>
 			<br class="clear-both" />
 		</div>

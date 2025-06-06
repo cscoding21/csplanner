@@ -3,6 +3,7 @@
 	import { type ApexOptions, default as ApexCharts } from 'apexcharts';
 	import { formatCurrency } from '$lib/utils/format';
 	import { getPrimaryColor, getTertiaryColor, getQuaternaryColor, getWhiteAndDark900Colors } from './chartConfig'
+	import { onMount } from 'svelte';
 
     interface Props {
 		values: number[];
@@ -83,9 +84,17 @@
 		};
 	};
 
-	let chart = new ApexCharts(document.querySelector('#pie_chartPlaceholder'), getChartOptions(values, labels));
+
+	let options = $state()
+
+	onMount(() => {
+		options = getChartOptions(values, labels)
+		console.log("pie chart options", options)
+	})
+
 </script>
 
-
-<Chart options={getChartOptions(values, labels)} {chart} />
+{#if options}
+<Chart {options} />
 <div id="pie_chartPlaceholder"></div>
+{/if}

@@ -125,10 +125,7 @@
 {#if result.exceptions}
     <div class="my-4">
     <Alert class="items-start!" color="yellow" border>
-        <span slot="icon">
-          <InfoCircleSolid class="w-5 h-5" />
-          <span class="sr-only">Warning</span>
-        </span>
+        {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <p class="font-medium">The following issues were found and could affect execution:</p>
         <ul class="mt-1.5 ms-4 list-disc list-inside">
             {#each result.exceptions as ex}

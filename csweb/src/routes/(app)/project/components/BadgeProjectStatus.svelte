@@ -1,9 +1,7 @@
 <script lang="ts">
     import { 
         Badge, 
-        Indicator,
-        type ColorVariant,
-		type IndicatorColorType 
+        Indicator
 	} from "flowbite-svelte";
 
 	interface Props {
@@ -14,8 +12,8 @@
 	}: Props = $props();
 
 	let badgeName = $state("")
-	let badgeColor = $state("default" as ColorVariant)
-	let badgeIndicatorColor = $state("default" as IndicatorColorType)
+	let badgeColor = $state("default" as "red"|"yellow"|"blue"|"purple"|"green")
+	let badgeIndicatorColor = $state("default" as "red"|"yellow"|"blue"|"purple"|"green")
 	
 	$effect(() => {
 		switch (status) {
@@ -61,8 +59,8 @@
 				break;
 			case 'complete':
 				badgeName = 'Complete';
-				badgeColor = 'none';
-				badgeIndicatorColor = 'none';
+				badgeColor = 'green';
+				badgeIndicatorColor = 'green';
 				break;
 			case 'deferred':
 				badgeName = 'Deferred';
