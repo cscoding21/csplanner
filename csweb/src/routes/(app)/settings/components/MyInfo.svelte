@@ -13,9 +13,20 @@
 
     let errors = $state({ firstName: "", lastName: ""})
     let uf = $state({} as UpdateUser)
+    let value: FileList | null = $state(null);
 
     let fileValue = [];
-	const handleChange = (e: any) => {
+
+    function handleChange(event: Event) {
+        console.log("handle change2")
+        alert(event)
+        const target = event.target as HTMLInputElement;
+        value = target.files;
+    }
+
+
+	const handleChange2 = (e: any) => {
+        console.log("handle change2")
 		const files = e.target.files;
 		if (files.length > 0) {
 			const file = files[0];
@@ -92,13 +103,13 @@
 <div class="flex">
     <div class="flex-none pr-6 items-center space-x-4 rtl:space-x-reverse">
         <div>
-            <Dropzone id="dropzone" class="" onchange={handleChange}>
-                <Avatar size="xl" src={uf.profileImage || ''} class="hover:cursor-pointer"
-                    >{getInitialsFromName(uf.firstName + " " + uf.lastName)}</Avatar
-                >
+            <Dropzone id="user_dropzone" bind:files={value} onchange={handleChange2} class="h-full dark:bg-gray-800 border-0">
+                <Avatar size="xl" src={uf.profileImage || ''} class="hover:cursor-pointer">
+                    {getInitialsFromName(uf.firstName + " " + uf.lastName)}
+                </Avatar>
             </Dropzone>
         </div>
-        <small class="text-sm dark:text-white mt-2">Click to re-upload</small>
+        <div class="text-sm dark:text-white px-4 mt-4">Click to re-upload</div>
     </div>
     <div class="flex-1">
         <h3 class="mb-4">

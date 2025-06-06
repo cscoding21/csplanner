@@ -167,15 +167,15 @@
 <div class="flex mb-8">
 	<div class="flex-1 px-2">
 		<SectionSubHeading>Cost by Resource</SectionSubHeading>
-		{#if resourcePieValues}
-			<PieChart labels={Object.keys(resourcePieValues)} values={Object.values(resourcePieValues)} format="currency" />
+		{#if Object.keys(resourcePieValues).length > 0}
+			<PieChart height={200} labels={Object.keys(resourcePieValues)} values={Object.values(resourcePieValues)} format="currency" />
 		{/if}
 	</div>
 
 	<div class="flex-1 px-2">
 		<SectionSubHeading>Cost by Milestone</SectionSubHeading>
-		{#if milestonePieValues}
-		<PieChart labels={Object.keys(milestonePieValues)} values={Object.values(milestonePieValues)} format="currency" />
+		{#if Object.keys(milestonePieValues).length > 0}
+		<PieChart height={200} labels={Object.keys(milestonePieValues)} values={Object.values(milestonePieValues)} format="currency" />
 		{/if}
 	</div>
 

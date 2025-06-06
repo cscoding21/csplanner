@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Project } from "$lib/graphql/generated/sdk";
+    import type { Project, ProjectStatusTransition } from "$lib/graphql/generated/sdk";
 	import { setProjectStatus } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
     import { Button } from "flowbite-svelte";
@@ -8,8 +8,9 @@
     interface Props {
 		project: Project;
 		update?: Function;
+        displayStates: string[]
 	}
-	let { project, update }: Props = $props();
+	let { project, update, displayStates }: Props = $props();
 
     interface StatusPageContent {
         currentTitle: string;
@@ -39,6 +40,24 @@
 			}
 		});
 	};
+
+    const getNextState = (project:Project, state:string):ProjectStatusTransition|undefined => {
+        if(!project || !project.projectStatusBlock) {
+            return undefined
+        }
+
+        for (let i = 0; i < (project.projectStatusBlock.allowedNextStates?.length || 0); i++) {
+            // @ts-expect-error
+            const thisState = project.projectStatusBlock?.allowedNextStates[i]
+
+            if (state === thisState.nextState) {
+                return thisState
+            }
+        }
+
+
+        return undefined
+    }
 
     const getStatusContent = (type:string):StatusPageContent => {
         let def = {
@@ -126,12 +145,13 @@
 {#if project}
 
 {#if project.projectStatusBlock.allowedNextStates}
-{#each project.projectStatusBlock.allowedNextStates as next, index}
-        {#if next.canEnter}
+{#each displayStates as state, index}
+    {@const next = getNextState(project, state)}
+        {#if next && next.canEnter}
             {@const statusContent = getStatusContent(next.nextState)}
             <Button pill color={statusContent.buttonColor} class="w-64 m-2" onclick={() => setStatus(next.nextState)}>{statusContent.buttonDisplay}</Button>
         {:else}
-            {@const statusContent = getStatusContent(next.nextState)}
+            {@const statusContent = getStatusContent(next && next.nextState || "")}
             <!-- <h3 class="font-semibold text-red-400">Cannot move to '{statusContent.currentTitle}'</h3>
             <div class="text-sm">
                 {statusContent.currentDesc}

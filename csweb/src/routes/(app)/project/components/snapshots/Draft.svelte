@@ -151,7 +151,7 @@
 
         {#if showNextStatus}
         <div class="text-center mt-8">
-        <UpdateStatusButtons {project} />
+        <UpdateStatusButtons {project} displayStates={["abandoned", "proposed"]} />
         <!-- 
 			{#if canEnterStatus(project, "proposed")}
 				<Button onclick={() => setStatus("proposed")} color="green" class="px-8 m-2 w-64">Propose this Project</Button>

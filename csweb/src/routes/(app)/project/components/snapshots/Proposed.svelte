@@ -122,7 +122,7 @@
         </div>
 
 		<div class="text-center mt-8">
-			<UpdateStatusButtons {project} />
+			<UpdateStatusButtons {project} displayStates={["dragt", "rejected", "approved"]} />
 
 			<!-- {#if canEnterStatus(project, "draft")}
 				<Button onclick={() => setStatus("draft")} color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>

@@ -33,7 +33,7 @@
 </script>
 
 
-<Card size="xl" class="mr-2">
+<Card size="xl" class="mr-2 p-4">
 <div class="flex justify-between">
 <div>
     <h5 class="leading-none text-3xl pb-2 {labelColor}">{dataPoint}</h5>

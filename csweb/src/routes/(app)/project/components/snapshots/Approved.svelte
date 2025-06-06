@@ -77,7 +77,7 @@
         <ProjectStartDateSet {project} update={() => { refresh(); callIf(update)} } />
 
         <div class="text-center mt-8">
-			<UpdateStatusButtons {project} />
+			<UpdateStatusButtons {project} displayStates={["draft", "backlogged", "scheduled"]} />
 		</div>
     </div>
 </div>

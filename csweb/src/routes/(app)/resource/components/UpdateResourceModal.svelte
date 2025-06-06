@@ -120,7 +120,7 @@
 	{#if isUpdate}
 		<div class="flex items-center space-x-4 rtl:space-x-reverse">
 			<div>
-				<Dropzone id="dropzone" onchange={handleChange}>
+				<Dropzone class="m-0 p-0 h-full" id="dropzone" onchange={handleChange}>
 					<Avatar size="xl" src={rf.profileImage || ''} class="hover:cursor-pointer"
 						>{getInitialsFromName(rf.name)}</Avatar
 					>

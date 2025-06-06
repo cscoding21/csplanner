@@ -44,11 +44,15 @@
 			resourceSkills = r.data?.skills as Skill[];
 
 			return r
-		}).then(p => {
+		}).then(r => {
 			 refreshWork().then(p => {
 				portfolio = p
 
 				flatData = flattenPortfolio(p, startDate, endDate)
+				projectPieData = csGroupBy(deepCopy(flatData), "projectName", "actualizedHours")
+				skillPieData = csGroupBy(deepCopy(flatData), "requiredSkill", "actualizedHours")
+
+				console.log("projectPieData", projectPieData)
 			 })
 		});
 	}
@@ -56,9 +60,8 @@
 	let flatData = $state([] as FlatPortfolioItem[])
 	let resourceSkills = $state([] as Skill[])
 	let resourcePromise:ResourceEnvelope = $state({} as ResourceEnvelope);
-	let projectPieData = $derived(csGroupBy(deepCopy(flatData), "projectName", "actualizedHours"))
-	let skillPieData = $derived(csGroupBy(deepCopy(flatData), "requiredSkill", "actualizedHours"))
-
+	let projectPieData:any[] = $state([])
+	let skillPieData:any[] = $state([])
 
 	let portfolio:Portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
@@ -176,16 +179,16 @@
 				<div class="mt-8 grid grid-cols-2">
 					<div class="p-4">
 						<SectionSubHeading>Project Distribution</SectionSubHeading>
-						{#if projectPieData}
-							<PieChart labels={Object.keys(projectPieData)} values={Object.values(projectPieData)} />
+						{#if Object.keys(projectPieData).length > 0}
+							<PieChart  height={200} labels={Object.keys(projectPieData)} values={Object.values(projectPieData)} />
 						{/if}
 					</div>
 
 
 					<div class="p-4">
 						<SectionSubHeading>Skills Distribution</SectionSubHeading>
-						{#if projectPieData}
-							<PieChart labels={Object.keys(skillPieData)} values={Object.values(skillPieData)} />
+						{#if Object.keys(skillPieData).length > 0}
+							<PieChart height={200} labels={Object.keys(skillPieData)} values={Object.values(skillPieData)} />
 						{/if}
 					</div>
 

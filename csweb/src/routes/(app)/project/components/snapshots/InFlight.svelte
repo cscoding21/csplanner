@@ -43,7 +43,7 @@
 
 
         <div class="text-center mt-8">
-			<UpdateStatusButtons {project} />
+			<UpdateStatusButtons {project} displayStates={["deferred"]} />
 		</div>
     </div>
 </div>
