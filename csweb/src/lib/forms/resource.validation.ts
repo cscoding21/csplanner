@@ -34,7 +34,7 @@ export const resourceSchema = yup.object().shape({
 	type: yup.string().required(),
 	status: yup.string().required(),
 	userID: yup.string(),
-	roleID: yup.string().required(),
+	roleID: yup.string().nullable(),
 	email: yup.string().email(),
 	profileImage: yup.string().nullable(),
 	initialCost: yup.number(),

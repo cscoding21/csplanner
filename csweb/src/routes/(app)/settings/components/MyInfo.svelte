@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { TextInput, SectionHeading } from "$lib/components";
+	import { TextInput, SectionHeading, CSHR, CSAvatarUpload } from "$lib/components";
     import type { UpdateUser, User } from "$lib/graphql/generated/sdk";
     import { authService } from "$lib/services/auth";
-    import { Dropzone, Avatar, Hr, Button } from "flowbite-svelte";
-    import { getInitialsFromName } from "$lib/utils/format";
+    import { Button } from "flowbite-svelte";
     import { handleFileUpload } from "$lib/services/file";
 	import { updateUser } from "$lib/services/user";
     import { userFormSchema } from "$lib/forms/uservalidation"
@@ -13,24 +12,14 @@
 
     let errors = $state({ firstName: "", lastName: ""})
     let uf = $state({} as UpdateUser)
-    let value: FileList | null = $state(null);
 
     let fileValue = [];
 
-    function handleChange(event: Event) {
-        console.log("handle change2")
-        alert(event)
-        const target = event.target as HTMLInputElement;
-        value = target.files;
-    }
-
-
-	const handleChange2 = (e: any) => {
-        console.log("handle change2")
+	const handleChange = (e: any) => {
 		const files = e.target.files;
+
 		if (files.length > 0) {
 			const file = files[0];
-			console.log('handleChange', file);
 
 			handleFileUpload(file, uf?.id as string, 'user_image', handleUploadComplete);
 
@@ -103,13 +92,8 @@
 <div class="flex">
     <div class="flex-none pr-6 items-center space-x-4 rtl:space-x-reverse">
         <div>
-            <Dropzone id="user_dropzone" bind:files={value} onchange={handleChange2} class="h-full dark:bg-gray-800 border-0">
-                <Avatar size="xl" src={uf.profileImage || ''} class="hover:cursor-pointer">
-                    {getInitialsFromName(uf.firstName + " " + uf.lastName)}
-                </Avatar>
-            </Dropzone>
+            <CSAvatarUpload avatar={uf.profileImage} onchange={handleChange} name={uf.firstName + " " + uf.lastName} />
         </div>
-        <div class="text-sm dark:text-white px-4 mt-4">Click to re-upload</div>
     </div>
     <div class="flex-1">
         <h3 class="mb-4">
@@ -122,7 +106,7 @@
     </div>
 </div>
 
-<Hr />
+<CSHR />
 
 <TextInput
     bind:value={uf.firstName as string}

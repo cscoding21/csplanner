@@ -48,6 +48,7 @@ export { default as Toast } from './messages/Toast.svelte';
 //---Widgets
 export { default as AutoSave } from './widgets/AutoSave.svelte';
 export { default as CheckBoxFilter } from './widgets/CheckBoxFilter.svelte';
+export { default as CSAvatarUpload } from './widgets/CSAvatarUpload.svelte';
 export { default as CSMultiFilter } from './widgets/CSMultiFilter.svelte';
 export { default as CSNavItem } from './widgets/CSNavItem.svelte';
 export { default as CSPaging } from './widgets/CSPaging.svelte';

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { Avatar, Button, Dropzone, Hr, Modal, type SelectOptionType } from 'flowbite-svelte';
-	import { TextInput, MoneyInput, SelectInput, CSHR } from '$lib/components';
-	import { getInitialsFromName } from '$lib/utils/format';
+	import { Button, Hr, Modal, type SelectOptionType } from 'flowbite-svelte';
+	import { TextInput, MoneyInput, SelectInput, CSHR, CSAvatarUpload } from '$lib/components';
 	import { resourceSchema, resourceForm } from '$lib/forms/resource.validation';
 	import { findAllRoles, getResource, updateResource } from '$lib/services/resource';
 	import type { UpdateResource } from '$lib/graphql/generated/sdk';
@@ -120,12 +119,7 @@
 	{#if isUpdate}
 		<div class="flex items-center space-x-4 rtl:space-x-reverse">
 			<div>
-				<Dropzone class="m-0 p-0 h-full" id="dropzone" onchange={handleChange}>
-					<Avatar size="xl" src={rf.profileImage || ''} class="hover:cursor-pointer"
-						>{getInitialsFromName(rf.name)}</Avatar
-					>
-				</Dropzone>
-				<div class="ml-4 font-medium dark:text-white">Click profile image to re-upload</div>
+				<CSAvatarUpload avatar={rf.profileImage} onchange={handleChange} name={rf.name} />
 			</div>
 		</div>
 

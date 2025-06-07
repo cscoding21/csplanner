@@ -2,6 +2,7 @@
 	import { callIf } from '$lib/utils/helpers';
 	import type { Snippet } from 'svelte';
 	import FormErrorMessage from './FormErrorMessage.svelte';
+	import { newID } from '$lib/utils/id';
 
 	interface Props {
 		fieldName: string;
@@ -19,15 +20,17 @@
 		error = $bindable(),
 		value = $bindable()
 	}: Props = $props();
+
+	const inputID = newID()
 </script>
 
 <div class="mb-6">
-	<label for="input" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+	<label for={inputID} class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
 		>{fieldName}</label
 	>
 	<input
 		type="text"
-		id="input"
+		id={inputID}
 		class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
 		placeholder={placeholder as string}
 		required
