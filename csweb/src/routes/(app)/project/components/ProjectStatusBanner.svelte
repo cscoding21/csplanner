@@ -15,13 +15,13 @@
 
 {#if schedule}
     {#if project.projectStatusBlock.status === "scheduled"}
-    <Alert border color="blue" class="mt-2 mb-6">
+    <Alert border class="mt-2 mb-6">
         {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <span class="font-medium">Project scheduled</span>
         This project has been scheduled and is set to begin on <b>{formatDate(project.projectBasics.startDate)}</b>
     </Alert>
     {:else if project.projectStatusBlock.status === "inflight"}
-    <Alert border color="green" class="mt-2 mb-6">
+    <Alert border class="mt-2 mb-6">
         {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <span class="font-medium">Project in-flight!</span>
         This project is currently in-flight with a scheduled completion date of <b>{formatDate(schedule?.end)}</b>

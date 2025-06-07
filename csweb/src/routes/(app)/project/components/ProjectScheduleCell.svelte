@@ -1,18 +1,7 @@
-<!-- <script module lang="ts">
-    export type Week = {
-        showTasks: boolean
-        weekEnding: string
-        activities: ProjectActivity[]
-        risks: string[]
-    }
-</script> -->
-
 <script lang="ts">
-	import type { ProjectActivity } from "$lib/graphql/generated/sdk";
     import { Popover, Button } from "flowbite-svelte";
     import { normalizeGUID } from "$lib/utils/id";
-	import { formatDate, pluralize } from "$lib/utils/format";
-    import { ResourceList } from "$lib/components";
+	import { formatDate } from "$lib/utils/format";
 	import WeekPopupSummary from "$lib/components/widgets/WeekPopupSummary.svelte";
 	import type { ProjectScheduleRowCell } from "$lib/services/schedule";
 

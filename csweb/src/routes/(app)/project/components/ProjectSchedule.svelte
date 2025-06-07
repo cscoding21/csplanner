@@ -11,6 +11,7 @@
 	import { InfoCircleSolid } from "flowbite-svelte-icons";
     import { getScheduleTableByResource, getScheduleTableByTask, type ProjectScheduleTable } from "$lib/services/schedule"
 	import ScheduleTable from "$lib/components/widgets/ScheduleTable.svelte";
+	import ScheduleSummary from "./snapshots/ScheduleSummary.svelte";
 
     interface ScheduleRow {
         label: string
@@ -111,7 +112,10 @@
     <span class="float-right"><BadgeProjectStatus status={result.project.projectStatusBlock?.status} /></span>
 </SectionHeading>
 
-<ProjectStatusBanner project={result.project} schedule={result} />
+
+<ShowIfStatus scope={["scheduled"]} status={result.project.projectStatusBlock?.status}>
+    <ScheduleSummary schedule={result} />
+</ShowIfStatus>
 
 <ShowIfStatus scope={["approved", "scheduled", "inflight", "deferred", "abandoned"]} status={result.project.projectStatusBlock?.status}>
     <ProjectStartDateSet project={result.project} update={() => refresh()} />
@@ -124,7 +128,7 @@
 
 {#if result.exceptions}
     <div class="my-4">
-    <Alert class="items-start!" color="yellow" border>
+    <Alert class="items-start!" border>
         {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <p class="font-medium">The following issues were found and could affect execution:</p>
         <ul class="mt-1.5 ms-4 list-disc list-inside">

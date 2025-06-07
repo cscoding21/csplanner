@@ -55,7 +55,7 @@
         Move this project to "draft" to begin fleshing out details, costs, and benefit.
     </div>
 
-    <Button class="mt-4" onclick={setStatusToDraft}>Move to draft</Button>
+    <Button class="mt-4 w-64" color="green" onclick={setStatusToDraft}>Move to draft >></Button>
 
     <div class="p-8 mt-2">
         <div class="mb-4 text-sm">Is this a duplicate?  If so, you can delete it now.</div>

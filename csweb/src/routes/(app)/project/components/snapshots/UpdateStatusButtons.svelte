@@ -76,15 +76,15 @@
             case("draft"):
                 def.currentTitle = "Draft";
                 def.currentDesc = "When in the draft state, all elements of the project can be edited"
-                def.buttonDisplay = "Move to Draft"
+                def.buttonDisplay = "Revert to Draft"
                 def.transitionWarning = "Moving a project to draft will clear its approval status"
-                def.buttonColor = "primary"
+                def.buttonColor = "blue"
                 break;
             case("proposed"):
                 def.currentTitle = "Proposed";
                 def.currentDesc = "The project has been fully characterized and is under consideration for implementation"
                 def.buttonDisplay = "Propose this project"
-                def.buttonColor = "primary"
+                def.buttonColor = "green"
                 break;
             case("approved"):
                 def.currentTitle = "Approved";
@@ -102,7 +102,7 @@
                 def.currentTitle = "Backlogged";
                 def.currentDesc = "The project has been approved, but is not ready for scheduling likely due to resource constraints"
                 def.buttonDisplay = "Move to backlog"
-                def.buttonColor = "yellow"
+                def.buttonColor = "alternative"
                 break;
             case("scheduled"):
                 def.currentTitle = "Scheduled";
@@ -122,7 +122,7 @@
                 def.currentTitle = "Deferred";
                 def.currentDesc = "A project that is deferred is taken off the schedule but can be re-scheduled without future approval"
                 def.buttonDisplay = "Defer this project"
-                def.buttonColor = "yellow"
+                def.buttonColor = "alternative"
                 break;
             case("abandoned"):
                 def.currentTitle = "Abandoned";

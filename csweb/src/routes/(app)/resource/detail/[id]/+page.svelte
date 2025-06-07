@@ -170,7 +170,7 @@
 				<CSSection>
 				<SectionSubHeading>Project Allocation: {formatDate(startDate)} - {formatDate(endDate)}</SectionSubHeading>
 
-				{#if portfolio && portfolio.schedule}
+				{#if portfolio && portfolio.schedule && portfolio.schedule.length > 0}
 				<div class="mb-2">
 					<PortfolioTable {portfolio} {startDate} {endDate}></PortfolioTable>
 				</div>
@@ -185,18 +185,20 @@
 					</div>
 
 
+					{#if resourcePromise.data.type == "human"}
 					<div class="p-4">
 						<SectionSubHeading>Skills Distribution</SectionSubHeading>
 						{#if Object.keys(skillPieData).length > 0}
 							<PieChart height={200} labels={Object.keys(skillPieData)} values={Object.values(skillPieData)} />
 						{/if}
 					</div>
+					{/if}
 
 				</div>
 				{:else}
 
 				<div class="p-16 text-center text-lg">
-					{resourcePromise.data?.name} has not been allocated to any project
+					{resourcePromise.data?.name} has not been allocated to any projects
 				</div>
 
 				{/if}

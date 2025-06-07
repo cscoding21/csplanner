@@ -1,11 +1,9 @@
 <script lang="ts">
-	import type { Project, Resource, Schedule, User } from "$lib/graphql/generated/sdk";
+	import type { Project, Resource, Schedule } from "$lib/graphql/generated/sdk";
 	import { CalendarWeekOutline, ClockSolid, DollarOutline } from "flowbite-svelte-icons";
-	import { Button } from "flowbite-svelte";
-	import { calculateProjectSchedule, canEnterStatus, setProjectStatus } from "$lib/services/project";
+	import { calculateProjectSchedule } from "$lib/services/project";
 	import { addToast } from "$lib/stores/toasts";
-	import { reloadPage } from "$lib/utils/helpers";
-	import { DataCard, SectionSubHeading, UserCard, ResourceCard } from "$lib/components";
+	import { DataCard, SectionSubHeading, ResourceCard } from "$lib/components";
 	import { formatCurrency, pluralize } from "$lib/utils/format";
 	import FinancialSummary from "./FinancialSummary.svelte";
 	import BasicsSummary from "./BasicsSummary.svelte";
@@ -18,27 +16,6 @@
     let { project }:Props = $props()
 
 	let schedule:Schedule = $state({} as Schedule)
-
-    const setStatus = async (s:string) => {
-		setProjectStatus(project.id as string, s).then((res) => {
-			if (res.status?.success) {
-				addToast({
-					message: 'Project set to ' + s,
-					dismissible: true,
-					type: 'success'
-				});
-
-                reloadPage()
-			} else {
-				addToast({
-					message: 'Error setting project status to ' + s + ': ' + res.status?.message,
-					dismissible: true,
-					type: 'error'
-				});
-			}
-		});
-	};
-
 
 	const load = async ():Promise<Schedule> => {
 		return calculateProjectSchedule(project.id as string, new Date())
@@ -122,23 +99,7 @@
         </div>
 
 		<div class="text-center mt-8">
-			<UpdateStatusButtons {project} displayStates={["dragt", "rejected", "approved"]} />
-
-			<!-- {#if canEnterStatus(project, "draft")}
-				<Button onclick={() => setStatus("draft")} color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>
-			{:else}
-				<Button disabled color="yellow" class="px-8 m-2 w-64">Revert to Draft</Button>
-			{/if}
-			{#if canEnterStatus(project, "rejected")}
-				<Button onclick={() => setStatus("rejected")} color="red" class="px-8 m-2 w-64">Reject</Button>
-			{:else}
-				<Button disabled color="yellow" class="px-8 m-2 w-64">Reject</Button>
-			{/if}
-			{#if canEnterStatus(project, "approved")}
-				<Button onclick={() => setStatus("approved")} color="green" class="px-8 m-2 w-64">Approve</Button>
-			{:else}
-				<Button disabled color="yellow" class="px-8 m-2 w-64">Approve</Button>
-			{/if} -->
+			<UpdateStatusButtons {project} displayStates={["draft", "rejected", "approved"]} />
 		</div>
     </div>
 </div>

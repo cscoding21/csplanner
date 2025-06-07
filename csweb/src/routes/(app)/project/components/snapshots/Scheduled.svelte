@@ -46,7 +46,7 @@
             <ScheduleSummary schedule={projectSchedule} />
             {/if} 
         {/await}
-        <Alert color="blue" border class="my-4">
+        <Alert border class="my-4">
             {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
             This project will automatically convert to "in-flight" on its start date of <b>{formatDate(projectSchedule?.begin)}</b>
         </Alert>
