@@ -224,7 +224,7 @@ func GetScheduleItems(p *project.Project) []ScheduleBatch {
 				//---no need to schedule
 				//continue
 
-				hoursToSchedule = 0
+				//hoursToSchedule = 0
 			}
 
 			workspace := ScheduleWorkspace{

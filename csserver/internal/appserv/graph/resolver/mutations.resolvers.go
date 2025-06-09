@@ -14,6 +14,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/services/comment"
 	"csserver/internal/services/project"
+	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/resource"
 	"csserver/internal/utils"
@@ -205,6 +206,42 @@ func (r *mutationResolver) DeleteProjectTask(ctx context.Context, projectID stri
 
 	out := idl.CreateProjectResult{
 		Status:  status,
+		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
+	}
+
+	return &out, nil
+}
+
+// UpdateProjectTaskStatus is the resolver for the updateProjectTaskStatus field.
+func (r *mutationResolver) UpdateProjectTaskStatus(ctx context.Context, projectID string, milestoneID string, taskID string, status string) (*idl.CreateProjectResult, error) {
+	defer csmap.ExpireProjectCache()
+
+	service := factory.GetProjectService(ctx)
+	rs := factory.GetResourceService(ctx)
+	org, _ := factory.GetDefaultOrganization(ctx)
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := service.UpdateProjectTaskStatus(ctx, projectID, milestoneID, taskID, milestonestatus.MilestoneStatus(status), resourceMap, roleMap, *org)
+	if err != nil {
+		return nil, err
+	}
+
+	updateStatus, err := csmap.GetStatusFromUpdateResult(result)
+	if err != nil {
+		return nil, err
+	}
+
+	out := idl.CreateProjectResult{
+		Status:  updateStatus,
 		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
 

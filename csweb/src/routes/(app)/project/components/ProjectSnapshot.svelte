@@ -25,6 +25,8 @@
     const load = async (): Promise<ProjectEnvelope> => {
 		return await getProject(id)
 			.then((proj) => {
+                project = proj
+
 				return proj;
 			})
 			.catch((err) => {
@@ -33,9 +35,7 @@
 	};
 
     const loadPage = async () => {
-        load().then(p => {
-            project = p
-        });
+        load();
 	};
 
 </script>
@@ -78,7 +78,7 @@
 </ShowIfStatus>
 
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["inflight"]}>
-    <InFlight project={project.data} />
+    <InFlight project={project.data} update={() => load()} />
 </ShowIfStatus>
 
 

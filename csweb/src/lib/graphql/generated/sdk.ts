@@ -233,6 +233,7 @@ export type Mutation = {
   updateProjectComment: CreateProjectCommentResult;
   updateProjectFeature: CreateProjectResult;
   updateProjectTask: CreateProjectResult;
+  updateProjectTaskStatus: CreateProjectResult;
   updateProjectTemplate: CreateProjectTemplateResult;
   updateProjectValueLine: CreateProjectResult;
   updateResource: CreateResourceResult;
@@ -365,6 +366,14 @@ export type MutationUpdateProjectFeatureArgs = {
 
 export type MutationUpdateProjectTaskArgs = {
   input: UpdateProjectMilestoneTask;
+};
+
+
+export type MutationUpdateProjectTaskStatusArgs = {
+  milestoneID: Scalars['String']['input'];
+  projectID: Scalars['String']['input'];
+  status: Scalars['String']['input'];
+  taskID: Scalars['String']['input'];
 };
 
 
@@ -1914,6 +1923,24 @@ export const UpdateProjectTaskDocument = gql`
 }
     ${StatusFragmentFragmentDoc}
 ${ProjectFragmentFragmentDoc}`;
+export const UpdateProjectTaskStatusDocument = gql`
+    mutation updateProjectTaskStatus($projectID: String!, $milestoneID: String!, $taskID: String!, $status: String!) {
+  updateProjectTaskStatus(
+    projectID: $projectID
+    milestoneID: $milestoneID
+    taskID: $taskID
+    status: $status
+  ) {
+    status {
+      ...statusFragment
+    }
+    project {
+      ...projectFragment
+    }
+  }
+}
+    ${StatusFragmentFragmentDoc}
+${ProjectFragmentFragmentDoc}`;
 export const DeleteProjectTaskDocument = gql`
     mutation deleteProjectTask($projectID: String!, $milestoneID: String!, $taskID: String!) {
   deleteProjectTask(
@@ -2293,6 +2320,9 @@ export function getSdk<C>(requester: Requester<C>) {
     },
     updateProjectTask(variables: UpdateProjectTaskMutationVariables, options?: C): Promise<UpdateProjectTaskMutation> {
       return requester<UpdateProjectTaskMutation, UpdateProjectTaskMutationVariables>(UpdateProjectTaskDocument, variables, options) as Promise<UpdateProjectTaskMutation>;
+    },
+    updateProjectTaskStatus(variables: UpdateProjectTaskStatusMutationVariables, options?: C): Promise<UpdateProjectTaskStatusMutation> {
+      return requester<UpdateProjectTaskStatusMutation, UpdateProjectTaskStatusMutationVariables>(UpdateProjectTaskStatusDocument, variables, options) as Promise<UpdateProjectTaskStatusMutation>;
     },
     deleteProjectTask(variables: DeleteProjectTaskMutationVariables, options?: C): Promise<DeleteProjectTaskMutation> {
       return requester<DeleteProjectTaskMutation, DeleteProjectTaskMutationVariables>(DeleteProjectTaskDocument, variables, options) as Promise<DeleteProjectTaskMutation>;

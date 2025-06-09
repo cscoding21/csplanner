@@ -225,6 +225,7 @@ type ComplexityRoot struct {
 		UpdateProjectComment             func(childComplexity int, input idl.UpdateComment) int
 		UpdateProjectFeature             func(childComplexity int, input idl.UpdateProjectFeature) int
 		UpdateProjectTask                func(childComplexity int, input idl.UpdateProjectMilestoneTask) int
+		UpdateProjectTaskStatus          func(childComplexity int, projectID string, milestoneID string, taskID string, status string) int
 		UpdateProjectTemplate            func(childComplexity int, input *idl.UpdateProjecttemplate) int
 		UpdateProjectValueLine           func(childComplexity int, input idl.UpdateProjectValueLine) int
 		UpdateResource                   func(childComplexity int, input idl.UpdateResource) int
@@ -692,6 +693,7 @@ type MutationResolver interface {
 	DeleteProject(ctx context.Context, id string) (*idl.Status, error)
 	UpdateProjectTask(ctx context.Context, input idl.UpdateProjectMilestoneTask) (*idl.CreateProjectResult, error)
 	DeleteProjectTask(ctx context.Context, projectID string, milestoneID string, taskID string) (*idl.CreateProjectResult, error)
+	UpdateProjectTaskStatus(ctx context.Context, projectID string, milestoneID string, taskID string, status string) (*idl.CreateProjectResult, error)
 	UpdateProjectFeature(ctx context.Context, input idl.UpdateProjectFeature) (*idl.CreateProjectResult, error)
 	DeleteProjectFeature(ctx context.Context, projectID string, featureID string) (*idl.CreateProjectResult, error)
 	UpdateProjectValueLine(ctx context.Context, input idl.UpdateProjectValueLine) (*idl.CreateProjectResult, error)
@@ -1648,6 +1650,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateProjectTask(childComplexity, args["input"].(idl.UpdateProjectMilestoneTask)), true
+
+	case "Mutation.updateProjectTaskStatus":
+		if e.complexity.Mutation.UpdateProjectTaskStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProjectTaskStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProjectTaskStatus(childComplexity, args["projectID"].(string), args["milestoneID"].(string), args["taskID"].(string), args["status"].(string)), true
 
 	case "Mutation.updateProjectTemplate":
 		if e.complexity.Mutation.UpdateProjectTemplate == nil {
@@ -4769,12 +4783,17 @@ input UpdateUser {
     createProject(input: UpdateNewProject!): CreateProjectResult!
     updateProject(input: UpdateProject!): CreateProjectResult!
     deleteProject(id: String!): Status!
+
     updateProjectTask(input: UpdateProjectMilestoneTask!): CreateProjectResult!
     deleteProjectTask(projectID: String!, milestoneID: String!, taskID: String!): CreateProjectResult!
+    updateProjectTaskStatus(projectID: String!, milestoneID: String!, taskID: String!, status: String!) : CreateProjectResult!
+
     updateProjectFeature(input: UpdateProjectFeature!): CreateProjectResult!
     deleteProjectFeature(projectID: String!, featureID: String!): CreateProjectResult!
+
     updateProjectValueLine(input: UpdateProjectValueLine!): CreateProjectResult!
     deleteProjectValueLine(projectID: String!, valueLineID: String!): CreateProjectResult!
+
     setProjectStatus(projectID: String!, newStatus: String!): CreateProjectResult!
     runProcesses: Status!
 
@@ -5605,6 +5624,103 @@ func (ec *executionContext) field_Mutation_updateProjectFeature_argsInput(
 	}
 
 	var zeroVal idl.UpdateProjectFeature
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectTaskStatus_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateProjectTaskStatus_argsProjectID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["projectID"] = arg0
+	arg1, err := ec.field_Mutation_updateProjectTaskStatus_argsMilestoneID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["milestoneID"] = arg1
+	arg2, err := ec.field_Mutation_updateProjectTaskStatus_argsTaskID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["taskID"] = arg2
+	arg3, err := ec.field_Mutation_updateProjectTaskStatus_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateProjectTaskStatus_argsProjectID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["projectID"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("projectID"))
+	if tmp, ok := rawArgs["projectID"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectTaskStatus_argsMilestoneID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["milestoneID"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("milestoneID"))
+	if tmp, ok := rawArgs["milestoneID"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectTaskStatus_argsTaskID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["taskID"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("taskID"))
+	if tmp, ok := rawArgs["taskID"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectTaskStatus_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["status"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
 	return zeroVal, nil
 }
 
@@ -10820,6 +10936,67 @@ func (ec *executionContext) fieldContext_Mutation_deleteProjectTask(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteProjectTask_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateProjectTaskStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateProjectTaskStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateProjectTaskStatus(rctx, fc.Args["projectID"].(string), fc.Args["milestoneID"].(string), fc.Args["taskID"].(string), fc.Args["status"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*idl.CreateProjectResult)
+	fc.Result = res
+	return ec.marshalNCreateProjectResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐCreateProjectResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateProjectTaskStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_CreateProjectResult_status(ctx, field)
+			case "project":
+				return ec.fieldContext_CreateProjectResult_project(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateProjectResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateProjectTaskStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -30558,6 +30735,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteProjectTask":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProjectTask(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateProjectTaskStatus":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateProjectTaskStatus(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

@@ -316,7 +316,7 @@ func CalculateStatsForTask(task *ProjectMilestoneTask, orgSettings organization.
 	task.Calculated.ActualizedHoursToComplete = commsAdjustedHours + skillsAdjustedHours + baseHoursEstimate
 	task.Calculated.ActualizedCost = float64(task.Calculated.ActualizedHoursToComplete * hourlyChargeRate)
 
-	task.Calculated.Exceptions = append(task.Calculated.Exceptions, exceptions...)
+	task.Calculated.Exceptions = exceptions
 }
 
 func getAverageResourceChargePerHour(org organization.Organization, resources []resource.Resource, roleMap map[string]resource.Role) float64 {
@@ -362,7 +362,8 @@ func getResource(rm map[string]resource.Resource, id string) *resource.Resource 
 
 func getSkill(id string, res resource.Resource) *resource.Skill {
 	for _, s := range res.Skills {
-		if strings.EqualFold(s.ID, id) {
+		log.Warnf("skills match %s - %s | %v", s.SkillID, id, strings.EqualFold(s.SkillID, id))
+		if strings.EqualFold(s.SkillID, id) {
 			return s
 		}
 	}

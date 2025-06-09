@@ -35,7 +35,8 @@ import {
 	CheckProjectStatusDocument,
 	SetProjectStatusDocument,
 	UpdateProjectValueLineDocument,
-	DeleteProjectValueLineDocument
+	DeleteProjectValueLineDocument,
+	UpdateProjectTaskStatusDocument
 } from '$lib/graphql/generated/sdk';
 import { coalesceToType } from '$lib/forms/helpers';
 import { safeArray } from '$lib/utils/helpers';
@@ -396,6 +397,32 @@ export const updateProjectTask = async (
 		.then((pro) => {
 			if (pro) {
 				return pro.data.updateProjectTask;
+			}
+		})
+		.catch((err) => {
+			return err;
+		});
+};
+
+
+/**
+ * update the status of a project task
+ * @param projectID the project ID
+ * @param milestoneID the milestone ID
+ * @param taskID the task ID
+ * @param status the new status
+ * @returns an updated Project object
+ */
+export const updateProjectTaskStatus = async (
+	projectID: string, milestoneID: string, taskID: string, status: string
+): Promise<CreateProjectResult> => {
+	const client = getApolloClient();
+
+	return client
+		.mutate({ mutation: UpdateProjectTaskStatusDocument, variables: { projectID, milestoneID, taskID, status } })
+		.then((pro) => {
+			if (pro) {
+				return pro.data.updateProjectTaskStatus;
 			}
 		})
 		.catch((err) => {

@@ -7,8 +7,9 @@
 
     interface Props {
         project: Project
+        abridged?:boolean
     }
-    let { project }:Props = $props()
+    let { project, abridged }:Props = $props()
 </script>
 
 
@@ -40,9 +41,11 @@
     </div>
 </div>
 
+{#if !abridged}
 <div class="flex mb-8">			
     <div class="flex-1 px-2">
         <SectionSubHeading>Five Year Outlook</SectionSubHeading>
         <ProjectValueChart project={project}></ProjectValueChart>
     </div>
 </div>
+{/if}

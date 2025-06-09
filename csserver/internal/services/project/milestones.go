@@ -78,6 +78,39 @@ func (s *ProjectService) UpdateProjectTask(
 	return s.UpdateProject(ctx, updatedProject)
 }
 
+// UpdateProjectTaskStatus update the status of a given project task
+func (s *ProjectService) UpdateProjectTaskStatus(
+	ctx context.Context,
+	projectID string,
+	milestoneID string,
+	taskID string,
+	status milestonestatus.MilestoneStatus,
+	resourceMap map[string]resource.Resource,
+	roleMap map[string]resource.Role,
+	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
+
+	project, err := s.GetProjectByID(ctx, projectID)
+	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
+	}
+
+	//---DO THE UPDATE
+	for i, m := range project.Data.ProjectMilestones {
+		if *m.ID == milestoneID {
+			for j, t := range m.Tasks {
+				if *t.ID == taskID {
+					project.Data.ProjectMilestones[i].Tasks[j].Status = status
+					break
+				}
+			}
+		}
+	}
+
+	project.Data.PerformAllCalcs(org, resourceMap, roleMap)
+
+	return s.UpdateProject(ctx, project.Data)
+}
+
 // updateTaskFromProjectGraph if the milestone exists in the project object graph...update the specified task.  Otherwise, add the task
 func UpdateTaskFromProjectGraph(project Project, milestoneID string, task ProjectMilestoneTask) Project {
 	//---DO THE UPDATE

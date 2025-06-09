@@ -4,12 +4,17 @@ type Mutation {
     createProject(input: UpdateNewProject!): CreateProjectResult!
     updateProject(input: UpdateProject!): CreateProjectResult!
     deleteProject(id: String!): Status!
+
     updateProjectTask(input: UpdateProjectMilestoneTask!): CreateProjectResult!
     deleteProjectTask(projectID: String!, milestoneID: String!, taskID: String!): CreateProjectResult!
+    updateProjectTaskStatus(projectID: String!, milestoneID: String!, taskID: String!, status: String!) : CreateProjectResult!
+
     updateProjectFeature(input: UpdateProjectFeature!): CreateProjectResult!
     deleteProjectFeature(projectID: String!, featureID: String!): CreateProjectResult!
+
     updateProjectValueLine(input: UpdateProjectValueLine!): CreateProjectResult!
     deleteProjectValueLine(projectID: String!, valueLineID: String!): CreateProjectResult!
+
     setProjectStatus(projectID: String!, newStatus: String!): CreateProjectResult!
     runProcesses: Status!
 

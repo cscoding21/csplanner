@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DataCard, SectionSubHeading } from "$lib/components";
+	import { DataCard } from "$lib/components";
 	import { formatDate, pluralize } from "$lib/utils/format";
 	import { CalendarWeekOutline } from "flowbite-svelte-icons";
 	import type { Schedule } from "$lib/graphql/generated/sdk";
@@ -10,7 +10,7 @@
     let { schedule }:Props = $props()
 </script>
 
-
+{#if schedule}
 <div class="flex mb-8">
     <div class="flex-1 px-r mr-2">
         <DataCard dataPoint={formatDate(schedule.begin)} indicatorClass="text-green-500 dark:text-green-500">
@@ -45,3 +45,4 @@
         </DataCard>
     </div>
 </div>
+{/if}

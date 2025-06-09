@@ -230,6 +230,17 @@ mutation updateProjectTask($input: UpdateProjectMilestoneTask!) {
 	}
 }
 
+mutation updateProjectTaskStatus($projectID: String!, $milestoneID: String!, $taskID: String!, $status: String!) {
+	updateProjectTaskStatus(projectID: $projectID, milestoneID: $milestoneID, taskID: $taskID, status: $status) {
+		status {
+			...statusFragment
+		}
+		project {
+			...projectFragment
+		}
+	}
+}
+
 mutation deleteProjectTask($projectID: String!, $milestoneID: String!, $taskID: String!) {
 	deleteProjectTask(projectID: $projectID, milestoneID: $milestoneID, taskID: $taskID) {
 		status {
