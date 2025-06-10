@@ -8,7 +8,7 @@
     interface Props {
 		project: Project;
 		update?: Function;
-        displayStates: string[]
+        displayStates?: string[]|undefined
 	}
 	let { project, update, displayStates }: Props = $props();
 
@@ -144,31 +144,27 @@
 
 {#if project}
 
-{#if project.projectStatusBlock.allowedNextStates}
-{#each displayStates as state, index}
-    {@const next = getNextState(project, state)}
+{#if displayStates && displayStates.length > 0}
+    {#each displayStates as state, index}
+        {@const next = getNextState(project, state)}
+            {#if next && next.canEnter}
+                {@const statusContent = getStatusContent(next.nextState)}
+                <Button pill color={statusContent.buttonColor} class="w-64 m-2" onclick={() => setStatus(next.nextState)}>{statusContent.buttonDisplay}</Button>
+            {:else}
+            {JSON.stringify(next)}
+                {@const statusContent = getStatusContent(next && next.nextState || "")}
+                <Button pill disabled color="alternative" size="xs" class="w-64 m-2">{statusContent.buttonDisplay}</Button>
+            {/if}
+    {/each}
+{:else if project.projectStatusBlock.allowedNextStates}
+    {#each project.projectStatusBlock.allowedNextStates as next, index}
         {#if next && next.canEnter}
             {@const statusContent = getStatusContent(next.nextState)}
             <Button pill color={statusContent.buttonColor} class="w-64 m-2" onclick={() => setStatus(next.nextState)}>{statusContent.buttonDisplay}</Button>
         {:else}
             {@const statusContent = getStatusContent(next && next.nextState || "")}
-            <!-- <h3 class="font-semibold text-red-400">Cannot move to '{statusContent.currentTitle}'</h3>
-            <div class="text-sm">
-                {statusContent.currentDesc}
-            </div>
-            {#if next.checkResult && next.checkResult.messages}
-            <ul class="mt-4">
-            {#each next.checkResult.messages as msg}
-                <li class="text-sm text-red-300">
-                    <InfoCircleOutline size="sm" class="float-left mr-2" />
-                    {msg?.message}
-                    <br class="clear-both" />
-                </li>
-            {/each}
-            </ul>
-            {/if} -->
             <Button pill disabled color="alternative" size="xs" class="w-64 m-2">{statusContent.buttonDisplay}</Button>
         {/if}
-{/each}
+    {/each}
 {/if}
 {/if}

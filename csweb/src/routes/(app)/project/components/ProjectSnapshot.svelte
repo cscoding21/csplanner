@@ -82,12 +82,10 @@
 </ShowIfStatus>
 
 
+
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["deferred", "abandoned", "rejected", "backlogged", "complete"]}>
     <Shelved project={project.data} />
 </ShowIfStatus>
-
-
-
 
 <ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["exception"]}>
     <Exception project={project.data} />

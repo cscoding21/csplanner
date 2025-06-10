@@ -66,6 +66,11 @@ export type CsWeek = {
   year: Scalars['Int']['output'];
 };
 
+export type CalculatedScheduleInfo = {
+  __typename?: 'CalculatedScheduleInfo';
+  isComplete: Scalars['Boolean']['output'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   acknowledges?: Maybe<Array<Scalars['String']['output']>>;
@@ -553,11 +558,18 @@ export type ProjectBasics = {
 
 export type ProjectCalculatedData = {
   __typename?: 'ProjectCalculatedData';
+  completedCost?: Maybe<Scalars['Float']['output']>;
+  completedHours?: Maybe<Scalars['Int']['output']>;
+  completedTasks?: Maybe<Scalars['Int']['output']>;
   featureStatusAcceptedCount?: Maybe<Scalars['Int']['output']>;
   featureStatusDoneCount?: Maybe<Scalars['Int']['output']>;
   featureStatusProposedCount?: Maybe<Scalars['Int']['output']>;
   featureStatusRemovedCount?: Maybe<Scalars['Int']['output']>;
   healthyTasks?: Maybe<Scalars['Int']['output']>;
+  projectPercentComplete?: Maybe<Scalars['Float']['output']>;
+  remainingCost?: Maybe<Scalars['Float']['output']>;
+  remainingHours?: Maybe<Scalars['Int']['output']>;
+  remainingTasks?: Maybe<Scalars['Int']['output']>;
   teamMembers?: Maybe<Array<Maybe<Resource>>>;
   totalTasks?: Maybe<Scalars['Int']['output']>;
   unhealthyTasks?: Maybe<Scalars['Int']['output']>;
@@ -621,6 +633,7 @@ export type ProjectMilestoneCalculatedData = {
   hoursRemaining?: Maybe<Scalars['Int']['output']>;
   isComplete?: Maybe<Scalars['Boolean']['output']>;
   isInFlight?: Maybe<Scalars['Boolean']['output']>;
+  percentDone?: Maybe<Scalars['Float']['output']>;
   removedHours?: Maybe<Scalars['Int']['output']>;
   totalHours?: Maybe<Scalars['Int']['output']>;
   totalTasks?: Maybe<Scalars['Int']['output']>;
@@ -681,6 +694,7 @@ export type ProjectTaskCalculatedData = {
   averageHourlyRate?: Maybe<Scalars['Float']['output']>;
   commsHourAdjustment?: Maybe<Scalars['Int']['output']>;
   exceptions?: Maybe<Array<Scalars['String']['output']>>;
+  portfolioEstimatedCompleteDate?: Maybe<Scalars['Time']['output']>;
   resourceContention?: Maybe<Scalars['Float']['output']>;
   skillsHourAdjustment?: Maybe<Scalars['Int']['output']>;
 };
@@ -919,6 +933,7 @@ export type RoleResults = {
 export type Schedule = {
   __typename?: 'Schedule';
   begin?: Maybe<Scalars['Time']['output']>;
+  calculated?: Maybe<CalculatedScheduleInfo>;
   end?: Maybe<Scalars['Time']['output']>;
   exceptions?: Maybe<Array<ScheduleException>>;
   project: Project;
@@ -1487,6 +1502,7 @@ export const ProjectFragmentFragmentDoc = gql`
       isComplete
       isInFlight
       unhealthyTasks
+      percentDone
     }
     phase {
       name
@@ -1517,6 +1533,7 @@ export const ProjectFragmentFragmentDoc = gql`
         skillsHourAdjustment
         averageHourlyRate
         exceptions
+        portfolioEstimatedCompleteDate
       }
     }
   }
@@ -1531,6 +1548,13 @@ export const ProjectFragmentFragmentDoc = gql`
     unhealthyTasks
     healthyTasks
     totalTasks
+    completedTasks
+    remainingTasks
+    completedCost
+    remainingCost
+    completedHours
+    remainingHours
+    projectPercentComplete
   }
 }
     ${UserFragmentFragmentDoc}
@@ -1566,6 +1590,9 @@ export const ScheduleFragmentFragmentDoc = gql`
         ...resourceFragment
       }
     }
+  }
+  calculated {
+    isComplete
   }
 }
     ${ProjectFragmentFragmentDoc}

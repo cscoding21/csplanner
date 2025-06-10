@@ -82,6 +82,8 @@ type ScheduleException struct {
 
 type CalculatedScheduleInfo struct {
 	IsComplete bool
+
+	PortfolioPlannedCompleteDate *time.Time
 }
 
 type ResourceProjectHourAllocation struct {

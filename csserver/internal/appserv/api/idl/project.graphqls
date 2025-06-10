@@ -25,6 +25,14 @@ type ProjectCalculatedData {
   unhealthyTasks: Int
   healthyTasks: Int
   totalTasks: Int
+
+  completedTasks: Int
+	remainingTasks: Int
+	completedCost: Float
+	remainingCost: Float
+	completedHours: Int
+	remainingHours: Int
+	projectPercentComplete: Float
 }
 
 
@@ -173,6 +181,7 @@ type ProjectMilestoneCalculatedData {
 	removedHours: Int
 
   unhealthyTasks: Int
+  percentDone: Float
 }
 
 type ProjectTaskCalculatedData {
@@ -182,6 +191,8 @@ type ProjectTaskCalculatedData {
   averageHourlyRate: Float
   skillsHourAdjustment: Int
   commsHourAdjustment: Int
+
+  portfolioEstimatedCompleteDate: Time
 
   exceptions: [String!]
 }

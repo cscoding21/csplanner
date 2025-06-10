@@ -4,6 +4,7 @@ import (
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/services/schedule"
+	"fmt"
 	"time"
 )
 
@@ -105,4 +106,41 @@ func (p *Portfolio) GetDateRange() (*time.Time, *time.Time) {
 	}
 
 	return &start, &end
+}
+
+func (p *Portfolio) SetCalculatedData() error {
+	taskMap := make(map[string]time.Time)
+
+	for _, s := range p.Schedule {
+		for _, paw := range s.ProjectActivityWeeks {
+			for _, a := range paw.Activities {
+				taskDate, ok := taskMap[a.TaskID]
+				if ok {
+					if a.TaskEndDate != nil && taskDate.After(*a.TaskEndDate) {
+						taskMap[a.TaskID] = *a.TaskEndDate
+					} else {
+						taskMap[a.TaskID] = paw.End
+					}
+				} else {
+					taskMap[a.TaskID] = paw.End
+				}
+			}
+
+		}
+	}
+
+	for i, s := range p.Schedule {
+		for j, paw := range s.ProjectActivityWeeks {
+			for k, a := range paw.Activities {
+				taskDate, ok := taskMap[a.TaskID]
+				if ok {
+					p.Schedule[i].ProjectActivityWeeks[j].Activities[k].TaskEndDate = &taskDate
+				} else {
+					return fmt.Errorf("error setting task end date for task %s", a.TaskID)
+				}
+			}
+		}
+	}
+
+	return nil
 }

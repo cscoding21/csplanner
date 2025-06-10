@@ -149,6 +149,11 @@ func (ps *PortfolioService) BalancePortfolio(ctx context.Context, port *Portfoli
 		}
 	}
 
+	err := port.SetCalculatedData()
+	if err != nil {
+		return err
+	}
+
 	port.Validator = &comparer
 
 	return nil

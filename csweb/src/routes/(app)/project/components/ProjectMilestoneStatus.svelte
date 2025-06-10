@@ -1,9 +1,8 @@
 <script lang="ts">
 	import type { ProjectMilestone } from "$lib/graphql/generated/sdk";
+	import { safeInt } from "$lib/utils/helpers";
 	import { normalizeGUID } from "$lib/utils/id";
     import { Progressbar, Popover } from "flowbite-svelte";
-    import { safeInt } from "$lib/utils/helpers";
-
 
     interface Props {
         milestone: ProjectMilestone
@@ -12,7 +11,7 @@
         milestone = $bindable() 
     }:Props = $props()
 
-    let percentDone = $derived(safeInt(milestone.calculated?.totalHours) == 0 ? 0 : Math.round((safeInt(milestone.calculated?.totalHours) - safeInt(milestone.calculated?.hoursRemaining)) / safeInt(milestone.calculated?.totalHours)*100.0))
+    let percentDone = $derived(Math.round(milestone.calculated?.percentDone as number * 100.0))
 
     const getID = (prefix:string):string => {
         return prefix + normalizeGUID(milestone.id)
@@ -28,7 +27,7 @@
 {#if milestone.calculated?.isComplete}
 <Progressbar progress={percentDone} id={getID("mil_")} size="h-4" color="green" labelOutside="Complete" />
 {:else if milestone.calculated?.isInFlight}
-<Progressbar progress={percentDone} id={getID("mil_")} size="h-4" labelOutside={"Remaining Hours: " + milestone.calculated?.removedHours} />
+<Progressbar progress={percentDone} id={getID("mil_")} size="h-4" labelOutside={"Remaining Hours: " + milestone.calculated?.hoursRemaining} />
 {:else}
 <Progressbar progress={percentDone} id={getID("mil_")} size="h-4" color="yellow" labelOutside="Not Started" />
 {/if}

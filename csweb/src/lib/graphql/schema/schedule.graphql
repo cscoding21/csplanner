@@ -29,6 +29,9 @@ fragment scheduleFragment on Schedule {
         }
       }
     }
+    calculated {
+      isComplete
+    }
 }
 
 fragment scheduleResultFragment on ProjectScheduleResult {

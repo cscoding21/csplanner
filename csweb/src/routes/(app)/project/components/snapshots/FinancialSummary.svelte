@@ -10,12 +10,18 @@
         abridged?:boolean
     }
     let { project, abridged }:Props = $props()
+
+    // @ts-expect-error
+    let npvHealth = $derived(project.projectValue.calculated?.netPresentValue > 0.0 ? "good" : "bad") as "good"|"normal"|"bad"|undefined
+
+    // @ts-expect-error
+    let irrHealth = $derived(project.projectValue.calculated?.internalRateOfReturn > 0.0 ? "good" : "bad") as "good"|"normal"|"bad"|undefined
 </script>
 
 
 <div class="flex mb-8">
     <div class="flex-1 px-r mr-2">
-        <DataCard dataPoint={formatCurrency.format(project.projectValue.calculated?.netPresentValue as number)} indicatorClass="text-green-500 dark:text-green-500">
+        <DataCard dataPoint={formatCurrency.format(project.projectValue.calculated?.netPresentValue as number)} indicatorClass="" health={npvHealth}>
             {#snippet description()}
                 Net Present Value
             {/snippet}
@@ -26,7 +32,7 @@
     </div>
 
     <div class="flex-1 px-r">
-        <DataCard dataPoint={formatPercent.format(project.projectValue.calculated?.internalRateOfReturn as number)} indicatorClass="text-green-500 dark:text-green-500">
+        <DataCard dataPoint={formatPercent.format(project.projectValue.calculated?.internalRateOfReturn as number)} indicatorClass="" health={irrHealth}>
             {#snippet description()}
                 Internal Rate of Return
             {/snippet}

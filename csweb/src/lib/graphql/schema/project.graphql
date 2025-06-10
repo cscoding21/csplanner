@@ -91,6 +91,7 @@ fragment projectFragment on Project {
 			isInFlight
 
 			unhealthyTasks
+			percentDone
 		}
 
 		phase {
@@ -123,6 +124,7 @@ fragment projectFragment on Project {
 				skillsHourAdjustment
 				averageHourlyRate
 				exceptions
+				portfolioEstimatedCompleteDate
 			}
 		}
 	}
@@ -138,6 +140,14 @@ fragment projectFragment on Project {
 		unhealthyTasks
 		healthyTasks
 		totalTasks
+
+		completedTasks
+		remainingTasks
+		completedCost
+		remainingCost
+		completedHours
+		remainingHours
+		projectPercentComplete
 	}
 }
 

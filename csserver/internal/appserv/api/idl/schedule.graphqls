@@ -7,6 +7,7 @@ type Schedule {
     end: Time
     projectActivityWeeks: [ProjectActivityWeek!]
     exceptions: [ScheduleException!]
+    calculated: CalculatedScheduleInfo
 }
 
 type ProjectActivityWeek {
@@ -46,4 +47,8 @@ type ProjectScheduleResult {
 
 type ResourceAllocationGrid {
   weekActivities: [ProjectActivity]
+}
+
+type CalculatedScheduleInfo {
+    isComplete: Boolean!
 }

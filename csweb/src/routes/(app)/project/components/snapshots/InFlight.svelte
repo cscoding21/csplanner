@@ -2,7 +2,7 @@
 	import { SectionSubHeading } from "$lib/components";
 	import type { Project, ProjectMilestoneTask, Resource, Schedule, UpdateProjectTemplateTask } from "$lib/graphql/generated/sdk";
 	import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
-	import { Accordion, AccordionItem, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
+	import { Accordion, AccordionItem, Progressbar, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
 	import BasicsSummary from "./BasicsSummary.svelte";
 	import ScheduleSummary from "./ScheduleSummary.svelte";
 	import UpdateStatusButtons from "./UpdateStatusButtons.svelte";
@@ -11,7 +11,8 @@
 	import ResourceList from "$lib/components/widgets/ResourceList.svelte";
 	import { updateProjectTaskStatus } from "$lib/services/project";
 	import { addToast } from "$lib/stores/toasts";
-	import { callIf } from "$lib/utils/helpers";
+	import { callIf, safeInt } from "$lib/utils/helpers";
+	import { getID } from "$lib/utils/id";
 
     interface Props {
         project:Project
@@ -75,16 +76,24 @@
          
 
 
-        <SectionSubHeading>Tasks</SectionSubHeading>
+        <SectionSubHeading>Milestones</SectionSubHeading>
         {#if project.projectMilestones && project.projectMilestones.length > 0}
 
         <Accordion>
         {#each project.projectMilestones as m, mi}
         <AccordionItem open={m.calculated?.isInFlight || true}>
             {#snippet header()}
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 w-full px-8 py-4">
                 <div>{m.phase.name}</div>
-                <div>{m.phase.description}</div>
+                <div>
+                    {#if m.calculated?.isComplete}
+                    <Progressbar progress={m.calculated?.percentDone as number * 100.0} id={getID("mil_")} size="h-4 w-full" color="green" labelInside />
+                    {:else if m.calculated?.isInFlight}
+                    <Progressbar progress={m.calculated?.percentDone as number * 100.0} id={getID("mil_")} size="h-4 w-full" labelInside />
+                    {:else}
+                    <Progressbar progress={m.calculated?.percentDone as number * 100.0} id={getID("mil_")} size="h-4 w-full" color="yellow" labelInside />
+                    {/if}
+                </div>
 <!-- 
                 <div>{m.calculated?.completedTasks}</div>
                 <div>{m.calculated?.hoursRemaining}</div>
@@ -99,7 +108,7 @@
                 <TableHead>
                     <TableHeadCell>Owner(s)</TableHeadCell>
                     <TableHeadCell>Task</TableHeadCell>
-                    <TableHeadCell class="text-center">Hours</TableHeadCell>
+                    <TableHeadCell class="text-center">Implementation Hours</TableHeadCell>
                     <TableHeadCell class="text-center">Status</TableHeadCell>
                 </TableHead>
                 <TableBody>

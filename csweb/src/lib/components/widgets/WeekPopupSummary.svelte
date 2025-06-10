@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ProjectActivity } from "$lib/graphql/generated/sdk";
-	import { pluralize } from "$lib/utils/format";
+	import { formatDate, pluralize } from "$lib/utils/format";
 	import { Alert } from "flowbite-svelte";
 	import { InfoCircleSolid } from "flowbite-svelte-icons";
 	import { ResourceList } from "..";
@@ -23,7 +23,8 @@
                 <ResourceList resources={[activity.resource]} size="sm" maxSize={1} />
             </span>
             {activity.taskName}<br /> 
-            <small class="text-gray-800 dark:text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small>
+            <small class="text-gray-800 dark:text-gray-100">{activity.hoursSpent + " " + pluralize("hour", activity.hoursSpent || 0)}</small><br />
+            <!-- <small class="text-gray-800 dark:text-gray-100">Task completes on <b>{formatDate(activity.taskEndDate)}</b></small> -->
             <br class="clear-both" />
         </li>
         {/each}

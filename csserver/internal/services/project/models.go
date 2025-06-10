@@ -118,6 +118,14 @@ type ProjectCalculatedData struct {
 	UnhealthyTasks int `json:"unhealthy_tasks"`
 	HealthyTasks   int `json:"healthy_tasks"`
 	TotalTasks     int `json:"total_tasks"`
+
+	CompletedTasks         int     `json:"completed_tasks"`
+	RemainingTasks         int     `json:"remaining_tasks"`
+	CompletedCost          float64 `json:"completed_cost"`
+	RemainingCost          float64 `json:"remaining_cost"`
+	CompletedHours         int     `json:"completed_hours"`
+	RemainingHours         int     `json:"remaining_hours"`
+	ProjectPercentComplete float64 `json:"project_percent_complete"`
 }
 
 type ProjectCostCalculatedData struct {
@@ -138,14 +146,15 @@ type ProjectValueCalculatedData struct {
 }
 
 type ProjectMilestoneCalculatedData struct {
-	TotalHours     int  `json:"total_hours"`
-	HoursRemaining int  `json:"hours_remaining"`
-	IsComplete     bool `json:"is_complete"`
-	IsInFlight     bool `json:"is_in_flight"`
-	TotalTasks     int  `json:"total_tasks"`
-	CompletedTasks int  `json:"completed_tasks"`
-	RemovedHours   int  `json:"removed_hours"`
-	UnhealthyTasks int  `json:"unhealthy_tasks"`
+	TotalHours     int     `json:"total_hours"`
+	HoursRemaining int     `json:"hours_remaining"`
+	IsComplete     bool    `json:"is_complete"`
+	IsInFlight     bool    `json:"is_in_flight"`
+	TotalTasks     int     `json:"total_tasks"`
+	CompletedTasks int     `json:"completed_tasks"`
+	RemovedHours   int     `json:"removed_hours"`
+	UnhealthyTasks int     `json:"unhealthy_tasks"`
+	PercentDone    float64 `json:"percent_done"`
 }
 
 type ProjectTaskCalculatedData struct {
@@ -159,6 +168,8 @@ type ProjectTaskCalculatedData struct {
 	ResourceContention         float64 `json:"resource_contention"`
 	SkillsHourAdjustment       int     `json:"skills_hour_adjustment"`
 	CommsHourAdjustment        int     `json:"comms_hour_adjustment"`
+
+	PortfolioEstimatedCompleteDate *time.Time `json:"portfolio_estimated_complete_date"`
 
 	Exceptions []string `json:"exceptions"`
 }

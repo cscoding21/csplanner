@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { SectionSubHeading, UserCard } from "$lib/components";
-	import type { Project, User } from "$lib/graphql/generated/sdk";
+	import type { Project } from "$lib/graphql/generated/sdk";
 	import ProjectStatusBanner from "../ProjectStatusBanner.svelte";
 	import BasicsSummary from "./BasicsSummary.svelte";
 	import FinancialSummary from "./FinancialSummary.svelte";
+	import UpdateStatusButtons from "./UpdateStatusButtons.svelte";
 
     interface Props {
         project:Project
@@ -25,6 +25,8 @@
         <ProjectStatusBanner project={project} />
 
         <FinancialSummary {project} />
+
+        <UpdateStatusButtons {project} />
         
     </div>
 </div>

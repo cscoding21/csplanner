@@ -49,6 +49,10 @@ type CSWeek struct {
 	WeekNumber int       `json:"weekNumber"`
 }
 
+type CalculatedScheduleInfo struct {
+	IsComplete bool `json:"isComplete"`
+}
+
 type Comment struct {
 	ID           string             `json:"id"`
 	ProjectID    string             `json:"projectId"`
@@ -316,6 +320,13 @@ type ProjectCalculatedData struct {
 	UnhealthyTasks             *int        `json:"unhealthyTasks,omitempty"`
 	HealthyTasks               *int        `json:"healthyTasks,omitempty"`
 	TotalTasks                 *int        `json:"totalTasks,omitempty"`
+	CompletedTasks             *int        `json:"completedTasks,omitempty"`
+	RemainingTasks             *int        `json:"remainingTasks,omitempty"`
+	CompletedCost              *float64    `json:"completedCost,omitempty"`
+	RemainingCost              *float64    `json:"remainingCost,omitempty"`
+	CompletedHours             *int        `json:"completedHours,omitempty"`
+	RemainingHours             *int        `json:"remainingHours,omitempty"`
+	ProjectPercentComplete     *float64    `json:"projectPercentComplete,omitempty"`
 }
 
 type ProjectCost struct {
@@ -372,6 +383,7 @@ type ProjectMilestoneCalculatedData struct {
 	CompletedTasks     *int       `json:"completedTasks,omitempty"`
 	RemovedHours       *int       `json:"removedHours,omitempty"`
 	UnhealthyTasks     *int       `json:"unhealthyTasks,omitempty"`
+	PercentDone        *float64   `json:"percentDone,omitempty"`
 }
 
 type ProjectMilestonePhase struct {
@@ -416,13 +428,14 @@ type ProjectStatusTransition struct {
 }
 
 type ProjectTaskCalculatedData struct {
-	ActualizedHoursToComplete *int     `json:"actualizedHoursToComplete,omitempty"`
-	ActualizedCost            *float64 `json:"actualizedCost,omitempty"`
-	ResourceContention        *float64 `json:"resourceContention,omitempty"`
-	AverageHourlyRate         *float64 `json:"averageHourlyRate,omitempty"`
-	SkillsHourAdjustment      *int     `json:"skillsHourAdjustment,omitempty"`
-	CommsHourAdjustment       *int     `json:"commsHourAdjustment,omitempty"`
-	Exceptions                []string `json:"exceptions,omitempty"`
+	ActualizedHoursToComplete      *int       `json:"actualizedHoursToComplete,omitempty"`
+	ActualizedCost                 *float64   `json:"actualizedCost,omitempty"`
+	ResourceContention             *float64   `json:"resourceContention,omitempty"`
+	AverageHourlyRate              *float64   `json:"averageHourlyRate,omitempty"`
+	SkillsHourAdjustment           *int       `json:"skillsHourAdjustment,omitempty"`
+	CommsHourAdjustment            *int       `json:"commsHourAdjustment,omitempty"`
+	PortfolioEstimatedCompleteDate *time.Time `json:"portfolioEstimatedCompleteDate,omitempty"`
+	Exceptions                     []string   `json:"exceptions,omitempty"`
 }
 
 type ProjectTemplateTask struct {
@@ -546,13 +559,14 @@ type RoleResults struct {
 }
 
 type Schedule struct {
-	ProjectName          string                 `json:"projectName"`
-	ProjectID            string                 `json:"projectID"`
-	Project              *Project               `json:"project"`
-	Begin                *time.Time             `json:"begin,omitempty"`
-	End                  *time.Time             `json:"end,omitempty"`
-	ProjectActivityWeeks []*ProjectActivityWeek `json:"projectActivityWeeks,omitempty"`
-	Exceptions           []*ScheduleException   `json:"exceptions,omitempty"`
+	ProjectName          string                  `json:"projectName"`
+	ProjectID            string                  `json:"projectID"`
+	Project              *Project                `json:"project"`
+	Begin                *time.Time              `json:"begin,omitempty"`
+	End                  *time.Time              `json:"end,omitempty"`
+	ProjectActivityWeeks []*ProjectActivityWeek  `json:"projectActivityWeeks,omitempty"`
+	Exceptions           []*ScheduleException    `json:"exceptions,omitempty"`
+	Calculated           *CalculatedScheduleInfo `json:"calculated,omitempty"`
 }
 
 type ScheduleException struct {
