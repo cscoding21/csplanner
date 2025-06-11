@@ -36,3 +36,8 @@ export const getSetting = (key:string, def:any):any|null => {
 export const PROJECT_SEARCH_INPUT_FILTER = "projectSearchInputFilter"
 export const PROJECT_STATUS_FILTER = "projectStatusFilter"
 export const PROJECT_RESOURCE_ID_FILTER = "projectResourceIDFilter"
+
+export const RESOURCE_SEARCH_INPUT_FILTER = "resourceSearchInputFilter"
+export const RESOURCE_TYPE_FILTER = "resourceTypeFilter"
+export const RESOURCE_STATUS_FILTER = "resourceStatusFilter"
+export const RESOURCE_SKILLS_FILTER = "resourceSkillsFilter"

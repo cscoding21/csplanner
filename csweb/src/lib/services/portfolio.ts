@@ -195,6 +195,8 @@ export const findWeekRisks = (activities:ProjectActivity[], resourceID: string|u
     for(let i = 0; i < activities.length; i++) {
         const res = activities[i].resource
 
+        
+
         if(resourceID && resourceID != res?.id)
             continue
 

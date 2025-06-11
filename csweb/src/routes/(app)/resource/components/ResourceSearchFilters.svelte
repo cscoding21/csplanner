@@ -5,6 +5,8 @@
     import { getList } from '$lib/services/list';
     import { findSelectOptsFromList } from '$lib/forms/helpers';
 	import { CloseCircleOutline } from 'flowbite-svelte-icons';
+	import { getSetting, RESOURCE_SEARCH_INPUT_FILTER, RESOURCE_SKILLS_FILTER, RESOURCE_STATUS_FILTER, RESOURCE_TYPE_FILTER, setSetting } from '$lib/services/settings';
+	import { onMount } from 'svelte';
 
     let searchInput:string = $state("")
     let status:string[] = $state([])
@@ -30,17 +32,23 @@
     const statusChange = (e:any) => {
         status = e
 
+        setSetting(RESOURCE_STATUS_FILTER, status)
+
         change(getFilters())
     }
 
     const typeChange = (e:any) => {
         type = e
 
+        setSetting(RESOURCE_TYPE_FILTER, type)
+
         change(getFilters())
     }
 
     const skillsChange = (e:any) => {
         skills = e.join("")
+
+        setSetting(RESOURCE_SKILLS_FILTER, skills)
 
         change(getFilters())
     }
@@ -49,6 +57,8 @@
         clearTimeout(clearHandle)
 
         clearHandle = setTimeout(() => {
+            setSetting(RESOURCE_SEARCH_INPUT_FILTER, searchInput)
+
             change(getFilters())
         }, 500)
         
@@ -59,6 +69,11 @@
         status = []
         type = []
         skills = ""
+
+        setSetting(RESOURCE_SEARCH_INPUT_FILTER, searchInput)
+        setSetting(RESOURCE_TYPE_FILTER, type)
+        setSetting(RESOURCE_STATUS_FILTER, status)
+        setSetting(RESOURCE_SKILLS_FILTER, skills)
 
         change(getFilters())
     }
@@ -105,6 +120,15 @@
 				
 			});
 	};
+
+    onMount(() => {
+        searchInput = getSetting(RESOURCE_SEARCH_INPUT_FILTER, searchInput)
+        type = getSetting(RESOURCE_TYPE_FILTER, type)
+        status = getSetting(RESOURCE_STATUS_FILTER, status)
+        skills = getSetting(RESOURCE_SKILLS_FILTER, skills)
+
+        change(getFilters())
+    })
 
 </script>
 
