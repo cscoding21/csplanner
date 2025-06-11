@@ -1,13 +1,15 @@
 <script lang="ts">
-    import { Input, Search, Select } from 'flowbite-svelte';
+    import { Input } from 'flowbite-svelte';
     import type { SelectOptionType } from 'flowbite-svelte';
     import type { InputFilters, InputFilter } from '$lib/graphql/generated/sdk';
-    import { CheckBoxFilter, CSMultiFilter } from '$lib/components';
+    import { CSMultiFilter } from '$lib/components';
     import { findAllResources } from '$lib/services/resource';
 	import { CloseCircleOutline } from 'flowbite-svelte-icons';
+	import { onMount } from 'svelte';
+	import { getSetting, PROJECT_SEARCH_INPUT_FILTER, PROJECT_STATUS_FILTER, PROJECT_RESOURCE_ID_FILTER, setSetting } from '$lib/services/settings';
 
     let searchInput:string = $state("")
-    let status:string[] = $state([])
+    let status:string[] = $state(["new", "draft", "approved", "proposed", "inflight", "scheduled"])
     let resourceID:string = $state("")
 
     let clearHandle:any
@@ -31,20 +33,25 @@
     const statusChange = (e:any) => {
         status = e
 
+        setSetting(PROJECT_STATUS_FILTER, status)
+
         change(getFilters())
     }
 
     const resourceChange = (e:any) => {
         resourceID = e.join("")
 
+        setSetting(PROJECT_RESOURCE_ID_FILTER, resourceID)
+
         change(getFilters())
     }
 
     const searchChange = () => {
-        console.log("searchChange")
         clearTimeout(clearHandle)
 
         clearHandle = setTimeout(() => {
+            setSetting(PROJECT_SEARCH_INPUT_FILTER, searchInput)
+
             change(getFilters())
         }, 500)
         
@@ -52,8 +59,12 @@
 
     const resetFilters = () => {
         searchInput = ""
-        status = []
+        status = ["new", "draft", "approved", "proposed", "inflight", "scheduled"]
         resourceID = ""
+
+        setSetting(PROJECT_SEARCH_INPUT_FILTER, searchInput)
+        setSetting(PROJECT_RESOURCE_ID_FILTER, resourceID)
+        setSetting(PROJECT_STATUS_FILTER, status)
 
         change(getFilters())
     }
@@ -96,6 +107,14 @@
 				})) as SelectOptionType<string>[]];
 			});
 	};
+
+    onMount(() => {
+        searchInput = getSetting(PROJECT_SEARCH_INPUT_FILTER, "")
+        status = getSetting(PROJECT_STATUS_FILTER, ["new", "draft", "approved", "proposed", "inflight", "scheduled"])
+        resourceID = getSetting(PROJECT_RESOURCE_ID_FILTER, "")
+
+        change(getFilters())
+    })
 </script>
 
 <div class="flex">

@@ -99,6 +99,7 @@
             {/if}
             
             <DropdownGroup>
+            {#if filterOpts && filterOpts.length > 0}
             {#each filterOpts as opt}
                 {#if filterValue.includes(opt.value)}
                 <DropdownItem class="font-bold" href="#" onclick={() => dropDownChange(opt.value)}>
@@ -110,6 +111,7 @@
                 </DropdownItem>
                 {/if}
             {/each}
+            {/if}
             </DropdownGroup>
         </Dropdown>
     </div>
