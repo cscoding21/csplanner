@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Dropdown, DropdownGroup, DropdownHeader, DropdownItem, type SelectOptionType } from "flowbite-svelte";
+    import { Dropdown, DropdownGroup, DropdownItem, type SelectOptionType } from "flowbite-svelte";
     import { CheckCircleOutline, ChevronDownOutline, CircleMinusOutline } from "flowbite-svelte-icons";
 
     interface Props {
@@ -48,7 +48,9 @@
         }
         change(internalState)
 
-        dropdownOpen = false
+        if(!isMulti) {
+            dropdownOpen = false
+        }
     }
 
     const getFilterDisplay = ():string => {
@@ -86,7 +88,7 @@
             
         <ChevronDownOutline size="lg" /></button
         >
-        <Dropdown class="min-w-48">
+        <Dropdown class="min-w-48" bind:isOpen={dropdownOpen}>
             
             {#if hasValues}
             <DropdownGroup>

@@ -531,6 +531,7 @@ export type ProjectActivity = {
   requiredSkillID: Scalars['String']['output'];
   resource?: Maybe<Resource>;
   resourceID: Scalars['String']['output'];
+  status: Scalars['String']['output'];
   taskEndDate?: Maybe<Scalars['Time']['output']>;
   taskID: Scalars['String']['output'];
   taskName: Scalars['String']['output'];
@@ -1586,6 +1587,7 @@ export const ScheduleFragmentFragmentDoc = gql`
       hoursSpent
       requiredSkillID
       taskEndDate
+      status
       resource {
         ...resourceFragment
       }

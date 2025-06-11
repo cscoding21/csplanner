@@ -105,7 +105,7 @@ export const getWeekActivities = (paWeeks:ProjectActivityWeek[], week:Date):Proj
 }
 
 /**
- * 
+ * take a portfolio object and convert it to a UI friendly shape
  * @param res the portfolio to transform
  * @returns a portfolio table
  */
@@ -162,13 +162,22 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, end
             if(thisWeekEnd < startDate || thisWeekStart > endDate)
                 continue;
 
-            let cell = {active:false, activities:[], end: thisWeek?.end, orgCapacity: thisWeek?.orgCapacity, risks: [] as string[] } as ProjectRowCell
+            let cell = {
+                active:false, 
+                isPastDue: false,
+                activities:[], 
+                end: thisWeek?.end,
+                orgCapacity: thisWeek?.orgCapacity, 
+                risks: [] as string[] 
+            } as ProjectRowCell
 
             const paw = getWeekActivities(schedule.projectActivityWeeks as ProjectActivityWeek[], thisWeekEnd)
             cell.orgCapacity = paw.orgCapacity
 
             if (paw.activities && paw.activities.length > 0) {
                 rowHasActivity = true
+
+                cell.isPastDue = findWeekHasPastDueTasks(paw.activities)
                 cell.active = true
                 cell.activities = paw.activities as ProjectActivity[]
             }
@@ -188,14 +197,18 @@ export const buildPortfolioTable = (res:Portfolio, startDate:Date|undefined, end
 
 export const findWeekRisks = (activities:ProjectActivity[], resourceID: string|undefined):string[] => {
     let out = [] as string[]
+    const today = new Date()
     if (!activities || !activities.length) {
         return out
     }
 
     for(let i = 0; i < activities.length; i++) {
-        const res = activities[i].resource
+        const act = activities[i]
+        const res = act.resource
 
-        
+        if(act.taskEndDate && new Date(act.taskEndDate) < today && (act.status == "new" || act.status == "accepted")) {
+            out.push('Task "' + act.taskName + '" is past due')
+        }
 
         if(resourceID && resourceID != res?.id)
             continue
@@ -206,6 +219,28 @@ export const findWeekRisks = (activities:ProjectActivity[], resourceID: string|u
     }
 
     return out
+}
+
+/**
+ * return whether or not any activities in the array are past due
+ * @param activities a list of activities for the week
+ * @returns true if any activities are past due
+ */
+export const findWeekHasPastDueTasks = (activities:ProjectActivity[]):boolean => {
+    if (!activities || !activities.length) {
+        return false
+    }
+
+    const today = new Date()
+    for(let i = 0; i < activities.length; i++) {
+        const act = activities[i]
+
+        if(act.taskEndDate && new Date(act.taskEndDate) < today && (act.status == "new" || act.status == "accepted")) {
+            return true
+        }
+    }
+
+    return false
 }
 
 export const flattenPortfolio = (port:Portfolio, startDate:Date, endDate:Date):FlatPortfolioItem[] => {
@@ -276,6 +311,7 @@ export interface ProjectRow {
 }
 export interface ProjectRowCell {
     active: boolean
+    isPastDue: boolean
     risks: string[]
     end: Date
     orgCapacity: number

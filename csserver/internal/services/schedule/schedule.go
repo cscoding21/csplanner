@@ -60,8 +60,6 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 		return schedule, nil
 	}
 
-	//today := time.Now()
-
 	exceptions := validateProjectForScheduling(*p, ram)
 	schedule.Exceptions = append(schedule.Exceptions, exceptions...)
 
@@ -164,6 +162,7 @@ func ScheduleProjectAlgo(p *project.Project, startDate time.Time, ram ResourceAl
 						MilestoneName:   task.MilestoneName,
 						HoursSpent:      hoursToAllocate,
 						RequiredSkillID: task.RequiredSkillID,
+						Status:          task.Status,
 					}
 
 					activities = append(activities, activity)
@@ -236,6 +235,7 @@ func GetScheduleItems(p *project.Project) []ScheduleBatch {
 				HoursToSchedule: hoursToSchedule,
 				HoursScheduled:  0,
 				RequiredSkillID: t.RequiredSkillID,
+				Status:          t.Status,
 			}
 
 			hoursToComplete += t.Calculated.ActualizedHoursToComplete

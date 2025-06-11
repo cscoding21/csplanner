@@ -291,6 +291,7 @@ type ProjectActivity struct {
 	HoursSpent      int        `json:"hoursSpent"`
 	RequiredSkillID string     `json:"requiredSkillID"`
 	TaskEndDate     *time.Time `json:"taskEndDate,omitempty"`
+	Status          string     `json:"status"`
 }
 
 type ProjectActivityWeek struct {

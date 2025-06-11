@@ -8,6 +8,7 @@ package schedule
 import (
 	"csserver/internal/calendar"
 	"csserver/internal/common"
+	"csserver/internal/services/project/ptypes/milestonestatus"
 	"time"
 
 	"github.com/google/uuid"
@@ -53,6 +54,7 @@ type ProjectActivity struct {
 	HourlyRate      float64
 	RequiredSkillID string
 	TaskEndDate     *time.Time
+	Status          milestonestatus.MilestoneStatus
 }
 
 type ScheduleBatch struct {
@@ -71,6 +73,7 @@ type ScheduleWorkspace struct {
 	ResourceIDs     []string
 	HoursToSchedule int
 	HoursScheduled  int
+	Status          milestonestatus.MilestoneStatus
 }
 
 type ScheduleException struct {

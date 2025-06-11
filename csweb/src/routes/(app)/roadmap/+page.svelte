@@ -28,6 +28,16 @@
 		return "good"
 	}
 
+	const getCellColor = (risks:string[], isPastDue:boolean):"red"|"yellow"|"green"|undefined => {
+		if(isPastDue) {
+			return "red"
+		} else if (risks && risks.length > 0) {
+			return "yellow"
+		}
+
+		return "green"
+	}
+
 	let portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
 		refresh().then((r) => {
@@ -102,7 +112,7 @@
 					
 					<TableBodyCell class="text-center">
 						{#if week.active}
-						{@const cellColor = week.risks.length > 0 ? "yellow" : "green" }
+						{@const cellColor = getCellColor(week.risks, week.isPastDue) }
 						{@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
 						<Button  size="xs" color={cellColor} id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
 						<Popover class=" text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
