@@ -3,6 +3,7 @@ import type { Portfolio, PortfolioWeekSummary, Schedule, ProjectActivityWeek, Pr
 import { getApolloClient } from "$lib/graphql/gqlclient";
 import { dateCompare } from "$lib/utils/check";
 import { formatDateNoYear } from "$lib/utils/format";
+import { deepCopy, isOneOf } from "$lib/utils/helpers";
 
 
 /**
@@ -289,6 +290,67 @@ export const flattenPortfolio = (port:Portfolio, startDate:Date, endDate:Date):F
         }
     }
 
+
+    return out
+}
+
+/**
+ * take the risks and date info and return what the cell color should be
+ * @param risks the risks calculated for the schedule
+ * @param isPastDue a boolean for whether or not the task is past due
+ * @returns a color specification
+ */
+export const getCellColor = (risks:string[], isPastDue:boolean):"red"|"yellow"|"green"|undefined => {
+    if(isPastDue) {
+        return "red"
+    } else if (risks && risks.length > 0) {
+        return "yellow"
+    }
+
+    return "green"
+}
+
+
+/**
+ * 
+ * @param port 
+ * @returns 
+ */
+export const findOpenPastDueTasksInPortfolio = (port:Portfolio):ProjectActivity[] => {
+    let out:ProjectActivity[] = []
+
+    if(!port || !port.schedule || port.schedule.length === 0) {
+        return out
+    }
+
+    const today = new Date()
+
+    for (let i = 0; i < port.schedule.length; i++) {
+        const sch = port.schedule[i]
+
+        if (!sch.projectActivityWeeks) {
+            continue
+        }
+
+        for (let j = 0; j < sch.projectActivityWeeks?.length; j++) {
+            const paw = sch.projectActivityWeeks[j]
+
+            if(!paw.activities || paw.activities.length === 0) {
+                continue
+            }
+
+            for (let k = 0; k < paw.activities.length; k++) {
+                let act = paw.activities[k]
+
+                if(isOneOf(act.status, ["new", "accepted"]) && new Date(act.taskEndDate) < today) {
+                    let outAct = deepCopy(act)
+                    outAct.project = deepCopy(sch.project)
+                    //console.log("sch", sch)
+                    out.push(outAct)
+                }
+            }
+        }
+    }
 
     return out
 }

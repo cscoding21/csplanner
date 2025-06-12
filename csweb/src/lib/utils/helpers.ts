@@ -135,3 +135,23 @@ export const reloadPage = () => {
 
 	window.location.reload()
 }
+
+/**
+ * test whether a value is contained in a set of options
+ * @param val the value to check
+ * @param opts the options to compare to the value
+ * @returns true if the value is one of the options
+ */
+export const isOneOf = (val:any, opts:any[]):boolean => {
+	if(!opts || opts.length == 0) {
+		return false
+	}
+
+	for(let i = 0; i < opts.length; i++) {
+		if(val === opts[i]) {
+			return true
+		}
+	}
+
+	return false
+}

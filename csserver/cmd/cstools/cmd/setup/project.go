@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"csserver/internal/appserv/factory"
+	"csserver/internal/calendar"
 	"csserver/internal/common"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/featurepriority"
@@ -51,7 +52,7 @@ func CreateTestProjects(ctx context.Context) error {
 			Name:        "YouTube Sensation",
 			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
 			OwnerID:     allUsers.Results[0].Data.Email,
-			StartDate:   utils.ValToRef(time.Now().Add(time.Hour * 24 * 30)),
+			StartDate:   utils.ValToRef(calendar.GetWeek(time.Now().Add(time.Hour * 24 * 30)).End),
 		},
 		ProjectStatusBlock: &project.ProjectStatusBlock{
 			Status: projectstatus.Scheduled,
@@ -334,11 +335,11 @@ func findPortfolioProjects(ctx context.Context) []project.Project {
 		{name: "Video: Golang Project Setup", status: projectstatus.Backlogged},
 		{name: "Video: Mapping Objects in our Project", status: projectstatus.Backlogged},
 		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft},
-		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: utils.ValToRef(time.Date(2025, 7, 1, 0, 0, 0, 0, time.UTC))},
-		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: utils.ValToRef(time.Date(2025, 8, 1, 0, 0, 0, 0, time.UTC))},
-		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(time.Now())},
-		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(time.Now())},
-		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(time.Now())},
+		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 7, 1, 0, 0, 0, 0, time.UTC))).End},
+		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 8, 1, 0, 0, 0, 0, time.UTC))).End},
+		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
+		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
+		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
 	}
 
 	for i, p := range names {

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import {
+	Alert,
 		Avatar,
 		ButtonGroup
 	} from 'flowbite-svelte';
-	import { TrashBinOutline, PenOutline } from 'flowbite-svelte-icons';
+	import { TrashBinOutline, PenOutline, InfoCircleSolid } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import {
 		ResourceActionBar,
@@ -12,10 +13,10 @@
 		SkillsTable
 	} from '../../components';
 	import { getResource } from '$lib/services/resource';
-	import { formatDate, formatCurrency, titleCase } from '$lib/utils/format';
+	import { formatDate, formatCurrency, titleCase, pluralize } from '$lib/utils/format';
 	import { getInitialsFromName } from '$lib/utils/format';
-	import type { ResourceEnvelope, Portfolio, Skill } from '$lib/graphql/generated/sdk';
-	import { findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
+	import type { ResourceEnvelope, Portfolio, Skill, ProjectActivity } from '$lib/graphql/generated/sdk';
+	import { findOpenPastDueTasksInPortfolio, findScheduledWorkForResource, flattenPortfolio, type FlatPortfolioItem } from '$lib/services/portfolio';
 	import { SectionSubHeading, CSSection , PieChart, CSHR, PortfolioTable } from '$lib/components';
 	import { csGroupBy, deepCopy } from '$lib/utils/helpers';
 
@@ -48,11 +49,11 @@
 			 refreshWork().then(p => {
 				portfolio = p
 
+				pastDueTasks = findOpenPastDueTasksInPortfolio(portfolio)
+
 				flatData = flattenPortfolio(p, startDate, endDate)
 				projectPieData = csGroupBy(deepCopy(flatData), "projectName", "actualizedHours")
 				skillPieData = csGroupBy(deepCopy(flatData), "requiredSkill", "actualizedHours")
-
-				console.log("projectPieData", projectPieData)
 			 })
 		});
 	}
@@ -62,6 +63,7 @@
 	let resourcePromise:ResourceEnvelope = $state({} as ResourceEnvelope);
 	let projectPieData:any[] = $state([])
 	let skillPieData:any[] = $state([])
+	let pastDueTasks:ProjectActivity[] = $state([])
 
 	let portfolio:Portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
@@ -170,9 +172,23 @@
 				<CSSection>
 				<SectionSubHeading>Project Allocation: {formatDate(startDate)} - {formatDate(endDate)}</SectionSubHeading>
 
+				{#if pastDueTasks && pastDueTasks.length > 0}
+					<div class="my-4">
+					<Alert class="items-start!" border>
+						{#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
+						<p class="font-medium">The following tasks assigned to {resourcePromise.data?.name} are past due:</p>
+						<ul class="mt-1.5 ms-4 list-disc list-inside">
+							{#each pastDueTasks as t}
+								<li>{t.project?.projectBasics.name}: {t.taskName} ({t.hoursSpent} {pluralize("hour", t.hoursSpent)}) was due on {formatDate(t.taskEndDate)}</li>
+							{/each}
+						</ul>
+					</Alert> 
+					</div>
+				{/if}
+
 				{#if portfolio && portfolio.schedule && portfolio.schedule.length > 0}
 				<div class="mb-2">
-					<PortfolioTable {portfolio} {startDate} {endDate}></PortfolioTable>
+					<PortfolioTable {portfolio}></PortfolioTable>
 				</div>
 					
 

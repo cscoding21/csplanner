@@ -23,8 +23,6 @@
         portfolio = res
 		portfolioTable = buildPortfolioTable(res, new Date(2025, 5, 1), new Date(2025, 8, 30), project.id as string)
 
-        console.log("portfolio", portfolio)
-
 		return res;
 	};
 

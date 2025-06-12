@@ -1,16 +1,17 @@
 <script lang="ts">
-    import type { Portfolio } from "$lib/graphql/generated/sdk";
+    import type { Portfolio, ProjectActivity } from "$lib/graphql/generated/sdk";
 	import type { ProjectRow, ScheduleTable } from "$lib/services/portfolio";
-	import { getPortfolio, buildPortfolioTable } from "$lib/services/portfolio";
+	import { getPortfolio, buildPortfolioTable, getCellColor, findOpenPastDueTasksInPortfolio } from "$lib/services/portfolio";
     import { NoResults, CSSection, DataCard, WeekPopupSummary, SectionSubHeading } from "$lib/components";
-    import { formatDate, formatPercent, formatCurrency } from "$lib/utils/format";
+    import { formatDate, formatPercent, formatCurrency, pluralize } from "$lib/utils/format";
 	import { getID } from "$lib/utils/id";
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover } from "flowbite-svelte";
+	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Alert } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
-	import { DollarOutline } from "flowbite-svelte-icons";
+	import { DollarOutline, InfoCircleSolid } from "flowbite-svelte-icons";
 	import { RoadmapActionBar } from "./components";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
+	let pastDueTasks:ProjectActivity[] = $state([])
 
 	const refresh = async (): Promise<Portfolio> => {
 		const res = await getPortfolio();
@@ -28,20 +29,24 @@
 		return "good"
 	}
 
-	const getCellColor = (risks:string[], isPastDue:boolean):"red"|"yellow"|"green"|undefined => {
-		if(isPastDue) {
-			return "red"
-		} else if (risks && risks.length > 0) {
-			return "yellow"
+	const getPastDueMessage = ():string => {
+		if (!pastDueTasks || pastDueTasks.length == 0) {
+			return "None"
 		}
 
-		return "green"
+		const hours =  pastDueTasks.reduce( function(a, b){
+			return a + b.hoursSpent;
+		}, 0);
+
+		return pastDueTasks.length + " (" + hours +  pluralize(" hour", hours) + ")"
 	}
 
 	let portfolio = $state({} as Portfolio);
 	const loadPage = async () => {
 		refresh().then((r) => {
 			portfolio = r as Portfolio;
+
+			pastDueTasks = findOpenPastDueTasksInPortfolio(portfolio)
 		});
 	};
 </script>
@@ -87,7 +92,31 @@
 					{/snippet}
 				</DataCard>
 			</div>
+			<div class="flex-1  pl-2">
+				<DataCard health={pastDueTasks.length === 0 ? "good" : "bad"} dataPoint={getPastDueMessage()} indicatorClass="text-red-500 dark:text-red-500">
+					{#snippet description()}
+						Past Due Tasks
+					{/snippet}
+					{#snippet indicator()}
+						<DollarOutline />
+					{/snippet}
+				</DataCard>
+			</div>
 		</div>
+
+		{#if pastDueTasks && pastDueTasks.length > 0}
+			<div class="my-4">
+			<Alert class="items-start!" border>
+				{#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
+				<p class="font-medium">The following tasks are past due:</p>
+				<ul class="mt-1.5 ms-4 list-disc list-inside">
+					{#each pastDueTasks as t}
+						<li>{t.project?.projectBasics.name}: {t.taskName} ({t.hoursSpent} {pluralize("hour", t.hoursSpent)}) was due on {formatDate(t.taskEndDate)}</li>
+					{/each}
+				</ul>
+			</Alert> 
+			</div>
+		{/if}
 
 		<SectionSubHeading>Portfolio Schedule</SectionSubHeading>
 		<Table divClass="h-full">
@@ -114,8 +143,8 @@
 						{#if week.active}
 						{@const cellColor = getCellColor(week.risks, week.isPastDue) }
 						{@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
-						<Button  size="xs" color={cellColor} id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
-						<Popover class=" text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
+						<Button  size="xs"  class="cursor-pointer" color={cellColor} id={"id_" + getID(row.project.id, formatDate(week.end))}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
+						<Popover class=" text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} trigger="click" triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>
 							<WeekPopupSummary activities={week.activities} risks={week.risks} />
 						</Popover>
 						

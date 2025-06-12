@@ -151,7 +151,6 @@
                 {@const statusContent = getStatusContent(next.nextState)}
                 <Button pill color={statusContent.buttonColor} class="w-64 m-2" onclick={() => setStatus(next.nextState)}>{statusContent.buttonDisplay}</Button>
             {:else}
-            {JSON.stringify(next)}
                 {@const statusContent = getStatusContent(next && next.nextState || "")}
                 <Button pill disabled color="alternative" size="xs" class="w-64 m-2">{statusContent.buttonDisplay}</Button>
             {/if}

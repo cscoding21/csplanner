@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Popover } from "flowbite-svelte";
 	import type { Portfolio } from "$lib/graphql/generated/sdk";
-    import { buildPortfolioTable, type ScheduleTable } from "$lib/services/portfolio";
+    import { buildPortfolioTable, getCellColor, type ScheduleTable } from "$lib/services/portfolio";
     import { getID } from "$lib/utils/id";
     import { formatDate, formatPercent } from "$lib/utils/format";
 	import { RiskLegend } from "../../../routes/(app)/project/components";
@@ -43,12 +43,12 @@
             </td>
 
             {#each row.weeks as week}
-                {@const cellColor = week.risks.length > 0 ? "bg-yellow-400" : "bg-green-600 " }
+                {@const cellColor = getCellColor(week.risks, week.isPastDue)}
                 {@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
                 {#if week.active}
                 <td class="text-center text-xs text-gray-100 py-1">
-                    <div class="px-0 {cellColor}">
-                    <button class="text-xs" id={"id_" + getID(row.project.id, formatDate(week.end))}>
+                    <div class="px-0 bg-{cellColor}-500">
+                    <button class="text-xs cursor-pointer" id={"id_" + getID(row.project.id, formatDate(week.end))}>
                         <!-- {week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)} -->
                          &nbsp;&nbsp;&nbsp;&nbsp;
                         <Popover class="text-sm font-light {popWidth}" trigger="click" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + getID(row.project.id, formatDate(week.end))}>

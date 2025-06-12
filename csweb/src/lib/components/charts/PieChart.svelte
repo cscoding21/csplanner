@@ -89,7 +89,6 @@
 
 	onMount(() => {
 		options = getChartOptions(values, labels)
-		console.log("pie chart options", options)
 	})
 
 </script>

@@ -32,6 +32,11 @@
 		let opts:SelectOptionType<string>[] = []
 		let startDate = new Date(year, 0, 1)
 
+		if(project.projectBasics.startDate) {
+			const psd = new Date(project.projectBasics.startDate)
+			opts.push({name: psd.toLocaleDateString(), value: psd.toLocaleDateString()})
+		}
+
 		if(year === new Date().getFullYear()) {
 			startDate = getEarliestScheduleDate()
 		}
