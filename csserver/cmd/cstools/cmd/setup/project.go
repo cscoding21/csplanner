@@ -337,7 +337,7 @@ func findPortfolioProjects(ctx context.Context) []project.Project {
 		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft},
 		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 7, 1, 0, 0, 0, 0, time.UTC))).End},
 		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 8, 1, 0, 0, 0, 0, time.UTC))).End},
-		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
+		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now().AddDate(0, 0, -7)).End)},
 		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
 		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
 	}

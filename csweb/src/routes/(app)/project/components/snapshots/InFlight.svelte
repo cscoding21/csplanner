@@ -6,7 +6,7 @@
 	import BasicsSummary from "./BasicsSummary.svelte";
 	import ScheduleSummary from "./ScheduleSummary.svelte";
 	import UpdateStatusButtons from "./UpdateStatusButtons.svelte";
-	import { CheckCircleSolid, CirclePlusOutline, ExclamationCircleOutline } from "flowbite-svelte-icons";
+	import { CheckCircleSolid, CheckPlusCircleOutline, CirclePlusOutline, ExclamationCircleOutline } from "flowbite-svelte-icons";
 	import FinancialSummary from "./FinancialSummary.svelte";
 	import ResourceList from "$lib/components/widgets/ResourceList.svelte";
 	import { updateProjectTaskStatus } from "$lib/services/project";
@@ -171,7 +171,7 @@
                     </button>
                     {:else}
                         <button onclick={() => setTaskStatus(m.id, t.id, "done")} title="Mark done">
-                            <CirclePlusOutline color="yellow" />
+                            <CheckPlusCircleOutline color="yellow" />
                         </button>
                     {/if}
                 </TableBodyCell>

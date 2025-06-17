@@ -7,7 +7,7 @@
 	import { getID } from "$lib/utils/id";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell, Button, Popover, Alert } from "flowbite-svelte";
 	import { RiskLegend } from "../project/components";
-	import { DollarOutline, InfoCircleSolid } from "flowbite-svelte-icons";
+	import { DollarOutline, InfoCircleSolid, RectangleListOutline } from "flowbite-svelte-icons";
 	import { RoadmapActionBar } from "./components";
 
 	let portfolioTable:ScheduleTable = $state({header: [] as string[], body:[] as ProjectRow[] } as ScheduleTable)
@@ -93,12 +93,12 @@
 				</DataCard>
 			</div>
 			<div class="flex-1  pl-2">
-				<DataCard health={pastDueTasks.length === 0 ? "good" : "bad"} dataPoint={getPastDueMessage()} indicatorClass="text-red-500 dark:text-red-500">
+				<DataCard health={pastDueTasks.length === 0 ? "good" : "bad"} dataPoint={getPastDueMessage()} indicatorClass={pastDueTasks.length === 0 ? "text-green-500 dark:text-greem-500" : "text-red-500 dark:text-red-500"}>
 					{#snippet description()}
 						Past Due Tasks
 					{/snippet}
 					{#snippet indicator()}
-						<DollarOutline />
+						<RectangleListOutline />
 					{/snippet}
 				</DataCard>
 			</div>

@@ -257,7 +257,11 @@ func (p *Project) CalculateProjectMilestoneStats() {
 				hoursRemaining += t.HourEstimate
 				isComplete = false
 
-				if len(t.ResourceIDs) == 0 || len(t.RequiredSkillID) == 0 || t.HourEstimate == 0 {
+				if len(t.ResourceIDs) == 0 ||
+					len(t.RequiredSkillID) == 0 ||
+					t.HourEstimate == 0 ||
+					t.Status == milestonestatus.New {
+
 					unhealthyTasks++
 					projectUnhealthyTasks++
 				} else {

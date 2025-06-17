@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"csserver/internal/common"
+	"csserver/internal/services/activity"
 	"csserver/internal/services/organization"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/services/projecttemplate"
@@ -10,6 +11,12 @@ import (
 	"csserver/internal/utils"
 
 	"github.com/cscoding21/csval/validate"
+)
+
+var (
+	ActivityNewProject          = activity.ActivityDef{Type: "new-project", Template: "The project '%s' was created by %s"}
+	ActivityUpdateProject       = activity.ActivityDef{Type: "update-project", Template: "The project '%s' was updated by %s"}
+	ActivityProjectStatusChange = activity.ActivityDef{Type: "project-status-change", Template: ""}
 )
 
 // SaveProject saves a project in the system and updates all stored calculations
