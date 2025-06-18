@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model license {
+  id           String       @unique @default(dbgenerated("gen_random_uuid()")) @db.VarChar(128)
+  org_id       String       @unique @db.VarChar(128)
+  app          String       @unique @db.VarChar(128)
+  email        String       @db.VarChar(128)
+  expires_on   DateTime     @db.Timestamp(6)
+  cancelled_on DateTime?    @db.Timestamp(6)
+  auto_renew   Boolean
+  created_at   DateTime     @default(now()) @db.Timestamp(6)
+  created_by   String       @db.VarChar(128)
+  updated_at   DateTime     @default(now()) @db.Timestamp(6)
+  updated_by   String       @db.VarChar(128)
+  deleted_at   DateTime?    @db.Timestamp(6)
+  deleted_by   String?      @db.VarChar(128)
+  data         Json?
+  organization organization @relation(fields: [org_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([email], map: "idx_license_email")
+  @@index([id], map: "idx_license_id")
+  @@index([org_id], map: "idx_license_org_id")
+}
+
+model organization {
+  id             String    @unique @db.VarChar(128)
+  name           String    @db.VarChar(128)
+  db_host        String    @db.VarChar(128)
+  database       String    @db.VarChar(128)
+  url_key        String    @unique @db.VarChar(128)
+  realm          String    @db.VarChar(128)
+  is_provisioned Boolean
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
+  created_by     String    @db.VarChar(128)
+  updated_at     DateTime  @default(now()) @db.Timestamp(6)
+  updated_by     String    @db.VarChar(128)
+  deleted_at     DateTime? @db.Timestamp(6)
+  deleted_by     String?   @db.VarChar(128)
+  data           Json?
+  license        license?
+
+  @@index([id], map: "idx_organization_id")
+  @@index([url_key], map: "idx_organization_url_key")
+}
