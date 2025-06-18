@@ -10,8 +10,8 @@ def setup_cssaas():
 
     docker_build(
         'csplanner-cssaas', 
-        './cssaas2', 
-        dockerfile = 'cssaas2/Dockerfile'
+        './cssaas', 
+        dockerfile = 'cssaas/Dockerfile'
     )
 
     k8s_yaml(

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Section from "./Section.svelte";
-
+	  import Section from "./Section.svelte";
 
     interface Props {
         back: "lighter"|"darker"
@@ -16,7 +15,7 @@
           class="inline-flex items-center justify-between px-1 py-1 pr-4 mb-6 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
           role="alert">
           <span class="px-3 py-1 mr-3 text-xs text-white rounded-full bg-primary-700">New</span> <span
-            class="text-sm font-medium">Flowbite is out! See what's new</span>
+            class="text-sm font-medium">csPlanner is coming soon!</span>
           <svg class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"

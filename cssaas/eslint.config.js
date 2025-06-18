@@ -6,6 +6,7 @@ import globals from 'globals';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript-eslint';
 import svelteConfig from './svelte.config.js';
+
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
 export default ts.config(
@@ -14,19 +15,15 @@ export default ts.config(
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
 	prettier,
-	...svelte.configs['flat/prettier'],
+	...svelte.configs.prettier,
 	{
 		languageOptions: {
-			globals: {
-				...globals.browser,
-				...globals.node
-			}
-		}
+			globals: { ...globals.browser, ...globals.node }
+		},
+		rules: { 'no-undef': 'off' }
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-		ignores: ['eslint.config.js', 'svelte.config.js'],
-
 		languageOptions: {
 			parserOptions: {
 				projectService: true,
