@@ -2,8 +2,8 @@
 
 </script>
 
-<header>
-    <nav id="mainNavbar" data-sticky="false" class="dark:bg-transparent bg-transparent border-gray-200 py-2.5 fixed w-full z-40 top-0 start-0 data-[sticky=true]:bg-white data-[sticky=true]:border-b dark:data-[sticky=true]:bg-gray-800 dark:data-[sticky=true]:border-gray-700">
+<header><!-- dark:bg-transparent bg-transparent -->
+    <nav id="mainNavbar" data-sticky="false" class="dark:bg-gray-900 bg-gray-100 border-gray-200 py-2.5 fixed w-full z-40 top-0 start-0 data-[sticky=true]:bg-white data-[sticky=true]:border-b dark:data-[sticky=true]:bg-gray-800 dark:data-[sticky=true]:border-gray-700">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4">
             <a href="/" class="flex items-center">
                 <img src="/csplanner-logo-white.png" class="h-6 mr-3" alt="csPlanner Logo" />

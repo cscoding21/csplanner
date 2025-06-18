@@ -69,7 +69,7 @@
                       <a href="https://www.youtube.com/@CommonSenseCoding-ge5dn" target="_blank" class="hover:underline hover:text-gray-900 dark:hover:text-white">YouTube</a>
                   </li>
                   <li class="mb-4">
-                      <a href="/contact" target="_blank" class="hover:underline hover:text-gray-900 dark:hover:text-white">Contact Us</a>
+                      <a href="/contact" target="_blank" class="hover:underline hover:text-gray-900 dark:hover:text-white">FAQs</a>
                   </li>
               </ul>
           </div>
