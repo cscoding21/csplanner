@@ -4,6 +4,7 @@
 	import { formatDate } from "$lib/utils/format";
 	import WeekPopupSummary from "$lib/components/widgets/WeekPopupSummary.svelte";
 	import type { ProjectScheduleRowCell } from "$lib/services/schedule";
+	import { getCellColor } from "$lib/services/portfolio";
 
     interface Props {
         week: ProjectScheduleRowCell
@@ -15,7 +16,7 @@
 
 
 {#if week.activities.length > 0}
-{@const cellColor = week.risks.length > 0 ? "yellow" : "green" }
+{@const cellColor = getCellColor(week.risks, week.isPastDue) } 
 {@const popWidth = week.risks.length > 0 ? "w-[600px]" : "w-64" }
 <Button  size="xs" color={cellColor} pill id={"id_" + uuid}>{week.activities.reduce((acc, curr) => acc + (curr.hoursSpent || 0), 0)}</Button>
 <Popover class="text-sm font-light {popWidth}" title={"Week ending " + formatDate(week.end)} triggeredBy={"#id_" + uuid}>

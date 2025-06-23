@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CSSection, OrgStateChecker } from "$lib/components";
-	import type { Organization, PageAndFilter, ProjectResults } from "$lib/graphql/generated/sdk";
+	import type { ActivityResults, Organization, PageAndFilter, ProjectResults } from "$lib/graphql/generated/sdk";
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
 	import { findProjects } from "$lib/services/project";
@@ -12,6 +12,10 @@
 	import FundingSources from "./setup/FundingSources.svelte";
 	import Roles from "./setup/Roles.svelte";
 	import Resources from "./setup/Resources.svelte";
+	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
+	import { findActivity } from "$lib/services/activity";
+	import { page } from "$app/state";
+	import NoResults from "$lib/components/messages/NoResults.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -33,10 +37,7 @@
     const loadPage = async () => {
         getOrganization().then(o => {
             org = o
-
             currentStep = getStartingStep(org)
-
-            console.log(org)
 
             return o
         }).then(r => {
@@ -44,11 +45,17 @@
                 .then(res => {
                     myProjects = res
                 })
+        }).then(r => {
+            findActivity(pageAndFilter).then(a => {
+                activity = a
+            })
         })   
     }
 
+    let pageAndFilter = $state({} as PageAndFilter)
     let org = $state({} as Organization)
     let myProjects = $state({} as ProjectResults)
+    let activity = $state({} as ActivityResults)
     let currentStep = $state(0)
 
     const getStartingStep = (o:Organization):number => {
@@ -81,13 +88,38 @@
     {:then promiseData} 
 
     <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
-        <h1>My Projects</h1>
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
-            <ul>
-            {#each myProjects.results as project}
-                <li>{project?.data?.projectBasics.name} {project?.meta?.id}</li>
-            {/each}
-            </ul>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="col-span-2 p-4">
+                <SectionSubHeading>My Projects</SectionSubHeading>
+                <ul>
+                {#each myProjects.results as project}
+                    <li>
+                        <a href="/project/detail/{project?.meta?.id}#snapshot">
+                        {project?.data?.projectBasics.name}
+                        </a>
+                    </li>
+                {/each}
+                </ul>
+            </div>
+
+            <div class="p-4">
+                <SectionSubHeading>Activity</SectionSubHeading>
+                {#if activity && activity.results}
+                <ul>
+                    {#each activity.results as a}
+                        <li>
+                            {a?.summary}
+                        </li>
+                    {/each}
+                </ul>
+                {:else}
+                <div class="text-center p-6">
+                    No activity yet...
+                </div>
+                {/if}
+            </div>
+        </div>
         {/if}
 
         {#snippet elseRender()}

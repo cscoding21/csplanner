@@ -5,7 +5,7 @@
     import { findWeekRisks, getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
 	import { formatDate, formatDateNoYear, pluralize } from "$lib/utils/format";
-    import { SectionHeading, SectionSubHeading } from "$lib/components";
+    import { CSHR, SectionHeading, SectionSubHeading } from "$lib/components";
     import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
 	import { InfoCircleSolid } from "flowbite-svelte-icons";
@@ -126,7 +126,7 @@
 </ShowIfStatus>
 {/if}
 
-{#if result.exceptions}
+{#if result.exceptions && result.exceptions.length > 0}
     <div class="my-4">
     <Alert class="items-start!" border>
         {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
@@ -142,19 +142,44 @@
 
 {#if result.projectActivityWeeks && result.projectActivityWeeks.length > 0}
     {#if result.end}
-    <SectionSubHeading>{formatDate(result.begin)} - {formatDate(result.end)}</SectionSubHeading>
+    <SectionSubHeading cssClass="my-2">{formatDate(result.begin)} - {formatDate(result.end)}</SectionSubHeading>
     {#if result.project.projectBasics.startDate}
     <h2>Scheduled length: {result.projectActivityWeeks.length + " " + pluralize("week", result.projectActivityWeeks.length)}</h2>
     {:else}
     <h2>Unadjusted length: {result.projectActivityWeeks.length + " " + pluralize("week", result.projectActivityWeeks.length)}</h2>
     {/if}
     {/if}
-    
-    <ButtonGroup class="*:!ring-primary-700 mt-2">
-        <Button onclick={() => { setView("resource") }}>Resource view</Button>
-        <Button onclick={() => { setView("task") }}>Task view</Button>
-    </ButtonGroup>
-    <Hr />
+
+
+    <div class="block w-full items-center justify-between border-t py-3 dark:border-gray-800 sm:flex border-gray-200 mt-4">
+        <div class="flex flex-wrap gap-4">
+          <div class="flex items-center text-sm font-medium text-gray-900 dark:text-white">View by:</div>
+          <div class="flex items-center">
+            <input
+              id="sort-role"
+              type="radio"
+              value=""
+              name="show-only"
+              checked={true}
+              onclick={() => { setView("task") } }
+              class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
+            />
+            <label for="sort-role" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Task</label>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="all-users"
+              type="radio"
+              value=""
+              name="show-only"
+              checked={false}
+              onclick={() => { setView("resource") } }
+              class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
+            />
+            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Resource</label>
+          </div>
+        </div>
+    </div>
 
     <ScheduleTable schedule={result} view={view as "task"|"resource"|undefined} />
 {/if}

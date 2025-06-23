@@ -207,12 +207,16 @@ export const findWeekRisks = (activities:ProjectActivity[], resourceID: string|u
         const act = activities[i]
         const res = act.resource
 
-        if(act.taskEndDate && new Date(act.taskEndDate) < today && (act.status == "new" || act.status == "accepted")) {
-            out.push('Task "' + act.taskName + '" is past due')
+        if(act.status === "done" || act.status === "removed") {
+            continue
         }
 
         if(resourceID && resourceID != res?.id)
             continue
+
+        if(act.taskEndDate && new Date(act.taskEndDate) < today && (act.status == "new" || act.status == "accepted")) {
+            out.push('Task "' + act.taskName + '" is past due')
+        }
 
         if(res?.status != "inhouse") {
             out.push(res?.name + " is not currently in house and may not be available for this week")
@@ -237,6 +241,7 @@ export const findWeekHasPastDueTasks = (activities:ProjectActivity[]):boolean =>
         const act = activities[i]
 
         if(act.taskEndDate && new Date(act.taskEndDate) < today && (act.status == "new" || act.status == "accepted")) {
+            console.log(act.taskEndDate, act.status)
             return true
         }
     }

@@ -42,6 +42,7 @@ export function authService() {
 
 					return true;
 				} else {
+					console.error("loginFetchError", data)
 					return false;
 				}
 			})

@@ -21,6 +21,7 @@ func OrgMiddleware(next http.Handler) http.Handler {
 
 		m, err := orgmap.GetSaaSOrg(ctx)
 		if err != nil {
+			log.Error(err)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		} else {

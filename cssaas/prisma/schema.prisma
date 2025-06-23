@@ -50,3 +50,10 @@ model organization {
   @@index([id], map: "idx_organization_id")
   @@index([url_key], map: "idx_organization_url_key")
 }
+
+model email {
+  id    String @unique @db.VarChar(128)
+  email String @unique @db.VarChar(128)
+  ip    String @db.VarChar(32)
+  data  Json?
+}

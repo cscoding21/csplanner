@@ -1,6 +1,6 @@
-import type { PortfolioWeekSummary, Project, ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk"
-import { formatDate, formatDateNoYear } from "$lib/utils/format"
-import { findWeekRisks } from "./portfolio"
+import type { PortfolioWeekSummary, ProjectActivity, ProjectActivityWeek, Resource, Schedule } from "$lib/graphql/generated/sdk"
+import { formatDateNoYear } from "$lib/utils/format"
+import { findWeekHasPastDueTasks, findWeekRisks } from "./portfolio"
 
 
 export interface ProjectScheduleTable {
@@ -18,6 +18,7 @@ export interface ProjectScheduleRow {
 export interface ProjectScheduleRowCell {
     active: boolean
     risks: string[]
+    isPastDue: boolean
     showTasks: boolean
     end: Date
     orgCapacity: number
@@ -59,6 +60,7 @@ export const getScheduleTableByResource = (r: Schedule):ProjectScheduleTable => 
                 const week = r.projectActivityWeeks[i]
                 let weeksActivities:ProjectScheduleRowCell = { 
                     showTasks: true,
+                    isPastDue: false,
                     end: week.end,
                     active: true,
                     orgCapacity: 0,
@@ -75,6 +77,8 @@ export const getScheduleTableByResource = (r: Schedule):ProjectScheduleTable => 
                             weeksActivities.risks = findWeekRisks(week.activities, activity.resourceID)
                         }
                     }
+
+                    weeksActivities.isPastDue = findWeekHasPastDueTasks(weeksActivities.activities as ProjectActivity[])
                 }
             
                 row.weeks.push(weeksActivities)
@@ -124,6 +128,7 @@ export const getScheduleTableByResource = (r: Schedule):ProjectScheduleTable => 
                 let weeksActivities:ProjectScheduleRowCell = { 
                     showTasks: false,
                     end: week.end, 
+                    isPastDue: false,
                     active: true,
                     orgCapacity: 0,
                     activities: [] as ProjectActivity[],
@@ -140,6 +145,7 @@ export const getScheduleTableByResource = (r: Schedule):ProjectScheduleTable => 
                     }
 
                     weeksActivities.risks = findWeekRisks(weeksActivities.activities, undefined)
+                    weeksActivities.isPastDue = findWeekHasPastDueTasks(weeksActivities.activities as ProjectActivity[])
                 }
             
                 row.weeks.push(weeksActivities)

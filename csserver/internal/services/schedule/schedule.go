@@ -288,6 +288,10 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 			}
 
 			for _, rss := range t.ResourceIDs {
+				if t.Status == milestonestatus.Done || t.Status == milestonestatus.Removed {
+					continue
+				}
+
 				resource := ram.ResourceMap[rss]
 				skill := resource.GetSkill(t.RequiredSkillID)
 

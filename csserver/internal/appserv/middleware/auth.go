@@ -22,18 +22,20 @@ import (
 
 type AuthResult struct {
 	Valid bool
-	Token interface{}
+	Token any
 }
 
 type GraphQLShape struct {
 	Query         string
 	OperationName string
-	Variables     interface{}
+	Variables     any
 }
 
 // ValidationMiddleware
 func ValidationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Debugf("ValidationMiddleware: %v", r.Method)
+
 		//---temporary for testing
 		if checkIsFile(r) {
 			log.Debug("Auth bypass: is file")
