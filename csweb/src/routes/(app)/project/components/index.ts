@@ -6,6 +6,7 @@ export { default as DeleteProject } from './DeleteProject.svelte';
 export { default as DeleteProjectFeature } from './DeleteProjectFeature.svelte';
 export { default as DeleteProjectTask } from './DeleteProjectTask.svelte';
 export { default as DeleteProjectValueLine } from './DeleteProjectValueLine.svelte';
+export { default as ProjectActionTable } from './ProjectActionTable.svelte';
 export { default as ProjectNavBar } from './ProjectNavBar.svelte';
 export { default as ProjectActionBar } from './ProjectActionBar.svelte';
 export { default as ProjectBasics } from './ProjectBasics.svelte';
@@ -22,6 +23,7 @@ export { default as ProjectScheduleCell } from './ProjectScheduleCell.svelte';
 export { default as ProjectSearchFilters } from './ProjectSearchFilters.svelte';
 export { default as ProjectSnapshot } from './ProjectSnapshot.svelte';
 export { default as ProjectStartDateSet } from './ProjectStartDateSet.svelte';
+export { default as ProjectStatusBar } from './ProjectStatusBar.svelte';
 export { default as ProjectStatusBanner } from './ProjectStatusBanner.svelte';
 export { default as ProjectStatusUpdate } from './ProjectStatusUpdate.svelte';
 export { default as ProjectTaskDisplay } from './ProjectTaskDisplay.svelte';
@@ -38,4 +40,4 @@ export { default as RiskLegend } from './RiskLegend.svelte';
 export { default as ShowIfStatus } from './ShowIfStatus.svelte';
 
 
-export type { Week } from './ProjectScheduleCell.svelte';
+// export type { Week } from './ProjectScheduleCell.svelte';

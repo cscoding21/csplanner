@@ -14,8 +14,7 @@
 	import Resources from "./setup/Resources.svelte";
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
 	import { findActivity } from "$lib/services/activity";
-	import { page } from "$app/state";
-	import NoResults from "$lib/components/messages/NoResults.svelte";
+	import ProjectActionTable from "../project/components/ProjectActionTable.svelte";
 
     const as = authService()
     const user = as.currentUser()
@@ -82,7 +81,6 @@
 </script>
 
 <div class="p-4">
-<CSSection>
     {#await loadPage()}
         Loading...
     {:then promiseData} 
@@ -90,20 +88,12 @@
     <OrgStateChecker invert={false} stateToCheck="isReadyForProjects">
         {#if myProjects && myProjects.results && myProjects.results?.length > 0}
         <div class="grid grid-cols-3 gap-4">
-            <div class="col-span-2 p-4">
+            <CSSection cssClass="col-span-2">
                 <SectionSubHeading>My Projects</SectionSubHeading>
-                <ul>
-                {#each myProjects.results as project}
-                    <li>
-                        <a href="/project/detail/{project?.meta?.id}#snapshot">
-                        {project?.data?.projectBasics.name}
-                        </a>
-                    </li>
-                {/each}
-                </ul>
-            </div>
+                <ProjectActionTable projects={myProjects.results} />
+            </CSSection>
 
-            <div class="p-4">
+            <CSSection>
                 <SectionSubHeading>Activity</SectionSubHeading>
                 {#if activity && activity.results}
                 <ul>
@@ -118,11 +108,12 @@
                     No activity yet...
                 </div>
                 {/if}
-            </div>
+            </CSSection>
         </div>
         {/if}
 
         {#snippet elseRender()}
+        <CSSection>
             <SetupWizard {org} bind:step={currentStep} />
 
             <div class="p-4 grid grid-cols-4 gap-4">
@@ -146,10 +137,11 @@
             <div></div>
                 </div>
             </div>
+        </CSSection>    
         {/snippet}
+        
     </OrgStateChecker>
 
     {/await}
-</CSSection>
 
 </div>
