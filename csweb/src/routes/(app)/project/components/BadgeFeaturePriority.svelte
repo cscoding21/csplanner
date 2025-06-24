@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FeaturePriorityHigh, FeaturePriorityLow, FeaturePriorityMedium, FeaturePriorityVeryHigh } from "$lib/services/project";
     import { 
         Badge, 
         Indicator} from "flowbite-svelte";
@@ -16,22 +17,22 @@
 
 	$effect(() => {
 		switch (priority) {
-			case 'veryhigh':
+			case FeaturePriorityVeryHigh:
 				badgeName = 'Must Have';
 				badgeColor = 'red';
 				badgeIndicatorColor = 'red';
 				break;
-			case 'high':
+			case FeaturePriorityHigh:
 				badgeName = 'High';
 				badgeColor = 'yellow';
 				badgeIndicatorColor = 'yellow';
 				break;
-			case 'medium':
+			case FeaturePriorityMedium:
 				badgeName = 'Medium';
 				badgeColor = 'blue';
 				badgeIndicatorColor = 'blue';
 				break;
-			case 'low':				
+			case FeaturePriorityLow:				
 				badgeName = 'Low';
 				badgeColor = 'purple';
 				badgeIndicatorColor = 'purple';

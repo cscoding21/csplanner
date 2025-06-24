@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MilestoneStatusAccepted, MilestoneStatusDone, MilestoneStatusNew, MilestoneStatusRemoved } from "$lib/services/project";
     import { 
         Badge, 
         Indicator} from "flowbite-svelte";
@@ -16,22 +17,22 @@ interface Props {
 
 	$effect(() => {
 		switch (status) {
-			case 'new':
+			case MilestoneStatusNew:
 				badgeName = 'New';
 				badgeColor = 'yellow';
 				badgeIndicatorColor = 'yellow';
 				break;
-			case 'accepted':
+			case MilestoneStatusAccepted:
 				badgeName = 'Accepted';
 				badgeColor = 'blue';
 				badgeIndicatorColor = 'blue';
 				break;
-			case 'removed':
+			case MilestoneStatusRemoved:
 				badgeName = 'Removed';
 				badgeColor = 'red';
 				badgeIndicatorColor = 'red';
 				break;
-			case 'done':				
+			case MilestoneStatusDone:				
 				badgeName = 'Done';
 				badgeColor = 'green';
 				badgeIndicatorColor = 'green';

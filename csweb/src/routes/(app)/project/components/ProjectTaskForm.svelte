@@ -19,7 +19,7 @@
 		parseErrors,
 		findSelectOptsFromList
 	} from '$lib/forms/helpers';
-	import { updateProjectTask } from '$lib/services/project';
+	import { MilestoneStatusAccepted, MilestoneStatusDone, MilestoneStatusNew, MilestoneStatusRemoved, updateProjectTask } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
 	import { findAllResources } from '$lib/services/resource';
@@ -36,10 +36,10 @@
 	let { milestoneID, projectID, task, update }: Props = $props();
 
 	const statusOpts = [
-		{ value: 'new', name: 'New' },
-		{ value: 'accepted', name: 'Accepted' },
-		{ value: 'removed', name: 'Removed' },
-		{ value: 'done', name: 'Done' }
+		{ value: MilestoneStatusNew, name: 'New' },
+		{ value: MilestoneStatusAccepted, name: 'Accepted' },
+		{ value: MilestoneStatusRemoved, name: 'Removed' },
+		{ value: MilestoneStatusDone, name: 'Done' }
 	];
 
 	const resetNewTask = () => {

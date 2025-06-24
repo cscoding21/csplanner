@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ButtonGroup, Drawer, Button } from 'flowbite-svelte';
-	import { getProject } from '$lib/services/project';
+	import { getProject, ProjectStatusAbandoned, ProjectStatusDraft, ProjectStatusNew, ProjectStatusRejected } from '$lib/services/project';
 	import { 
 		ProjectActionBar, 
 		DeleteProject, 
@@ -25,8 +25,8 @@
 	import { goto } from '$app/navigation';
 	import ShowIfStatus from '../../components/ShowIfStatus.svelte';
 
-	const id = $page.params.id;
-	let hash = $state($page.url.hash);
+	const id = page.params.id;
+	let hash = $state(page.url.hash);
 
 	let project: ProjectEnvelope = $state({} as ProjectEnvelope);
 
@@ -51,7 +51,7 @@
 
 <svelte:window
 	on:hashchange={() => {
-		hash = $page.url.hash
+		hash = page.url.hash
 	}}
 />
 
@@ -73,7 +73,7 @@
 				<ArrowRightToBracketOutline size="sm" class="mr-2"  />
 				Status
 			</ProjectStatusUpdate>
-			<ShowIfStatus scope={["new", "draft", "abandoned", "rejected"]} status={project.data?.projectStatusBlock?.status}>
+			<ShowIfStatus scope={[ProjectStatusNew, ProjectStatusDraft, ProjectStatusAbandoned, ProjectStatusRejected]} status={project.data?.projectStatusBlock?.status}>
 				<DeleteProject id={id} name={project.data?.projectBasics?.name}>
 					<TrashBinOutline size="sm" class="mr-2" />
 					Delete

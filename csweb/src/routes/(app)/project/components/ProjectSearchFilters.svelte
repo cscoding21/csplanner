@@ -7,25 +7,26 @@
 	import { CloseCircleOutline } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import { getSetting, PROJECT_SEARCH_INPUT_FILTER, PROJECT_STATUS_FILTER, PROJECT_RESOURCE_ID_FILTER, setSetting } from '$lib/services/settings';
+	import { ProjectStatusNew, ProjectStatusDraft, ProjectStatusProposed, ProjectStatusApproved, ProjectStatusRejected, ProjectStatusBacklogged, ProjectStatusScheduled, ProjectStatusInflight, ProjectStatusComplete, ProjectStatusDeferred, ProjectStatusAbandoned } from '$lib/services/project';
 
     let searchInput:string = $state("")
-    let status:string[] = $state(["new", "draft", "approved", "proposed", "inflight", "scheduled"])
+    let status:string[] = $state([ProjectStatusNew, ProjectStatusDraft, ProjectStatusApproved, ProjectStatusProposed, ProjectStatusInflight, ProjectStatusScheduled])
     let resourceID:string = $state("")
 
     let clearHandle:any
 
     let statusOpts = [
-        { value: "new", name: "New", checked: false},
-        { value: "draft", name: "Draft", checked: false},
-        { value: "proposed", name: "Proposed", checked: false},
-        { value: "approved", name: "Approved", checked: false},
-        { value: "rejected", name: "Rejected", checked: false},
-        { value: "backlogged", name: "Backlogged", checked: false},
-        { value: "scheduled", name: "Scheduled", checked: false},
-        { value: "inflight", name: "In-flight", checked: false},
-        { value: "complete", name: "Complete", checked: false},
-        { value: "deferred", name: "Deferred", checked: false},
-        { value: "abandoned", name: "Abandoned", checked: false},
+        { value: ProjectStatusNew, name: "New", checked: false},
+        { value: ProjectStatusDraft, name: "Draft", checked: false},
+        { value: ProjectStatusProposed, name: "Proposed", checked: false},
+        { value: ProjectStatusApproved, name: "Approved", checked: false},
+        { value: ProjectStatusRejected, name: "Rejected", checked: false},
+        { value: ProjectStatusBacklogged, name: "Backlogged", checked: false},
+        { value: ProjectStatusScheduled, name: "Scheduled", checked: false},
+        { value: ProjectStatusInflight, name: "In-flight", checked: false},
+        { value: ProjectStatusComplete, name: "Complete", checked: false},
+        { value: ProjectStatusDeferred, name: "Deferred", checked: false},
+        { value: ProjectStatusAbandoned, name: "Abandoned", checked: false},
     ]
 
     let resourceOpts:SelectOptionType<string>[] = $state([])
@@ -59,7 +60,7 @@
 
     const resetFilters = () => {
         searchInput = ""
-        status = ["new", "draft", "approved", "proposed", "inflight", "scheduled"]
+        status = [ProjectStatusNew, ProjectStatusDraft, ProjectStatusApproved, ProjectStatusProposed, ProjectStatusInflight, ProjectStatusScheduled]
         resourceID = ""
 
         setSetting(PROJECT_SEARCH_INPUT_FILTER, searchInput)
@@ -110,7 +111,7 @@
 
     onMount(() => {
         searchInput = getSetting(PROJECT_SEARCH_INPUT_FILTER, "")
-        status = getSetting(PROJECT_STATUS_FILTER, ["new", "draft", "approved", "proposed", "inflight", "scheduled"])
+        status = getSetting(PROJECT_STATUS_FILTER, [ProjectStatusNew, ProjectStatusDraft, ProjectStatusApproved, ProjectStatusProposed, ProjectStatusInflight, ProjectStatusScheduled])
         resourceID = getSetting(PROJECT_RESOURCE_ID_FILTER, "")
 
         change(getFilters())

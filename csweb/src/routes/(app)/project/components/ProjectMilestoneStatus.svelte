@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { ProjectMilestone } from "$lib/graphql/generated/sdk";
-	import { safeInt } from "$lib/utils/helpers";
 	import { normalizeGUID } from "$lib/utils/id";
     import { Progressbar, Popover } from "flowbite-svelte";
 

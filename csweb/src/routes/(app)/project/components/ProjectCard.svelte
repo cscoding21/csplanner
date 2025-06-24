@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, Heading, Hr, P } from 'flowbite-svelte';
+	import { Heading, P } from 'flowbite-svelte';
 	import type { ProjectEnvelope, Resource } from '$lib/graphql/generated/sdk';
 	import { formatDate } from '$lib/utils/format';
 	import { ResourceList, MoneyDisplay, CSHR } from '$lib/components';

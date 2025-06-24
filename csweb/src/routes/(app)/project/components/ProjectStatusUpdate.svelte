@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
     import type { ProjectEnvelope } from "$lib/graphql/generated/sdk";
-	import { setProjectStatus, getProject } from "$lib/services/project";
+	import { setProjectStatus, getProject, ProjectStatusException, ProjectStatusAbandoned, ProjectStatusApproved, ProjectStatusBacklogged, ProjectStatusComplete, ProjectStatusDeferred, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusRejected, ProjectStatusScheduled } from "$lib/services/project";
     import { addToast } from "$lib/stores/toasts";
     import { Button, Modal, Hr } from "flowbite-svelte";
     import { callIf, reloadPage } from "$lib/utils/helpers";
@@ -75,68 +75,68 @@
         }
 
         switch(type) {
-            case("new"):
+            case(ProjectStatusNew):
                 def.currentTitle = "New Project";
                 def.currentDesc = "The project has been created, but no work has been started"
                 break;
-            case("draft"):
+            case(ProjectStatusDraft):
                 def.currentTitle = "Draft";
                 def.currentDesc = "When in the draft state, all elements of the project can be edited"
                 def.buttonDisplay = "Move to Draft"
                 def.transitionWarning = "Moving a project to draft will clear its approval status"
                 def.buttonColor = "primary"
                 break;
-            case("proposed"):
+            case(ProjectStatusProposed):
                 def.currentTitle = "Proposed";
                 def.currentDesc = "The project has been fully characterized and is under consideration for implementation"
                 def.buttonDisplay = "Propose this project"
                 def.buttonColor = "primary"
                 break;
-            case("approved"):
+            case(ProjectStatusApproved):
                 def.currentTitle = "Approved";
                 def.currentDesc = "The project has been considered and approved for implementation"
                 def.buttonDisplay = "Approve this project"
                 def.buttonColor = "green"
                 break;
-            case("rejected"):
+            case(ProjectStatusRejected):
                 def.currentTitle = "Rejected";
                 def.currentDesc = "The project has been considered but cannot be scheduled in its current state"
                 def.buttonDisplay = "Reject this project"
                 def.buttonColor = "red"
                 break;
-            case("backlogged"):
+            case(ProjectStatusBacklogged):
                 def.currentTitle = "Backlogged";
                 def.currentDesc = "The project has been approved, but is not ready for scheduling likely due to resource constraints"
                 def.buttonDisplay = "Move to backlog"
                 def.buttonColor = "yellow"
                 break;
-            case("scheduled"):
+            case(ProjectStatusScheduled):
                 def.currentTitle = "Scheduled";
                 def.currentDesc = "This project has been scheduled.  It will automatically be promoted to 'in-flight' when the start date has arrived"
                 def.buttonDisplay = "Schedule this project"
                 def.buttonColor = "green"
                 break;
-            case("inflight"):
+            case(ProjectStatusInflight):
                 def.currentTitle = "In-Flight";
                 def.currentDesc = "This project has been scheduled and is currently being implemented.  It will be automatically promoted to 'complete' when all tasks have been marked done"
                 break;
-            case("complete"):
+            case(ProjectStatusComplete):
                 def.currentTitle = "Complete";
                 def.currentDesc = "This project has been completed"
                 break;
-            case("deferred"):
+            case(ProjectStatusDeferred):
                 def.currentTitle = "Deferred";
                 def.currentDesc = "A project that is deferred is taken off the schedule but can be re-scheduled without future approval"
                 def.buttonDisplay = "Defer this project"
                 def.buttonColor = "yellow"
                 break;
-            case("abandoned"):
+            case(ProjectStatusAbandoned):
                 def.currentTitle = "Abandoned";
                 def.currentDesc = "A project that abandoned is removed from the schedule with no intention of coming back to in the future"
                 def.buttonDisplay = "Abandon this project"
                 def.buttonColor = "red"
                 break;
-            case("exception"):
+            case(ProjectStatusException):
                 def.currentTitle = "Exception";
                 def.currentDesc = "This should not have happened"
                 break;

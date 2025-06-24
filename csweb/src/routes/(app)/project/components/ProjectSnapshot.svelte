@@ -4,7 +4,7 @@
     } from "$lib/components";
     import { BadgeProjectStatus, ShowIfStatus } from ".";
     import type { ProjectEnvelope } from '$lib/graphql/generated/sdk'
-    import { getProject } from "$lib/services/project";
+    import { getProject, ProjectStatusAbandoned, ProjectStatusApproved, ProjectStatusBacklogged, ProjectStatusComplete, ProjectStatusDeferred, ProjectStatusDraft, ProjectStatusException, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusRejected, ProjectStatusScheduled } from "$lib/services/project";
     import { getDefaultProject } from "$lib/forms/project.validation";
 	import Draft from "./snapshots/Draft.svelte";
 	import New from "./snapshots/New.svelte";
@@ -57,37 +57,37 @@
 
 
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["new"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusNew]}>
     <New project={project.data} />
 </ShowIfStatus>
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["draft"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusDraft]}>
     <Draft project={project.data} />
 </ShowIfStatus>
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["proposed"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusProposed]}>
     <Proposed project={project.data} />
 </ShowIfStatus>
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["approved"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusApproved]}>
     <Approved project={project.data} />
 </ShowIfStatus>
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["scheduled"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusScheduled]}>
     <Scheduled project={project.data} />
 </ShowIfStatus>
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["inflight"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusInflight]}>
     <InFlight project={project.data} update={() => load()} />
 </ShowIfStatus>
 
 
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["deferred", "abandoned", "rejected", "backlogged", "complete"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusDeferred, ProjectStatusAbandoned, ProjectStatusRejected, ProjectStatusBacklogged, ProjectStatusComplete]}>
     <Shelved project={project.data} />
 </ShowIfStatus>
 
-<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={["exception"]}>
+<ShowIfStatus status={project.data?.projectStatusBlock.status} scope={[ProjectStatusException]}>
     <Exception project={project.data} />
 </ShowIfStatus>
 

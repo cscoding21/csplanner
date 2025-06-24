@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { ProjectActivity, Resource, Schedule } from "$lib/graphql/generated/sdk";
-    import { BadgeProjectStatus, ProjectScheduleCell, ProjectStatusBanner, ProjectStartDateSet, ShowIfStatus, type Week, RiskLegend } from ".";
-	import { calculateProjectSchedule } from "$lib/services/project";
-    import { findWeekRisks, getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
+	import type { Resource, Schedule } from "$lib/graphql/generated/sdk";
+    import { BadgeProjectStatus, ProjectStartDateSet, ShowIfStatus, type Week } from ".";
+	import { calculateProjectSchedule, ProjectStatusAbandoned, ProjectStatusApproved, ProjectStatusDeferred, ProjectStatusInflight, ProjectStatusScheduled } from "$lib/services/project";
+    import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
-	import { formatDate, formatDateNoYear, pluralize } from "$lib/utils/format";
-    import { CSHR, SectionHeading, SectionSubHeading } from "$lib/components";
-    import { Hr , Table, TableBody, TableHead, TableHeadCell, TableBodyCell, TableBodyRow, ButtonGroup, Button, Alert } from "flowbite-svelte";
-	import { ResourceList } from "$lib/components";
+	import { formatDate, pluralize } from "$lib/utils/format";
+    import { SectionHeading, SectionSubHeading } from "$lib/components";
+    import { Alert } from "flowbite-svelte";
 	import { InfoCircleSolid } from "flowbite-svelte-icons";
     import { getScheduleTableByResource, getScheduleTableByTask, type ProjectScheduleTable } from "$lib/services/schedule"
 	import ScheduleTable from "$lib/components/widgets/ScheduleTable.svelte";
@@ -113,11 +112,11 @@
 </SectionHeading>
 
 
-<ShowIfStatus scope={["scheduled"]} status={result.project.projectStatusBlock?.status}>
+<ShowIfStatus scope={[ProjectStatusScheduled]} status={result.project.projectStatusBlock?.status}>
     <ScheduleSummary schedule={result} />
 </ShowIfStatus>
 
-<ShowIfStatus scope={["approved", "scheduled", "inflight", "deferred", "abandoned"]} status={result.project.projectStatusBlock?.status}>
+<ShowIfStatus scope={[ProjectStatusApproved, ProjectStatusScheduled, ProjectStatusInflight, ProjectStatusDeferred, ProjectStatusAbandoned]} status={result.project.projectStatusBlock?.status}>
     <ProjectStartDateSet project={result.project} update={() => refresh()} />
 
     {#snippet elseRender()}

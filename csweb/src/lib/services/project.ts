@@ -47,6 +47,35 @@ import {
 	taskSchema
 } from '$lib/forms/project.validation';
 
+export const ProjectStatusNew = "new"
+export const ProjectStatusDraft = "draft"
+export const ProjectStatusProposed = "proposed"
+export const ProjectStatusApproved = "approved"
+export const ProjectStatusRejected = "rejected"
+export const ProjectStatusScheduled = "scheduled"
+export const ProjectStatusInflight = "inflight"
+export const ProjectStatusAbandoned = "abandoned"
+export const ProjectStatusDeferred = "deferred"
+export const ProjectStatusBacklogged = "backlogged"
+export const ProjectStatusComplete = "complete"
+export const ProjectStatusException = "exception"
+
+export const MilestoneStatusNew = "new"
+export const MilestoneStatusAccepted = "accepted"
+export const MilestoneStatusRemoved = "removed"
+export const MilestoneStatusDone = "done"
+
+export const FeaturePriorityLow = "low"
+export const FeaturePriorityMedium = "medium"
+export const FeaturePriorityHigh = "high"
+export const FeaturePriorityVeryHigh = "veryhigh"
+
+export const FeatureStatusProposed = "proposed"
+export const FeatureStatusAccepted = "accepted"
+export const FeatureStatusRemoved = "removed"
+export const FeatureStatusDone = "done"
+
+
 /**
  * return an list of projects based on passed in filter and paging criteria
  * @param input object with paging and filtering details

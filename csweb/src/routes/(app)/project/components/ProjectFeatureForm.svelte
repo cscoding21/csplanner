@@ -4,7 +4,7 @@
 	import { featureSchema, getNewFeature } from '$lib/forms/project.validation';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import { onMount } from 'svelte';
-	import { updateProjectFeature } from '$lib/services/project';
+	import { FeaturePriorityHigh, FeaturePriorityLow, FeaturePriorityMedium, FeaturePriorityVeryHigh, FeatureStatusAccepted, FeatureStatusDone, FeatureStatusProposed, FeatureStatusRemoved, updateProjectFeature } from '$lib/services/project';
 	import { is } from '$lib/utils/check';
 	import type { ProjectFeature } from '$lib/graphql/generated/sdk';
 	import { TextAreaInput } from '$lib/components';
@@ -36,17 +36,17 @@
 	let errors: any = $state({});
 
 	const priorityOpts: SelectOptionType<string>[] = [
-		{ value: 'veryhigh', name: 'Must Have' },
-		{ value: 'high', name: 'High' },
-		{ value: 'medium', name: 'Medium' },
-		{ value: 'low', name: 'Low' }
+		{ value: FeaturePriorityVeryHigh, name: 'Must Have' },
+		{ value: FeaturePriorityHigh, name: 'High' },
+		{ value: FeaturePriorityMedium, name: 'Medium' },
+		{ value: FeaturePriorityLow, name: 'Low' }
 	];
 
 	const statusOpts: SelectOptionType<string>[] = [
-		{ value: 'proposed', name: 'Proposed' },
-		{ value: 'accepted', name: 'Accepted' },
-		{ value: 'removed', name: 'Removed' },
-		{ value: 'done', name: 'Done' }
+		{ value: FeatureStatusProposed, name: 'Proposed' },
+		{ value: FeatureStatusAccepted, name: 'Accepted' },
+		{ value: FeatureStatusRemoved, name: 'Removed' },
+		{ value: FeatureStatusDone, name: 'Done' }
 	];
 
 	const submitForm = () => {

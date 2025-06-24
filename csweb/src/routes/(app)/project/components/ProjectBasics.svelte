@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Toggle, type SelectOptionType } from 'flowbite-svelte';
 	import { SelectInput, TextInput, TextAreaInput, SectionHeading } from '$lib/components';
-	import { getProject, updateProjectBasics } from '$lib/services/project';
+	import { getProject, ProjectStatusApproved, ProjectStatusBacklogged, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusScheduled, updateProjectBasics } from '$lib/services/project';
 	import { basicSchema, getDefaultProject } from '$lib/forms/project.validation';
 	import { mergeErrors, parseErrors } from '$lib/forms/helpers';
 	import type { UpdateProjectBasics, ProjectEnvelope } from '$lib/graphql/generated/sdk';
@@ -136,7 +136,7 @@
 			<Toggle class="mt-3" bind:checked={basicsForm.isCapitalized}>Capitalized</Toggle>
 		</div>
 
-		<ShowIfStatus scope={["new", "draft", "proposed", "approved", "backlogged", "scheduled", "inflight"]} status={project.data?.projectStatusBlock?.status}>
+		<ShowIfStatus scope={[ProjectStatusNew, ProjectStatusDraft, ProjectStatusProposed, ProjectStatusApproved, ProjectStatusBacklogged, ProjectStatusScheduled, ProjectStatusInflight]} status={project.data?.projectStatusBlock?.status}>
 		<div class="">
 			<span class="float-right">
 				<Button onclick={updateBasics}>Update Basics</Button>

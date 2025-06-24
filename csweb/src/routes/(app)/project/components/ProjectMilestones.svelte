@@ -7,7 +7,7 @@
 	import { SectionHeading } from '$lib/components';
 	import { findAllProjectTemplates } from '$lib/services/template';
 	import { ProjectTaskForm, ProjectTaskDisplay, ProjectTemplateSelector, ProjectMilestoneStatus, BadgeProjectStatus, ShowIfStatus } from '.';
-	import { getProject } from '$lib/services/project';
+	import { getProject, ProjectStatusDraft, ProjectStatusNew } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import { callIf } from '$lib/utils/helpers';
 
@@ -101,7 +101,7 @@
 									{/if}
 								{/each}
 							{/if}
-							<ShowIfStatus scope={["new", "draft"]} status={project.data?.projectStatusBlock?.status}>
+							<ShowIfStatus scope={[ProjectStatusNew, ProjectStatusDraft]} status={project.data?.projectStatusBlock?.status}>
 								<SectionHeading>Add New Task to Milestone {milestone.phase.name}</SectionHeading>
 								<ProjectTaskForm milestoneID={milestone.id} projectID={id} update={() => refresh()} />
 							</ShowIfStatus>

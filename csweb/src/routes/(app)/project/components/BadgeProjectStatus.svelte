@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ProjectStatusAbandoned, ProjectStatusApproved, ProjectStatusBacklogged, ProjectStatusComplete, ProjectStatusDeferred, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusRejected, ProjectStatusScheduled } from "$lib/services/project";
     import { 
         Badge, 
         Indicator
@@ -17,57 +18,57 @@
 	
 	$effect(() => {
 		switch (status) {
-			case 'new':
+			case ProjectStatusNew:
 				badgeName = 'New';
 				badgeColor = 'red';
 				badgeIndicatorColor = 'red';
 				break;
-			case 'draft':
+			case ProjectStatusDraft:
 				badgeName = 'Draft';
 				badgeColor = 'yellow';
 				badgeIndicatorColor = 'yellow';
 				break;
-			case 'proposed':
+			case ProjectStatusProposed	:
 				badgeName = 'Proposed';
 				badgeColor = 'blue';
 				badgeIndicatorColor = 'blue';
 				break;
-			case 'approved':				
+			case ProjectStatusApproved:	
 				badgeName = 'Approved';
 				badgeColor = 'purple';
 				badgeIndicatorColor = 'purple';
 				break;
-			case 'rejected':
+			case ProjectStatusRejected:
 				badgeName = 'Rejected';
 				badgeColor = 'red';
 				badgeIndicatorColor = 'red';
 				break;
-			case 'backlogged':
+			case ProjectStatusBacklogged:
 				badgeName = 'Backlogged';
 				badgeColor = 'purple';
 				badgeIndicatorColor = 'purple';
 				break;
-			case 'scheduled':
+			case ProjectStatusScheduled:
 				badgeName = 'Scheduled';
 				badgeColor = 'green';
 				badgeIndicatorColor = 'green';
 				break;
-			case 'inflight':
+			case ProjectStatusInflight:
 				badgeName = 'In-flight';
 				badgeColor = 'green';
 				badgeIndicatorColor = 'green';
 				break;
-			case 'complete':
+			case ProjectStatusComplete:
 				badgeName = 'Complete';
 				badgeColor = 'green';
 				badgeIndicatorColor = 'green';
 				break;
-			case 'deferred':
+			case ProjectStatusDeferred:
 				badgeName = 'Deferred';
 				badgeColor = 'purple';
 				badgeIndicatorColor = 'purple';
 				break;
-			case 'abandoned':
+			case ProjectStatusAbandoned:
 				badgeName = 'Abandoned';
 				badgeColor = 'red';
 				badgeIndicatorColor = 'red';

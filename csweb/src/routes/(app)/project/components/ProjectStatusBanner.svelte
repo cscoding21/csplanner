@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { Project, Schedule } from "$lib/graphql/generated/sdk";
-    import { Alert, Button } from "flowbite-svelte";
+    import { Alert } from "flowbite-svelte";
     import { InfoCircleSolid } from "flowbite-svelte-icons";
     import { formatDate, titleCase } from "$lib/utils/format";
+	import { ProjectStatusScheduled, ProjectStatusInflight } from "$lib/services/project";
 
     interface Props {
 		project: Project;
@@ -14,13 +15,13 @@
 
 
 {#if schedule}
-    {#if project.projectStatusBlock.status === "scheduled"}
+    {#if project.projectStatusBlock.status === ProjectStatusScheduled}
     <Alert border class="mt-2 mb-6">
         {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <span class="font-medium">Project scheduled</span>
         This project has been scheduled and is set to begin on <b>{formatDate(project.projectBasics.startDate)}</b>
     </Alert>
-    {:else if project.projectStatusBlock.status === "inflight"}
+    {:else if project.projectStatusBlock.status === ProjectStatusInflight}
     <Alert border class="mt-2 mb-6">
         {#snippet icon()}<InfoCircleSolid class="h-5 w-5" />{/snippet}
         <span class="font-medium">Project in-flight!</span>

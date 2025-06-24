@@ -20,12 +20,10 @@
         DollarOutline,
         CashOutline,
 
-		CheckCircleOutline
-
 	} from 'flowbite-svelte-icons';
 	import { scrollTop } from 'svelte-scrolling';
 	import ShowIfStatus from './ShowIfStatus.svelte';
-	import { Badge } from 'flowbite-svelte';
+	import { ProjectStatusApproved, ProjectStatusInflight, ProjectStatusNew, ProjectStatusScheduled } from '$lib/services/project';
 
 	afterNavigate((navigation) => {
 		scrollTop()
@@ -66,7 +64,7 @@
 	{/if}
 
 
-	<ShowIfStatus status={project.projectStatusBlock?.status} invert={true} scope={['new']}>
+	<ShowIfStatus status={project.projectStatusBlock?.status} invert={true} scope={[ProjectStatusNew]}>
 	<CSSidebarItem href="#features" label="Features" active={hash === "#features"}> 
 		{#snippet icon()}
 			<RectangleListOutline />
@@ -93,7 +91,7 @@
 	
 	</ShowIfStatus>
 
-	<ShowIfStatus status={project.projectStatusBlock?.status} scope={['approved', 'scheduled', 'inflight']}>
+	<ShowIfStatus status={project.projectStatusBlock?.status} scope={[ProjectStatusApproved, ProjectStatusScheduled, ProjectStatusInflight]}>
 	<CSSidebarItem href="#schedule" label="Schedule" active={hash === "#schedule"}> 
 		{#snippet icon()}
 			<CalendarWeekOutline />

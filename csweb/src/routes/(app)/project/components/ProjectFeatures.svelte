@@ -2,7 +2,7 @@
 	import { Hr } from 'flowbite-svelte';
 	import { NoResults, SectionHeading } from '$lib/components';
 	import { BadgeProjectStatus, ProjectFeatureDisplay, ProjectFeatureForm } from '.';
-	import { getProject } from '$lib/services/project';
+	import { getProject, ProjectStatusDraft, ProjectStatusNew } from '$lib/services/project';
 	import { addToast } from '$lib/stores/toasts';
 	import type { ProjectEnvelope } from '$lib/graphql/generated/sdk';
 	import { getDefaultProject } from '$lib/forms/project.validation';
@@ -74,7 +74,7 @@
 	{/if}
 </div>
 
-<ShowIfStatus scope={["new", "draft"]} status={project.data?.projectStatusBlock?.status}>
+<ShowIfStatus scope={[ProjectStatusNew, ProjectStatusDraft]} status={project.data?.projectStatusBlock?.status}>
 	<ProjectFeatureForm projectID={id} feature={undefined} update={() => refresh()} />
 </ShowIfStatus>
 
