@@ -1,9 +1,8 @@
 <script lang="ts">
     import type { ProjectEnvelope, Resource } from "$lib/graphql/generated/sdk";
 	import { Table, TableBody, TableBodyCell, TableBodyRow } from "flowbite-svelte";
-	import BadgeProjectStatus from "./BadgeProjectStatus.svelte";
-	import ResourceList from "$lib/components/widgets/ResourceList.svelte";
-	import { ProjectStatusBar } from ".";
+	import { ResourceList } from "$lib/components";
+	import { ProjectStatusBrief, BadgeProjectStatus } from ".";
 
     interface Props {
         projects:ProjectEnvelope[]
@@ -29,7 +28,7 @@
             <TableBodyCell><BadgeProjectStatus status={project?.data?.projectStatusBlock.status} /></TableBodyCell>
             <TableBodyCell><ResourceList size="md" maxSize={4} resources={project?.data.calculated?.teamMembers as Resource[]} /></TableBodyCell>
             <TableBodyCell>
-                <ProjectStatusBar project={project?.data} />
+                <ProjectStatusBrief project={project?.data} />
             </TableBodyCell>
             </TableBodyRow>
         {/each}

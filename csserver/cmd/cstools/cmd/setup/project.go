@@ -12,6 +12,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/services/project"
 	"csserver/internal/services/project/ptypes/featurepriority"
+	"csserver/internal/services/project/ptypes/milestonestatus"
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/utils"
 
@@ -23,7 +24,6 @@ import (
 func CreateTestProjects(ctx context.Context) error {
 	ps := factory.GetProjectService(ctx)
 	rs := factory.GetResourceService(ctx)
-	us := factory.GetAppuserService(ctx)
 	org, _ := factory.GetDefaultOrganization(ctx)
 
 	projectList, _ := ps.FindAllProjects(ctx)
@@ -42,7 +42,6 @@ func CreateTestProjects(ctx context.Context) error {
 	}
 
 	allResources, _ := rs.FindAllResources(ctx)
-	allUsers, _ := us.FindAllAppusers(ctx)
 
 	updateProject := project.Project{
 		ControlFields: common.ControlFields{
@@ -51,7 +50,7 @@ func CreateTestProjects(ctx context.Context) error {
 		ProjectBasics: &project.ProjectBasics{
 			Name:        "YouTube Sensation",
 			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-			OwnerID:     allUsers.Results[0].Data.Email,
+			OwnerID:     "jeph@jmk21.com",
 			StartDate:   utils.ValToRef(calendar.GetWeek(time.Now().Add(time.Hour * 24 * 30)).End),
 		},
 		ProjectStatusBlock: &project.ProjectStatusBlock{
@@ -103,7 +102,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Stakeholder Alignment",
 						Description:     "Hob-nobbing the stakeholders",
 						HourEstimate:    120,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -112,7 +111,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Signoff",
 						Description:     "Get out your pen and sign off on the project charter",
 						HourEstimate:    40,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -132,7 +131,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Technical Requirements Gathering",
 						Description:     "Gather the requirements for the technical implementation of the project",
 						HourEstimate:    120,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:requirements-gathering",
 						ResourceIDs:     []string{"resource:yuffie"},
 					},
@@ -141,7 +140,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Resourcing Plan",
 						Description:     "Assign resources tentatively throughout the project lifecycle",
 						HourEstimate:    40,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:biggs"},
 					},
@@ -150,7 +149,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "User Interface Design",
 						Description:     "Full mockups for the user interface",
 						HourEstimate:    160,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:ux",
 						ResourceIDs:     []string{"resource:aerith"},
 					},
@@ -159,7 +158,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Technical Architecture",
 						Description:     "Design the system components and integrations",
 						HourEstimate:    120,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:technical-architecture",
 						ResourceIDs:     []string{"resource:cid", "resource:zack"},
 					},
@@ -180,7 +179,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Database Development",
 						Description:     "Write the schema, tables, and database objects",
 						HourEstimate:    120,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:database",
 						ResourceIDs:     []string{"resource:zack"},
 					},
@@ -189,7 +188,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Backend Development",
 						Description:     "Write the backend coding artifacts",
 						HourEstimate:    120,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:backend",
 						ResourceIDs:     []string{"resource:cloud"},
 					},
@@ -198,7 +197,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Frontend Development",
 						Description:     "Write the frontend coding artifacts",
 						HourEstimate:    40,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:frontend",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
@@ -207,7 +206,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Testing",
 						Description:     "Make sure all of the code works",
 						HourEstimate:    40,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:ui",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -228,7 +227,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Ongoing Project Management",
 						Description:     "Make sure the project is moving forward",
 						HourEstimate:    120,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -237,7 +236,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Documentation",
 						Description:     "Write the project diary",
 						HourEstimate:    40,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:technical-writing",
 						ResourceIDs:     []string{"resource:wedge"},
 					},
@@ -258,7 +257,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Final Signoff",
 						Description:     "Get the approvals",
 						HourEstimate:    16,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -267,7 +266,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Stakeholder Communication",
 						Description:     "Write the project diary",
 						HourEstimate:    8,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:project-management",
 						ResourceIDs:     []string{"resource:barret"},
 					},
@@ -276,7 +275,7 @@ func CreateTestProjects(ctx context.Context) error {
 						Name:            "Tell the World",
 						Description:     "Let everybody know of your triumph",
 						HourEstimate:    160,
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						RequiredSkillID: "td:marketing",
 						ResourceIDs:     []string{"resource:tifa"},
 					},
@@ -322,28 +321,29 @@ func findPortfolioProjects(ctx context.Context) []project.Project {
 	outProjects := []project.Project{}
 
 	type PT struct {
-		name      string
-		status    projectstatus.ProjectState
-		startDate *time.Time
+		name       string
+		status     projectstatus.ProjectState
+		startDate  *time.Time
+		ownerEmail string
 	}
 
 	names := []PT{
-		{name: "Video: Project Overview & Tech Stack", status: projectstatus.Approved},
-		{name: "Video: Kuberetes is Magic", status: projectstatus.Approved},
-		{name: "Video: Setting Local Dev With Tilt", status: projectstatus.Approved},
-		{name: "Video: Monorepo / Microservice", status: projectstatus.Rejected},
-		{name: "Video: Golang Project Setup", status: projectstatus.Backlogged},
-		{name: "Video: Mapping Objects in our Project", status: projectstatus.Backlogged},
-		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft},
-		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 7, 1, 0, 0, 0, 0, time.UTC))).End},
-		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 8, 1, 0, 0, 0, 0, time.UTC))).End},
-		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now().AddDate(0, 0, -7)).End)},
-		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
-		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End)},
+		{name: "Video: Project Overview & Tech Stack", status: projectstatus.Approved, ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Kuberetes is Magic", status: projectstatus.Approved, ownerEmail: ""},
+		{name: "Video: Setting Local Dev With Tilt", status: projectstatus.Approved, ownerEmail: ""},
+		{name: "Video: Monorepo / Microservice", status: projectstatus.Rejected, ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Golang Project Setup", status: projectstatus.Backlogged, ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Mapping Objects in our Project", status: projectstatus.Backlogged, ownerEmail: ""},
+		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft, ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 7, 1, 0, 0, 0, 0, time.UTC))).End, ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 8, 1, 0, 0, 0, 0, time.UTC))).End, ownerEmail: ""},
+		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now().AddDate(0, 0, -7)).End), ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End), ownerEmail: "jeph@jmk21.com"},
+		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End), ownerEmail: ""},
 	}
 
 	for i, p := range names {
-		proj, _ := utils.DeepCopy(GetVideoProjectTemplate(ctx, p.name, p.status, (i + 2)))
+		proj, _ := utils.DeepCopy(GetVideoProjectTemplate(ctx, p.name, p.status, (i + 2), p.ownerEmail))
 
 		if p.startDate != nil {
 			proj.ProjectBasics.StartDate = p.startDate
@@ -361,12 +361,16 @@ func findPortfolioProjects(ctx context.Context) []project.Project {
 	return outProjects
 }
 
-func GetVideoProjectTemplate(ctx context.Context, name string, status projectstatus.ProjectState, id int) project.Project {
+func GetVideoProjectTemplate(ctx context.Context, name string, status projectstatus.ProjectState, id int, ownerEmail string) project.Project {
 	rs := factory.GetResourceService(ctx)
 	us := factory.GetAppuserService(ctx)
 
 	allResources, _ := rs.FindAllResources(ctx)
 	allUsers, _ := us.FindAllAppusers(ctx)
+
+	if len(ownerEmail) == 0 {
+		ownerEmail = allUsers.Results[rand.Intn(*allUsers.Pagination.TotalResults-1)].Data.Email
+	}
 
 	proj := project.Project{
 		ControlFields: common.ControlFields{
@@ -375,7 +379,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 		ProjectBasics: &project.ProjectBasics{
 			Name:        name,
 			Description: "Here's a video to add to the portfolio",
-			OwnerID:     allUsers.Results[rand.Intn(*allUsers.Pagination.TotalResults-1)].Data.Email,
+			OwnerID:     ownerEmail,
 		},
 		ProjectStatusBlock: &project.ProjectStatusBlock{
 			Status: status,
@@ -425,7 +429,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Research",
 						HourEstimate:    2 + rand.Intn(10),
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						Description:     "do the research",
 						RequiredSkillID: "td:business-analysis",
 						ResourceIDs:     []string{"resource:yuffie"},
@@ -434,7 +438,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Video Outline",
 						HourEstimate:    2 + rand.Intn(11),
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						Description:     "make the outline",
 						RequiredSkillID: "td:content-writing",
 						ResourceIDs:     []string{"resource:tifa"},
@@ -443,7 +447,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Video Shoot",
 						HourEstimate:    2 + rand.Intn(14),
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						Description:     "shoot the video",
 						RequiredSkillID: "td:communications",
 						ResourceIDs:     []string{"resource:barret"},
@@ -452,7 +456,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Edit Video",
 						HourEstimate:    2 + rand.Intn(6),
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						Description:     "edit the video",
 						RequiredSkillID: "td:video-editing",
 						ResourceIDs:     []string{"resource:jessie"},
@@ -461,7 +465,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Upload to All Platforms",
 						HourEstimate:    2 + rand.Intn(3),
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						Description:     "upload to the places",
 						RequiredSkillID: "td:frontend",
 						ResourceIDs:     []string{"resource:wedge"},
@@ -470,7 +474,7 @@ func GetVideoProjectTemplate(ctx context.Context, name string, status projectsta
 						ID:              utils.ValToRef(fmt.Sprintf("task:%s", uuid.New().String())),
 						Name:            "Promote Upload",
 						HourEstimate:    2 + rand.Intn(3),
-						Status:          "new",
+						Status:          milestonestatus.Accepted,
 						Description:     "tell the world",
 						RequiredSkillID: "td:marketing",
 						ResourceIDs:     []string{"resource:wedge"},

@@ -14,9 +14,9 @@
     let isPastDue = $state(false)
 
     const getBarColor = (ar:boolean, pd:boolean):"red"|"yellow"|"green" => {
-        if(pd) 
+        if(ar) 
             return "red"
-        else if (ar)
+        else if (pd)
             return "yellow"
 
         return "green"
