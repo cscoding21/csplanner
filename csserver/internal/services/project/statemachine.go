@@ -201,8 +201,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 
 			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
-				projectstatus.Scheduled,
-				projectstatus.Deferred))
+				projectstatus.Scheduled))
 			//---can auto-transition to scheduled if start date is set to the future
 
 			return result
@@ -232,7 +231,7 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 		State:       projectstatus.Deferred,
 		Description: "project was in flight, but work has been postponed",
 		//---states that can be entered from this state
-		NextValidStates: []projectstatus.ProjectState{projectstatus.InFlight, projectstatus.Scheduled},
+		NextValidStates: []projectstatus.ProjectState{projectstatus.Scheduled, projectstatus.Draft},
 
 		Can: func(p *Project) validate.ValidationResult {
 			result := validate.NewSuccessValidationResult()
@@ -241,7 +240,6 @@ var stateMachineMap = map[projectstatus.ProjectState]ProjectStatus{
 
 			//---states that can be transitioned into this state
 			result.Append(checkStateTransition(currentStatus, thisState,
-				projectstatus.InFlight,
 				projectstatus.Scheduled))
 
 			return result

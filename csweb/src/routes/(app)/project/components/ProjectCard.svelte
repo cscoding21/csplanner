@@ -27,7 +27,7 @@
 		>{project.data?.projectBasics?.description}</P
 	>
 	{#if project.data?.projectBasics.startDate}
-	<span class="text-xs text-yellow-200">Start date: <b>{formatDate(project.data?.projectBasics?.startDate)}</b></span>
+	<span class="text-xs text-yellow-200">Kickoff date: <b>{formatDate(project.data?.projectBasics?.startDate)}</b></span>
 	{/if}
 	 <CSHR />
 	<div class="px-4">

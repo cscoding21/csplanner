@@ -3,7 +3,7 @@
 	import type { ActivityResults, Organization, PageAndFilter, ProjectResults } from "$lib/graphql/generated/sdk";
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
-	import { findProjects } from "$lib/services/project";
+	import { findProjects, ProjectStatusApproved, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusScheduled } from "$lib/services/project";
 	import SetupWizard from "./setup/SetupWizard.svelte";
 	import Welcome from "./setup/Welcome.svelte";
 	import OrgSettings from "./setup/OrgSettings.svelte";
@@ -19,13 +19,15 @@
     const as = authService()
     const user = as.currentUser()
 
+    const statusFilters = [ProjectStatusNew, ProjectStatusDraft, ProjectStatusApproved, ProjectStatusScheduled, ProjectStatusInflight, ProjectStatusProposed]
+
     const getFilters = ():PageAndFilter => {
         let pageAndFilter: PageAndFilter = {
 			paging: { pageNumber: 1, resultsPerPage: 10 },
             filters: {
                 filters: [
                     { key: 'data.basics.owner_id', value: user?.email as string, operation: 'eq' },
-                    { key: 'data.status.status', value: "new,draft,approved,scheduled,inflight", operation: 'in' }
+                    { key: 'data.status.status', value: statusFilters.join(","), operation: 'in' }
                 ]
             }
 		};

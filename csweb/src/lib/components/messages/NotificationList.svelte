@@ -15,7 +15,7 @@
 	});
 
 	onDestroy(() => {
-		//unsubHandle.unsubscribe();
+		unsubHandle.unsubscribe();
 	});
 
 	const refresh = async () => {
@@ -28,13 +28,13 @@
 		});
 	};
 
-	// let sub = subscribeToUpdates();
+	let sub = subscribeToUpdates();
 
-	// let unsubHandle = sub.subscribe({
-	// 	next: () => {
-	// 		refreshNotificationStore();
-	// 	}
-	// });
+	let unsubHandle = sub.subscribe({
+		next: () => {
+			refreshNotificationStore();
+		}
+	});
 
 	let notificationIndicator = $state($notificationStore?.some((n) => !n.isRead));
 	let title = $state(

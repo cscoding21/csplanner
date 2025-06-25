@@ -3,6 +3,7 @@
 	import { Table, TableBody, TableBodyCell, TableBodyRow } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
 	import { ProjectStatusBrief, BadgeProjectStatus } from ".";
+	import ShowIfStatus from "./ShowIfStatus.svelte";
 
     interface Props {
         projects:ProjectEnvelope[]
@@ -21,7 +22,7 @@
         {#each projects as project}
             <TableBodyRow>
             <TableBodyCell>
-            <a href="/project/detail/{project?.meta.id}#snapshot" class="text-lg text-gray-300">
+            <a href="/project/detail/{project?.meta.id}#snapshot" class="text-md dark:text-gray-300">
                 {project.data.projectBasics.name}
             </a>
             </TableBodyCell>

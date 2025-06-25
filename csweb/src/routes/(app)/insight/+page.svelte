@@ -8,6 +8,7 @@
 
 <InsightsActionBar pageDetail="" />
 
+<div class="p-4">
 
 <NoResults title="No Insights" newUrl="">
 
@@ -16,3 +17,5 @@
 	</div>
 
 </NoResults>
+
+</div>
