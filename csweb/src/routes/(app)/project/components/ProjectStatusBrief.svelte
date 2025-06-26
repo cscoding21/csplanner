@@ -5,7 +5,7 @@
 	import { CalendarMonthOutline, ExclamationCircleOutline, QuestionCircleOutline, RectangleListOutline, ToolsOutline } from "flowbite-svelte-icons";
 	import { ShowIfStatus } from ".";
 	import { ProjectStatusApproved, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusProposed, ProjectStatusScheduled } from "$lib/services/project";
-	import { formatCurrency, formatDate, formatPercent, pluralize } from "$lib/utils/format";
+	import { formatDate, pluralize } from "$lib/utils/format";
 	import { MoneyDisplay, PercentDisplay } from "$lib/components";
 
 

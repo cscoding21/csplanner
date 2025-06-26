@@ -16,7 +16,7 @@
 		maxSize
 	}: Props = $props();
 
-	const deDuped = resources.filter((value, index) => {
+	const deDuped = resources?.filter((value, index) => {
 		const _value = JSON.stringify(value);
 		return index === resources.findIndex(obj => {
 			return JSON.stringify(obj) === _value;

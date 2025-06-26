@@ -284,6 +284,7 @@ func (p *Project) CalculateProjectMilestoneStats() {
 	p.Calculated.UnhealthyTasks = projectUnhealthyTasks
 	p.Calculated.HealthyTasks = projectHealthyTasks
 	p.Calculated.TotalTasks = totalProjectTasks
+	//p.Calculated.PastDueTasks = totalPastDueTasks
 }
 
 // CalculateProjectTasksStats update the calculated fields in a project task

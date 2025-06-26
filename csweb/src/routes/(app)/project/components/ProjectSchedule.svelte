@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Resource, Schedule } from "$lib/graphql/generated/sdk";
-    import { BadgeProjectStatus, ProjectStartDateSet, ShowIfStatus, type Week } from ".";
+    import { BadgeProjectStatus, ProjectStartDateSet, ShowIfStatus } from ".";
 	import { calculateProjectSchedule, ProjectStatusAbandoned, ProjectStatusApproved, ProjectStatusDeferred, ProjectStatusInflight, ProjectStatusScheduled } from "$lib/services/project";
     import { getScheduledProjectFromPortfolio } from "$lib/services/portfolio";
     import { addToast } from "$lib/stores/toasts";
@@ -15,7 +15,7 @@
     interface ScheduleRow {
         label: string
         resource?: Resource
-        weeks: Week[]
+        weeks: []
     }
 
     interface Props {
