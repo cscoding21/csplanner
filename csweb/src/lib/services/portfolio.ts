@@ -52,10 +52,10 @@ export const getDraftPortfolio = async (additionalID:string): Promise<Portfolio>
 export const getScheduledProjectFromPortfolio = async(projectID: string): Promise<Schedule> => {
     return getPortfolio()
         .then(res => {
-            let schedule = res.schedule.filter(s => s.projectID === projectID)
+            let schedule = extractProjectScheduleFromPortfolio(projectID, res)
 
-            if (schedule.length > 0) {
-                return schedule[0]
+            if (schedule) {
+                return schedule
             }
 
             return Promise.reject("project " + projectID + " not found in portfolio schedule")
@@ -63,6 +63,25 @@ export const getScheduledProjectFromPortfolio = async(projectID: string): Promis
         .catch(err => {
             return err
         })
+}
+
+
+/**
+ * return a single project schedule from the passed in portfolio
+ * @param projectID the project ID to retrieve
+ * @param portfolio the entire current portfolio
+ * @returns the specified project schedule
+ */
+export const extractProjectScheduleFromPortfolio = (projectID:string, portfolio:Portfolio):Schedule|undefined => {
+    if(!portfolio || !portfolio.schedule)
+        return undefined
+    
+    let schedule = portfolio.schedule.filter(s => s.projectID === projectID)
+
+    if(schedule && schedule.length > 0)
+        return schedule[0]
+
+    return undefined
 }
 
 /**
@@ -242,6 +261,29 @@ export const findWeekHasPastDueTasks = (activities:ProjectActivity[]):boolean =>
 
         if(act.taskEndDate && new Date(act.taskEndDate) < today && (act.status == "new" || act.status == "accepted")) {
             console.log(act.taskEndDate, act.status)
+            return true
+        }
+    }
+
+    return false
+}
+
+
+/**
+ * check all of the passed in weeks and return true if there are any past due tasks
+ * @param weeks an array of weeks to evaluate
+ * @returns true if a past-due week is found
+ */
+export const findWeekHasPastDueTasksFromWeeks = (weeks:ProjectActivityWeek[]):boolean => {
+    if (!weeks || !weeks.length) {
+        return false
+    }
+
+    for(let i = 0; i < weeks.length; i++) {
+        const thisWeek = weeks[i];
+        const has = findWeekHasPastDueTasks(thisWeek.activities as ProjectActivity[])
+
+        if (has) {
             return true
         }
     }

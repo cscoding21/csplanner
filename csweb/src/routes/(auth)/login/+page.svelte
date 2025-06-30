@@ -40,6 +40,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>csPlanner: Login</title>
+</svelte:head>
+
 <div class="mt-8">
 	<div
 		class="w-full rounded-lg border border-gray-200 bg-white p-4 shadow dark:border-gray-700 dark:bg-gray-800 sm:p-6 md:p-8"

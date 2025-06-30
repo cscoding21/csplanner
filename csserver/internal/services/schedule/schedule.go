@@ -265,8 +265,8 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 
 	for _, m := range p.ProjectMilestones {
 		for _, t := range m.Tasks {
-			//---no need to validate removed tasks
-			if t.Status == milestonestatus.Removed {
+			//---no need to validate removed or completed tasks
+			if t.Status == milestonestatus.Done || t.Status == milestonestatus.Removed {
 				continue
 			}
 
@@ -288,11 +288,15 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 			}
 
 			for _, rss := range t.ResourceIDs {
-				if t.Status == milestonestatus.Done || t.Status == milestonestatus.Removed {
-					continue
+				resource := ram.ResourceMap[rss]
+				if resource.Status != resourcestatus.Inhouse {
+					out = append(out, newScheduleException(
+						*t.ID,
+						fmt.Sprintf("Task '%s' resource, %s, is not currently on staff", t.Name, resource.Name),
+						AssignedResourceNotOnStaff,
+						ScheduleWarning))
 				}
 
-				resource := ram.ResourceMap[rss]
 				skill := resource.GetSkill(t.RequiredSkillID)
 
 				if skill == nil {
@@ -301,14 +305,6 @@ func validateProjectForScheduling(p project.Project, ram ResourceAllocationMap) 
 						fmt.Sprintf("Task '%s' resource, %s, lacks required skill %s", t.Name, resource.Name, t.RequiredSkillID),
 						TaskAssignedResourceMissingSkill,
 						ScheduleError))
-				}
-
-				if resource.Status != resourcestatus.Inhouse {
-					out = append(out, newScheduleException(
-						*t.ID,
-						fmt.Sprintf("Task '%s' resource, %s, is not currently on staff", t.Name, resource.Name),
-						AssignedResourceNotOnStaff,
-						ScheduleWarning))
 				}
 			}
 		}

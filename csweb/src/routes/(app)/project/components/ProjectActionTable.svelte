@@ -1,14 +1,16 @@
 <script lang="ts">
-    import type { ProjectEnvelope, Resource } from "$lib/graphql/generated/sdk";
+    import type { Portfolio, ProjectEnvelope, Resource, Schedule } from "$lib/graphql/generated/sdk";
 	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
 	import { ResourceList } from "$lib/components";
 	import { ProjectStatusBrief, BadgeProjectStatus } from ".";
 	import { ProjectStatusApproved, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusScheduled } from "$lib/services/project";
+	import { extractProjectScheduleFromPortfolio } from "$lib/services/portfolio";
 
     interface Props {
         projects:ProjectEnvelope[]
+        portfolio:Portfolio
     }
-    let { projects }:Props = $props()
+    let { projects, portfolio }:Props = $props()
 
     let projectFilter = $state("all")
     let displayProjects:ProjectEnvelope[] = $derived(projects?.filter(p => projectFilter === "all" || p.data.projectStatusBlock.status === projectFilter))
@@ -135,7 +137,7 @@
                 {/if}
             </TableBodyCell>
             <TableBodyCell>
-                <ProjectStatusBrief project={project?.data} />
+                <ProjectStatusBrief project={project?.data} {portfolio} />
             </TableBodyCell>
             </TableBodyRow>
         {/each}

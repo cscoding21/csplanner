@@ -133,7 +133,7 @@
 				{#each portfolioTable.body as row}
 					<TableBodyRow>
 					<TableBodyCell>
-					<a href="/project/detail/{row.project.id}#schedule">
+					<a href="/project/detail/{row.project.id}#snapshot">
 						{row.label}
 					</a>
 					</TableBodyCell>

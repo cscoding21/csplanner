@@ -2,6 +2,7 @@ import { appConfig } from '$lib/appConfig';
 import { type User, CurrentUserDocument } from '$lib/graphql/generated/sdk';
 import { getCookie, deleteCookie } from '$lib/utils/helpers';
 import { getApolloClient } from '$lib/graphql/gqlclient';
+import { refreshOrg, teardownOrg } from '$lib/stores/organization';
 
 let user: User | undefined;
 let refreshId: ReturnType<typeof setInterval>;
@@ -35,6 +36,8 @@ export function authService() {
 					storeTokens(data.accessToken, data.refreshToken);
 
 					decodeUser(data.accessToken);
+
+					refreshOrg()
 
 					//---refresh the token on the configured interval
 					refreshCycle();
@@ -95,6 +98,8 @@ export function authService() {
 	function cleanup() {
 		deleteCookie('accessToken');
 		deleteCookie('refreshToken');
+
+		teardownOrg()
 
 		clearInterval(refreshId);
 	}

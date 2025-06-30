@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Project } from "$lib/graphql/generated/sdk";
+	import { ProjectFragmentFragmentDoc, type Portfolio, type Project, type ProjectActivityWeek, type Schedule } from "$lib/graphql/generated/sdk";
 	import { getID } from "$lib/utils/id";
 	import { Progressbar } from "flowbite-svelte";
 	import { CalendarMonthOutline, ExclamationCircleOutline, QuestionCircleOutline, RectangleListOutline, ToolsOutline } from "flowbite-svelte-icons";
@@ -7,45 +7,50 @@
 	import { ProjectStatusApproved, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusProposed, ProjectStatusScheduled } from "$lib/services/project";
 	import { formatDate, pluralize } from "$lib/utils/format";
 	import { MoneyDisplay, PercentDisplay } from "$lib/components";
+	import { extractProjectScheduleFromPortfolio, findWeekHasPastDueTasks, findWeekHasPastDueTasksFromWeeks } from "$lib/services/portfolio";
 
 
     interface Props {
         project: Project
+        portfolio: Portfolio
     }
-    let { project }:Props = $props()
+    let { project, portfolio }:Props = $props()
 
     let isAtRisk = $state(project.calculated?.unhealthyTasks as number > 0)
     let isPastDue = $state(false)
 
+    const getProjectFromPortfolio = (projectID:string):Schedule|undefined => {
+        return extractProjectScheduleFromPortfolio(projectID, portfolio)
+    }
+
     const getBarColor = (ar:boolean, pd:boolean):"red"|"yellow"|"green" => {
-        if(ar) 
+        if(pd) 
             return "red"
-        else if (pd)
+        else if (ar)
             return "yellow"
 
         return "green"
     }
-
-    let barColor = $derived(getBarColor(isAtRisk, isPastDue))
-
-
 </script>
 
 <div class="flex w-72">
 
 
-
 <!-- In Flight -->
 <ShowIfStatus scope={[ProjectStatusInflight]} status={project.projectStatusBlock?.status}>
-
+{@const sch = getProjectFromPortfolio(project.id as string)}
+{@const iar = sch?.exceptions && sch?.exceptions.length as number > 0}
+{@const ipd = findWeekHasPastDueTasksFromWeeks(sch?.projectActivityWeeks as ProjectActivityWeek[])}
+{@const bc = getBarColor(iar as boolean, ipd) }
+<!-- <code>{JSON.stringify(sch?.exceptions)}</code> -->
 <div class="w-full">
-    <Progressbar progress={(project.calculated?.projectPercentComplete as number) * 100.0} id={getID("mil_")} size="h-4" color={barColor} labelInside={true} />
+    <Progressbar progress={(project.calculated?.projectPercentComplete as number) * 100.0} id={getID("mil_")} size="h-4" color={bc} labelInside={true} />
 </div>
 
-{#if isPastDue}
+{#if ipd}
     <div class="ml-2" title="Has past-due tasks"><ExclamationCircleOutline color="red" size="md"  /></div>
 {/if}
-{#if isAtRisk}
+{#if iar}
     <div class="ml-2" title="Has at-risk tasks"><QuestionCircleOutline color="yellow" size="md" /></div>
 {/if}
 

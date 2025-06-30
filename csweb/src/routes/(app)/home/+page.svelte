@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CSSection, OrgStateChecker } from "$lib/components";
-	import type { ActivityResults, Organization, PageAndFilter, ProjectResults } from "$lib/graphql/generated/sdk";
+	import type { ActivityResults, Organization, PageAndFilter, Portfolio, ProjectResults } from "$lib/graphql/generated/sdk";
 	import { authService } from "$lib/services/auth";
 	import { getOrganization } from "$lib/services/organization";
 	import { findProjects, ProjectStatusApproved, ProjectStatusDraft, ProjectStatusInflight, ProjectStatusNew, ProjectStatusProposed, ProjectStatusScheduled } from "$lib/services/project";
@@ -15,6 +15,7 @@
 	import SectionSubHeading from "$lib/components/formatting/SectionSubHeading.svelte";
 	import { findActivity } from "$lib/services/activity";
 	import ProjectActionTable from "../project/components/ProjectActionTable.svelte";
+	import { getPortfolio } from "$lib/services/portfolio";
 
     const as = authService()
     const user = as.currentUser()
@@ -47,6 +48,11 @@
                     myProjects = res
                 })
         }).then(r => {
+            getPortfolio()
+                .then(por => {
+                    portfolio = por
+                })
+        }).then(r => {
             findActivity(pageAndFilter).then(a => {
                 activity = a
             })
@@ -56,6 +62,7 @@
     let pageAndFilter = $state({} as PageAndFilter)
     let org = $state({} as Organization)
     let myProjects = $state({} as ProjectResults)
+    let portfolio = $state({} as Portfolio)
     let activity = $state({} as ActivityResults)
     let currentStep = $state(0)
 
@@ -92,7 +99,7 @@
         <div class="grid grid-cols-3 gap-4">
             <CSSection cssClass="col-span-2">
                 <SectionSubHeading>My Projects</SectionSubHeading>
-                <ProjectActionTable projects={myProjects.results} />
+                <ProjectActionTable projects={myProjects.results} {portfolio} />
             </CSSection>
 
             <CSSection>
