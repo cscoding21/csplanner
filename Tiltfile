@@ -2,6 +2,7 @@ load('./tilt_lib/csserver/Tiltfile', 'setup_csserver')
 load('./tilt_lib/csweb/Tiltfile', 'setup_csweb')
 load('./tilt_lib/csai/Tiltfile', 'setup_csai')
 load('./tilt_lib/csmcp/Tiltfile', 'setup_csservermcp')
+load('./tilt_lib/csprocessor/Tiltfile', 'setup_csprocessor')
 load('./tilt_lib/cssaas/Tiltfile', 'setup_cssaas')
 load('./tilt_lib/debug/Tiltfile', 'setup_debug')
 # load('./tilt_lib/surrealdb/Tiltfile', 'setup_surrealdb')
@@ -30,6 +31,7 @@ setup_csweb()
 setup_csai()
 setup_cssaas() 
 setup_csservermcp()
+setup_csprocessor()
 
 
 ###############################################################
@@ -52,6 +54,11 @@ k8s_resource(
 k8s_resource(
   workload='csmcp',
   port_forwards="6002:6002",
+  labels=["csPlanner"] 
+)
+
+k8s_resource(
+  workload='csprocessor',
   labels=["csPlanner"] 
 )
 
