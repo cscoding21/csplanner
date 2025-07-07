@@ -118,7 +118,7 @@ func setDefaults() {
 
 	//Pub-Sub
 	viper.SetDefault("pubsub.host", "nats://nats.nats.svc:4222")
-	viper.SetDefault("pubsub.subjectformat", "%s.%s.%s.%s")
+	viper.SetDefault("pubsub.subjectformat", "%s.%s.%s.%s.%s")
 	viper.SetDefault("pubsub.streamname", "CSPLANNER")
 	viper.SetDefault("pubsub.name", "csplanner-nats")
 

@@ -94,6 +94,12 @@ k8s_resource(
   labels=["Keycloak"]
 )
 
+# k8s_resource(
+#   workload='nats',
+#   port_forwards="4222:4222",
+#   labels=["NATS"],
+# )
+
 # local_resource(
 #   'database_setup',
 #   cmd='sh -c "tilt_lib/postgres/setup.sh"',

@@ -68,7 +68,7 @@ func (r *subscriptionResolver) NotificationUpdate(ctx context.Context) (<-chan s
 		return nil, err
 	}
 
-	subject := client.GetSubjectName("notification", "comment", "*")
+	subject := client.GetSubjectName(ctx, "notification", "comment", "*")
 	conn := client.GetPubSubConn()
 	_, err = conn.Subscribe(subject, func(msg *nats.Msg) {
 		log.Infof("Received message on subject %s: %s", subject, string(msg.Data))
