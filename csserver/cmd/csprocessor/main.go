@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"csserver/internal/appserv/csmap"
+	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
 	"fmt"
 	"time"
@@ -22,7 +23,22 @@ func init() {
 
 func main() {
 	log.Info("Processor started")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
+	ps, err := factory.GetPubSubClient(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Info(ps.StreamName)
+	//sub, err := ps.Subscribe(ctx, )
+
+	forever()
+	select {}
+}
+
+func example() {
 	// connect to nats server
 	nc, _ := nats.Connect(config.Config.PubSub.Host)
 
