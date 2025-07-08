@@ -425,7 +425,7 @@ type ProjectStatusBlock struct {
 type ProjectStatusTransition struct {
 	NextState   string            `json:"nextState"`
 	CanEnter    bool              `json:"canEnter"`
-	CheckResult *ValidationResult `json:"checkResult"`
+	CheckResult *ValidationResult `json:"checkResult,omitempty"`
 }
 
 type ProjectTaskCalculatedData struct {

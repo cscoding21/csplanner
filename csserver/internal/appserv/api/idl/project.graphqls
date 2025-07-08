@@ -127,7 +127,7 @@ type ProjectStatusBlock {
 type ProjectStatusTransition {
 	nextState: String!
   canEnter: Boolean!
-	checkResult: ValidationResult!
+	checkResult: ValidationResult
 }
 
 

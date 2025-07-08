@@ -4472,7 +4472,7 @@ type ProjectStatusBlock {
 type ProjectStatusTransition {
 	nextState: String!
   canEnter: Boolean!
-	checkResult: ValidationResult!
+	checkResult: ValidationResult
 }
 
 
@@ -20182,14 +20182,11 @@ func (ec *executionContext) _ProjectStatusTransition_checkResult(ctx context.Con
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*idl.ValidationResult)
 	fc.Result = res
-	return ec.marshalNValidationResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationResult(ctx, field.Selections, res)
+	return ec.marshalOValidationResult2ᚖcsserverᚋinternalᚋappservᚋgraphᚋidlᚐValidationResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectStatusTransition_checkResult(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -33155,9 +33152,6 @@ func (ec *executionContext) _ProjectStatusTransition(ctx context.Context, sel as
 			}
 		case "checkResult":
 			out.Values[i] = ec._ProjectStatusTransition_checkResult(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

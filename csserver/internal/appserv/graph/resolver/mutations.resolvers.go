@@ -417,7 +417,7 @@ func (r *mutationResolver) CreateProjectComment(ctx context.Context, input idl.U
 		Text:      input.Text,
 	}
 
-	result, err := service.UpdateComment(ctx, comment)
+	result, err := service.AddComment(ctx, comment)
 	if err != nil {
 		return nil, err
 	}

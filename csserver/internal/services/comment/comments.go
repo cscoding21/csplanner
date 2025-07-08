@@ -30,7 +30,19 @@ const (
 
 // AddComment adds a comment to a project.  Is a wrapper for CreateComment
 func (s *CommentService) AddComment(ctx context.Context, comment Comment) (common.UpdateResult[*common.BaseModel[Comment]], error) {
-	return s.CreateComment(ctx, comment)
+	c, err := s.CreateComment(ctx, comment)
+	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
+	}
+
+	err = s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(CommentIdentifier), "comment", "created", c)
+	if err != nil {
+		log.Errorf("StreamPublish error: %s", err)
+	} else {
+		log.Warnf("StreamPublish success!")
+	}
+
+	return c, nil
 }
 
 // AddComment create a new comment for a project
@@ -57,6 +69,8 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 	}
 
 	fmt.Println("replyDelta", replyDelta)
+
+	s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(CommentIdentifier), "reply", "created", outComment)
 	return common.NewSuccessUpdateResult(outComment)
 }
 
@@ -81,6 +95,8 @@ func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (co
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
+
+	s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(CommentIdentifier), "comment", "updated", result)
 
 	return common.NewSuccessUpdateResult(result)
 }
