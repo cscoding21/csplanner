@@ -9,6 +9,7 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/appserv/graph"
 	"csserver/internal/appserv/graph/idl"
+	"csserver/internal/config"
 	"fmt"
 	"time"
 
@@ -68,7 +69,9 @@ func (r *subscriptionResolver) NotificationUpdate(ctx context.Context) (<-chan s
 		return nil, err
 	}
 
-	subject := client.GetSubjectName(ctx, "notification", "comment", "*")
+	orgName := config.GetOrgUrlKeyFromContext(ctx)
+
+	subject := client.GetSubjectName(orgName, "notification", "comment", "*")
 	conn := client.GetPubSubConn()
 	_, err = conn.Subscribe(subject, func(msg *nats.Msg) {
 		log.Infof("Received message on subject %s: %s", subject, string(msg.Data))

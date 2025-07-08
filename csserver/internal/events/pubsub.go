@@ -19,7 +19,6 @@ var pubSubClientDurable jetstream.JetStream
 
 // CSPLANNER.[service].[object].[eventname]
 const SUBJECT_FORMAT = "%s.%s.%s.%s"
-const STREAM_NAME = "CSPLANNER"
 
 // PubSubProvider
 type PubSubProvider struct {
@@ -32,11 +31,10 @@ type PubSubProvider struct {
 
 // MessageWrapper a common message wrapper abstraction
 type MessageWrapper struct {
-	ID            string
-	Timestamp     time.Time
-	Body          any
-	SubjectFormat string
-	StreamName    string
+	OrgKey    string
+	ID        string
+	Timestamp time.Time
+	Body      any
 }
 
 // NewPubSubProvider return an configured pubsub provider
@@ -53,8 +51,7 @@ func NewPubSubProvider(host string, name string, subjectFormat string, streamNam
 }
 
 // getSubjectName enforce a standard around pubsub subject naming
-func (s *PubSubProvider) GetSubjectName(ctx context.Context, service string, object string, eventName string) string {
-	orgKey := config.GetOrgUrlKeyFromContext(ctx)
+func (s *PubSubProvider) GetSubjectName(orgKey string, service string, object string, eventName string) string {
 	return fmt.Sprintf(s.SubjectFormat, s.StreamName, orgKey, service, object, eventName)
 }
 
@@ -69,11 +66,11 @@ func (s *PubSubProvider) GetPubSubConn() *nats.Conn {
 		return nil
 	}
 
-	return client //pubSubClient
+	return client
 }
 
 // GetPubSubConnDurable return a configured Jetstream connection
-func (s *PubSubProvider) getStreamContext(ctx context.Context) jetstream.JetStream {
+func (s *PubSubProvider) getStreamContext() jetstream.JetStream {
 	if pubSubClientDurable != nil {
 		return pubSubClientDurable
 	}
@@ -93,31 +90,13 @@ func (s *PubSubProvider) getStreamContext(ctx context.Context) jetstream.JetStre
 	return pubSubClientDurable
 }
 
-// GetStreamConsumer
-// func (s *PubSubProvider) GetStreamConsumer(ctx context.Context, consumerName string) (jetstream.Consumer, error) {
-// 	js := *s.GetPubSubConnDurable(ctx)
-
-// 	cons, err := js.(ctx, STREAM_NAME, jetstream.ConsumerConfig{
-// 		Durable:   consumerName,
-// 		AckPolicy: jetstream.AckExplicitPolicy,
-// 	})
-// 	if err != nil {
-// 		log.Errorf("Error creating consumer: %s", err)
-// 		return nil, err
-// 	}
-
-// 	log.Infof("Created consumer %s on stream %s", consumerName, STREAM_NAME)
-
-// 	return cons, nil
-// }
-
 // Publish publish a message to the pubsub platform
-func (s *PubSubProvider) Publish(ctx context.Context, service string, object string, eventName string, body any) error {
+func (s *PubSubProvider) Publish(ctx context.Context, orgName string, service string, object string, eventName string, body any) error {
 	client := s.GetPubSubConn()
 	//defer client.Drain()
 
-	subject := s.GetSubjectName(ctx, service, object, eventName)
-	data, err := s.getWrappedData(body)
+	subject := s.GetSubjectName(orgName, service, object, eventName)
+	data, err := s.getWrappedData(orgName, body)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -129,10 +108,9 @@ func (s *PubSubProvider) Publish(ctx context.Context, service string, object str
 }
 
 // StreamPublish publisn an event to a durable stream
-func (s *PubSubProvider) StreamPublish(ctx context.Context, service string, object string, eventName string, body any) error {
-	js := s.getStreamContext(ctx)
+func (s *PubSubProvider) StreamPublish(ctx context.Context, orgName string, service string, object string, eventName string, body any) error {
+	js := s.getStreamContext()
 	streamName := strings.ToLower(config.Config.PubSub.StreamName)
-	orgName := strings.ToLower(config.GetOrgUrlKeyFromContext(ctx))
 
 	subject := fmt.Sprintf("%s.%s.%s.%s.%s", streamName, orgName, service, object, eventName)
 
@@ -141,15 +119,21 @@ func (s *PubSubProvider) StreamPublish(ctx context.Context, service string, obje
 		return err
 	}
 
+	wrappedData, err := s.getWrappedData(orgName, body)
+	if err != nil {
+		return err
+	}
+
+	//sj := fmt.Sprintf("%s.*.*.*.>", orgName)
 	_, err = js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
 		Name:     streamName,
-		Subjects: []string{fmt.Sprintf("%s.*.*.*.>", streamName)},
+		Subjects: []string{subject},
 	})
 	if err != nil {
 		return err
 	}
 
-	_, err = js.Publish(ctx, subject, jsonData)
+	_, err = js.Publish(ctx, subject, wrappedData)
 
 	log.Info(subject)
 	log.Info(jsonData)
@@ -157,14 +141,34 @@ func (s *PubSubProvider) StreamPublish(ctx context.Context, service string, obje
 	return err
 }
 
+// StreamConsume read messages from a durable stream
+func (s *PubSubProvider) GetStreamConsumer(ctx context.Context, name string, subject string) (jetstream.Consumer, error) {
+	js := s.getStreamContext()
+
+	cons, err := js.CreateOrUpdateConsumer(ctx, strings.ToLower(s.StreamName), jetstream.ConsumerConfig{
+		Durable: name,
+		// FilterSubject: subject,
+		AckPolicy: jetstream.AckExplicitPolicy,
+	})
+	if err != nil {
+		log.Errorf("Error creating consumer: %s", err)
+		return nil, err
+	}
+
+	log.Infof("Created consumer %s on stream %s", subject, s.StreamName)
+
+	return cons, nil
+}
+
 // Subscribe consumes messages from NATS
 func (s *PubSubProvider) Subscribe(
 	ctx context.Context,
+	orgName string,
 	service string,
 	object string,
 	eventName string) (*nats.Subscription, error) {
 	conn := s.GetPubSubConn()
-	subject := s.GetSubjectName(ctx, service, object, eventName)
+	subject := s.GetSubjectName(orgName, service, object, eventName)
 
 	sub, err := conn.Subscribe(subject, func(msg *nats.Msg) {
 		log.Debugf("Received message on subject %s: %s", subject, string(msg.Data))
@@ -177,8 +181,9 @@ func (s *PubSubProvider) Subscribe(
 	return sub, nil
 }
 
-func (s *PubSubProvider) getWrappedData(data interface{}) ([]byte, error) {
+func (s *PubSubProvider) getWrappedData(org string, data any) ([]byte, error) {
 	msg := MessageWrapper{
+		OrgKey:    org,
 		ID:        uuid.New().String(),
 		Timestamp: time.Now(),
 		Body:      data,
