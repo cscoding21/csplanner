@@ -7,13 +7,12 @@ import (
 )
 
 type Activity struct {
-	ID       string    `json:"id"`
-	Type     string    `json:"type"`
-	Summary  string    `json:"summary"`
-	Detail   *string   `json:"detail,omitempty"`
-	Context  string    `json:"context"`
-	TargetID *string   `json:"targetID,omitempty"`
-	Resource *Resource `json:"resource,omitempty"`
+	ID        string  `json:"id"`
+	Detail    string  `json:"detail"`
+	Link      *string `json:"link,omitempty"`
+	Context   *string `json:"context,omitempty"`
+	UserEmail string  `json:"userEmail"`
+	User      *User   `json:"user"`
 }
 
 type ActivityResults struct {

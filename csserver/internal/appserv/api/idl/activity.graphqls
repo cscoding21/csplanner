@@ -1,11 +1,10 @@
 type Activity {
   id: String!
-  type: String!
-  summary: String!
-  detail: String
-  context: String!
-  targetID: String
-  resource: Resource
+  detail: String!
+  link: String
+  context: String
+  userEmail: String!
+  user: User!
 }
 
 

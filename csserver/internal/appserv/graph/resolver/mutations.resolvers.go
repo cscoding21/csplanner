@@ -51,7 +51,6 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNe
 	rs := factory.GetResourceService(ctx)
 	ts := factory.GetProjectTemplateService(ctx)
 	org, _ := factory.GetDefaultOrganization(ctx)
-	as := factory.GetActivityService(ctx)
 
 	resourceMap, err := rs.GetResourceMap(ctx, false)
 	if err != nil {
@@ -89,8 +88,6 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input idl.UpdateNe
 		Status:  status,
 		Project: common.ValToRef(csmap.ProjectProjectToIdl(*common.UpwrapFromUpdateResult(result))),
 	}
-
-	as.LogActivity(ctx, project.ActivityNewProject, *out.Project.ID, "A project was created")
 
 	return &out, nil
 }

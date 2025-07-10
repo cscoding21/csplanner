@@ -35,6 +35,6 @@ func TestFindActivity(t *testing.T) {
 func drawActivity(act idl.Activity) {
 	fmt.Println("-------------------------------------------")
 	fmt.Printf("ActivityID: %s\n", act.ID)
-	fmt.Printf("Summary: %s\n", act.Summary)
-	fmt.Printf("Context: %s\n", act.Context)
+	fmt.Printf("Link: %s\n", *act.Link)
+	fmt.Printf("Detail: %s\n", act.Detail)
 }

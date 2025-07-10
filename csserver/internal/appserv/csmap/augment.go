@@ -71,6 +71,18 @@ func AugmentOrganization(ctx context.Context, org *idl.Organization) {
 
 }
 
+// AugmentActivity take an idl.Activity object and add the referenece user details
+func AugmentActivity(ctx context.Context, act *idl.Activity) {
+	u := getUserByEmail(ctx, act.UserEmail)
+	act.User = u
+}
+
+func AugmentActivitySlice(ctx context.Context, activities []*idl.Activity) {
+	for i := range activities {
+		AugmentActivity(ctx, activities[i])
+	}
+}
+
 // AugmentPortfolio enhance calculate and caches properties of a portfolio
 func AugmentPortfolio(ctx context.Context, port *idl.Portfolio, resourceID *string) {
 	//---exit conditions

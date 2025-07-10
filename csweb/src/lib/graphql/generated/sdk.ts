@@ -20,13 +20,12 @@ export type Scalars = {
 
 export type Activity = {
   __typename?: 'Activity';
-  context: Scalars['String']['output'];
-  detail?: Maybe<Scalars['String']['output']>;
+  context?: Maybe<Scalars['String']['output']>;
+  detail: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  resource?: Maybe<Resource>;
-  summary: Scalars['String']['output'];
-  targetID?: Maybe<Scalars['String']['output']>;
-  type: Scalars['String']['output'];
+  link?: Maybe<Scalars['String']['output']>;
+  user: User;
+  userEmail: Scalars['String']['output'];
 };
 
 export type ActivityResults = {
@@ -684,7 +683,7 @@ export type ProjectStatusBlock = {
 export type ProjectStatusTransition = {
   __typename?: 'ProjectStatusTransition';
   canEnter: Scalars['Boolean']['output'];
-  checkResult: ValidationResult;
+  checkResult?: Maybe<ValidationResult>;
   nextState: Scalars['String']['output'];
 };
 
@@ -1657,23 +1656,18 @@ export const FindActivityDocument = gql`
     }
     results {
       id
-      summary
       detail
+      link
       context
-      targetID
-      type
-      resource {
-        name
-        id
-        profileImage
-        user {
-          email
-        }
+      userEmail
+      user {
+        ...userFragment
       }
     }
   }
 }
-    ${PagingFragmentFragmentDoc}`;
+    ${PagingFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
 export const CreateProjectCommentDocument = gql`
     mutation createProjectComment($comment: UpdateComment!) {
   createProjectComment(input: $comment) {

@@ -185,6 +185,8 @@ func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.Page
 		Results: csmap.ActivityActivityToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(activityResults.Results))),
 	}
 
+	csmap.AugmentActivitySlice(ctx, out.Results)
+
 	return &out, nil
 }
 

@@ -6,7 +6,6 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
 	"csserver/internal/events"
-	"csserver/internal/services/activity"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -61,7 +60,9 @@ func processActivities(ctx context.Context, ps events.PubSubProvider) (jetstream
 		fmt.Println(string(msg.Data()))
 
 		activityService := factory.GetActivityService(actx)
-		ierr := activityService.LogActivity(actx, activity.ActivityDef{}, msg.Subject(), "summary")
+
+		ierr := activityService.LogActivity(actx, msg.Subject(), msg.Data())
+
 		if ierr != nil {
 			log.Errorf("LogActivity error: %s", ierr)
 		}

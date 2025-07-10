@@ -13,7 +13,7 @@ import (
 func NewMentionEmbed(userID string, name string) Embed {
 	embed := Embed{
 		Key: "mention",
-		Value: map[string]interface{}{
+		Value: map[string]any{
 			"index":          "0",
 			"denotationChar": "@",
 			"id":             userID,
@@ -31,7 +31,7 @@ func DeltaToString(delta Delta) string {
 	for _, o := range delta.Ops {
 		if o.InsertEmbed != nil {
 			if o.InsertEmbed.Key == "mention" {
-				builder.WriteString(o.InsertEmbed.Value.(map[string]interface{})["value"].(string))
+				builder.WriteString(o.InsertEmbed.Value.(map[string]any)["value"].(string))
 			}
 		} else {
 			builder.WriteString(string(o.Insert))

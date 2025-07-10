@@ -5,18 +5,12 @@ query findActivity($input: PageAndFilter!) {
 		}
 		results {
 			id
-			summary
 			detail
+			link
 			context
-			targetID
-			type
-			resource {
-				name
-				id
-				profileImage
-				user {
-					email
-				}
+			userEmail
+			user {
+				...userFragment
 			}
 		}
 	}

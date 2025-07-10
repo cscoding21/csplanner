@@ -17,8 +17,8 @@ import (
 // var pubSubClient *nats.Conn
 var pubSubClientDurable jetstream.JetStream
 
-// CSPLANNER.[service].[object].[eventname]
-const SUBJECT_FORMAT = "%s.%s.%s.%s"
+// csplanner.[org].[service].[object].[eventname]
+const SUBJECT_FORMAT = "%s.%s.%s.%s.%s"
 
 // PubSubProvider
 type PubSubProvider struct {
@@ -37,6 +37,35 @@ type MessageWrapper struct {
 	Body      any
 	UserEmail string
 	UserID    string
+}
+
+// CSSubject an object containing the discrete parts of a pubsub subject
+type CSSubject struct {
+	StreamName string
+	OrgKey     string
+	Service    string
+	Object     string
+	Event      string
+}
+
+// String return a string representation of a pubsub subject based on the discrete parts
+func (s *CSSubject) String() string {
+	return fmt.Sprintf(SUBJECT_FORMAT, s.StreamName, s.OrgKey, s.Service, s.Object, s.Event)
+}
+
+// GetCSSubject parse a subject string into an object
+func GetCSSubject(input string) CSSubject {
+	parts := strings.Split(input, ".")
+
+	out := CSSubject{
+		StreamName: parts[0],
+		OrgKey:     parts[1],
+		Service:    parts[2],
+		Object:     parts[3],
+		Event:      parts[4],
+	}
+
+	return out
 }
 
 // NewPubSubProvider return an configured pubsub provider
