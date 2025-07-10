@@ -36,6 +36,17 @@
 		return pageAndFilter
     }
 
+    const getActivityFilters = ():PageAndFilter => {
+        let pf: PageAndFilter = {
+			paging: { pageNumber: 1, resultsPerPage: 10 },
+            filters: {
+                filters: []
+            }
+		};
+
+		return pf
+    }
+
     const loadPage = async () => {
         getOrganization().then(o => {
             org = o
@@ -53,13 +64,14 @@
                     portfolio = por
                 })
         }).then(r => {
-            findActivity(pageAndFilter).then(a => {
+            findActivity(getActivityFilters()).then(a => {
                 activity = a
             })
         })   
     }
 
     let pageAndFilter = $state({} as PageAndFilter)
+    let activityPageAndFilter = $state({} as PageAndFilter)
     let org = $state({} as Organization)
     let myProjects = $state({} as ProjectResults)
     let portfolio = $state({} as Portfolio)
@@ -108,7 +120,7 @@
                 <ul>
                     {#each activity.results as a}
                         <li>
-                            {a?.summary}
+                            {a?.context}
                         </li>
                     {/each}
                 </ul>

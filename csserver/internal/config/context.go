@@ -29,6 +29,10 @@ func getValueFromContext(ctx context.Context, key contextKey) string {
 	return ""
 }
 
+func DeconstructContext(ctx context.Context) (string, string, string) {
+	return GetOrgUrlKeyFromContext(ctx), GetUserEmailFromContext(ctx), GetUserIDFromContext(ctx)
+}
+
 // GetUserIDFromContext get user id from context
 func GetUserIDFromContext(ctx context.Context) string {
 	return getValueFromContext(ctx, UserIDKey)

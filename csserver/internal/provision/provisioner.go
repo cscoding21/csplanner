@@ -308,7 +308,7 @@ func CreateTablesForPlanner(
 	ctx context.Context,
 	db *pgxpool.Pool) error {
 
-	tables := []string{"list", "organization", "project", "projecttemplate", "resource", "role", "appuser", "comment", "reaction"}
+	tables := []string{"list", "organization", "project", "projecttemplate", "resource", "role", "appuser", "comment", "reaction", "activity"}
 
 	var err error
 

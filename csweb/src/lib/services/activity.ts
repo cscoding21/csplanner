@@ -5,7 +5,7 @@ import { getApolloClient } from "$lib/graphql/gqlclient";
 export const findActivity = async (input: PageAndFilter):Promise<ActivityResults> => {
     const client = getApolloClient()
 
-    return client.query({ query: FindActivityDocument, variables: { pageAndFilter: input } , fetchPolicy: "no-cache" }).then((res) => {
+    return client.query({ query: FindActivityDocument, variables: { input } , fetchPolicy: "no-cache" }).then((res) => {
         if (res) {
             return res.data.findActivity;
         }

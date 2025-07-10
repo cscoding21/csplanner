@@ -5,10 +5,15 @@ import (
 	"csserver/internal/appserv/csmap"
 	"csserver/internal/appserv/factory"
 	"csserver/internal/config"
+	"csserver/internal/events"
+	"csserver/internal/services/activity"
+	"encoding/json"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
-	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	log "github.com/sirupsen/logrus"
 )
@@ -31,40 +36,57 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Info(ps.StreamName)
-	//sub, err := ps.Subscribe(ctx, )
+	go processActivities(ctx, ps)
 
-	forever()
-	select {}
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
 }
 
-func example() {
-	// connect to nats server
-	nc, _ := nats.Connect(config.Config.PubSub.Host)
+func processActivities(ctx context.Context, ps events.PubSubProvider) (jetstream.ConsumeContext, error) {
+	c, err := ps.GetStreamConsumer(ctx, "activity", "csplanner.*")
+	if err != nil {
+		log.Fatalf("GetStreamConsumer error: %v", err)
+	}
 
-	// create jetstream context from nats connection
-	js, _ := jetstream.New(nc)
+	handler, err := c.Consume(func(msg jetstream.Msg) {
+		actx, err := getEventContext(msg)
+		if err != nil {
+			log.Errorf("getEventcontext error: %s", err)
+			return
+		}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
+		fmt.Println("----------------- MESSAGE -----------------")
+		fmt.Println(msg.Subject())
+		fmt.Println(string(msg.Data()))
 
-	// get existing stream handle
-	stream, _ := js.Stream(ctx, "foo")
+		activityService := factory.GetActivityService(actx)
+		ierr := activityService.LogActivity(actx, activity.ActivityDef{}, msg.Subject(), "summary")
+		if ierr != nil {
+			log.Errorf("LogActivity error: %s", ierr)
+		}
 
-	// retrieve consumer handle from a stream
-	cons, _ := stream.Consumer(ctx, "cons")
-
-	// consume messages from the consumer in callback
-	cc, _ := cons.Consume(func(msg jetstream.Msg) {
-		fmt.Println("Received jetstream message: ", string(msg.Data()))
 		msg.Ack()
 	})
-	defer cc.Stop()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return handler, err
 }
 
-func forever() {
-	for {
-		fmt.Printf("FOREVER: %v+\n", time.Now())
-		time.Sleep(time.Second * 10)
+func getEventContext(msg jetstream.Msg) (context.Context, error) {
+	ctx := context.Background()
+
+	var env events.MessageWrapper
+	err := json.Unmarshal(msg.Data(), &env)
+	if err != nil {
+		return ctx, err
 	}
+
+	ctx = context.WithValue(ctx, config.OrgUrlKey, env.OrgKey)
+	ctx = context.WithValue(ctx, config.UserEmailKey, env.UserEmail)
+	ctx = context.WithValue(ctx, config.UserIDKey, env.UserID)
+
+	return ctx, nil
 }

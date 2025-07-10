@@ -35,6 +35,8 @@ type MessageWrapper struct {
 	ID        string
 	Timestamp time.Time
 	Body      any
+	UserEmail string
+	UserID    string
 }
 
 // NewPubSubProvider return an configured pubsub provider
@@ -95,8 +97,9 @@ func (s *PubSubProvider) Publish(ctx context.Context, orgName string, service st
 	client := s.GetPubSubConn()
 	//defer client.Drain()
 
+	_, email, userid := config.DeconstructContext(ctx)
 	subject := s.GetSubjectName(orgName, service, object, eventName)
-	data, err := s.getWrappedData(orgName, body)
+	data, err := s.getWrappedData(orgName, email, userid, body)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -111,6 +114,7 @@ func (s *PubSubProvider) Publish(ctx context.Context, orgName string, service st
 func (s *PubSubProvider) StreamPublish(ctx context.Context, orgName string, service string, object string, eventName string, body any) error {
 	js := s.getStreamContext()
 	streamName := strings.ToLower(config.Config.PubSub.StreamName)
+	_, email, userid := config.DeconstructContext(ctx)
 
 	subject := fmt.Sprintf("%s.%s.%s.%s.%s", streamName, orgName, service, object, eventName)
 
@@ -119,12 +123,11 @@ func (s *PubSubProvider) StreamPublish(ctx context.Context, orgName string, serv
 		return err
 	}
 
-	wrappedData, err := s.getWrappedData(orgName, body)
+	wrappedData, err := s.getWrappedData(orgName, email, userid, body)
 	if err != nil {
 		return err
 	}
 
-	//sj := fmt.Sprintf("%s.*.*.*.>", orgName)
 	_, err = js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
 		Name:     streamName,
 		Subjects: []string{subject},
@@ -181,12 +184,14 @@ func (s *PubSubProvider) Subscribe(
 	return sub, nil
 }
 
-func (s *PubSubProvider) getWrappedData(org string, data any) ([]byte, error) {
+func (s *PubSubProvider) getWrappedData(org string, email string, userid string, data any) ([]byte, error) {
 	msg := MessageWrapper{
 		OrgKey:    org,
 		ID:        uuid.New().String(),
 		Timestamp: time.Now(),
 		Body:      data,
+		UserEmail: email,
+		UserID:    userid,
 	}
 
 	b, err := json.Marshal(msg)

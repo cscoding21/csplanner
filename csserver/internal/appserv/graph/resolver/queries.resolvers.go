@@ -170,24 +170,22 @@ func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.C
 
 // FindActivity is the resolver for the findActivity field.
 func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error) {
-	panic("needs refactor")
+	service := factory.GetActivityService(ctx)
 
-	// service := factory.GetActivityService()
+	//---TODO: make this find paged activities
+	activityResults, err := service.FindAllActivitys(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	// //---TODO: make this find paged activities
-	// activityResults, err := service.FindAllActivitys(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	pg, fi := csmap.GetPageAndFilterIdl(activityResults.Pagination, activityResults.Filters)
+	out := idl.ActivityResults{
+		Paging:  &pg,
+		Filters: &fi,
+		Results: csmap.ActivityActivityToIdlSlice(common.ValToRefSlice(common.ExtractDataFromBase(activityResults.Results))),
+	}
 
-	// pg, fi := csmap.GetPageAndFilterIdl(activityResults.Pagination, activityResults.Filters)
-	// out := idl.ActivityResults{
-	// 	Paging:  &pg,
-	// 	Filters: &fi,
-	// 	Results: csmap.ActivityActivityToIdlSlice(common.ValToRefSlice(activityResults.Results)),
-	// }
-
-	// return &out, nil
+	return &out, nil
 }
 
 // FindAllProjectTemplates is the resolver for the findAllProjectTemplates field.
