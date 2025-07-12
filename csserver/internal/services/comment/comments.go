@@ -21,11 +21,6 @@ const (
 	Loves       CommentReactionType = "loves"
 	LaughsAt    CommentReactionType = "laughs_at"
 	Acknowledge CommentReactionType = "acknowledges"
-
-	// Mentioned CommentRelationshipType = "mentioned"
-
-	// IsAReplyTo CommentRelationshipType = "is_a_reply_to"
-	// BelongsTo  CommentRelationshipType = "belongsto"
 )
 
 // AddComment adds a comment to a project.  Is a wrapper for CreateComment
@@ -35,7 +30,14 @@ func (s *CommentService) AddComment(ctx context.Context, comment Comment) (commo
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	err = s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(CommentIdentifier), "comment", "created", c)
+	cc := *c.Object
+	err = s.pubsub.StreamPublish(ctx,
+		string(CommentIdentifier),
+		"comment", "created", map[string]any{
+			"text":       cc.Data.Text,
+			"id":         cc.ID,
+			"project_id": cc.Data.ProjectID,
+		})
 	if err != nil {
 		log.Errorf("StreamPublish error: %s", err)
 	} else {
@@ -70,7 +72,7 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 
 	fmt.Println("replyDelta", replyDelta)
 
-	s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(CommentIdentifier), "reply", "created", outComment)
+	s.pubsub.StreamPublish(ctx, string(CommentIdentifier), "reply", "created", outComment)
 	return common.NewSuccessUpdateResult(outComment)
 }
 
@@ -96,7 +98,7 @@ func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (co
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(CommentIdentifier), "comment", "updated", result)
+	s.pubsub.StreamPublish(ctx, string(CommentIdentifier), "comment", "updated", result)
 
 	return common.NewSuccessUpdateResult(result)
 }

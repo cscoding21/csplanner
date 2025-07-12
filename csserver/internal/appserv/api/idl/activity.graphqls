@@ -5,6 +5,7 @@ type Activity {
   context: String
   userEmail: String!
   user: User!
+  activityDate: Time
 }
 
 

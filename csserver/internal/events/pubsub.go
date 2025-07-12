@@ -53,6 +53,11 @@ func (s *CSSubject) String() string {
 	return fmt.Sprintf(SUBJECT_FORMAT, s.StreamName, s.OrgKey, s.Service, s.Object, s.Event)
 }
 
+// LookupKey get an abbreviated version of a subject to use as a lookup key.  It omits the stream name and org segments.
+func (s *CSSubject) LookupKey() string {
+	return fmt.Sprintf("%s.%s.%s", s.Service, s.Object, s.Event)
+}
+
 // GetCSSubject parse a subject string into an object
 func GetCSSubject(input string) CSSubject {
 	parts := strings.Split(input, ".")
@@ -140,10 +145,10 @@ func (s *PubSubProvider) Publish(ctx context.Context, orgName string, service st
 }
 
 // StreamPublish publisn an event to a durable stream
-func (s *PubSubProvider) StreamPublish(ctx context.Context, orgName string, service string, object string, eventName string, body any) error {
+func (s *PubSubProvider) StreamPublish(ctx context.Context, service string, object string, eventName string, body any) error {
 	js := s.getStreamContext()
 	streamName := strings.ToLower(config.Config.PubSub.StreamName)
-	_, email, userid := config.DeconstructContext(ctx)
+	orgName, email, userid := config.DeconstructContext(ctx)
 
 	subject := fmt.Sprintf("%s.%s.%s.%s.%s", streamName, orgName, service, object, eventName)
 

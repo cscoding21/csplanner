@@ -2,14 +2,26 @@ package activity
 
 import (
 	"context"
+	"csserver/internal/common"
+	"csserver/internal/config"
 	"csserver/internal/events"
+	"csserver/internal/services/project"
+	"csserver/internal/services/resource"
+	"csserver/internal/utils"
 	"encoding/json"
 	"fmt"
 )
 
+type ActivityTemplate struct {
+	Subject   string
+	GetDetail func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
+}
+
 // LogActivity logs a given activity
 func (s *ActivityService) LogActivity(
 	ctx context.Context,
+	ps project.ProjectService,
+	rs resource.ResourceService,
 	subject string,
 	data []byte) error {
 
@@ -22,23 +34,44 @@ func (s *ActivityService) LogActivity(
 		return err
 	}
 
-	detail, err := getActivityDetail(sub, wrapper)
+	detail, err := getActivityDetail(sub, ps, rs, wrapper)
 	if err != nil {
 		return err
 	}
 
 	act := Activity{
-		Detail:    detail,
-		Link:      subject,
-		Context:   subject,
-		UserEmail: wrapper.UserEmail,
+		ControlFields: common.ControlFields{
+			ID: utils.GenerateBase64UUID(),
+		},
+		Detail:       detail,
+		Link:         subject,
+		Context:      subject,
+		ActivityDate: wrapper.Timestamp,
+		UserEmail:    wrapper.UserEmail,
 	}
 
 	_, err = s.CreateActivity(ctx, act)
 	return err
 }
 
-func getActivityDetail(sub events.CSSubject, act events.MessageWrapper) (string, error) {
+// getActivityDetail return the detail for a given activity by looking up the proper template based on the key
+func getActivityDetail(sub events.CSSubject, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, error) {
+	key := sub.LookupKey()
+	ctx := getContextFromSubject(sub)
 
-	return "", nil
+	temp, ok := templateMap[key]
+	if !ok {
+		return "", fmt.Errorf("no template found for subject key %s", sub.LookupKey())
+	}
+
+	delta := temp.GetDetail(ctx, ps, rs, act)
+
+	return delta, nil
+}
+
+func getContextFromSubject(sub events.CSSubject) context.Context {
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, config.OrgUrlKey, sub.OrgKey)
+
+	return ctx
 }

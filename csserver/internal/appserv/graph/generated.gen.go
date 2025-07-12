@@ -50,12 +50,13 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Activity struct {
-		Context   func(childComplexity int) int
-		Detail    func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Link      func(childComplexity int) int
-		User      func(childComplexity int) int
-		UserEmail func(childComplexity int) int
+		ActivityDate func(childComplexity int) int
+		Context      func(childComplexity int) int
+		Detail       func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Link         func(childComplexity int) int
+		User         func(childComplexity int) int
+		UserEmail    func(childComplexity int) int
 	}
 
 	ActivityResults struct {
@@ -781,6 +782,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Activity.activityDate":
+		if e.complexity.Activity.ActivityDate == nil {
+			break
+		}
+
+		return e.complexity.Activity.ActivityDate(childComplexity), true
 
 	case "Activity.context":
 		if e.complexity.Activity.Context == nil {
@@ -4036,6 +4044,7 @@ var sources = []*ast.Source{
   context: String
   userEmail: String!
   user: User!
+  activityDate: Time
 }
 
 
@@ -6911,6 +6920,47 @@ func (ec *executionContext) fieldContext_Activity_user(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Activity_activityDate(ctx context.Context, field graphql.CollectedField, obj *idl.Activity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Activity_activityDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ActivityDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Activity_activityDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Activity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ActivityResults_paging(ctx context.Context, field graphql.CollectedField, obj *idl.ActivityResults) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ActivityResults_paging(ctx, field)
 	if err != nil {
@@ -7061,6 +7111,8 @@ func (ec *executionContext) fieldContext_ActivityResults_results(_ context.Conte
 				return ec.fieldContext_Activity_userEmail(ctx, field)
 			case "user":
 				return ec.fieldContext_Activity_user(ctx, field)
+			case "activityDate":
+				return ec.fieldContext_Activity_activityDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Activity", field.Name)
 		},
@@ -30224,6 +30276,8 @@ func (ec *executionContext) _Activity(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "activityDate":
+			out.Values[i] = ec._Activity_activityDate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

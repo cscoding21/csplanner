@@ -3,7 +3,6 @@ package resource
 import (
 	"context"
 	"csserver/internal/common"
-	"csserver/internal/config"
 	"csserver/internal/services/organization"
 	"csserver/internal/services/resource/rtypes/resourcetype"
 	"csserver/internal/utils"
@@ -60,7 +59,7 @@ func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (com
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(ResourceIdentifier), "resource", "created", r)
+	s.pubsub.StreamPublish(ctx, string(ResourceIdentifier), "resource", "created", r)
 
 	return r, nil
 }
@@ -89,7 +88,7 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, 
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	s.pubsub.StreamPublish(ctx, config.GetOrgUrlKeyFromContext(ctx), string(ResourceIdentifier), "resource", "updated", out)
+	s.pubsub.StreamPublish(ctx, string(ResourceIdentifier), "resource", "updated", out)
 
 	return out, nil
 }

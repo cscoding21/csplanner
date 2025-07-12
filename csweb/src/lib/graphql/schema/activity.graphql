@@ -9,6 +9,7 @@ query findActivity($input: PageAndFilter!) {
 			link
 			context
 			userEmail
+			activityDate
 			user {
 				...userFragment
 			}

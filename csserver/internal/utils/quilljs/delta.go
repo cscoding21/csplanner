@@ -18,16 +18,16 @@ type Delta struct {
 // have only one key and only one value.
 type Embed struct {
 	Key   string
-	Value interface{}
+	Value any
 }
 
 // Op is the smallest "operation"
 type Op struct {
-	Insert      []rune                 `json:"insert,omitempty"`
-	InsertEmbed *Embed                 `json:"-"`
-	Retain      *int                   `json:"retain,omitempty"`
-	Attributes  map[string]interface{} `json:"attributes,omitempty"`
-	Delete      *int                   `json:"delete,omitempty"`
+	Insert      []rune         `json:"insert,omitempty"`
+	InsertEmbed *Embed         `json:"-"`
+	Retain      *int           `json:"retain,omitempty"`
+	Attributes  map[string]any `json:"attributes,omitempty"`
+	Delete      *int           `json:"delete,omitempty"`
 }
 
 // IsNil tells you if the current Op is a nil operation
@@ -80,7 +80,7 @@ func (o *Op) UnmarshalJSON(data []byte) error {
 			o.Insert = []rune(b)
 			o.InsertEmbed = nil
 		} else {
-			var m map[string]interface{}
+			var m map[string]any
 			if err := json.Unmarshal(*aux.Insert, &m); err != nil {
 				return err
 			}
@@ -112,7 +112,7 @@ func (o *Op) MarshalJSON() ([]byte, error) {
 		}
 		message = (*json.RawMessage)(&b)
 	} else if o.InsertEmbed != nil {
-		m := make(map[string]interface{})
+		m := make(map[string]any)
 		m[o.InsertEmbed.Key] = o.InsertEmbed.Value
 		b, err := json.Marshal(m)
 		if err != nil {
@@ -131,7 +131,7 @@ func (o *Op) MarshalJSON() ([]byte, error) {
 
 // Insert takes a string and a map of attributes and adds them to the Delta d
 // If the string is empty, we return the original delta
-func (d *Delta) Insert(text string, attrs map[string]interface{}) *Delta {
+func (d *Delta) Insert(text string, attrs map[string]any) *Delta {
 	if len([]rune(text)) == 0 {
 		return d
 	}
@@ -145,7 +145,7 @@ func (d *Delta) Insert(text string, attrs map[string]interface{}) *Delta {
 
 // InsertEmbed takes a map of embeds and a map of attributes, adds them to the Delta. This
 // can be used to insert images or URLs to the Delta
-func (d *Delta) InsertEmbed(embed Embed, attrs map[string]interface{}) *Delta {
+func (d *Delta) InsertEmbed(embed Embed, attrs map[string]any) *Delta {
 	if len(embed.Key) == 0 || embed.Value == nil {
 		return d
 	}
@@ -168,7 +168,7 @@ func (d *Delta) Delete(n int) *Delta {
 }
 
 // Retain keeps n characters and applies the attrs if present
-func (d *Delta) Retain(n int, attrs map[string]interface{}) *Delta {
+func (d *Delta) Retain(n int, attrs map[string]any) *Delta {
 	if n <= 0 {
 		return d
 	}

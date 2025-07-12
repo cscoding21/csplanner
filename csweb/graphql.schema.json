@@ -20,6 +20,18 @@
         "isOneOf": null,
         "fields": [
           {
+            "name": "activityDate",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Time",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "context",
             "description": null,
             "args": [],

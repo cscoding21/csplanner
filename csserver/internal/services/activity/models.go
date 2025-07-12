@@ -7,6 +7,7 @@ package activity
 
 import (
 	"csserver/internal/common"
+	"time"
 )
 
 type ActivityType string
@@ -20,8 +21,9 @@ type Activity struct {
 	common.ControlFields `csval:"validate"`
 
 	//---TODO: add fields here
-	Detail    string `json:"detail"`
-	Context   string `json:"context"`
-	Link      string `json:"link"`
-	UserEmail string `json:"user_email"`
+	Detail       string    `json:"detail"`
+	Context      string    `json:"context"`
+	Link         string    `json:"link"`
+	UserEmail    string    `json:"user_email"`
+	ActivityDate time.Time `json:"activity_date"`
 }

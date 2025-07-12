@@ -24,8 +24,8 @@ type CSBody struct {
 const OrgName = "localhost"
 
 func TestGetConsumer(t *testing.T) {
-	//ctx := getTestContext()
 	ctx := context.Background()
+	ctx = context.WithValue(ctx, config.OrgUrlKey, OrgName)
 
 	ps, err := factory.GetPubSubClient(ctx)
 	if err != nil {
@@ -40,7 +40,7 @@ func TestGetConsumer(t *testing.T) {
 
 	for i := range 10 {
 		to = CSBody{Content: fmt.Sprintf("hello %d", i)}
-		err = ps.StreamPublish(ctx, OrgName, "test", "stream", "publish", to)
+		err = ps.StreamPublish(ctx, "test", "stream", "publish", to)
 		if err != nil {
 			t.Errorf("Stream publish error: %v", err)
 		}

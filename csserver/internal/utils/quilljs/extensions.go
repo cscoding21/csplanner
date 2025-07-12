@@ -43,8 +43,10 @@ func DeltaToString(delta Delta) string {
 
 // StringToDelta takes a simple string and converts it into a single-insert delta
 func StringToDelta(text string) *Delta {
-	delta := New(nil).Insert(text, nil)
-	return delta
+	var d Delta
+	json.Unmarshal([]byte(text), &d)
+
+	return &d
 }
 
 // StringToDeltaString takes a simple string and converts it into a single-insert delta and returns a JSON representation

@@ -8,7 +8,7 @@ import (
 type BaseModel[T any] struct {
 	ID        string     `json:"id,omitempty"`
 	ParentID  *string    `json:"parent_id"`
-	CreatedAt time.Time  `json:"craeted_at"`
+	CreatedAt time.Time  `json:"created_at"`
 	CreatedBy string     `json:"created_by"`
 	UpdatedAt time.Time  `json:"updated_at"`
 	UpdatedBy string     `json:"updated_by"`

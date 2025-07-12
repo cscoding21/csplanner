@@ -20,6 +20,7 @@ export type Scalars = {
 
 export type Activity = {
   __typename?: 'Activity';
+  activityDate?: Maybe<Scalars['Time']['output']>;
   context?: Maybe<Scalars['String']['output']>;
   detail: Scalars['String']['output'];
   id: Scalars['String']['output'];
@@ -1660,6 +1661,7 @@ export const FindActivityDocument = gql`
       link
       context
       userEmail
+      activityDate
       user {
         ...userFragment
       }
