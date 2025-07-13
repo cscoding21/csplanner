@@ -48,6 +48,12 @@ var templateMap = map[string]ActivityTemplate{
 
 			return string(out)
 		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s", projectID)
+		},
 	},
 	"resource.resource.created": {
 		Subject: "resource.resource.created",
@@ -65,6 +71,12 @@ var templateMap = map[string]ActivityTemplate{
 			}
 
 			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			resourceID := m["resource_id"].(string)
+
+			return fmt.Sprintf("/resource/detail/%s", resourceID)
 		},
 	},
 }

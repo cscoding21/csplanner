@@ -14,6 +14,7 @@ import (
 
 type ActivityTemplate struct {
 	Subject   string
+	GetLink   func(wrapper events.MessageWrapper) string
 	GetDetail func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
 }
 
@@ -34,7 +35,7 @@ func (s *ActivityService) LogActivity(
 		return err
 	}
 
-	detail, err := getActivityDetail(sub, ps, rs, wrapper)
+	detail, link, err := getActivityDetail(sub, ps, rs, wrapper)
 	if err != nil {
 		return err
 	}
@@ -44,7 +45,7 @@ func (s *ActivityService) LogActivity(
 			ID: utils.GenerateBase64UUID(),
 		},
 		Detail:       detail,
-		Link:         subject,
+		Link:         link,
 		Context:      subject,
 		ActivityDate: wrapper.Timestamp,
 		UserEmail:    wrapper.UserEmail,
@@ -55,18 +56,19 @@ func (s *ActivityService) LogActivity(
 }
 
 // getActivityDetail return the detail for a given activity by looking up the proper template based on the key
-func getActivityDetail(sub events.CSSubject, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, error) {
+func getActivityDetail(sub events.CSSubject, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, string, error) {
 	key := sub.LookupKey()
 	ctx := getContextFromSubject(sub)
 
 	temp, ok := templateMap[key]
 	if !ok {
-		return "", fmt.Errorf("no template found for subject key %s", sub.LookupKey())
+		return "", "", fmt.Errorf("no template found for subject key %s", sub.LookupKey())
 	}
 
 	delta := temp.GetDetail(ctx, ps, rs, act)
+	link := temp.GetLink(act)
 
-	return delta, nil
+	return delta, link, nil
 }
 
 func getContextFromSubject(sub events.CSSubject) context.Context {

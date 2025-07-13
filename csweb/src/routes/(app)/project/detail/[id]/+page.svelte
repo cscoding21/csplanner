@@ -26,7 +26,7 @@
 	import ShowIfStatus from '../../components/ShowIfStatus.svelte';
 
 	const id = page.params.id;
-	let hash = $state(page.url.hash);
+	let hash = $state(page.url.hash || "#snapshot");
 
 	let project: ProjectEnvelope = $state({} as ProjectEnvelope);
 

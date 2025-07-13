@@ -171,9 +171,10 @@ func (r *queryResolver) GetCommentThread(ctx context.Context, id string) (*idl.C
 // FindActivity is the resolver for the findActivity field.
 func (r *queryResolver) FindActivity(ctx context.Context, pageAndFilter idl.PageAndFilter) (*idl.ActivityResults, error) {
 	service := factory.GetActivityService(ctx)
+	paging, filters := csmap.GetPageAndFilterModel(*pageAndFilter.Paging, pageAndFilter.Filters)
 
 	//---TODO: make this find paged activities
-	activityResults, err := service.FindAllActivitys(ctx)
+	activityResults, err := service.FindActivitys(ctx, paging, filters)
 	if err != nil {
 		return nil, err
 	}
