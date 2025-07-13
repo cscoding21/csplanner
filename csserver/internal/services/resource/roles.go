@@ -85,6 +85,16 @@ func (s *ResourceService) CreateRole(ctx context.Context, input Role) (common.Up
 		return common.NewUpdateResult(val, &obj), err
 	}
 
+	newRole := *obj
+	s.pubsub.StreamPublish(ctx,
+		string(ResourceIdentifier),
+		"role",
+		"created",
+		map[string]any{
+			"id":   newRole.ID,
+			"name": newRole.Data.Name,
+		})
+
 	return common.NewUpdateResult(val, &obj), nil
 }
 
@@ -98,6 +108,16 @@ func (s *ResourceService) UpdateRole(ctx context.Context, input Role) (common.Up
 		return common.NewUpdateResult(val, &obj), err
 	}
 
+	newRole := *obj
+	s.pubsub.StreamPublish(ctx,
+		string(ResourceIdentifier),
+		"role",
+		"updated",
+		map[string]any{
+			"id":   newRole.ID,
+			"name": newRole.Data.Name,
+		})
+
 	return common.NewUpdateResult(val, &obj), nil
 }
 
@@ -110,6 +130,16 @@ func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.Up
 	if err != nil {
 		return common.NewUpdateResult(val, &obj), err
 	}
+
+	newRole := *obj
+	s.pubsub.StreamPublish(ctx,
+		string(ResourceIdentifier),
+		"role",
+		"updated",
+		map[string]any{
+			"id":   newRole.ID,
+			"name": newRole.Data.Name,
+		})
 
 	return common.NewUpdateResult(val, &obj), nil
 }

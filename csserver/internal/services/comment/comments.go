@@ -33,7 +33,8 @@ func (s *CommentService) AddComment(ctx context.Context, comment Comment) (commo
 	cc := *c.Object
 	err = s.pubsub.StreamPublish(ctx,
 		string(CommentIdentifier),
-		"comment", "created", map[string]any{
+		"comment", "created",
+		map[string]any{
 			"text":       cc.Data.Text,
 			"id":         cc.ID,
 			"project_id": cc.Data.ProjectID,

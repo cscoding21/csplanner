@@ -12,12 +12,6 @@ import (
 	"github.com/cscoding21/csval/validate"
 )
 
-// var (
-// 	ActivityNewProject          = activity.ActivityDef{Type: "new-project", Template: "The project '%s' was created by %s"}
-// 	ActivityUpdateProject       = activity.ActivityDef{Type: "update-project", Template: "The project '%s' was updated by %s"}
-// 	ActivityProjectStatusChange = activity.ActivityDef{Type: "project-status-change", Template: ""}
-// )
-
 // SaveProject saves a project in the system and updates all stored calculations
 func (s *ProjectService) SaveProject(
 	ctx context.Context,
@@ -50,7 +44,19 @@ func (s *ProjectService) SaveProject(
 
 	lastProject.Data.PerformAllCalcs(org, resourceMap, roleMap)
 
-	return s.UpdateProject(ctx, lastProject.Data)
+	resp, err := s.UpdateProject(ctx, lastProject.Data)
+
+	updated := *resp.Object
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"project",
+		"updated",
+		map[string]any{
+			"id":   updated.ID,
+			"name": updated.Data.ProjectBasics.Name,
+		})
+
+	return resp, err
 }
 
 func (s *ProjectService) newProject(
@@ -73,7 +79,19 @@ func (s *ProjectService) newProject(
 
 	pro.PerformAllCalcs(org, resourceMap, roleMap)
 
-	return s.UpdateProject(ctx, pro)
+	resp, err := s.UpdateProject(ctx, pro)
+
+	up := *resp.Object
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"project",
+		"created",
+		map[string]any{
+			"id":   up.ID,
+			"name": up.Data.ProjectBasics.Name,
+		})
+
+	return resp, err
 }
 
 // CreateNewProject adds a new project to the portfolio
@@ -141,6 +159,7 @@ func (s *ProjectService) SetProjectStatus(
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
+	oldState := stateMachineMap[p.Data.ProjectStatusBlock.Status]
 	newState := stateMachineMap[status]
 
 	val := newState.Can(&p.Data)
@@ -151,7 +170,20 @@ func (s *ProjectService) SetProjectStatus(
 
 	p.Data.ProjectStatusBlock.Status = newState.State
 
-	return s.UpdateProject(ctx, p.Data)
+	resp, err := s.UpdateProject(ctx, p.Data)
+	up := *resp.Object
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"state",
+		"updated",
+		map[string]any{
+			"id":         up.ID,
+			"name":       up.Data.ProjectBasics.Name,
+			"from_state": oldState.State,
+			"to_state":   newState.State,
+		})
+
+	return resp, err
 }
 
 // CheckProjectStatusChange performa dry run of a status change to see if it would go through successfully

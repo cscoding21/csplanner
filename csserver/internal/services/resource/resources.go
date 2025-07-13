@@ -59,7 +59,15 @@ func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (com
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	s.pubsub.StreamPublish(ctx, string(ResourceIdentifier), "resource", "created", r)
+	newRes := *r.Object
+	s.pubsub.StreamPublish(ctx,
+		string(ResourceIdentifier),
+		"resource",
+		"created",
+		map[string]any{
+			"id":   newRes.ID,
+			"name": newRes.Data.Name,
+		})
 
 	return r, nil
 }
@@ -88,7 +96,15 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, 
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
-	s.pubsub.StreamPublish(ctx, string(ResourceIdentifier), "resource", "updated", out)
+	newRes := *out.Object
+	s.pubsub.StreamPublish(ctx,
+		string(ResourceIdentifier),
+		"resource",
+		"updated",
+		map[string]any{
+			"id":   newRes.ID,
+			"name": newRes.Data.Name,
+		})
 
 	return out, nil
 }

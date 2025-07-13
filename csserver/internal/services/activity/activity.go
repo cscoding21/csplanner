@@ -71,6 +71,7 @@ func getActivityDetail(sub events.CSSubject, ps project.ProjectService, rs resou
 	return delta, link, nil
 }
 
+// getContextFromSubject return a context with values specific to the org that generated the activity
 func getContextFromSubject(sub events.CSSubject) context.Context {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, config.OrgUrlKey, sub.OrgKey)
