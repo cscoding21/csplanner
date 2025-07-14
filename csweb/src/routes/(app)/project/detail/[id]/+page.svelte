@@ -24,6 +24,7 @@
 	import { ProjectStatusUpdate } from '../../components';
 	import { goto } from '$app/navigation';
 	import ShowIfStatus from '../../components/ShowIfStatus.svelte';
+	import ProjectCollab from '../../components/ProjectCollab.svelte';
 
 	const id = page.params.id;
 	let hash = $state(page.url.hash || "#snapshot");
@@ -91,6 +92,8 @@
 		<CSSection>
 		{#if hash == "#snapshot"}
 			<ProjectSnapshot {id}  />
+		{:else if hash == '#collab'}
+			<ProjectCollab {id} update={() => console.log("update")} />
 		{:else if hash == '#basics'}
 			<ProjectBasics {id} update={() => console.log("update")} />
 		{:else if hash == '#daci'}

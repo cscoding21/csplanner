@@ -16,6 +16,7 @@ import (
 	"csserver/internal/services/project/ptypes/projectstatus"
 	"csserver/internal/utils"
 
+	"github.com/cscoding21/csval/validate"
 	"github.com/google/uuid"
 
 	log "github.com/sirupsen/logrus"
@@ -284,7 +285,7 @@ func CreateTestProjects(ctx context.Context) error {
 		},
 	}
 
-	pr, err := ps.SaveProject(ctx, updateProject, resourceMap, roleMap, *org)
+	pr, err := ps.SaveTestProject(ctx, updateProject, resourceMap, roleMap, *org, validate.ValidationResult{})
 
 	if err != nil {
 		log.Errorf("Save Project Error (YTS): %s", err)
@@ -301,7 +302,7 @@ func CreateTestProjects(ctx context.Context) error {
 
 	for _, otherProject := range otherProjects {
 		st := otherProject.ProjectStatusBlock.Status
-		pr, err = ps.SaveProject(ctx, otherProject, resourceMap, roleMap, *org)
+		pr, err = ps.SaveTestProject(ctx, otherProject, resourceMap, roleMap, *org, validate.ValidationResult{})
 		if err != nil {
 			log.Errorf("Save Project Error (OTHER): %s", err)
 		}

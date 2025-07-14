@@ -5,6 +5,7 @@ import (
 	"csserver/internal/appserv/factory"
 	"csserver/internal/common"
 	"csserver/internal/config"
+	"csserver/internal/utils"
 	"fmt"
 	"testing"
 )
@@ -41,7 +42,7 @@ func TestSaveProject(t *testing.T) {
 
 	put.Data.ProjectBasics.Name = put.Data.ProjectBasics.Name + " T1"
 
-	result, err := service.SaveProject(ctx, put.Data, resourceMap, roleMap, *org)
+	result, err := service.SaveProject(ctx, put.Data, resourceMap, roleMap, *org, utils.ValToRef("created"))
 	if err != nil {
 		t.Error(err)
 	}

@@ -112,7 +112,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input idl.UpdatePr
 		return nil, err
 	}
 
-	result, err := service.SaveProject(ctx, proj, resourceMap, roleMap, *org)
+	result, err := service.SaveProject(ctx, proj, resourceMap, roleMap, *org, nil)
 	if err != nil {
 		return nil, err
 	}

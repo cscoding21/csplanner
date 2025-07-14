@@ -43,6 +43,12 @@ var templateMap = map[string]ActivityTemplate{
 
 			return string(out)
 		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#collab", projectID)
+		},
 	},
 	"comment.reply.created": {
 		Subject: "comment.reply.created",
@@ -86,7 +92,7 @@ var templateMap = map[string]ActivityTemplate{
 			m := wrapper.Body.(map[string]any)
 			projectID := m["project_id"].(string)
 
-			return fmt.Sprintf("/project/detail/%s", projectID)
+			return fmt.Sprintf("/project/detail/%s#collab", projectID)
 		},
 	},
 	"resource.resource.created": {

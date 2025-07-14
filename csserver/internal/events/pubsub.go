@@ -147,6 +147,11 @@ func (s *PubSubProvider) Publish(ctx context.Context, orgName string, service st
 // StreamPublish publisn an event to a durable stream
 func (s *PubSubProvider) StreamPublish(ctx context.Context, service string, object string, eventName string, body any) error {
 	js := s.getStreamContext()
+	if js == nil {
+		return fmt.Errorf("stream context not available")
+	}
+
+	log.Infof("Stream context: %v\n", js)
 	streamName := strings.ToLower(config.Config.PubSub.StreamName)
 	orgName, email, userid := config.DeconstructContext(ctx)
 
@@ -167,6 +172,7 @@ func (s *PubSubProvider) StreamPublish(ctx context.Context, service string, obje
 		Subjects: []string{subject},
 	})
 	if err != nil {
+		log.Errorf("Error in CreateOrUpdateStream: %s", err)
 		return err
 	}
 

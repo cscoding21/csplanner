@@ -77,36 +77,6 @@ func (s *ResourceService) FindRoles(ctx context.Context, paging common.Paginatio
 	return postgres.FindPagedObjects[Role](ctx, s.db, sql, out.Pagination, out.Filters, params)
 }
 
-// // UpdateRoles update an existing Roles.
-// func (s *ResourceService) UpdateRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
-
-// 	val := validate.NewSuccessValidationResult()
-
-// 	obj, err := postgres.UpdateObject(ctx, s.db, input, RoleIdentifier, input.ID)
-// 	if err != nil {
-// 		return common.NewUpdateResult(val, &obj), err
-// 	}
-
-// 	eventType := "updated"
-
-// 	log.Warnf("%v - %v", obj.CreatedAt, obj.UpdatedAt)
-// 	if obj.CreatedAt.Equal(obj.UpdatedAt) {
-// 		eventType = "created"
-// 	}
-
-// 	newRole := *obj
-// 	s.pubsub.StreamPublish(ctx,
-// 		string(ResourceIdentifier),
-// 		"role",
-// 		eventType,
-// 		map[string]any{
-// 			"id":   newRole.ID,
-// 			"name": newRole.Data.Name,
-// 		})
-
-// 	return common.NewUpdateResult(val, &obj), nil
-// }
-
 // UpsertRoles create or update a Roles
 func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
 

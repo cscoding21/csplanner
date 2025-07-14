@@ -19,6 +19,7 @@
         RectangleListOutline,
         DollarOutline,
         CashOutline,
+		PersonChalkboardOutline,
 
 	} from 'flowbite-svelte-icons';
 	import { scrollTop } from 'svelte-scrolling';
@@ -45,6 +46,12 @@
 		{#snippet tail()}
 			<!-- <CheckCircleOutline color="green" /> -->
 			<!-- <Badge>5</Badge> -->
+		{/snippet}
+	</CSSidebarItem>
+
+	<CSSidebarItem href="#collab" label="Collaborate" active={hash === "#collab"}> 
+		{#snippet icon()}
+			<PersonChalkboardOutline />
 		{/snippet}
 	</CSSidebarItem>
 

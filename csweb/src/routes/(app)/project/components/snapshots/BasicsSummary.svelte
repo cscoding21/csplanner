@@ -8,7 +8,7 @@
     let { project }:Props = $props()
 </script>
 
-
+{#if project && project.projectBasics}
 <SectionSubHeading>{project.projectBasics.name}</SectionSubHeading>
 
 <h3 class="text-gray-100 font-semibold">Owner</h3>
@@ -16,3 +16,4 @@
 
 <h3 class="text-gray-100 font-semibold mt-6">Executive Summary</h3>
 <p class="py-2 text-gray-200">{@html project.projectBasics.description.replaceAll(/[\n]/g, "<br />")}</p>
+{/if}

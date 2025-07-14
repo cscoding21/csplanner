@@ -14,6 +14,10 @@
 
     let projectFilter = $state("all")
     let displayProjects:ProjectEnvelope[] = $derived(projects?.filter(p => projectFilter === "all" || p.data.projectStatusBlock.status === projectFilter))
+
+    const hasAnyInStatus = (status:string):boolean => {
+        return projects.some(p => p.data.projectStatusBlock.status === status)
+    } 
 </script>
 
 
@@ -39,10 +43,11 @@
                 value={ProjectStatusNew}
                 name="status"
                 checked={false}
+                disabled={!hasAnyInStatus(ProjectStatusNew)}
                 onclick={() => { projectFilter = ProjectStatusNew } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">New</label>
+            <label for="all-users" class="ml-2 text-sm font-medium  {hasAnyInStatus(ProjectStatusNew) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">New</label>
         </div>
 
         <div class="flex items-center">
@@ -52,10 +57,11 @@
                 value={ProjectStatusDraft}
                 name="status"
                 checked={false}
+                disabled={!hasAnyInStatus(ProjectStatusDraft)}
                 onclick={() => { projectFilter = ProjectStatusDraft } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Draft</label>
+            <label for="all-users" class="ml-2 text-sm font-medium {hasAnyInStatus(ProjectStatusDraft) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"} ">Draft</label>
         </div>
 
         <div class="flex items-center">
@@ -65,10 +71,11 @@
                 value={ProjectStatusProposed}
                 name="status"
                 checked={false}
+                disabled={!hasAnyInStatus(ProjectStatusProposed)}
                 onclick={() => { projectFilter = ProjectStatusProposed } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Proposed</label>
+            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusProposed) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Proposed</label>
         </div>
 
         <div class="flex items-center">
@@ -78,10 +85,11 @@
                 value={ProjectStatusApproved}
                 name="status"
                 checked={false}
+                disabled={!hasAnyInStatus(ProjectStatusApproved)}
                 onclick={() => { projectFilter = ProjectStatusApproved } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Approved</label>
+            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusApproved) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Approved</label>
         </div>
 
         <div class="flex items-center">
@@ -91,10 +99,11 @@
                 value={ProjectStatusScheduled}
                 name="status"
                 checked={false}
+                disabled={!hasAnyInStatus(ProjectStatusScheduled)}
                 onclick={() => { projectFilter = ProjectStatusScheduled } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Scheduled</label>
+            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusScheduled) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Scheduled</label>
         </div>
 
         <div class="flex items-center">
@@ -104,10 +113,11 @@
                 value={ProjectStatusInflight}
                 name="status"
                 checked={false}
+                disabled={!hasAnyInStatus(ProjectStatusInflight)}
                 onclick={() => { projectFilter = ProjectStatusInflight } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">In-Flight</label>
+            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusInflight) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">In-Flight</label>
         </div>
         
     </div>

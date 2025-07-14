@@ -8,8 +8,11 @@ import (
 	"csserver/internal/services/projecttemplate"
 	"csserver/internal/services/resource"
 	"csserver/internal/utils"
+	"fmt"
 
 	"github.com/cscoding21/csval/validate"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // SaveProject saves a project in the system and updates all stored calculations
@@ -18,13 +21,19 @@ func (s *ProjectService) SaveProject(
 	pro Project,
 	resourceMap map[string]resource.Resource,
 	roleMap map[string]resource.Role,
-	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
+	org organization.Organization,
+	eventName *string) (common.UpdateResult[*common.BaseModel[Project]], error) {
 	//---TODO: update to proper validation
-	//val := pro.Validate()
+	// val := pro.Validate()
 	val := validate.NewSuccessValidationResult()
+	log.Debugf("project validation: %v", val)
 
 	if len(pro.ID) == 0 {
-		return s.newProject(ctx, pro, resourceMap, roleMap, org, val)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, fmt.Errorf("project id not known.  Save failed"))
+	}
+
+	if eventName == nil {
+		eventName = utils.ValToRef("updated")
 	}
 
 	lastProject, err := s.GetProjectByID(ctx, pro.ID)
@@ -33,7 +42,7 @@ func (s *ProjectService) SaveProject(
 	}
 	if lastProject == nil {
 		//---existing project does not exist...create
-		return s.newProject(ctx, pro, resourceMap, roleMap, org, val)
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, fmt.Errorf("project with id %s not found.  Save failed", pro.ID))
 	}
 
 	lastProject.Data.ProjectBasics = pro.ProjectBasics
@@ -50,7 +59,7 @@ func (s *ProjectService) SaveProject(
 	s.pubsub.StreamPublish(ctx,
 		string(ProjectIdentifier),
 		"project",
-		"updated",
+		*eventName,
 		map[string]any{
 			"id":   updated.ID,
 			"name": updated.Data.ProjectBasics.Name,
@@ -59,7 +68,7 @@ func (s *ProjectService) SaveProject(
 	return resp, err
 }
 
-func (s *ProjectService) newProject(
+func (s *ProjectService) SaveTestProject(
 	ctx context.Context,
 	pro Project,
 	resourceMap map[string]resource.Resource,
@@ -80,16 +89,6 @@ func (s *ProjectService) newProject(
 	pro.PerformAllCalcs(org, resourceMap, roleMap)
 
 	resp, err := s.UpdateProject(ctx, pro)
-
-	up := *resp.Object
-	s.pubsub.StreamPublish(ctx,
-		string(ProjectIdentifier),
-		"project",
-		"created",
-		map[string]any{
-			"id":   up.ID,
-			"name": up.Data.ProjectBasics.Name,
-		})
 
 	return resp, err
 }
@@ -144,7 +143,7 @@ func (s *ProjectService) CreateNewProject(
 
 	pro = common.UpwrapFromUpdateResult(updateResultWithMS)
 
-	return s.SaveProject(ctx, *pro, rm, roleMap, org)
+	return s.SaveProject(ctx, *pro, rm, roleMap, org, utils.ValToRef("created"))
 }
 
 // SetProjectStatus update the status of a project by adhering to the rules of the state machine
@@ -179,6 +178,7 @@ func (s *ProjectService) SetProjectStatus(
 		map[string]any{
 			"id":         up.ID,
 			"name":       up.Data.ProjectBasics.Name,
+			"start_date": up.Data.ProjectBasics.StartDate,
 			"from_state": oldState.State,
 			"to_state":   newState.State,
 		})
