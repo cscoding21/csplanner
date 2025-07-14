@@ -14,7 +14,6 @@
 <b>{activity.user.firstName} {activity.user.lastName}</b> replied to a comment from 
 <b>{detail.parent_user_firstname} {detail.parent_user_lastname}</b>
  on the project {detail.project_name}
-<b>{detail.name}</b> 
 </div>
 <blockquote class="pl-4 py-2 italic text-sm">
     {detail.comment}

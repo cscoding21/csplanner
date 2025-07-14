@@ -7,7 +7,7 @@
     }
     let { activity }:Props = $props()
 
-    let detail:any = $derived(activity.detail)
+    let detail:any = $derived(JSON.parse(activity.detail))
 </script>
 
 A new role called <b>{detail.name}</b> was created.

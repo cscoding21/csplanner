@@ -7,7 +7,7 @@
     }
     let { activity }:Props = $props()
 
-    let detail:any = $derived(activity.detail)
+    let detail:any = $derived(JSON.parse(activity.detail))
 </script>
 
 <b>{detail.name}</b> was added to the resource roster!

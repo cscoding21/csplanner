@@ -5,6 +5,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/events"
+	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/utils"
@@ -15,12 +16,13 @@ import (
 type ActivityTemplate struct {
 	Subject   string
 	GetLink   func(wrapper events.MessageWrapper) string
-	GetDetail func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
+	GetDetail func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
 }
 
 // LogActivity logs a given activity
 func (s *ActivityService) LogActivity(
 	ctx context.Context,
+	us appuser.AppuserService,
 	ps project.ProjectService,
 	rs resource.ResourceService,
 	subject string,
@@ -35,7 +37,7 @@ func (s *ActivityService) LogActivity(
 		return err
 	}
 
-	detail, link, err := getActivityDetail(sub, ps, rs, wrapper)
+	detail, link, err := getActivityDetail(sub, us, ps, rs, wrapper)
 	if err != nil {
 		return err
 	}
@@ -56,7 +58,7 @@ func (s *ActivityService) LogActivity(
 }
 
 // getActivityDetail return the detail for a given activity by looking up the proper template based on the key
-func getActivityDetail(sub events.CSSubject, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, string, error) {
+func getActivityDetail(sub events.CSSubject, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, string, error) {
 	key := sub.LookupKey()
 	ctx := getContextFromSubject(sub)
 
@@ -65,7 +67,7 @@ func getActivityDetail(sub events.CSSubject, ps project.ProjectService, rs resou
 		return "", "", fmt.Errorf("no template found for subject key %s", sub.LookupKey())
 	}
 
-	delta := temp.GetDetail(ctx, ps, rs, act)
+	delta := temp.GetDetail(ctx, us, ps, rs, act)
 	link := temp.GetLink(act)
 
 	return delta, link, nil

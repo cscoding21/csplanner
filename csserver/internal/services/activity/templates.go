@@ -3,6 +3,7 @@ package activity
 import (
 	"context"
 	"csserver/internal/events"
+	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/utils/quilljs"
@@ -15,7 +16,7 @@ import (
 var templateMap = map[string]ActivityTemplate{
 	"comment.comment.created": {
 		Subject: "comment.comment.created",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			payload := m["text"].(string)
@@ -29,24 +30,53 @@ var templateMap = map[string]ActivityTemplate{
 				return ""
 			}
 
+			//TOOD: enhance pubsub body to build activity output
 			//---augment map with calculated values
 			m["name"] = project.Data.ProjectBasics.Name
 			m["comment"] = comment
 
-			// mentionEmbed := quilljs.NewMentionEmbed(wrapper.UserID, "Jeph")
-			// delta := quilljs.New(nil).
-			// 	InsertEmbed(mentionEmbed,
-			// 		map[string]any{
-			// 			"bold": true,
-			// 		}).
-			// 	Insert(" commented on the project ", nil).
-			// 	Insert(project.Data.ProjectBasics.Name, map[string]any{"bold": true}).
-			// 	Insert("\n", nil).
-			// 	Insert(comment, map[string]any{"small": true})
-
 			out, err := json.Marshal(m)
 			if err != nil {
 				log.Errorf("Activity template error (comment.comment.created): %s", err)
+				return ""
+			}
+
+			return string(out)
+		},
+	},
+	"comment.reply.created": {
+		Subject: "comment.reply.created",
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			payload := m["text"].(string)
+			payloadDelta := quilljs.StringToDelta(payload)
+			comment := quilljs.DeltaToString(*payloadDelta)
+			projectID := m["project_id"].(string)
+			parentUserID := m["parent_user_id"].(string)
+
+			project, err := ps.GetProjectByID(ctx, projectID)
+			if err != nil {
+				log.Errorf("Activity template error GetProjectByID (comment.reply.created): %s", err)
+				return ""
+			}
+
+			parentUser, err := us.GetAppuserByID(ctx, parentUserID)
+			if err != nil {
+				log.Errorf("Activity template error GetAppUserByID (comment.reply.created): %s", err)
+				return ""
+			}
+
+			//TOOD: enhance pubsub body to build activity output
+			//---augment map with calculated values
+			m["project_name"] = project.Data.ProjectBasics.Name
+			m["comment"] = comment
+			m["parent_user_firstname"] = parentUser.Data.FirstName
+			m["parent_user_lastname"] = parentUser.Data.LastName
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (comment.reply.created: %s", err)
 				return ""
 			}
 
@@ -61,14 +91,8 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"resource.resource.created": {
 		Subject: "resource.resource.created",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
-			fmt.Println(m)
-
-			//TOOD: enhance delta to build activity output
-			// delta := quilljs.New(nil).
-			// 	Insert(m["name"].(string), map[string]any{"bold": true}).
-			// 	Insert(" was added to the resource roster.", nil)
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -87,15 +111,10 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"resource.role.created": {
 		Subject: "resource.role.created",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
-			fmt.Println(m)
 
-			//TOOD: enhance delta to build activity output
-			// delta := quilljs.New(nil).
-			// 	Insert("A new role called ", nil).
-			// 	Insert(m["name"].(string), map[string]any{"bold": true}).
-			// 	Insert(" was created.", nil)
+			//TOOD: enhance pubsub body to build activity output
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -111,15 +130,10 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"resource.role.updated": {
 		Subject: "resource.role.updated",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
-			fmt.Println(m)
 
-			//TOOD: enhance delta to build activity output
-			// delta := quilljs.New(nil).
-			// 	Insert("Details of the role ", nil).
-			// 	Insert(m["name"].(string), map[string]any{"bold": true}).
-			// 	Insert(" were updated.", nil)
+			//TOOD: enhance pubsub body to build activity output
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -135,15 +149,10 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"project.project.created": {
 		Subject: "project.project.created",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
-			fmt.Println(m)
 
-			//TOOD: enhance delta to build activity output
-			// delta := quilljs.New(nil).
-			// 	Insert("A new project,  ", nil).
-			// 	Insert(m["name"].(string), map[string]any{"bold": true}).
-			// 	Insert(", was added to the portfolio!", nil)
+			//TOOD: enhance pubsub body to build activity output
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -162,15 +171,10 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"project.project.updated": {
 		Subject: "project.project.updated",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
-			fmt.Println(m)
 
-			//TOOD: enhance delta to build activity output
-			// delta := quilljs.New(nil).
-			// 	Insert("Details for the project ", nil).
-			// 	Insert(m["name"].(string), map[string]any{"bold": true}).
-			// 	Insert(" were updated.", nil)
+			//TOOD: enhance pubsub body to build activity output
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -189,18 +193,10 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"project.state.updated": {
 		Subject: "project.state.updated",
-		GetDetail: func(ctx context.Context, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
-			fmt.Println(m)
 
-			//TOOD: enhance delta to build activity output
-			// delta := quilljs.New(nil).
-			// 	Insert("Project  ", nil).
-			// 	Insert(m["name"].(string), map[string]any{"bold": true}).
-			// 	Insert(" was moved from ", nil).
-			// 	Insert(m["from_state"].(string), map[string]any{"bold": true}).
-			// 	Insert(" to ", nil).
-			// 	Insert(m["to_state"].(string), map[string]any{"bold": true})
+			//TOOD: enhance pubsub body to build activity output
 
 			out, err := json.Marshal(m)
 			if err != nil {

@@ -10,4 +10,4 @@
     let detail:any = $derived(JSON.parse(activity.detail))
 </script>
 
-Details of the role <b>{detail.name}</b> were updated.
+Project <b>{detail.name}</b> was moved from <b>{detail.from_state}</b> to <b>{detail.to_state}</b>.

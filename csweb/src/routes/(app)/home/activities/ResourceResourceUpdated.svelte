@@ -7,7 +7,7 @@
     }
     let { activity }:Props = $props()
 
-    let detail:any = $derived(activity.detail)
+    let detail:any = $derived(JSON.parse(activity.detail))
 </script>
 
-Project <b>{detail.name}</b> was moved from <b>{detail.from_state}</b> to <b>{detail.to_state}</b>.
+The details for resource <b>{detail.name}</b> were updated.

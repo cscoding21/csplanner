@@ -73,7 +73,22 @@ func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, p
 
 	fmt.Println("replyDelta", replyDelta)
 
-	s.pubsub.StreamPublish(ctx, string(CommentIdentifier), "reply", "created", outComment)
+	cc := *outComment
+	err = s.pubsub.StreamPublish(ctx,
+		string(CommentIdentifier),
+		"reply", "created",
+		map[string]any{
+			"text":           cc.Data.Text,
+			"id":             cc.ID,
+			"project_id":     parentComment.Data.ProjectID,
+			"parent_user_id": parentComment.CreatedBy,
+		})
+	if err != nil {
+		log.Errorf("StreamPublish error: %s", err)
+	} else {
+		log.Warnf("StreamPublish success!")
+	}
+
 	return common.NewSuccessUpdateResult(outComment)
 }
 

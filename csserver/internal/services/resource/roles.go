@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"github.com/cscoding21/csval/validate"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // ---This is the name of the object in the database
@@ -75,51 +77,35 @@ func (s *ResourceService) FindRoles(ctx context.Context, paging common.Paginatio
 	return postgres.FindPagedObjects[Role](ctx, s.db, sql, out.Pagination, out.Filters, params)
 }
 
-// CreateRoles creates a new Roles.
-func (s *ResourceService) CreateRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
+// // UpdateRoles update an existing Roles.
+// func (s *ResourceService) UpdateRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
 
-	val := validate.NewSuccessValidationResult()
+// 	val := validate.NewSuccessValidationResult()
 
-	obj, err := postgres.UpdateObject(ctx, s.db, input, RoleIdentifier, input.ID)
-	if err != nil {
-		return common.NewUpdateResult(val, &obj), err
-	}
+// 	obj, err := postgres.UpdateObject(ctx, s.db, input, RoleIdentifier, input.ID)
+// 	if err != nil {
+// 		return common.NewUpdateResult(val, &obj), err
+// 	}
 
-	newRole := *obj
-	s.pubsub.StreamPublish(ctx,
-		string(ResourceIdentifier),
-		"role",
-		"created",
-		map[string]any{
-			"id":   newRole.ID,
-			"name": newRole.Data.Name,
-		})
+// 	eventType := "updated"
 
-	return common.NewUpdateResult(val, &obj), nil
-}
+// 	log.Warnf("%v - %v", obj.CreatedAt, obj.UpdatedAt)
+// 	if obj.CreatedAt.Equal(obj.UpdatedAt) {
+// 		eventType = "created"
+// 	}
 
-// UpdateRoles update an existing Roles.
-func (s *ResourceService) UpdateRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
+// 	newRole := *obj
+// 	s.pubsub.StreamPublish(ctx,
+// 		string(ResourceIdentifier),
+// 		"role",
+// 		eventType,
+// 		map[string]any{
+// 			"id":   newRole.ID,
+// 			"name": newRole.Data.Name,
+// 		})
 
-	val := validate.NewSuccessValidationResult()
-
-	obj, err := postgres.UpdateObject(ctx, s.db, input, RoleIdentifier, input.ID)
-	if err != nil {
-		return common.NewUpdateResult(val, &obj), err
-	}
-
-	newRole := *obj
-	s.pubsub.StreamPublish(ctx,
-		string(ResourceIdentifier),
-		"role",
-		"updated",
-		map[string]any{
-			"id":   newRole.ID,
-			"name": newRole.Data.Name,
-		})
-
-	return common.NewUpdateResult(val, &obj), nil
-}
+// 	return common.NewUpdateResult(val, &obj), nil
+// }
 
 // UpsertRoles create or update a Roles
 func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
@@ -131,11 +117,18 @@ func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.Up
 		return common.NewUpdateResult(val, &obj), err
 	}
 
+	eventType := "updated"
+
+	log.Warnf("%v - %v", obj.CreatedAt, obj.UpdatedAt)
+	if obj.CreatedAt.Equal(obj.UpdatedAt) {
+		eventType = "created"
+	}
+
 	newRole := *obj
 	s.pubsub.StreamPublish(ctx,
 		string(ResourceIdentifier),
 		"role",
-		"updated",
+		eventType,
 		map[string]any{
 			"id":   newRole.ID,
 			"name": newRole.Data.Name,
