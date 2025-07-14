@@ -26,7 +26,7 @@
         <div class="flex items-center text-sm font-medium text-gray-900 dark:text-white">Status:</div>
         <div class="flex items-center">
             <input
-                id="sort-role"
+                id="all"
                 type="radio"
                 value="all"
                 name="status"
@@ -34,11 +34,11 @@
                 onclick={() => { projectFilter = "all" } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="sort-role" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
+            <label for="all" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">All</label>
         </div>
         <div class="flex items-center">
             <input
-                id="all-users"
+                id={ProjectStatusNew}
                 type="radio"
                 value={ProjectStatusNew}
                 name="status"
@@ -47,12 +47,12 @@
                 onclick={() => { projectFilter = ProjectStatusNew } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium  {hasAnyInStatus(ProjectStatusNew) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">New</label>
+            <label for={ProjectStatusNew} class="ml-2 text-sm font-medium  {hasAnyInStatus(ProjectStatusNew) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">New</label>
         </div>
 
         <div class="flex items-center">
             <input
-                id="all-users"
+                id={ProjectStatusDraft}
                 type="radio"
                 value={ProjectStatusDraft}
                 name="status"
@@ -61,12 +61,12 @@
                 onclick={() => { projectFilter = ProjectStatusDraft } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium {hasAnyInStatus(ProjectStatusDraft) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"} ">Draft</label>
+            <label for={ProjectStatusDraft} class="ml-2 text-sm font-medium {hasAnyInStatus(ProjectStatusDraft) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"} ">Draft</label>
         </div>
 
         <div class="flex items-center">
             <input
-                id="all-users"
+                id={ProjectStatusProposed}
                 type="radio"
                 value={ProjectStatusProposed}
                 name="status"
@@ -75,12 +75,12 @@
                 onclick={() => { projectFilter = ProjectStatusProposed } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusProposed) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Proposed</label>
+            <label for={ProjectStatusProposed} class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusProposed) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Proposed</label>
         </div>
 
         <div class="flex items-center">
             <input
-                id="all-users"
+                id={ProjectStatusApproved}
                 type="radio"
                 value={ProjectStatusApproved}
                 name="status"
@@ -89,12 +89,12 @@
                 onclick={() => { projectFilter = ProjectStatusApproved } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusApproved) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Approved</label>
+            <label for={ProjectStatusApproved} class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusApproved) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Approved</label>
         </div>
 
         <div class="flex items-center">
             <input
-                id="all-users"
+                id={ProjectStatusScheduled}
                 type="radio"
                 value={ProjectStatusScheduled}
                 name="status"
@@ -103,12 +103,12 @@
                 onclick={() => { projectFilter = ProjectStatusScheduled } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusScheduled) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Scheduled</label>
+            <label for={ProjectStatusScheduled} class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusScheduled) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">Scheduled</label>
         </div>
 
         <div class="flex items-center">
             <input
-                id="all-users"
+                id={ProjectStatusInflight}
                 type="radio"
                 value={ProjectStatusInflight}
                 name="status"
@@ -117,7 +117,7 @@
                 onclick={() => { projectFilter = ProjectStatusInflight } }
                 class="h-4 w-4 border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600"
             />
-            <label for="all-users" class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusInflight) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">In-Flight</label>
+            <label for={ProjectStatusInflight} class="ml-2 text-sm font-medium   {hasAnyInStatus(ProjectStatusInflight) ? "text-gray-900 dark:text-gray-300" : "text-gray-600"}">In-Flight</label>
         </div>
         
     </div>

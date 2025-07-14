@@ -57,7 +57,7 @@
   </button>
   
   <Modal bind:open={popupModal} size="lg" autoclose>
-    <h3>Reply to comment</h3>
+    <h3>Reply to comment {comment.id}</h3>
     <QuillDisplay attachContext={comment.id} bind:contents={comment.text} />
 
     <div>

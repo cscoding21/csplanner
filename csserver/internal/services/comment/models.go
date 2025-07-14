@@ -19,6 +19,7 @@ type Comment struct {
 	//---TODO: add fields here
 	ProjectID      string                      `json:"project_id"`
 	Text           string                      `json:"text"`
+	IsActivity     bool                        `json:"is_activity"`
 	CommentReplies []common.BaseModel[Comment] `json:"replies"`
 	Likes          []string                    `json:"likes"`
 	Loves          []string                    `json:"loves"`

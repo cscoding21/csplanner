@@ -56,6 +56,7 @@ type CalculatedScheduleInfo struct {
 type Comment struct {
 	ID           string             `json:"id"`
 	ProjectID    string             `json:"projectId"`
+	IsActivity   bool               `json:"isActivity"`
 	Text         string             `json:"text"`
 	User         *User              `json:"user"`
 	Replies      []*CommentEnvelope `json:"replies,omitempty"`

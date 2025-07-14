@@ -76,6 +76,7 @@ export type Comment = {
   acknowledges?: Maybe<Array<Scalars['String']['output']>>;
   dislikes?: Maybe<Array<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
+  isActivity: Scalars['Boolean']['output'];
   isEdited: Scalars['Boolean']['output'];
   laughsAt?: Maybe<Array<Scalars['String']['output']>>;
   likes?: Maybe<Array<Scalars['String']['output']>>;
@@ -1244,6 +1245,7 @@ export const CommentFragmentFragmentDoc = gql`
   id
   text
   isEdited
+  isActivity
   projectId
   replies {
     meta {

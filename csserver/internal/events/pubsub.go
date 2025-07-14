@@ -3,12 +3,12 @@ package events
 import (
 	"context"
 	"csserver/internal/config"
+	"csserver/internal/utils"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	log "github.com/sirupsen/logrus"
@@ -227,7 +227,7 @@ func (s *PubSubProvider) Subscribe(
 func (s *PubSubProvider) getWrappedData(org string, email string, userid string, data any) ([]byte, error) {
 	msg := MessageWrapper{
 		OrgKey:    org,
-		ID:        uuid.New().String(),
+		ID:        utils.GenerateBase64UUID(),
 		Timestamp: time.Now(),
 		Body:      data,
 		UserEmail: email,

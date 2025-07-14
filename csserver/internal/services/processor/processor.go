@@ -92,12 +92,16 @@ func (s *ProcessorService) ProcessCompleteProject(ctx context.Context, projects 
 		}
 
 		incompleteCount := 0
-		for _, m := range p.ProjectMilestones {
-			for _, t := range m.Tasks {
-				if !common.IsOneOf(t.Status, milestonestatus.Done, milestonestatus.Removed) {
-					incompleteCount++
+		if len(p.ProjectMilestones) > 0 {
+			for _, m := range p.ProjectMilestones {
+				for _, t := range m.Tasks {
+					if !common.IsOneOf(t.Status, milestonestatus.Done, milestonestatus.Removed) {
+						incompleteCount++
+					}
 				}
 			}
+		} else {
+			incompleteCount = 999
 		}
 
 		if incompleteCount == 0 {

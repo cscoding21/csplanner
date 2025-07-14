@@ -161,10 +161,11 @@ func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData
 	for _, s := range port.Schedule {
 		out.TotalCount++
 		out.TotalValue += *s.Project.ProjectValue.Calculated.NetPresentValue
-		if s.Project.ProjectStatusBlock.Status == "inflight" {
+		switch s.Project.ProjectStatusBlock.Status {
+		case "inflight":
 			out.CountInFlight++
 			out.ValueInFlight += *s.Project.ProjectValue.Calculated.NetPresentValue
-		} else if s.Project.ProjectStatusBlock.Status == "scheduled" {
+		case "scheduled":
 			out.CountScheduled++
 			out.ValueScheduled += *s.Project.ProjectValue.Calculated.NetPresentValue
 		}
@@ -176,10 +177,6 @@ func getPortfolioCalculatedData(port *idl.Portfolio) idl.PortfolioCalculatedData
 // AugmentProject add extra details to the properties of a project
 func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Project) {
 	if proj == nil || model == nil {
-		return
-	}
-
-	if len(proj.ProjectMilestones) == 0 {
 		return
 	}
 
@@ -205,6 +202,10 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 			Pass:     tra.CheckResults.Pass,
 			Messages: messages,
 		}
+	}
+
+	if len(proj.ProjectMilestones) == 0 {
+		return
 	}
 
 	for i, m := range proj.ProjectMilestones {

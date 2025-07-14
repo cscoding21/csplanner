@@ -2,6 +2,7 @@ fragment commentFragment on Comment {
 	id
 	text
 	isEdited
+	isActivity
 	projectId
 	replies {
 		meta {

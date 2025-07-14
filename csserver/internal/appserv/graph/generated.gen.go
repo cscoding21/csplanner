@@ -100,6 +100,7 @@ type ComplexityRoot struct {
 		Acknowledges func(childComplexity int) int
 		Dislikes     func(childComplexity int) int
 		ID           func(childComplexity int) int
+		IsActivity   func(childComplexity int) int
 		IsEdited     func(childComplexity int) int
 		LaughsAt     func(childComplexity int) int
 		Likes        func(childComplexity int) int
@@ -1006,6 +1007,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Comment.ID(childComplexity), true
+
+	case "Comment.isActivity":
+		if e.complexity.Comment.IsActivity == nil {
+			break
+		}
+
+		return e.complexity.Comment.IsActivity(childComplexity), true
 
 	case "Comment.isEdited":
 		if e.complexity.Comment.IsEdited == nil {
@@ -4068,6 +4076,7 @@ type RelateArtifact {
 	{Name: "../api/idl/comment.graphqls", Input: `type Comment {
   id: String!
   projectId: String!
+  isActivity: Boolean!
   text: String!
   user: User!
   replies: [CommentEnvelope!]
@@ -8065,6 +8074,50 @@ func (ec *executionContext) fieldContext_Comment_projectId(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Comment_isActivity(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Comment_isActivity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsActivity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Comment_isActivity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Comment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Comment_text(ctx context.Context, field graphql.CollectedField, obj *idl.Comment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Comment_text(ctx, field)
 	if err != nil {
@@ -8570,6 +8623,8 @@ func (ec *executionContext) fieldContext_CommentEnvelope_data(_ context.Context,
 				return ec.fieldContext_Comment_id(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Comment_projectId(ctx, field)
+			case "isActivity":
+				return ec.fieldContext_Comment_isActivity(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
 			case "user":
@@ -9458,6 +9513,8 @@ func (ec *executionContext) fieldContext_CreateProjectCommentResult_comment(_ co
 				return ec.fieldContext_Comment_id(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Comment_projectId(ctx, field)
+			case "isActivity":
+				return ec.fieldContext_Comment_isActivity(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
 			case "user":
@@ -30581,6 +30638,11 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "projectId":
 			out.Values[i] = ec._Comment_projectId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isActivity":
+			out.Values[i] = ec._Comment_isActivity(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

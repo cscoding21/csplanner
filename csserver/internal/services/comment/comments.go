@@ -101,6 +101,11 @@ func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (co
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
+	if existingComment.Data.IsActivity {
+		err := fmt.Errorf("activity comments cannot be modified")
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
+	}
+
 	if userEmail != existingComment.CreatedBy {
 		err := fmt.Errorf("user %v is not allowed to update comment %v", userEmail, existingComment.ID)
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
