@@ -271,14 +271,20 @@ func (s *CommentService) FindCommentReplies(ctx context.Context, commentID strin
 }
 
 // ToggleCommentReaction if a user has emoted to the comment...remove the existing emote.  Otherwise add it
-func (s *CommentService) ToggleCommentReaction(ctx context.Context, projectID string, commentID string, reaction CommentReactionType) error {
+func (s *CommentService) ToggleCommentReaction(ctx context.Context, projectID string, parentID *string, commentID string, reaction CommentReactionType) error {
 	userEmail := config.GetUserEmailFromContext(ctx)
 	sql := fmt.Sprintf(`select * from %s where created_by = $1 and parent_id = $2 and data->>'type' = $3`, ReactionIdentifier)
 	params := []any{userEmail, commentID, reaction}
+
+	log.Warnf("Existing reaction SQL: %s", sql)
+	log.Warnf("Existing params: %v", params)
+
 	existingReaction, err := postgres.GetObject[common.BaseModel[Reaction]](ctx, s.db, ReactionIdentifier, sql, params...)
 	if err != nil {
 		return err
 	}
+
+	log.Warnf("Existing reaction: %v", existingReaction)
 
 	if existingReaction != nil {
 		if !strings.EqualFold(existingReaction.CreatedBy, userEmail) {
@@ -293,7 +299,7 @@ func (s *CommentService) ToggleCommentReaction(ctx context.Context, projectID st
 		return nil
 	}
 
-	err = s.createCommentReaction(ctx, projectID, commentID, reaction)
+	err = s.createCommentReaction(ctx, projectID, parentID, commentID, reaction)
 	if err != nil {
 		return err
 	}
@@ -302,8 +308,10 @@ func (s *CommentService) ToggleCommentReaction(ctx context.Context, projectID st
 }
 
 // CreateCommentEmote add an emote to an comment
-func (s *CommentService) createCommentReaction(ctx context.Context, projectID string, commentID string, reaction CommentReactionType) error {
+func (s *CommentService) createCommentReaction(ctx context.Context, projectID string, parentID *string, commentID string, reaction CommentReactionType) error {
 	obj := Reaction{Type: reaction, ProjectID: projectID}
+
+	log.Warnf("New reaction: %v", obj)
 
 	_, err := postgres.UpdateObjectWithParent(ctx, s.db, obj, ReactionIdentifier, "", &commentID)
 	return err

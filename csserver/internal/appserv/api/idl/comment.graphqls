@@ -40,5 +40,6 @@ input UpdateCommentReply {
 input UpdateCommentEmote {
   commentID: String!
   projectID: String!
+  parentID: String
   emoteType: String!
 }

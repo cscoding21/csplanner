@@ -61,34 +61,11 @@
 <div class="grow scrollbar overflow-y-auto">
     {#if comments && comments.length > 0}
     {#each comments as comment(comment.meta?.id)}
-        <div class="px-2 pt-4 mb-2 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700 text-gray-500 dark:text-gray-400">
+        <div class="px-2 pt-4 pb-2 mb-2 text-base bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700 text-gray-500 dark:text-gray-400">
             <div class="mb-2">
-                <CommentItem {comment} projectID={id} update={update} canReply={true} />
+                <CommentItem {comment} parentID={undefined} projectID={id} update={update} canReply={true} />
             </div>
-            {#if comment.data?.replies && comment.data.replies.length > 0}
-                {#if showReplies[comment.meta?.id] }
-                <div class="pl-12">  
-                    {#each comment.data.replies as reply(reply.meta?.id)}
-                        <CommentItem comment={reply} projectID={id} update={update} canReply={false} />
-                    {/each}
-                </div>
-                <button class="text-xs ml-2 mb-2 flex" onclick={() => showReplies[comment.meta?.id] = false}>
-                    <svg class="mr-1.5 w-3 h-3 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
-                    </svg> 
-                    <span class="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-primary-700 hover:underline dark:text-primary-500 sm:text-sm">Hide {comment.data.replies.length} {pluralize("reply", comment.data.replies.length)}</span>
-                </button>
-                {:else}
-                    <button class="text-xs ml-2 mb-2 flex" onclick={() => showReplies[comment.meta?.id] = true}>
-                        <svg class="mr-1.5 w-3 h-3 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
-                        </svg> 
-                        <span class="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-primary-700 hover:underline dark:text-primary-500 sm:text-sm">Show {comment.data.replies.length} {pluralize("reply", comment.data.replies.length)}
-                    </span>
-                    </button>
-                {/if}
-                
-            {/if}
+            
         </div>
     {/each}
     {:else}

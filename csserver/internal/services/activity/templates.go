@@ -67,7 +67,7 @@ var templateMap = map[string]ActivityTemplate{
 				return ""
 			}
 
-			parentUser, err := us.GetAppuserByID(ctx, parentUserID)
+			parentUser, err := us.GetAppuser(ctx, parentUserID)
 			if err != nil {
 				log.Errorf("Activity template error GetAppUserByID (comment.reply.created): %s", err)
 				return ""
@@ -77,8 +77,8 @@ var templateMap = map[string]ActivityTemplate{
 			//---augment map with calculated values
 			m["project_name"] = project.Data.ProjectBasics.Name
 			m["comment"] = comment
-			m["parent_user_firstname"] = parentUser.Data.FirstName
-			m["parent_user_lastname"] = parentUser.Data.LastName
+			m["parent_user_firstname"] = parentUser.FirstName
+			m["parent_user_lastname"] = parentUser.LastName
 
 			out, err := json.Marshal(m)
 			if err != nil {

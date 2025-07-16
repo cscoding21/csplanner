@@ -496,7 +496,7 @@ func (r *mutationResolver) UpdateProjectComment(ctx context.Context, input idl.U
 func (r *mutationResolver) ToggleEmote(ctx context.Context, input idl.UpdateCommentEmote) (*idl.Status, error) {
 	service := factory.GetCommentService(ctx)
 
-	return csmap.GetStatusFromError(service.ToggleCommentReaction(ctx, input.ProjectID, input.CommentID, comment.CommentReactionType(input.EmoteType)))
+	return csmap.GetStatusFromError(service.ToggleCommentReaction(ctx, input.ProjectID, input.ParentID, input.CommentID, comment.CommentReactionType(input.EmoteType)))
 }
 
 // CreateResource is the resolver for the createResource field.

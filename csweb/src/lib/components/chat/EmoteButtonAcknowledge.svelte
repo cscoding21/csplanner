@@ -7,6 +7,7 @@
         users: string[]
         commentID: string
         projectID: string
+        parentID: string|undefined
         size: "xs"|"sm"|"md"|"lg"|"xl"|undefined
     }
     let {
@@ -15,13 +16,14 @@
         users,
         commentID,
         projectID,
-        size
+        size,
+        parentID
     }:Props = $props()
 
 </script>
 
 
-<button type="button" onclick={() => toggleReaction(projectID, commentID, "acknowledges")} class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
+<button type="button" onclick={() => toggleReaction(projectID, parentID, commentID, "acknowledges")} class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
     {#if users?.includes(userID)}
     <span class="text-blue-400">
         <CheckCircleSolid size={size} />
@@ -33,5 +35,5 @@
     </span>
     </span>
     {/if}
-    <sup class="ml-1 no-underline">{users?.length.valueOf() || ""}</sup>
+    <sup class="ml-1 no-underline hover:no-underline">{users?.length.valueOf() || ""}</sup>
 </button>

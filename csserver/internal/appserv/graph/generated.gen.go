@@ -4115,6 +4115,7 @@ input UpdateCommentReply {
 input UpdateCommentEmote {
   commentID: String!
   projectID: String!
+  parentID: String
   emoteType: String!
 }`, BuiltIn: false},
 	{Name: "../api/idl/common.graphqls", Input: `scalar Time
@@ -28978,7 +28979,7 @@ func (ec *executionContext) unmarshalInputUpdateCommentEmote(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"commentID", "projectID", "emoteType"}
+	fieldsInOrder := [...]string{"commentID", "projectID", "parentID", "emoteType"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -28999,6 +29000,13 @@ func (ec *executionContext) unmarshalInputUpdateCommentEmote(ctx context.Context
 				return it, err
 			}
 			it.ProjectID = data
+		case "parentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentID = data
 		case "emoteType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emoteType"))
 			data, err := ec.unmarshalNString2string(ctx, v)

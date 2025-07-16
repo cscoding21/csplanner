@@ -609,9 +609,10 @@ type UpdateComment struct {
 }
 
 type UpdateCommentEmote struct {
-	CommentID string `json:"commentID"`
-	ProjectID string `json:"projectID"`
-	EmoteType string `json:"emoteType"`
+	CommentID string  `json:"commentID"`
+	ProjectID string  `json:"projectID"`
+	ParentID  *string `json:"parentID,omitempty"`
+	EmoteType string  `json:"emoteType"`
 }
 
 type UpdateCommentReply struct {

@@ -994,6 +994,7 @@ export type UpdateComment = {
 export type UpdateCommentEmote = {
   commentID: Scalars['String']['input'];
   emoteType: Scalars['String']['input'];
+  parentID?: InputMaybe<Scalars['String']['input']>;
   projectID: Scalars['String']['input'];
 };
 
