@@ -56,7 +56,7 @@ func TestToggleCommentReaction(t *testing.T) {
 	idUnderTest := "comment:1"
 	projectUnderTest := "project:1"
 
-	err := service.ToggleCommentReaction(ctx, projectUnderTest, idUnderTest, comment.Likes)
+	err := service.ToggleCommentReaction(ctx, projectUnderTest, nil, idUnderTest, comment.Likes)
 	if err != nil {
 		t.Error(err)
 	}
