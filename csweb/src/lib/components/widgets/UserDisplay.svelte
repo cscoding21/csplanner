@@ -10,6 +10,7 @@
 	let { user }: Props = $props();
 </script>
 
+{#if user}
 <button class="bg-initial" id={normalizeID(user.email as string)}>{user.firstName} {user.lastName}</button>
 
 <Popover
@@ -20,3 +21,4 @@
 >
 	<UserCard {user} />
 </Popover>
+{/if}

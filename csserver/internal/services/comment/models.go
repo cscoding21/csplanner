@@ -20,6 +20,7 @@ type Comment struct {
 	ProjectID      string                      `json:"project_id"`
 	Text           string                      `json:"text"`
 	IsActivity     bool                        `json:"is_activity"`
+	Context        *string                     `json:"context"`
 	CommentReplies []common.BaseModel[Comment] `json:"replies"`
 	Likes          []string                    `json:"likes"`
 	Loves          []string                    `json:"loves"`

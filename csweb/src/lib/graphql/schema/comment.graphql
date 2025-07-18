@@ -3,6 +3,7 @@ fragment commentFragment on Comment {
 	text
 	isEdited
 	isActivity
+	context
 	projectId
 	replies {
 		meta {

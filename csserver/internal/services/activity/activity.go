@@ -5,23 +5,27 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/events"
+	"csserver/internal/services/comment"
 	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
 	"csserver/internal/utils"
 	"encoding/json"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type ActivityTemplate struct {
 	Subject   string
 	GetLink   func(wrapper events.MessageWrapper) string
-	GetDetail func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
+	GetDetail func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
 }
 
 // LogActivity logs a given activity
 func (s *ActivityService) LogActivity(
 	ctx context.Context,
+	cs comment.CommentService,
 	us appuser.AppuserService,
 	ps project.ProjectService,
 	rs resource.ResourceService,
@@ -37,7 +41,7 @@ func (s *ActivityService) LogActivity(
 		return err
 	}
 
-	detail, link, err := getActivityDetail(sub, us, ps, rs, wrapper)
+	detail, link, err := getActivityDetail(sub, cs, us, ps, rs, wrapper)
 	if err != nil {
 		return err
 	}
@@ -53,12 +57,29 @@ func (s *ActivityService) LogActivity(
 		UserEmail:    wrapper.UserEmail,
 	}
 
+	ctx = context.WithValue(ctx, config.UserEmailKey, wrapper.UserEmail)
+	ctx = context.WithValue(ctx, config.UserIDKey, wrapper.UserID)
+
 	_, err = s.CreateActivity(ctx, act)
+
+	if sub.IsAny("project.state.updated", "project.project.updated", "project.project.created") {
+		m := wrapper.Body.(map[string]any)
+
+		_, err = cs.AddActivityComment(ctx, comment.Comment{
+			Text:      detail,
+			ProjectID: m["id"].(string),
+			Context:   utils.ValToRef(sub.LookupKey()),
+		})
+		if err != nil {
+			log.Errorf("Activity template error creating activity comment (project.project.updated): %s", err)
+		}
+	}
+
 	return err
 }
 
 // getActivityDetail return the detail for a given activity by looking up the proper template based on the key
-func getActivityDetail(sub events.CSSubject, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, string, error) {
+func getActivityDetail(sub events.CSSubject, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, string, error) {
 	key := sub.LookupKey()
 	ctx := getContextFromSubject(sub)
 
@@ -67,7 +88,7 @@ func getActivityDetail(sub events.CSSubject, us appuser.AppuserService, ps proje
 		return "", "", fmt.Errorf("no template found for subject key %s", sub.LookupKey())
 	}
 
-	delta := temp.GetDetail(ctx, us, ps, rs, act)
+	delta := temp.GetDetail(ctx, cs, us, ps, rs, act)
 	link := temp.GetLink(act)
 
 	return delta, link, nil

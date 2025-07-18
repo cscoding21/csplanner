@@ -57,6 +57,7 @@ type Comment struct {
 	ID           string             `json:"id"`
 	ProjectID    string             `json:"projectId"`
 	IsActivity   bool               `json:"isActivity"`
+	Context      *string            `json:"context,omitempty"`
 	Text         string             `json:"text"`
 	User         *User              `json:"user"`
 	Replies      []*CommentEnvelope `json:"replies,omitempty"`

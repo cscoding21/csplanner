@@ -63,8 +63,9 @@ func processActivities(ctx context.Context, ps events.PubSubProvider) (jetstream
 		ps := factory.GetProjectService(actx)
 		rs := factory.GetResourceService(actx)
 		us := factory.GetAppuserService(actx)
+		cs := factory.GetCommentService(actx)
 
-		ierr := activityService.LogActivity(actx, *us, *ps, *rs, msg.Subject(), msg.Data())
+		ierr := activityService.LogActivity(actx, *cs, *us, *ps, *rs, msg.Subject(), msg.Data())
 
 		if ierr != nil {
 			log.Errorf("LogActivity error: %s", ierr)

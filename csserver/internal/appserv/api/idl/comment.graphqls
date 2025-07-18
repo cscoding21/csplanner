@@ -2,6 +2,7 @@ type Comment {
   id: String!
   projectId: String!
   isActivity: Boolean!
+  context: String
   text: String!
   user: User!
   replies: [CommentEnvelope!]

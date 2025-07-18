@@ -3,6 +3,7 @@ package activity
 import (
 	"context"
 	"csserver/internal/events"
+	"csserver/internal/services/comment"
 	"csserver/internal/services/iam/appuser"
 	"csserver/internal/services/project"
 	"csserver/internal/services/resource"
@@ -16,7 +17,7 @@ import (
 var templateMap = map[string]ActivityTemplate{
 	"comment.comment.created": {
 		Subject: "comment.comment.created",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			payload := m["text"].(string)
@@ -52,7 +53,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"comment.reply.created": {
 		Subject: "comment.reply.created",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			payload := m["text"].(string)
@@ -97,7 +98,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"resource.resource.created": {
 		Subject: "resource.resource.created",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			out, err := json.Marshal(m)
@@ -117,7 +118,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"resource.role.created": {
 		Subject: "resource.role.created",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
@@ -136,7 +137,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"resource.role.updated": {
 		Subject: "resource.role.updated",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
@@ -155,7 +156,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"project.project.created": {
 		Subject: "project.project.created",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
@@ -177,7 +178,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"project.project.updated": {
 		Subject: "project.project.updated",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
@@ -199,7 +200,7 @@ var templateMap = map[string]ActivityTemplate{
 	},
 	"project.state.updated": {
 		Subject: "project.state.updated",
-		GetDetail: func(ctx context.Context, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output

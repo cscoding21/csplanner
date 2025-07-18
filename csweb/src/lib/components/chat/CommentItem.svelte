@@ -13,6 +13,8 @@
     import { addToast } from '$lib/stores/toasts';
     import { callIf } from '$lib/utils/helpers';
     import { QuillEditor, QuillDisplay, ReplyToComment } from '..';
+	import ActivityDisplay from '../../../routes/(app)/home/activities/ActivityDisplay.svelte';
+	import CommentActivityDisplay from './CommentActivityDisplay.svelte';
 
 
     interface Props {
@@ -59,7 +61,7 @@
     }
 
     const toggleReply = () => {
-        showReplies = !showReplyForm
+        showReplies = !showReplies
     }
 
     const postReply = async () => {
@@ -260,7 +262,7 @@
             </ReplyToComment>
             {/if} -->
 
-            {#if userCreatedComment}
+            {#if userCreatedComment && !comment.data.isActivity}
             <button id="user_{normalizeID(id)}" class="inline-flex items-center text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <DotsHorizontalOutline />
                 <span class="sr-only">Comment settings</span>
@@ -305,7 +307,11 @@
             </form>
             </div>
     {:else}
-        <QuillDisplay attachContext={id} bind:contents={editorContent} />
+        {#if comment.data?.isActivity}
+            <CommentActivityDisplay {comment} />
+        {:else}
+            <QuillDisplay attachContext={id} bind:contents={editorContent} />
+        {/if}
     {/if}
 
     {#if comment.data?.replies && comment.data.replies.length > 0}
@@ -335,7 +341,13 @@
             <svg class="mr-1.5 w-3 h-3 mt-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 18">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"/>
                 </svg> 
-                <span class="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-primary-700 hover:underline dark:text-primary-500 sm:text-sm">Reply</span>
+                <span class="inline-flex cursor-pointer items-center gap-1 text-xs font-medium text-primary-700 hover:underline dark:text-primary-500 sm:text-sm">
+                    {#if showReplies}
+                    Hide Reply
+                    {:else}
+                    Reply
+                    {/if}
+                </span>
         </button>
     {/if}
 

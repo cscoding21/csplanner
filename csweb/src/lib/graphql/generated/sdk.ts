@@ -74,6 +74,7 @@ export type CalculatedScheduleInfo = {
 export type Comment = {
   __typename?: 'Comment';
   acknowledges?: Maybe<Array<Scalars['String']['output']>>;
+  context?: Maybe<Scalars['String']['output']>;
   dislikes?: Maybe<Array<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
   isActivity: Scalars['Boolean']['output'];
@@ -1247,6 +1248,7 @@ export const CommentFragmentFragmentDoc = gql`
   text
   isEdited
   isActivity
+  context
   projectId
   replies {
     meta {

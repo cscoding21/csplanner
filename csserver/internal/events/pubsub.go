@@ -58,6 +58,22 @@ func (s *CSSubject) LookupKey() string {
 	return fmt.Sprintf("%s.%s.%s", s.Service, s.Object, s.Event)
 }
 
+// Is tests if a string matches a subject whether or not it contains product/org info
+func (s *CSSubject) Is(sub string) bool {
+	return strings.HasSuffix(sub, s.LookupKey())
+}
+
+// Is tests if a string matches a subject whether or not it contains product/org info
+func (s *CSSubject) IsAny(subs ...string) bool {
+	for _, thisSub := range subs {
+		if s.Is(thisSub) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // GetCSSubject parse a subject string into an object
 func GetCSSubject(input string) CSSubject {
 	parts := strings.Split(input, ".")

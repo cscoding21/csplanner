@@ -48,6 +48,12 @@ func (s *CommentService) AddComment(ctx context.Context, comment Comment) (commo
 	return c, nil
 }
 
+// AddActivityComment add a comment for an activity
+func (s *CommentService) AddActivityComment(ctx context.Context, comment Comment) (common.UpdateResult[*common.BaseModel[Comment]], error) {
+	comment.IsActivity = true
+	return s.CreateComment(ctx, comment)
+}
+
 // AddComment create a new comment for a project
 func (s *CommentService) AddCommentReply(ctx context.Context, comment Comment, parentCommentID string) (common.UpdateResult[*common.BaseModel[Comment]], error) {
 	log.Infof("RETRIEVING PARENT COMMENT: %v", parentCommentID)
@@ -324,6 +330,15 @@ func (s *CommentService) deleteCommentReaction(ctx context.Context, id string) e
 
 // RemoveComment soft-delete a comment based on its ID
 func (s *CommentService) RemoveComment(ctx context.Context, commentID string) error {
+	existingComment, err := s.GetCommentByID(ctx, commentID)
+	if err != nil {
+		return err
+	}
+
+	if existingComment.Data.IsActivity {
+		return fmt.Errorf("activity comments cannot be deleted")
+	}
+
 	return postgres.SoftDelete(ctx, s.db, ReactionIdentifier, commentID)
 }
 
