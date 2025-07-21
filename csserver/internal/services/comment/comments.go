@@ -145,7 +145,7 @@ func (s *CommentService) FindProjectComments(ctx context.Context, projectID stri
 			where true 
 				and deleted_at is null 
 				and data->>'project_id' = $1
-			order by created_at`
+			order by updated_at`
 
 	results, err := postgres.FindPagedObjects[Comment](ctx, s.db, sql, pagedResults.Pagination, filters, filters.GetFiltersOrderedValues())
 	if err != nil {
@@ -247,7 +247,7 @@ func (s *CommentService) GetCommentThread(ctx context.Context, commentID string)
 		}
 	}
 
-	sql := fmt.Sprintf(`select * from %s c where c.id = $1 or c.parent_id = $1 order by created_at`, CommentIdentifier)
+	sql := fmt.Sprintf(`select * from %s c where c.id = $1 or c.parent_id = $1 order by updated_at`, CommentIdentifier)
 	pa := common.NewPagedResultsForAllRecords[Comment]()
 	pa.Filters.AddFilter(common.Filter{Key: "id", Value: comment.ID, Operation: common.FilterOperationEqual})
 

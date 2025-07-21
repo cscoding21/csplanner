@@ -21,7 +21,7 @@ export type Scalars = {
 export type Activity = {
   __typename?: 'Activity';
   activityDate?: Maybe<Scalars['Time']['output']>;
-  context?: Maybe<Scalars['String']['output']>;
+  context: Scalars['String']['output'];
   detail: Scalars['String']['output'];
   id: Scalars['String']['output'];
   link?: Maybe<Scalars['String']['output']>;

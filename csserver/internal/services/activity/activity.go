@@ -52,7 +52,7 @@ func (s *ActivityService) LogActivity(
 		},
 		Detail:       detail,
 		Link:         link,
-		Context:      subject,
+		Context:      ActivityType(sub.LookupKey()),
 		ActivityDate: wrapper.Timestamp,
 		UserEmail:    wrapper.UserEmail,
 	}
@@ -62,7 +62,7 @@ func (s *ActivityService) LogActivity(
 
 	_, err = s.CreateActivity(ctx, act)
 
-	if sub.IsAny("project.state.updated", "project.project.updated", "project.project.created") {
+	if sub.IsAny(ProjectProjectCreated, ProjectProjectUpdated, ProjectStateUpdated) {
 		m := wrapper.Body.(map[string]any)
 
 		_, err = cs.AddActivityComment(ctx, comment.Comment{
@@ -71,7 +71,7 @@ func (s *ActivityService) LogActivity(
 			Context:   utils.ValToRef(sub.LookupKey()),
 		})
 		if err != nil {
-			log.Errorf("Activity template error creating activity comment (project.project.updated): %s", err)
+			log.Errorf("Activity template error creating activity comment (%s): %s", sub.LookupKey(), err)
 		}
 	}
 
@@ -80,7 +80,7 @@ func (s *ActivityService) LogActivity(
 
 // getActivityDetail return the detail for a given activity by looking up the proper template based on the key
 func getActivityDetail(sub events.CSSubject, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, act events.MessageWrapper) (string, string, error) {
-	key := sub.LookupKey()
+	key := ActivityType(sub.LookupKey())
 	ctx := getContextFromSubject(sub)
 
 	temp, ok := templateMap[key]

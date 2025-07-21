@@ -2,7 +2,7 @@ type Activity {
   id: String!
   detail: String!
   link: String
-  context: String
+  context: String!
   userEmail: String!
   user: User!
   activityDate: Time

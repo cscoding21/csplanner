@@ -14,9 +14,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var templateMap = map[string]ActivityTemplate{
-	"comment.comment.created": {
-		Subject: "comment.comment.created",
+var templateMap = map[ActivityType]ActivityTemplate{
+	CommentCommentCreated: {
+		Subject: CommentCommentCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -27,7 +27,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			project, err := ps.GetProjectByID(ctx, projectID)
 			if err != nil {
-				log.Errorf("Activity template error (comment.comment.created): %s", err)
+				log.Errorf("Activity template error (%s): %s", CommentCommentCreated, err)
 				return ""
 			}
 
@@ -38,7 +38,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (comment.comment.created): %s", err)
+				log.Errorf("Activity template error (%s): %s", CommentCommentCreated, err)
 				return ""
 			}
 
@@ -51,8 +51,8 @@ var templateMap = map[string]ActivityTemplate{
 			return fmt.Sprintf("/project/detail/%s#collab", projectID)
 		},
 	},
-	"comment.reply.created": {
-		Subject: "comment.reply.created",
+	CommentReplyCreated: {
+		Subject: CommentReplyCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -64,13 +64,13 @@ var templateMap = map[string]ActivityTemplate{
 
 			project, err := ps.GetProjectByID(ctx, projectID)
 			if err != nil {
-				log.Errorf("Activity template error GetProjectByID (comment.reply.created): %s", err)
+				log.Errorf("Activity template error GetProjectByID (%s): %s", CommentReplyCreated, err)
 				return ""
 			}
 
 			parentUser, err := us.GetAppuser(ctx, parentUserID)
 			if err != nil {
-				log.Errorf("Activity template error GetAppUserByID (comment.reply.created): %s", err)
+				log.Errorf("Activity template error GetAppUserByID (%s): %s", CommentReplyCreated, err)
 				return ""
 			}
 
@@ -83,7 +83,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (comment.reply.created: %s", err)
+				log.Errorf("Activity template error (%s: %s", CommentReplyCreated, err)
 				return ""
 			}
 
@@ -96,14 +96,14 @@ var templateMap = map[string]ActivityTemplate{
 			return fmt.Sprintf("/project/detail/%s#collab", projectID)
 		},
 	},
-	"resource.resource.created": {
-		Subject: "resource.resource.created",
+	ResourceResourceCreated: {
+		Subject: ResourceResourceCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (resource.resource.created): %s", err)
+				log.Errorf("Activity template error (%s): %s", ResourceResourceCreated, err)
 				return ""
 			}
 
@@ -116,8 +116,8 @@ var templateMap = map[string]ActivityTemplate{
 			return fmt.Sprintf("/resource/detail/%s", resourceID)
 		},
 	},
-	"resource.role.created": {
-		Subject: "resource.role.created",
+	ResourceRoleCreated: {
+		Subject: ResourceRoleCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -125,7 +125,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (resource.role.created): %s", err)
+				log.Errorf("Activity template error (%s): %s", ResourceRoleCreated, err)
 				return ""
 			}
 
@@ -135,8 +135,8 @@ var templateMap = map[string]ActivityTemplate{
 			return "/settings#roles"
 		},
 	},
-	"resource.role.updated": {
-		Subject: "resource.role.updated",
+	ResourceRoleUpdated: {
+		Subject: ResourceRoleUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -144,7 +144,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (resource.role.updated): %s", err)
+				log.Errorf("Activity template error (%s): %s", ResourceRoleUpdated, err)
 				return ""
 			}
 
@@ -154,8 +154,8 @@ var templateMap = map[string]ActivityTemplate{
 			return "/settings#roles"
 		},
 	},
-	"project.project.created": {
-		Subject: "project.project.created",
+	ProjectProjectCreated: {
+		Subject: ProjectProjectCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -163,7 +163,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (project.project.created): %s", err)
+				log.Errorf("Activity template error (%s): %s", ProjectProjectCreated, err)
 				return ""
 			}
 
@@ -176,8 +176,8 @@ var templateMap = map[string]ActivityTemplate{
 			return fmt.Sprintf("/project/detail/%s", projectID)
 		},
 	},
-	"project.project.updated": {
-		Subject: "project.project.updated",
+	ProjectProjectUpdated: {
+		Subject: ProjectProjectUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -185,7 +185,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (project.project.updated): %s", err)
+				log.Errorf("Activity template error (%s): %s", ProjectProjectUpdated, err)
 				return ""
 			}
 
@@ -198,8 +198,8 @@ var templateMap = map[string]ActivityTemplate{
 			return fmt.Sprintf("/project/detail/%s", projectID)
 		},
 	},
-	"project.state.updated": {
-		Subject: "project.state.updated",
+	ProjectStateUpdated: {
+		Subject: ProjectStateUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
 
@@ -207,7 +207,7 @@ var templateMap = map[string]ActivityTemplate{
 
 			out, err := json.Marshal(m)
 			if err != nil {
-				log.Errorf("Activity template error (project.state.updated): %s", err)
+				log.Errorf("Activity template error (%s): %s", ProjectStateUpdated, err)
 				return ""
 			}
 

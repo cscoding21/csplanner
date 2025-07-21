@@ -59,14 +59,19 @@ func (s *CSSubject) LookupKey() string {
 }
 
 // Is tests if a string matches a subject whether or not it contains product/org info
-func (s *CSSubject) Is(sub string) bool {
+func (s *CSSubject) IsKey(sub string) bool {
 	return strings.HasSuffix(sub, s.LookupKey())
+}
+
+// Is tests if a string matches a subject whether or not it contains product/org info
+func (s *CSSubject) IsService(service string) bool {
+	return strings.EqualFold(s.Service, service)
 }
 
 // Is tests if a string matches a subject whether or not it contains product/org info
 func (s *CSSubject) IsAny(subs ...string) bool {
 	for _, thisSub := range subs {
-		if s.Is(thisSub) {
+		if s.IsKey(thisSub) {
 			return true
 		}
 	}
