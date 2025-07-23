@@ -7,27 +7,55 @@ package activity
 
 import (
 	"csserver/internal/common"
+	"fmt"
 	"time"
 )
 
 type ActivityType string
 
 const (
-	ProjectProjectCreated   = "project.project.created"
-	ProjectProjectUpdated   = "project.project.updated"
-	ProjectStateUpdated     = "project.state.updated"
-	ProjectFeatureCreated   = "project.feature.created"
-	ProjectFeatureUpdated   = "project.feature.updated"
-	ProjectTaskCreated      = "project.task.created"
-	ProjectTaskUpdated      = "project.task.updated"
-	ProjectMilestoneCreated = "project.milestone.created"
-	ProjectMilestoneUpdated = "project.milestone.updated"
-	ResourceRoleUpdated     = "resource.role.updated"
-	ResourceRoleCreated     = "resource.role.created"
-	ResourceResourceCreated = "resource.resource.created"
-	CommentReplyCreated     = "comment.reply.created"
-	CommentCommentCreated   = "comment.comment.created"
-	CommentReactionCreated  = "comment.reaction.created"
+	ActivityServiceProject  = "project"
+	ActivityServiceResource = "resource"
+	ActivityServiceComment  = "comment"
+
+	ActivityObjectProject   = "project"
+	ActivityObjectState     = "state"
+	ActivityObjectFeature   = "feature"
+	ActivityObjectTask      = "task"
+	ActivityObjectMilestone = "milestone"
+
+	ActivityObjectResource = "resource"
+	ActivityObjectRole     = "role"
+
+	ActivityObjectComment  = "comment"
+	ActivityObjectReply    = "reply"
+	ActivityObjectReaction = "reaction"
+
+	ActivityEventCreated = "created"
+	ActivityEventUpdated = "updated"
+	ActivityEventDeleted = "deleted"
+)
+
+var (
+	ProjectProjectCreated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectProject, ActivityEventCreated))
+	ProjectProjectUpdated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectProject, ActivityEventUpdated))
+	ProjectStateUpdated     = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectState, ActivityEventUpdated))
+	ProjectFeatureCreated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventCreated))
+	ProjectFeatureUpdated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventUpdated))
+	ProjectTaskCreated      = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventCreated))
+	ProjectTaskUpdated      = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventUpdated))
+	ProjectMilestoneCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectMilestone, ActivityEventCreated))
+	ProjectMilestoneUpdated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectMilestone, ActivityEventUpdated))
+
+	ResourceRoleUpdated     = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceResource, ActivityObjectRole, ActivityEventUpdated))
+	ResourceRoleCreated     = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceResource, ActivityObjectRole, ActivityEventCreated))
+	ResourceResourceCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceResource, ActivityObjectResource, ActivityEventCreated))
+	ResourceResourceUpdated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceResource, ActivityObjectResource, ActivityEventUpdated))
+
+	CommentReplyCreated    = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceComment, ActivityObjectReply, ActivityEventCreated))
+	CommentCommentCreated  = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceComment, ActivityObjectComment, ActivityEventCreated))
+	CommentCommentUpdated  = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceComment, ActivityObjectComment, ActivityEventUpdated))
+	CommentReactionCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceComment, ActivityObjectReaction, ActivityEventCreated))
 )
 
 type Activity struct {

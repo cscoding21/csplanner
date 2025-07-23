@@ -17,7 +17,7 @@ import (
 )
 
 type ActivityTemplate struct {
-	Subject   string
+	Subject   ActivityType
 	GetLink   func(wrapper events.MessageWrapper) string
 	GetDetail func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string
 }
@@ -62,7 +62,7 @@ func (s *ActivityService) LogActivity(
 
 	_, err = s.CreateActivity(ctx, act)
 
-	if sub.IsAny(ProjectProjectCreated, ProjectProjectUpdated, ProjectStateUpdated) {
+	if sub.IsAny(string(ProjectProjectCreated), string(ProjectProjectUpdated), string(ProjectStateUpdated)) {
 		m := wrapper.Body.(map[string]any)
 
 		_, err = cs.AddActivityComment(ctx, comment.Comment{

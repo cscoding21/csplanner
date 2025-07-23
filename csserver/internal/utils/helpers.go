@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/wI2L/jsondiff"
 )
 
 // RemoveAll removes all occurrences of items from input.
@@ -45,4 +46,29 @@ func GenerateBase64UUID() string {
 	guid := uuid.New()
 	encodedGuid := base64.RawURLEncoding.EncodeToString(guid[:])
 	return encodedGuid
+}
+
+// GetDiffGraph return a list of differences between 2 objects
+func GetDiffGraph[T any](source T, target T) string {
+	sourceJSON, err := json.Marshal(source)
+	if err != nil {
+		return ""
+	}
+
+	targetJSON, err := json.Marshal(target)
+	if err != nil {
+		return ""
+	}
+
+	diffs, err := jsondiff.CompareJSON(sourceJSON, targetJSON)
+	if err != nil {
+		return ""
+	}
+
+	diffOut, err := json.Marshal(diffs)
+	if err != nil {
+		return ""
+	}
+
+	return string(diffOut)
 }

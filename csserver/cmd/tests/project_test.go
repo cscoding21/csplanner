@@ -6,8 +6,11 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/utils"
+	"encoding/json"
 	"fmt"
 	"testing"
+
+	"github.com/wI2L/jsondiff"
 )
 
 func init() {
@@ -68,4 +71,41 @@ func TestGetProject(t *testing.T) {
 	csmap.AugmentProject(ctx, &pro.Data, &put)
 
 	fmt.Println(pro.Data.ProjectBasics.Name)
+}
+
+func TestProjectDiff(t *testing.T) {
+	ctx := getTestContext()
+
+	service := factory.GetProjectService(ctx)
+	put, err := service.GetProjectByID(ctx, "project:1")
+	if err != nil {
+		t.Error(err)
+	}
+
+	source := put.Data
+	target, err := utils.DeepCopy(source)
+	if err != nil {
+		t.Error(err)
+	}
+	target.ID = fmt.Sprintf("%s-UPDATED", target.ID)
+	target.ProjectBasics.Name = fmt.Sprintf("%s-UPDATED", target.ID)
+
+	sourceJSON, err := json.Marshal(source)
+	if err != nil {
+		t.Error(err)
+	}
+
+	targetJSON, err := json.Marshal(target)
+	if err != nil {
+		t.Error(err)
+	}
+
+	diffs, err := jsondiff.CompareJSON(sourceJSON, targetJSON)
+	if err != nil {
+		t.Error(err)
+	}
+
+	for _, d := range diffs {
+		fmt.Println(d)
+	}
 }

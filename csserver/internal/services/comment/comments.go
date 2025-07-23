@@ -5,6 +5,7 @@ import (
 	"csserver/internal/common"
 	"csserver/internal/config"
 	"csserver/internal/providers/postgres"
+	"csserver/internal/utils"
 	"csserver/internal/utils/quilljs"
 	"fmt"
 	"strings"
@@ -117,6 +118,11 @@ func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (co
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
+	ec, err := utils.DeepCopy(*existingComment)
+	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
+	}
+
 	existingComment.Data.Text = comment.Text
 	existingComment.Data.IsEdited = true
 
@@ -125,7 +131,21 @@ func (s *CommentService) ModifyComment(ctx context.Context, comment Comment) (co
 		return common.NewFailingUpdateResult[*common.BaseModel[Comment]](nil, err)
 	}
 
-	s.pubsub.StreamPublish(ctx, string(CommentIdentifier), "comment", "updated", result)
+	dg := utils.GetDiffGraph(ec.Data, existingComment.Data)
+	err = s.pubsub.StreamPublish(ctx,
+		string(CommentIdentifier),
+		"comment", "updated",
+		map[string]any{
+			"text":       existingComment.Data.Text,
+			"id":         existingComment.ID,
+			"project_id": existingComment.Data.ProjectID,
+			"diffs":      dg,
+		})
+	if err != nil {
+		log.Errorf("StreamPublish error: %s", err)
+	} else {
+		log.Warnf("StreamPublish success!")
+	}
 
 	return common.NewSuccessUpdateResult(result)
 }

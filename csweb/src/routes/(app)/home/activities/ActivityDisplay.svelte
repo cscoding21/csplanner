@@ -12,6 +12,7 @@
 	import ResourceRoleCreated from "./ResourceRoleCreated.svelte";
 	import CommentReplyCreated from "./CommentReplyCreated.svelte";
 	import { ClockOutline } from "flowbite-svelte-icons";
+	import CommentCommentUpdated from "./CommentCommentUpdated.svelte";
 
 
     interface Props {
@@ -38,6 +39,8 @@
     <ProjectStateUpdated {activity} />
 {:else if activity.context?.endsWith("comment.comment.created")}
     <CommentCommentCreated {activity} />
+{:else if activity.context?.endsWith("comment.comment.updated")}
+    <CommentCommentUpdated {activity} />
 {:else if activity.context?.endsWith("comment.reply.created")}
     <CommentReplyCreated {activity} />
 {:else if activity.context?.endsWith("resource.resource.created")}

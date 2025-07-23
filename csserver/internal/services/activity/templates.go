@@ -33,7 +33,9 @@ var templateMap = map[ActivityType]ActivityTemplate{
 
 			//TOOD: enhance pubsub body to build activity output
 			//---augment map with calculated values
-			m["name"] = project.Data.ProjectBasics.Name
+			if project != nil {
+				m["name"] = project.Data.ProjectBasics.Name
+			}
 			m["comment"] = comment
 
 			out, err := json.Marshal(m)
@@ -84,6 +86,51 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			out, err := json.Marshal(m)
 			if err != nil {
 				log.Errorf("Activity template error (%s: %s", CommentReplyCreated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#collab", projectID)
+		},
+	},
+	CommentCommentUpdated: {
+		Subject: CommentCommentUpdated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			payload := m["text"].(string)
+			payloadDelta := quilljs.StringToDelta(payload)
+			comment := quilljs.DeltaToString(*payloadDelta)
+			projectID := m["project_id"].(string)
+			// parentUserID := m["parent_user_id"].(string)
+
+			project, err := ps.GetProjectByID(ctx, projectID)
+			if err != nil {
+				log.Errorf("Activity template error GetProjectByID (%s): %s", CommentCommentUpdated, err)
+				return ""
+			}
+
+			// parentUser, err := us.GetAppuser(ctx, parentUserID)
+			// if err != nil {
+			// 	log.Errorf("Activity template error GetAppUserByID (%s): %s", CommentCommentUpdated, err)
+			// 	return ""
+			// }
+
+			//TOOD: enhance pubsub body to build activity output
+			//---augment map with calculated values
+			m["project_name"] = project.Data.ProjectBasics.Name
+			m["comment"] = comment
+			// m["parent_user_firstname"] = parentUser.FirstName
+			// m["parent_user_lastname"] = parentUser.LastName
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s: %s", CommentCommentUpdated, err)
 				return ""
 			}
 
