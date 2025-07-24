@@ -4,11 +4,10 @@ import (
 	"context"
 	"csserver/internal/common"
 	"csserver/internal/providers/postgres"
+	"csserver/internal/utils"
 	"fmt"
 
 	"github.com/cscoding21/csval/validate"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // ---This is the name of the object in the database
@@ -81,16 +80,18 @@ func (s *ResourceService) FindRoles(ctx context.Context, paging common.Paginatio
 func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.UpdateResult[*common.BaseModel[Role]], error) {
 
 	val := validate.NewSuccessValidationResult()
+	dg := ""
+	eventType := "updated"
 
 	obj, err := postgres.UpdateObject(ctx, s.db, input, RoleIdentifier, input.ID)
 	if err != nil {
 		return common.NewUpdateResult(val, &obj), err
 	}
 
-	eventType := "updated"
-
-	log.Warnf("%v - %v", obj.CreatedAt, obj.UpdatedAt)
-	if obj.CreatedAt.Equal(obj.UpdatedAt) {
+	existingRole, _ := s.GetRoleByID(ctx, input.ID)
+	if existingRole != nil {
+		dg = utils.GetDiffGraph(existingRole.Data, obj.Data)
+	} else {
 		eventType = "created"
 	}
 
@@ -100,8 +101,9 @@ func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.Up
 		"role",
 		eventType,
 		map[string]any{
-			"id":   newRole.ID,
-			"name": newRole.Data.Name,
+			"id":    newRole.ID,
+			"name":  newRole.Data.Name,
+			"diffs": dg,
 		})
 
 	return common.NewUpdateResult(val, &obj), nil

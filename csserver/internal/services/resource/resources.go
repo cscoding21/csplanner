@@ -76,7 +76,14 @@ func (s *ResourceService) addNewResource(ctx context.Context, res Resource) (com
 func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, org organization.Organization) (common.UpdateResult[*common.BaseModel[Resource]], error) {
 	//val := validate.NewSuccessValidationResult()
 
+	dg := ""
+
 	res, err := s.GetResourceByID(ctx, resource.ID)
+	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
+	}
+
+	existingResource, err := utils.DeepCopy(res.Data)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
@@ -96,14 +103,18 @@ func (s *ResourceService) PatchResource(ctx context.Context, resource Resource, 
 		return common.NewFailingUpdateResult[*common.BaseModel[Resource]](nil, err)
 	}
 
+	no := *out.Object
+	dg = utils.GetDiffGraph(*existingResource, no.Data)
+
 	newRes := *out.Object
 	s.pubsub.StreamPublish(ctx,
 		string(ResourceIdentifier),
 		"resource",
 		"updated",
 		map[string]any{
-			"id":   newRes.ID,
-			"name": newRes.Data.Name,
+			"id":    newRes.ID,
+			"name":  newRes.Data.Name,
+			"diffs": dg,
 		})
 
 	return out, nil

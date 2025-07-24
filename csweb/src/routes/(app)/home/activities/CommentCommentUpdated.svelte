@@ -12,7 +12,7 @@
 </script>
 
 <div>
-<b>{activity.user.firstName} {activity.user.lastName}</b> updated their comment on project
+<b>{activity.user.firstName} {activity.user.lastName}</b> updated their comment on the project
 <b>{detail.project_name}</b> 
 </div>
 <blockquote class="pl-4 py-2 italic text-sm">

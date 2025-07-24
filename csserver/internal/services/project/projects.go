@@ -27,6 +27,7 @@ func (s *ProjectService) SaveProject(
 	// val := pro.Validate()
 	val := validate.NewSuccessValidationResult()
 	log.Debugf("project validation: %v", val)
+	dg := ""
 
 	if len(pro.ID) == 0 {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, fmt.Errorf("project id not known.  Save failed"))
@@ -45,6 +46,8 @@ func (s *ProjectService) SaveProject(
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, fmt.Errorf("project with id %s not found.  Save failed", pro.ID))
 	}
 
+	lp, _ := utils.DeepCopy(lastProject.Data)
+
 	lastProject.Data.ProjectBasics = pro.ProjectBasics
 	lastProject.Data.ProjectCost = pro.ProjectCost
 	lastProject.Data.ProjectDaci = pro.ProjectDaci
@@ -55,14 +58,18 @@ func (s *ProjectService) SaveProject(
 
 	resp, err := s.UpdateProject(ctx, lastProject.Data)
 
+	up := *resp.Object
+	dg = utils.GetDiffGraph(*lp, up.Data)
+
 	updated := *resp.Object
 	s.pubsub.StreamPublish(ctx,
 		string(ProjectIdentifier),
 		"project",
 		*eventName,
 		map[string]any{
-			"id":   updated.ID,
-			"name": updated.Data.ProjectBasics.Name,
+			"id":    updated.ID,
+			"name":  updated.Data.ProjectBasics.Name,
+			"diffs": dg,
 		})
 
 	return resp, err
@@ -153,10 +160,14 @@ func (s *ProjectService) SetProjectStatus(
 	status projectstatus.ProjectState,
 	force bool) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
+	dg := ""
+
 	p, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
+
+	oldStateObject, _ := utils.DeepCopy(p.Data.ProjectStatusBlock)
 
 	oldState := stateMachineMap[p.Data.ProjectStatusBlock.Status]
 	newState := stateMachineMap[status]
@@ -168,6 +179,8 @@ func (s *ProjectService) SetProjectStatus(
 	}
 
 	p.Data.ProjectStatusBlock.Status = newState.State
+
+	dg = utils.GetDiffGraph(*oldStateObject, p.Data.ProjectStatusBlock)
 
 	resp, err := s.UpdateProject(ctx, p.Data)
 	up := *resp.Object
@@ -181,6 +194,7 @@ func (s *ProjectService) SetProjectStatus(
 			"start_date": up.Data.ProjectBasics.StartDate,
 			"from_state": oldState.State,
 			"to_state":   newState.State,
+			"diffs":      dg,
 		})
 
 	return resp, err

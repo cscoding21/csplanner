@@ -163,6 +163,26 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			return fmt.Sprintf("/resource/detail/%s", resourceID)
 		},
 	},
+	ResourceResourceUpdated: {
+		Subject: ResourceResourceUpdated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ResourceResourceUpdated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			resourceID := m["id"].(string)
+
+			return fmt.Sprintf("/resource/detail/%s", resourceID)
+		},
+	},
 	ResourceRoleCreated: {
 		Subject: ResourceRoleCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
