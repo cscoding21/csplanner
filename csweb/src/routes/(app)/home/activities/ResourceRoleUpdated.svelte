@@ -13,9 +13,11 @@
 
 Details of the role <b>{detail.name}</b> were updated.
 
+{#if diffs && diffs.length > 0}
 <code>{JSON.stringify(diffs)}</code>
 <ul>
 {#each diffs as d}
     <li>{d.path} is now <b>{d.value}</b></li>
 {/each}
 </ul>
+{/if}

@@ -9,4 +9,4 @@
     let detail:any = $derived(JSON.parse(comment.data.text))
 </script>
 
-The status for project, <b>{detail.name}</b>, was moved from <b>{detail.from_state}</b> to <b>{detail.to_state}</b>.
+Status was changed from <b>{detail.from_state}</b> to <b>{detail.to_state}</b>.

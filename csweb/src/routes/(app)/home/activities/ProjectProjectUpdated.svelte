@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Activity } from "$lib/graphql/generated/sdk";
+	import { csJsonKeyTranlsator } from "$lib/utils/format";
 
 
     interface Props {
@@ -13,9 +14,14 @@
 
 Details for the project <b>{detail.name}</b> were updated.
 
-<!-- <code>{JSON.stringify(diffs)}</code> -->
+<!-- <code>{JSON.stringify(diffs)}</code> --> 
+{#if diffs && diffs.length > 0}
 <ul>
 {#each diffs as d}
-    <li>{d.path} is now <b>{d.value}</b></li>
+    {@const key = csJsonKeyTranlsator(d.path)}
+    {#if key}
+    <li>{key} is now <b>{d.value}</b></li>
+    {/if}
 {/each}
 </ul>
+{/if}

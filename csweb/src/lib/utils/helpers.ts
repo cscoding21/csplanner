@@ -155,3 +155,10 @@ export const isOneOf = (val:any, opts:any[]):boolean => {
 
 	return false
 }
+
+/**
+ * check to see if the input is a number
+ * @param input a string to check
+ * @returns true if the passed in value resolves to a number
+ */
+export const isNumeric = (input:string):boolean => Number.isFinite(+input);

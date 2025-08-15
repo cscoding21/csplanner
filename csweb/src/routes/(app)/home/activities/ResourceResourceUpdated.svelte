@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Activity } from "$lib/graphql/generated/sdk";
+	import { csJsonKeyTranlsator } from "$lib/utils/format";
 
 
     interface Props {
@@ -13,8 +14,13 @@
 
 The details for resource <b>{detail.name}</b> were updated.
 
+{#if diffs && diffs.length > 0}
 <ul>
 {#each diffs as d}
-    <li>{d.path} is now <b>{d.value}</b></li>
+    {@const key = csJsonKeyTranlsator(d.path)}
+    {#if key}
+    <li>{key} is now <b>{d.value}</b></li>
+    {/if}
 {/each}
 </ul>
+{/if}

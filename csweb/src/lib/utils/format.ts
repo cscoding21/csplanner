@@ -1,3 +1,5 @@
+import { isNumeric } from "./helpers";
+
 /**
  * Applies consistent string formatting for date values
  * @param input The date to be formatted
@@ -184,3 +186,26 @@ export const titleCase = (text: string|undefined):string => {
 		t => t.charAt(0).toUpperCase() + t.substring(1).toLowerCase()
 	  );
 } 
+
+
+/**
+ * translate the key from the json patch value to a human-friendly descriptor
+ * @param key the json path to tranlsate
+ * @returns a human-readable descriptor derived from the key
+ */
+export const csJsonKeyTranlsator = (key: string):string => {
+	if(key.length === 0) {
+		return ""
+	}
+
+	const parts = key.split("/")
+
+	const last = parts[parts.length - 1]
+
+	//---disregard array elements for now
+	if(isNumeric(last)) {
+		return ""
+	}
+
+	return titleCase(last)
+}
