@@ -1,18 +1,16 @@
 <script lang="ts">
 	import type { Activity } from "$lib/graphql/generated/sdk";
 	import { Avatar } from "flowbite-svelte";
-	import ProjectProjectCreated from "./ProjectProjectCreated.svelte";
 	import { formatDateTime, getInitialsFromName } from "$lib/utils/format";
 	import CommentCommentCreated from "./CommentCommentCreated.svelte";
-	import ProjectProjectUpdated from "./ProjectProjectUpdated.svelte";
 	import ResourceResourceCreated from "./ResourceResourceCreated.svelte";
-	import ResourceRoleUpdated from "./ResourceRoleUpdated.svelte";
-	import ResourceResourceUpdated from "./ResourceResourceUpdated.svelte";
 	import ProjectStateUpdated from "./ProjectStateUpdated.svelte";
-	import ResourceRoleCreated from "./ResourceRoleCreated.svelte";
 	import CommentReplyCreated from "./CommentReplyCreated.svelte";
 	import { ClockOutline } from "flowbite-svelte-icons";
 	import CommentCommentUpdated from "./CommentCommentUpdated.svelte";
+	import ObjectCreated from "./ObjectCreated.svelte";
+	import ObjectDeleted from "./ObjectDeleted.svelte";
+	import ObjectUpdated from "./ObjectUpdated.svelte";
 
 
     interface Props {
@@ -32,25 +30,50 @@
 
 
 {#if activity.context?.endsWith("project.project.created")}
-    <ProjectProjectCreated {activity} />
+    <ObjectCreated object="project" {activity} />
 {:else if activity.context?.endsWith("project.project.updated")}
-    <ProjectProjectUpdated {activity} />
+    <ObjectUpdated object="project" {activity} />
+
 {:else if activity.context?.endsWith("project.state.updated")}
     <ProjectStateUpdated {activity} />
+
+{:else if activity.context?.endsWith("project.feature.created")}
+    <ObjectCreated object="feature" {activity} />
+{:else if activity.context?.endsWith("project.feature.updated")}
+    <ObjectUpdated object="feature" {activity} />
+{:else if activity.context?.endsWith("project.feature.deleted")}
+    <ObjectDeleted object="feature" {activity} />
+
+{:else if activity.context?.endsWith("project.milestone.created")}
+    <ObjectCreated object="milestone" {activity} />
+{:else if activity.context?.endsWith("project.milestone.updated")}
+    <ObjectUpdated object="milestone" {activity} />
+{:else if activity.context?.endsWith("project.milestone.deleted")}
+    <ObjectDeleted object="milestone" {activity} />
+
+{:else if activity.context?.endsWith("project.task.created")}
+    <ObjectCreated object="task" {activity} />
+{:else if activity.context?.endsWith("project.task.updated")}
+    <ObjectUpdated object="task" {activity} />
+{:else if activity.context?.endsWith("project.task.deleted")}
+    <ObjectDeleted object="task" {activity} />
+
 {:else if activity.context?.endsWith("comment.comment.created")}
     <CommentCommentCreated {activity} />
 {:else if activity.context?.endsWith("comment.comment.updated")}
     <CommentCommentUpdated {activity} />
 {:else if activity.context?.endsWith("comment.reply.created")}
     <CommentReplyCreated {activity} />
+
 {:else if activity.context?.endsWith("resource.resource.created")}
     <ResourceResourceCreated {activity} />
 {:else if activity.context?.endsWith("resource.resource.updated")}
-    <ResourceResourceUpdated {activity} />
+    <ObjectUpdated object="resource" {activity} />
+
 {:else if activity.context?.endsWith("resource.role.created")}
-    <ResourceRoleCreated {activity} />
+    <ObjectCreated object="role" {activity} />
 {:else if activity.context?.endsWith("resource.role.updated")}
-    <ResourceRoleUpdated {activity} />
+    <ObjectUpdated object="role" {activity} />
 {/if}
 
 <br />

@@ -26,26 +26,40 @@ func (s *ProjectService) DeleteTaskFromProject(
 	org organization.Organization,
 ) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
-	project, err := s.GetProjectByID(ctx, projectID)
+	result, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
-	updatedProject := deleteTaskFromProjectGraph(project.Data, milestoneID, taskID)
+	project := result.Data
 
+	updatedProject, deletedTask := deleteTaskFromProjectGraph(project, milestoneID, taskID)
 	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
+
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"task",
+		"deleted",
+		map[string]any{
+			"id":           milestoneID,
+			"project_id":   projectID,
+			"project_name": project.ProjectBasics.Name,
+			"name":         deletedTask.Name,
+		})
 
 	return s.UpdateProject(ctx, updatedProject)
 }
 
 // deleteTaskFromProjectGraph if the milestone exists in the project object graph...remove the specified task
-func deleteTaskFromProjectGraph(project Project, milestoneID string, taskID string) Project {
+func deleteTaskFromProjectGraph(project Project, milestoneID string, taskID string) (Project, ProjectMilestoneTask) {
+	var task ProjectMilestoneTask
 	//---find the task in the object graph
 	for i, m := range project.ProjectMilestones {
 		if *m.ID == milestoneID {
 			//---found milestone
 			for j, t := range m.Tasks {
 				if t.ID != nil && *t.ID == taskID {
+					task = *t
 					project.ProjectMilestones[i].Tasks = slices.Delete(project.ProjectMilestones[i].Tasks, j, j+1)
 					break
 				}
@@ -53,7 +67,7 @@ func deleteTaskFromProjectGraph(project Project, milestoneID string, taskID stri
 		}
 	}
 
-	return project
+	return project, task
 }
 
 // UpdateProjectTask update a project task if it exists or create it if it doesn't
@@ -66,14 +80,35 @@ func (s *ProjectService) UpdateProjectTask(
 	roleMap map[string]resource.Role,
 	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
-	project, err := s.GetProjectByID(ctx, projectID)
+	result, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
+	dg := ""
+	op := "created"
+	project := result.Data
+
 	//---DO THE UPDATE
-	updatedProject := UpdateTaskFromProjectGraph(project.Data, milestoneID, task)
+	updatedProject, existingTask := UpdateTaskFromProjectGraph(project, milestoneID, task)
 	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
+
+	if existingTask != nil {
+		dg = utils.GetDiffGraph(*existingTask, task)
+		op = "updated"
+	}
+
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"task",
+		op,
+		map[string]any{
+			"id":           task.ID,
+			"project_id":   projectID,
+			"project_name": project.ProjectBasics.Name,
+			"name":         task.Name,
+			"diffs":        dg,
+		})
 
 	return s.UpdateProject(ctx, updatedProject)
 }
@@ -89,30 +124,57 @@ func (s *ProjectService) UpdateProjectTaskStatus(
 	roleMap map[string]resource.Role,
 	org organization.Organization) (common.UpdateResult[*common.BaseModel[Project]], error) {
 
-	project, err := s.GetProjectByID(ctx, projectID)
+	result, err := s.GetProjectByID(ctx, projectID)
 	if err != nil {
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
+	dg := ""
+	op := "updated"
+	project := result.Data
+	var existingTask *ProjectMilestoneTask
+	var updatedTask *ProjectMilestoneTask
+
 	//---DO THE UPDATE
-	for i, m := range project.Data.ProjectMilestones {
+	for i, m := range project.ProjectMilestones {
 		if *m.ID == milestoneID {
 			for j, t := range m.Tasks {
 				if *t.ID == taskID {
-					project.Data.ProjectMilestones[i].Tasks[j].Status = status
+					existingTask, _ = utils.DeepCopy(*project.ProjectMilestones[i].Tasks[j])
+					project.ProjectMilestones[i].Tasks[j].Status = status
+
+					updatedTask, _ = utils.DeepCopy(*project.ProjectMilestones[i].Tasks[j])
 					break
 				}
 			}
 		}
 	}
 
-	project.Data.PerformAllCalcs(org, resourceMap, roleMap)
+	if existingTask != nil {
+		dg = utils.GetDiffGraph(*existingTask, *updatedTask)
+		op = "updated"
+	}
 
-	return s.UpdateProject(ctx, project.Data)
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"task",
+		op,
+		map[string]any{
+			"id":           updatedTask.ID,
+			"project_id":   projectID,
+			"project_name": project.ProjectBasics.Name,
+			"name":         updatedTask.Name,
+			"diffs":        dg,
+		})
+
+	project.PerformAllCalcs(org, resourceMap, roleMap)
+
+	return s.UpdateProject(ctx, project)
 }
 
 // updateTaskFromProjectGraph if the milestone exists in the project object graph...update the specified task.  Otherwise, add the task
-func UpdateTaskFromProjectGraph(project Project, milestoneID string, task ProjectMilestoneTask) Project {
+func UpdateTaskFromProjectGraph(project Project, milestoneID string, task ProjectMilestoneTask) (Project, *ProjectMilestoneTask) {
+	var outTask *ProjectMilestoneTask
 	//---DO THE UPDATE
 	for i, m := range project.ProjectMilestones {
 		log.Infof("Looping project milestone %s", *m.ID)
@@ -123,6 +185,7 @@ func UpdateTaskFromProjectGraph(project Project, milestoneID string, task Projec
 				//---this is an edit
 				for j, t := range m.Tasks {
 					if t.ID != nil && *t.ID == *task.ID {
+						outTask, _ = utils.DeepCopy(*project.ProjectMilestones[i].Tasks[j])
 						project.ProjectMilestones[i].Tasks[j] = &task
 						break
 					}
@@ -142,7 +205,7 @@ func UpdateTaskFromProjectGraph(project Project, milestoneID string, task Projec
 		}
 	}
 
-	return project
+	return project, outTask
 }
 
 // SetProjectMilestonesFromTemplate assign the details of a project plan to a specific project

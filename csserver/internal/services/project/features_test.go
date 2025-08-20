@@ -15,7 +15,7 @@ func TestDeleteFeatureFromProject(t *testing.T) {
 	currentFeatureCount := len(proj.ProjectFeatures)
 	expected := currentFeatureCount - 1
 
-	updatedProject := project.DeleteFeatureFromProjectGraph(proj, "projectfeature:1")
+	updatedProject, _ := project.DeleteFeatureFromProjectGraph(proj, "projectfeature:1")
 
 	updatedFeatureCount := len(updatedProject.ProjectFeatures)
 
@@ -32,7 +32,7 @@ func TestUpdateProjectFeature_Update(t *testing.T) {
 	//---no change in number of features
 	expected := currentFeatureCount
 
-	updatedProject := project.UpdateProjectFeatureGraph(proj,
+	updatedProject, _ := project.UpdateProjectFeatureGraph(proj,
 		project.ProjectFeature{
 			ID:          utils.ValToRef("projectfeature:1"),
 			Priority:    featurepriority.Medium,
@@ -55,7 +55,7 @@ func TestUpdateProjectFeature_New(t *testing.T) {
 	//---no change in number of features
 	expected := currentFeatureCount + 1
 
-	updatedProject := project.UpdateProjectFeatureGraph(proj,
+	updatedProject, _ := project.UpdateProjectFeatureGraph(proj,
 		project.ProjectFeature{
 			ID:          utils.ValToRef("projectfeature:9999"),
 			Priority:    featurepriority.Medium,

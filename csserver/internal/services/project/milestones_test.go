@@ -20,7 +20,7 @@ func TestUpdateProjectTask(t *testing.T) {
 		}
 	}
 
-	updatedProject := project.UpdateTaskFromProjectGraph(proj, "milestone:1", project.ProjectMilestoneTask{
+	updatedProject, _ := project.UpdateTaskFromProjectGraph(proj, "milestone:1", project.ProjectMilestoneTask{
 		ID:           utils.ValToRef("task:1"),
 		HourEstimate: 30,
 		Name:         "Updated Project Task",
@@ -51,7 +51,7 @@ func TestAddProjectTask(t *testing.T) {
 		}
 	}
 
-	updatedProject := project.UpdateTaskFromProjectGraph(proj, "milestone:1", project.ProjectMilestoneTask{
+	updatedProject, _ := project.UpdateTaskFromProjectGraph(proj, "milestone:1", project.ProjectMilestoneTask{
 		HourEstimate: 30,
 		Name:         "Added Project Task",
 		Status:       "accepted",

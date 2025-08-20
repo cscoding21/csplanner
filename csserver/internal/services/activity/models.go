@@ -37,15 +37,21 @@ const (
 )
 
 var (
-	ProjectProjectCreated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectProject, ActivityEventCreated))
-	ProjectProjectUpdated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectProject, ActivityEventUpdated))
-	ProjectStateUpdated     = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectState, ActivityEventUpdated))
-	ProjectFeatureCreated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventCreated))
-	ProjectFeatureUpdated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventUpdated))
-	ProjectTaskCreated      = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventCreated))
-	ProjectTaskUpdated      = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventUpdated))
+	ProjectProjectCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectProject, ActivityEventCreated))
+	ProjectProjectUpdated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectProject, ActivityEventUpdated))
+	ProjectStateUpdated   = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectState, ActivityEventUpdated))
+
+	ProjectFeatureCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventCreated))
+	ProjectFeatureUpdated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventUpdated))
+	ProjectFeatureDeleted = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectFeature, ActivityEventDeleted))
+
+	ProjectTaskCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventCreated))
+	ProjectTaskUpdated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventUpdated))
+	ProjectTaskDeleted = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectTask, ActivityEventDeleted))
+
 	ProjectMilestoneCreated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectMilestone, ActivityEventCreated))
 	ProjectMilestoneUpdated = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectMilestone, ActivityEventUpdated))
+	ProjectMilestoneDeleted = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceProject, ActivityObjectMilestone, ActivityEventDeleted))
 
 	ResourceRoleUpdated     = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceResource, ActivityObjectRole, ActivityEventUpdated))
 	ResourceRoleCreated     = ActivityType(fmt.Sprintf("%s.%s.%s", ActivityServiceResource, ActivityObjectRole, ActivityEventCreated))

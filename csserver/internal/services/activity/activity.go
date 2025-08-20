@@ -62,12 +62,15 @@ func (s *ActivityService) LogActivity(
 
 	_, err = s.CreateActivity(ctx, act)
 
-	if sub.IsAny(string(ProjectProjectCreated), string(ProjectProjectUpdated), string(ProjectStateUpdated)) {
+	// if sub.IsAny(string(ProjectProjectCreated), string(ProjectProjectUpdated), string(ProjectStateUpdated)) {
+	log.Warnf("project comment check: %s - %s", sub.Service, ActivityServiceProject)
+	if sub.Service == ActivityServiceProject {
 		m := wrapper.Body.(map[string]any)
+		log.Warnf("adding comment: %v", m)
 
 		_, err = cs.AddActivityComment(ctx, comment.Comment{
 			Text:      detail,
-			ProjectID: m["id"].(string),
+			ProjectID: m["project_id"].(string),
 			Context:   utils.ValToRef(sub.LookupKey()),
 		})
 		if err != nil {

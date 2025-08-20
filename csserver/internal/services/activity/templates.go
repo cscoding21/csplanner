@@ -125,8 +125,6 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			//---augment map with calculated values
 			m["project_name"] = project.Data.ProjectBasics.Name
 			m["comment"] = comment
-			// m["parent_user_firstname"] = parentUser.FirstName
-			// m["parent_user_lastname"] = parentUser.LastName
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -227,6 +225,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
+			m["project_id"] = m["id"]
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -249,6 +248,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
+			m["project_id"] = m["id"]
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -271,6 +271,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			m := wrapper.Body.(map[string]any)
 
 			//TOOD: enhance pubsub body to build activity output
+			m["project_id"] = m["id"]
 
 			out, err := json.Marshal(m)
 			if err != nil {
@@ -285,6 +286,210 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			projectID := m["id"].(string)
 
 			return fmt.Sprintf("/project/detail/%s", projectID)
+		},
+	},
+
+	//---FEATURES
+	ProjectFeatureCreated: {
+		Subject: ProjectFeatureCreated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectFeatureCreated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#features", projectID)
+		},
+	},
+	ProjectFeatureUpdated: {
+		Subject: ProjectFeatureUpdated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectFeatureUpdated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#features", projectID)
+		},
+	},
+	ProjectFeatureDeleted: {
+		Subject: ProjectFeatureDeleted,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectFeatureDeleted, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#features", projectID)
+		},
+	},
+
+	//---MILESTONES
+	ProjectMilestoneCreated: {
+		Subject: ProjectMilestoneCreated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectMilestoneCreated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
+		},
+	},
+	ProjectMilestoneUpdated: {
+		Subject: ProjectMilestoneUpdated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectMilestoneUpdated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
+		},
+	},
+	ProjectMilestoneDeleted: {
+		Subject: ProjectMilestoneDeleted,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectMilestoneDeleted, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
+		},
+	},
+
+	//---TASKS
+	ProjectTaskCreated: {
+		Subject: ProjectTaskCreated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectTaskCreated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
+		},
+	},
+	ProjectTaskUpdated: {
+		Subject: ProjectTaskUpdated,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectTaskUpdated, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
+		},
+	},
+	ProjectTaskDeleted: {
+		Subject: ProjectTaskDeleted,
+		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+
+			//TOOD: enhance pubsub body to build activity output
+
+			out, err := json.Marshal(m)
+			if err != nil {
+				log.Errorf("Activity template error (%s): %s", ProjectTaskDeleted, err)
+				return ""
+			}
+
+			return string(out)
+		},
+		GetLink: func(wrapper events.MessageWrapper) string {
+			m := wrapper.Body.(map[string]any)
+			projectID := m["project_id"].(string)
+
+			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
 		},
 	},
 }

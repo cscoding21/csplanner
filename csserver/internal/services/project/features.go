@@ -8,7 +8,8 @@ import (
 	"csserver/internal/services/organization"
 	"csserver/internal/services/resource"
 
-	"github.com/cscoding21/csmap/utils"
+	"csserver/internal/utils"
+
 	"github.com/google/uuid"
 )
 
@@ -29,23 +30,36 @@ func (s *ProjectService) DeleteFeatureFromProject(
 
 	project := result.Data
 
-	updatedProject := DeleteFeatureFromProjectGraph(project, featureID)
+	updatedProject, deletedFeature := DeleteFeatureFromProjectGraph(project, featureID)
 	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
+
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"feature",
+		"deleted",
+		map[string]any{
+			"id":           featureID,
+			"project_id":   projectID,
+			"project_name": project.ProjectBasics.Name,
+			"name":         deletedFeature.Name,
+		})
 
 	return s.UpdateProject(ctx, updatedProject)
 }
 
 // DeleteTaskFromProjectGraph if the feature exists in the project, remove it.
-func DeleteFeatureFromProjectGraph(project Project, featureID string) Project {
+func DeleteFeatureFromProjectGraph(project Project, featureID string) (Project, ProjectFeature) {
+	var deletedFeature ProjectFeature
 	for i, f := range project.ProjectFeatures {
 		if f.ID != nil && *f.ID == featureID {
+			deletedFeature = *project.ProjectFeatures[i]
 			project.ProjectFeatures = slices.Delete(project.ProjectFeatures, i, i+1)
 
 			break
 		}
 	}
 
-	return project
+	return project, deletedFeature
 }
 
 // UpdateProjectFeature if the feature exists in the project object graph...update it.  Otherwise, add it
@@ -62,18 +76,39 @@ func (s *ProjectService) UpdateProjectFeature(
 		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
 	}
 
+	dg := ""
+	op := "created"
+
 	project := projectResult.Data
-	updatedProject := UpdateProjectFeatureGraph(project, feature)
+	updatedProject, existingFeature := UpdateProjectFeatureGraph(project, feature)
 	updatedProject.PerformAllCalcs(org, resourceMap, roleMap)
+
+	if existingFeature != nil {
+		dg = utils.GetDiffGraph(*existingFeature, feature)
+		op = "updated"
+	}
+
+	s.pubsub.StreamPublish(ctx,
+		string(ProjectIdentifier),
+		"feature",
+		op,
+		map[string]any{
+			"id":           feature.ID,
+			"project_id":   projectID,
+			"project_name": project.ProjectBasics.Name,
+			"name":         feature.Name,
+			"diffs":        dg,
+		})
+
 	return s.UpdateProject(ctx, updatedProject)
 }
 
 // updateProjectFeatureGraph if the feature exists in the project object graph...update it.  Otherwise, add it
-func UpdateProjectFeatureGraph(project Project, feature ProjectFeature) Project {
+func UpdateProjectFeatureGraph(project Project, feature ProjectFeature) (Project, *ProjectFeature) {
 	for i, f := range project.ProjectFeatures {
 		if f.ID != nil && *f.ID == *feature.ID {
 			project.ProjectFeatures[i] = &feature
-			return project
+			return project, f
 		}
 	}
 
@@ -84,5 +119,5 @@ func UpdateProjectFeatureGraph(project Project, feature ProjectFeature) Project 
 
 	project.ProjectFeatures = append(project.ProjectFeatures, &feature)
 
-	return project
+	return project, nil
 }

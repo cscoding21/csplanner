@@ -1,17 +1,21 @@
 <script lang="ts">
-	import type { CommentEnvelope } from "$lib/graphql/generated/sdk";
+	import type { Activity } from "$lib/graphql/generated/sdk";
 	import { csJsonKeyTranlsator } from "$lib/utils/format";
-	
-    interface Props {
-        comment: CommentEnvelope
-    }
-    let { comment }:Props = $props()
 
-    let detail:any = $derived(JSON.parse(comment.data.text))
+
+    interface Props {
+        activity: Activity
+        object: string
+    }
+    let { activity, object }:Props = $props()
+
+    let detail:any = $derived(JSON.parse(activity.detail))
     let diffs:any = $derived(JSON.parse(detail.diffs))
 </script>
 
-Details for the project were updated.  
+Details for the {object} <b>{detail.name}</b> were updated.
+
+<!-- <code>{JSON.stringify(diffs)}</code> --> 
 {#if diffs && diffs.length > 0}
 <ul>
 {#each diffs as d}

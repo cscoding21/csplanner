@@ -1,19 +1,18 @@
 <script lang="ts">
-	import type { Activity } from "$lib/graphql/generated/sdk";
+	import type { CommentEnvelope } from "$lib/graphql/generated/sdk";
 	import { csJsonKeyTranlsator } from "$lib/utils/format";
-
-
+	
     interface Props {
-        activity: Activity
+        comment: CommentEnvelope
+        object: string
     }
-    let { activity }:Props = $props()
+    let { comment, object }:Props = $props()
 
-    let detail:any = $derived(JSON.parse(activity.detail))
+    let detail:any = $derived(JSON.parse(comment.data.text))
     let diffs:any = $derived(JSON.parse(detail.diffs))
 </script>
 
-The details for resource <b>{detail.name}</b> were updated.
-
+Details for the {object} were updated.  
 {#if diffs && diffs.length > 0}
 <ul>
 {#each diffs as d}
