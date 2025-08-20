@@ -12,7 +12,7 @@
     let diffs:any = $derived(JSON.parse(detail.diffs))
 </script>
 
-Details for the {object} were updated.  
+Details for the {object}, <b>{detail.name}</b> were updated.  
 {#if diffs && diffs.length > 0}
 <ul>
 {#each diffs as d}

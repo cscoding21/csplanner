@@ -308,8 +308,6 @@ func (r *queryResolver) FindAllUsers(ctx context.Context) (*idl.UserResults, err
 		return nil, err
 	}
 
-	log.Warn(userResults)
-
 	pg, fi := csmap.GetPageAndFilterIdl(userResults.Pagination, userResults.Filters)
 	out := idl.UserResults{
 		Paging:  &pg,

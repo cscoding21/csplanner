@@ -109,3 +109,47 @@ func TestProjectDiff(t *testing.T) {
 		fmt.Println(d)
 	}
 }
+
+func TestSetProjectMilestoneFromTemplate(t *testing.T) {
+	projectUnderTest := "y4pnyWsKQBag0QWyGwIdvg"
+	templateID := "projecttemplate:simple"
+	ctx := getTestContext()
+
+	service := factory.GetProjectService(ctx)
+	templateService := factory.GetProjectTemplateService(ctx)
+
+	org, err := factory.GetDefaultOrganization(ctx)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	rs := factory.GetResourceService(ctx)
+
+	resourceMap, err := rs.GetResourceMap(ctx, false)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	roleMap, err := rs.GetRoleMap(ctx, false)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	//---get the selected template
+	template, err := templateService.GetProjecttemplateByID(ctx, templateID)
+	if err != nil {
+		t.Errorf("Error getting template: %s", err)
+		return
+	}
+
+	pr, err := service.SetProjectMilestonesFromTemplate(ctx, projectUnderTest, template.Data, resourceMap, roleMap, *org)
+	if err != nil {
+		t.Errorf("Error setting template to project: %s", err)
+		return
+	}
+
+	fmt.Println(pr.Object)
+}

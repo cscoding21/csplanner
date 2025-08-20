@@ -253,5 +253,11 @@ func (s *ProjectService) SetProjectMilestonesFromTemplate(
 	}
 
 	project.Data.PerformAllCalcs(org, resourceMap, roleMap)
-	return s.UpdateProject(ctx, project.Data)
+
+	up, err := utils.DeepCopy(project.Data)
+	if err != nil {
+		return common.NewFailingUpdateResult[*common.BaseModel[Project]](nil, err)
+	}
+
+	return s.UpdateProject(ctx, *up)
 }

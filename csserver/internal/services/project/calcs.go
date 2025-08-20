@@ -199,7 +199,10 @@ func (p *Project) GetProjectInitialCost() (int, float64) {
 	p.Calculated.RemainingCost = remainingCost
 	p.Calculated.CompletedHours = completedHours
 	p.Calculated.RemainingHours = remainingHours
-	p.Calculated.ProjectPercentComplete = float64(completedHours) / float64(actualizedHours)
+
+	if actualizedHours > 0 {
+		p.Calculated.ProjectPercentComplete = float64(completedHours) / float64(actualizedHours)
+	}
 
 	return hours, cost
 }
@@ -278,7 +281,10 @@ func (p *Project) CalculateProjectMilestoneStats() {
 		p.ProjectMilestones[i].Calculated.IsComplete = isComplete
 		p.ProjectMilestones[i].Calculated.UnhealthyTasks = unhealthyTasks
 		p.ProjectMilestones[i].Calculated.IsInFlight = !isComplete && (hoursRemaining < (totalHours - removedHours))
-		p.ProjectMilestones[i].Calculated.PercentDone = (float64(totalHours) - float64(hoursRemaining)) / float64(totalHours)
+
+		if totalHours > 0 {
+			p.ProjectMilestones[i].Calculated.PercentDone = (float64(totalHours) - float64(hoursRemaining)) / float64(totalHours)
+		}
 	}
 
 	p.Calculated.UnhealthyTasks = projectUnhealthyTasks

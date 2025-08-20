@@ -102,9 +102,12 @@ func UpdateObjectWithParent[T any](
 
 	if err != nil {
 		tx.Rollback(ctx)
-	} else {
-		tx.Commit(ctx)
+
+		out, _ := GetObjectByID[T](ctx, db, table, id)
+		return out, err
 	}
+
+	tx.Commit(ctx)
 
 	return GetObjectByID[T](ctx, db, table, id)
 
