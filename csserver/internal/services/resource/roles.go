@@ -83,12 +83,13 @@ func (s *ResourceService) UpsertRole(ctx context.Context, input Role) (common.Up
 	dg := ""
 	eventType := "updated"
 
+	existingRole, _ := s.GetRoleByID(ctx, input.ID)
+
 	obj, err := postgres.UpdateObject(ctx, s.db, input, RoleIdentifier, input.ID)
 	if err != nil {
 		return common.NewUpdateResult(val, &obj), err
 	}
 
-	existingRole, _ := s.GetRoleByID(ctx, input.ID)
 	if existingRole != nil {
 		dg = utils.GetDiffGraph(existingRole.Data, obj.Data)
 	} else {

@@ -144,15 +144,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ResourceResourceCreated: {
 		Subject: ResourceResourceCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ResourceResourceCreated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ResourceResourceCreated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -164,15 +156,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ResourceResourceUpdated: {
 		Subject: ResourceResourceUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ResourceResourceUpdated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ResourceResourceUpdated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -184,17 +168,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ResourceRoleCreated: {
 		Subject: ResourceRoleCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ResourceRoleCreated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ResourceRoleCreated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			return "/settings#roles"
@@ -203,17 +177,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ResourceRoleUpdated: {
 		Subject: ResourceRoleUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ResourceRoleUpdated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ResourceRoleUpdated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			return "/settings#roles"
@@ -293,17 +257,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectFeatureCreated: {
 		Subject: ProjectFeatureCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectFeatureCreated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectFeatureCreated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -315,17 +269,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectFeatureUpdated: {
 		Subject: ProjectFeatureUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectFeatureUpdated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectFeatureUpdated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -337,17 +281,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectFeatureDeleted: {
 		Subject: ProjectFeatureDeleted,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectFeatureDeleted, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectFeatureDeleted)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -361,17 +295,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectMilestoneCreated: {
 		Subject: ProjectMilestoneCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectMilestoneCreated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectMilestoneCreated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -383,17 +307,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectMilestoneUpdated: {
 		Subject: ProjectMilestoneUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectMilestoneUpdated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectMilestoneUpdated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -405,17 +319,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectMilestoneDeleted: {
 		Subject: ProjectMilestoneDeleted,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectMilestoneDeleted, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectMilestoneDeleted)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -429,17 +333,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectTaskCreated: {
 		Subject: ProjectTaskCreated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectTaskCreated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectTaskCreated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -451,17 +345,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectTaskUpdated: {
 		Subject: ProjectTaskUpdated,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectTaskUpdated, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectTaskUpdated)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -473,17 +357,7 @@ var templateMap = map[ActivityType]ActivityTemplate{
 	ProjectTaskDeleted: {
 		Subject: ProjectTaskDeleted,
 		GetDetail: func(ctx context.Context, cs comment.CommentService, us appuser.AppuserService, ps project.ProjectService, rs resource.ResourceService, wrapper events.MessageWrapper) string {
-			m := wrapper.Body.(map[string]any)
-
-			//TOOD: enhance pubsub body to build activity output
-
-			out, err := json.Marshal(m)
-			if err != nil {
-				log.Errorf("Activity template error (%s): %s", ProjectTaskDeleted, err)
-				return ""
-			}
-
-			return string(out)
+			return getSimpleTemplateOutput(wrapper.Body.(map[string]any), ProjectTaskDeleted)
 		},
 		GetLink: func(wrapper events.MessageWrapper) string {
 			m := wrapper.Body.(map[string]any)
@@ -492,4 +366,14 @@ var templateMap = map[ActivityType]ActivityTemplate{
 			return fmt.Sprintf("/project/detail/%s#milestones", projectID)
 		},
 	},
+}
+
+func getSimpleTemplateOutput(m map[string]any, op ActivityType) string {
+	out, err := json.Marshal(m)
+	if err != nil {
+		log.Errorf("Activity template error (%s): %s", op, err)
+		return ""
+	}
+
+	return string(out)
 }
