@@ -243,8 +243,11 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
 					// AugmentResource(ctx, resource)
-					team[*r] = *resource
-					proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
+
+					if resource != nil {
+						team[*r] = *resource
+						proj.ProjectDaci.Driver = append(proj.ProjectDaci.Driver, resource)
+					}
 				}
 			}
 		}
@@ -254,8 +257,11 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
 					// AugmentResource(ctx, resource)
-					team[*r] = *resource
-					proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
+
+					if resource != nil {
+						team[*r] = *resource
+						proj.ProjectDaci.Approver = append(proj.ProjectDaci.Approver, resource)
+					}
 				}
 			}
 		}
@@ -265,8 +271,11 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
 					// AugmentResource(ctx, resource)
-					team[*r] = *resource
-					proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
+
+					if resource != nil {
+						team[*r] = *resource
+						proj.ProjectDaci.Contributor = append(proj.ProjectDaci.Contributor, resource)
+					}
 				}
 			}
 		}
@@ -276,8 +285,11 @@ func AugmentProject(ctx context.Context, model *project.Project, proj *idl.Proje
 				if r != nil {
 					resource := getResourceById(ctx, *resourceList, *r)
 					// AugmentResource(ctx, resource)
-					team[*r] = *resource
-					proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
+
+					if resource != nil {
+						team[*r] = *resource
+						proj.ProjectDaci.Informed = append(proj.ProjectDaci.Informed, resource)
+					}
 				}
 			}
 		}

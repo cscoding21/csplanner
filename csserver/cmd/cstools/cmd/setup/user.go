@@ -60,9 +60,9 @@ func CreateTestUsers(ctx context.Context) error {
 	usrs := []appuser.Appuser{
 		//---users
 		{ControlFields: common.ControlFields{ID: "jeph@jmk21.com"}, Email: "jeph@jmk21.com", FirstName: "Geomfry", LastName: "McHale", Password: "localpass", ConfirmPassword: "localpass"},
-		{ControlFields: common.ControlFields{ID: "tifa@jmk21.com"}, Email: "tifa@jmk21.com", FirstName: "Tifa", LastName: "Lockhart", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/tifa.png"},
-		{ControlFields: common.ControlFields{ID: "cloud@jmk21.com"}, Email: "cloud@jmk21.com", FirstName: "Cloud", LastName: "Strife", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/cloud.png"},
-		{ControlFields: common.ControlFields{ID: "aerith@jmk21.com"}, Email: "aerith@jmk21.com", FirstName: "Aerith", LastName: "Gainsborough", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/aerith.png"},
+		{ControlFields: common.ControlFields{ID: "tori@jmk21.com"}, Email: "tori@jmk21.com", FirstName: "Tori", LastName: "Lockhart", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/tifa.png"},
+		{ControlFields: common.ControlFields{ID: "chris@jmk21.com"}, Email: "chris@jmk21.com", FirstName: "Chris", LastName: "Strife", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/cloud.png"},
+		{ControlFields: common.ControlFields{ID: "adam@jmk21.com"}, Email: "adam@jmk21.com", FirstName: "Adam", LastName: "Gainsborough", Password: "localpass", ConfirmPassword: "localpass", ProfileImage: "/aerith.png"},
 	}
 
 	for _, u := range usrs {

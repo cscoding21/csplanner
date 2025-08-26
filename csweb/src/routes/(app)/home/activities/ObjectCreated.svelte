@@ -10,4 +10,8 @@
     let detail:any = $derived(JSON.parse(activity.detail))
 </script>
 
+{#if detail.project_name}
 A new {object}, <b>{detail.name}</b>, was added to the project <b>{detail.project_name}</b>.
+{:else}
+A new {object}, <b>{detail.name}</b>, was created.
+{/if}

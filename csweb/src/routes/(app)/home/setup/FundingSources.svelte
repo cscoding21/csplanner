@@ -123,8 +123,7 @@
 <div class="p-4">
     {#if fsList.length > 0}
     {#each fsList as fundsrc, index}
-    <Badge dismissable large onclose={() => removeFS(index)}>Default</Badge>
-        <Badge color="blue" class="m-2" dismissable>
+        <Badge color="blue" large class="m-2" dismissable onclose={() => removeFS(index)}>
             {fundsrc.name}
         </Badge>
     {/each}

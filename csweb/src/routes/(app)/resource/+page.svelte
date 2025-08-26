@@ -7,7 +7,7 @@
 	import type { ResourceResults, PageAndFilter, InputFilters, Pagination, Filters } from '$lib/graphql/generated/sdk';
 
 	let filters:InputFilters = $state({}) as InputFilters;
-	let paging:Pagination = $state({ pageNumber: 1, resultsPerPage: 10 }) as Pagination;
+	let paging:Pagination = $state({ pageNumber: 1, resultsPerPage: 30 }) as Pagination;
 
 	const refresh = async (): Promise<ResourceResults> => {
 		const res = await findResources(getFilters());

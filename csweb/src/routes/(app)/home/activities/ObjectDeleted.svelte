@@ -10,4 +10,10 @@
     let detail:any = $derived(JSON.parse(activity.detail))
 </script>
 
+
+{#if detail.project_name}
 The {object} <b>{detail.name}</b> was removed from project <b>{detail.project_name}</b>.
+{:else}
+The {object}, <b>{detail.name}</b>, was removed.
+{/if}
+

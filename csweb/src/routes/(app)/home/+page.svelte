@@ -83,15 +83,15 @@
         let out = 1;
 
         if(o.setup.hasResources) {
-            out = 7
+            out = 8
         } else if (o.setup.hasRoles) {
-            out = 6
+            out = 7
         } else if (o.setup.hasFundingSources) {
-            out = 5
+            out = 6
         } else if (o.setup.hasValueCategories) {
-            out = 4
+            out = 5
         } else if (o.setup.hasSkills) {
-            out = 3
+            out = 4
         } 
 
         return out
@@ -130,6 +130,12 @@
                 {/if}
             </CSSection>
         </div>
+        {:else}
+            <CSSection>
+                Add your first project!
+
+                <a href="/project/new">ADD</a>
+            </CSSection> 
         {/if}
 
         {#snippet elseRender()}
