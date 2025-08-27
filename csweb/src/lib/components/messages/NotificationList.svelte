@@ -46,9 +46,9 @@
 	);
 </script>
 
-<svelte:head>
+<!-- <svelte:head>
 	<title>{title}</title>
-</svelte:head>
+</svelte:head> -->
 
 {#await $notificationStore}
 	<span>Loading...</span>

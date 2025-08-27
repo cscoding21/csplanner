@@ -37,8 +37,6 @@ export function authService() {
 
 					decodeUser(data.accessToken);
 
-					refreshOrg()
-
 					//---refresh the token on the configured interval
 					refreshCycle();
 					console.log('setting refresh interval', refreshId);

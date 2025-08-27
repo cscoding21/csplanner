@@ -22,7 +22,7 @@
 	import { getInitialsFromName } from '$lib/utils/format';
 	import { PageMessages, CSNavItem, NotificationList, OrgStateChecker } from '$lib/components';
 	import { isDarkMode } from '$lib/utils/darkmode';
-	import { orgStore } from '$lib/stores/organization';
+	import { getOrg, orgStore, refreshOrg } from '$lib/stores/organization';
 
 	const as = authService();
 	const cu = as.currentUser();
@@ -31,7 +31,6 @@
 
 	let pageCat = $derived(page.url.pathname)
 	let showDarkModeLogo = $derived(isDarkMode())
-	let orgName = $state($orgStore ? $orgStore.name : "")
 
 	const logoutUser = () => {
 		as.signout().then((r) => {
@@ -45,15 +44,28 @@
 		return pageCat.indexOf(token) > -1
 	}
 
+	let title = $state("");
+
+	console.log("orgStore", $orgStore)
+
 	onMount(async () => {
 		console.log('layout onMount');
 		if (!as.authCheck()) {
 			goto('/login');
 		}
 
+		await refreshOrg()
+		title = 'csPlanner' + ($orgStore.name ? ": " + $orgStore.name : "")
+		console.log(title)
+
 		as.refreshCycle();
+	
 	});
 </script>
+
+<svelte:head>
+	<title>{title}</title>
+</svelte:head>
 
 <div class="w-full h-screen">
 
@@ -69,7 +81,7 @@
 	<div class="flex items-center md:order-3">
 		<DarkMode class="mr-2 text-2xl" />
 		<NotificationList />
-		<span class="ml-4 text-gray-800 dark:text-gray-200">{orgName}</span>
+		<span class="ml-4 text-gray-800 dark:text-gray-200">{$orgStore.name}</span>
 		
 		<Avatar id="avatar-menu" src={cu?.profileImage || ''} class="ml-6 cursor-pointer"
 			>{getInitialsFromName(cu?.firstName + ' ' + cu?.lastName || '')}</Avatar
