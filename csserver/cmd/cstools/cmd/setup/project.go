@@ -49,7 +49,7 @@ func CreateTestProjects(ctx context.Context) error {
 			ID: "project:1",
 		},
 		ProjectBasics: &project.ProjectBasics{
-			Name:        "YouTube Sensation",
+			Name:        "csPlanner: MVP",
 			Description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
 			OwnerID:     "jeph@jmk21.com",
 			StartDate:   utils.ValToRef(calendar.GetWeek(time.Now().Add(time.Hour * 24 * 30)).End),
@@ -328,17 +328,19 @@ func findPortfolioProjects(ctx context.Context) []project.Project {
 		ownerEmail string
 	}
 
+	now := time.Now()
+
 	names := []PT{
-		{name: "Video: Project Overview & Tech Stack", status: projectstatus.Approved, ownerEmail: "jeph@jmk21.com"},
-		{name: "Video: Kuberetes is Magic", status: projectstatus.Approved, ownerEmail: ""},
-		{name: "Video: Setting Local Dev With Tilt", status: projectstatus.Approved, ownerEmail: ""},
-		{name: "Video: Monorepo / Microservice", status: projectstatus.Rejected, ownerEmail: "jeph@jmk21.com"},
-		{name: "Video: Golang Project Setup", status: projectstatus.Backlogged, ownerEmail: "jeph@jmk21.com"},
-		{name: "Video: Mapping Objects in our Project", status: projectstatus.Backlogged, ownerEmail: ""},
-		{name: "Video: CRUD Operations Using Surreal", status: projectstatus.Draft, ownerEmail: "jeph@jmk21.com"},
-		{name: "Video: Scheduled 1", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 9, 1, 0, 0, 0, 0, time.UTC))).End, ownerEmail: "jeph@jmk21.com"},
-		{name: "Video: Scheduled 2", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(2025, 8, 1, 0, 0, 0, 0, time.UTC))).End, ownerEmail: ""},
-		{name: "Video: Inflight 1", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now().AddDate(0, 0, -7)).End), ownerEmail: "jeph@jmk21.com"},
+		{name: "csPlanner: LLM Integration with MCP", status: projectstatus.Approved, ownerEmail: "jeph@jmk21.com"},
+		{name: "csPlanner: Collaboration", status: projectstatus.Approved, ownerEmail: ""},
+		{name: "csContent: MVP", status: projectstatus.Approved, ownerEmail: ""},
+		{name: "csContent: Translations", status: projectstatus.Rejected, ownerEmail: "jeph@jmk21.com"},
+		{name: "csPlanner: CI/CD DevOps Implementation", status: projectstatus.Backlogged, ownerEmail: "jeph@jmk21.com"},
+		{name: "csPlanner; Insights MVP", status: projectstatus.Backlogged, ownerEmail: ""},
+		{name: "csPlanner: Google Login Integration", status: projectstatus.Draft, ownerEmail: "jeph@jmk21.com"},
+		{name: "csPlanner: Microsoft Login Integration", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(now.Year(), 9, 1, 0, 0, 0, 0, time.UTC))).End, ownerEmail: "jeph@jmk21.com"},
+		{name: "csSaaS: Stripe Integration", status: projectstatus.Scheduled, startDate: &utils.ValToRef(calendar.GetWeek(time.Date(now.Year(), 8, 1, 0, 0, 0, 0, time.UTC))).End, ownerEmail: ""},
+		{name: "csPlanner: In-App Notifications", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now().AddDate(0, 0, -7)).End), ownerEmail: "jeph@jmk21.com"},
 		{name: "Video: Inflight 2", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End), ownerEmail: "jeph@jmk21.com"},
 		{name: "Video: Inflight 3", status: projectstatus.InFlight, startDate: utils.ValToRef(calendar.GetWeek(time.Now()).End), ownerEmail: ""},
 	}
