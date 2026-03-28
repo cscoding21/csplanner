@@ -6,6 +6,7 @@ import (
 	"csserver/internal/utils"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -70,13 +71,7 @@ func (s *CSSubject) IsService(service string) bool {
 
 // Is tests if a string matches a subject whether or not it contains product/org info
 func (s *CSSubject) IsAny(subs ...string) bool {
-	for _, thisSub := range subs {
-		if s.IsKey(thisSub) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(subs, s.IsKey)
 }
 
 // GetCSSubject parse a subject string into an object

@@ -45,7 +45,7 @@ func main() {
 func processActivities(ctx context.Context, ps events.PubSubProvider) (jetstream.ConsumeContext, error) {
 	c, err := ps.GetStreamConsumer(ctx, "activity", "csplanner.*")
 	if err != nil {
-		log.Fatalf("GetStreamConsumer error: %v", err)
+		log.Errorf("GetStreamConsumer error: %v", err)
 	}
 
 	handler, err := c.Consume(func(msg jetstream.Msg) {
