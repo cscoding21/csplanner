@@ -18,7 +18,7 @@
 # Use the offical golang image to create a binary.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:1.24.0-alpine3.20 AS builder
+FROM golang:1.25 AS builder
 
 # Create and change to the app directory.
 WORKDIR /app
@@ -39,7 +39,7 @@ RUN go build -o csserver cmd/appserver/main.go
 # Use the official Debian slim image for a lean production container.
 # https://hub.docker.com/_/debian
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM debian:buster-slim
+FROM debian:stable
 RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     ca-certificates && \
     rm -rf /var/lib/apt/lists/*

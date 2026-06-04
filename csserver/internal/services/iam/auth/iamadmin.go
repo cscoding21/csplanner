@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"csserver/internal/common"
 	"csserver/internal/config"
@@ -165,8 +166,8 @@ func (s *IAMAdminService) UpdateUser(ctx context.Context, realm string, user app
 // getAdminToken return an token that can be used for
 func (s *IAMAdminService) getAdminToken(ctx context.Context) (*gocloak.JWT, error) {
 	token, err := s.KCClient.LoginAdmin(ctx,
-		s.KCAdminUser,
-		s.KCAdminPass,
+		strings.TrimSpace(s.KCAdminUser),
+		strings.TrimSpace(s.KCAdminPass),
 		config.Config.Security.KeycloakMasterRealmName)
 
 	return token, err
@@ -186,8 +187,8 @@ func (s *IAMAdminService) GetCurrentUser(ctx context.Context, realm string) (*ap
 // getKCUser retrieve a user record from Keycloak
 func (s *IAMAdminService) getKCUser(ctx context.Context, realm string, idOrEmail string) (*gocloak.User, error) {
 	token, err := s.KCClient.LoginAdmin(ctx,
-		s.KCAdminUser,
-		s.KCAdminPass,
+		strings.TrimSpace(s.KCAdminUser),
+		strings.TrimSpace(s.KCAdminPass),
 		config.Config.Security.KeycloakMasterRealmName)
 	if err != nil {
 		return nil, err
@@ -238,8 +239,8 @@ func (s *IAMAdminService) GetUser(ctx context.Context, realm string, idOrEmail s
 func (s *IAMAdminService) FindAllUsers(ctx context.Context, realm string) (common.PagedResults[appuser.Appuser], error) {
 	pagingResults := common.NewPagedResultsForAllRecords[appuser.Appuser]()
 	token, err := s.KCClient.LoginAdmin(ctx,
-		s.KCAdminUser,
-		s.KCAdminPass,
+		strings.TrimSpace(s.KCAdminUser),
+		strings.TrimSpace(s.KCAdminPass),
 		config.Config.Security.KeycloakMasterRealmName)
 	if err != nil {
 		return pagingResults, err

@@ -26,10 +26,10 @@ setup_nats()
 setup_debug()
 
 #---- App
-setup_csserver() 
-setup_csweb() 
-setup_csai()
-setup_cssaas() 
+setup_csserver()
+setup_csweb()
+# setup_csai()
+setup_cssaas()
 setup_csservermcp()
 setup_csprocessor()
 
@@ -47,19 +47,19 @@ setup_csprocessor()
 k8s_resource(
   workload='csserver',
   port_forwards="5000:5000",
-  labels=["csPlanner"] 
+  labels=["csPlanner"]
 )
 # resource_deps=['surrealdb']
 
 k8s_resource(
   workload='csmcp',
   port_forwards="6002:6002",
-  labels=["csPlanner"] 
+  labels=["csPlanner"]
 )
 
 k8s_resource(
   workload='csprocessor',
-  labels=["csPlanner"] 
+  labels=["csPlanner"]
 )
 
 k8s_resource(
@@ -76,11 +76,11 @@ k8s_resource(
   resource_deps=['csserver']
 )
 
-k8s_resource(
-  workload='csai',
-  port_forwards="7000:7000",
-  labels=["csPlanner"]
-)
+# k8s_resource(
+#  workload='csai',
+#  port_forwards="7000:7000",
+#  labels=["csPlanner"]
+#)
 
 k8s_resource(
   workload='postgres',

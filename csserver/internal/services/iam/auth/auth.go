@@ -52,7 +52,7 @@ func NewAuthService(client *gocloak.GoCloak,
 
 // ValidateToken returns a valid result if a token is active
 func (s *AuthService) ValidateToken(ctx context.Context, realm string, token string) (AuthResult, error) {
-	rptResult, err := s.KCClient.RetrospectToken(ctx, token, s.KCClientID, s.KCClientSecret, realm)
+	rptResult, err := s.KCClient.RetrospectToken(ctx, token, strings.TrimSpace(s.KCClientID), strings.TrimSpace(s.KCClientSecret), realm)
 	if err != nil {
 		return NewFailingAuthResult(token, err), err
 	}
@@ -69,7 +69,7 @@ func (s *AuthService) ValidateToken(ctx context.Context, realm string, token str
 
 // RefreshToken issue an updated authToken using the passed in refresh token
 func (s *AuthService) RefreshToken(ctx context.Context, realm string, refreshToken string) (AuthResult, error) {
-	newAuthToken, err := s.KCClient.RefreshToken(ctx, refreshToken, s.KCClientID, s.KCClientSecret, realm)
+	newAuthToken, err := s.KCClient.RefreshToken(ctx, refreshToken, strings.TrimSpace(s.KCClientID), strings.TrimSpace(s.KCClientSecret), realm)
 	if err != nil {
 		return NewFailingAuthResult(refreshToken, err), err
 	}
@@ -79,22 +79,23 @@ func (s *AuthService) RefreshToken(ctx context.Context, realm string, refreshTok
 
 // Signout issue a signout command to the auth server which will invalidate the refresh token
 func (s *AuthService) Signout(ctx context.Context, realm string, refreshToken string) error {
-	return s.KCClient.Logout(ctx, s.KCClientID, s.KCClientSecret, realm, refreshToken)
+	return s.KCClient.Logout(ctx, strings.TrimSpace(s.KCClientID), strings.TrimSpace(s.KCClientSecret), realm, refreshToken)
 }
 
 // Authenticate iterate over the provided auth providers and return the first valid AuthResult if successful
 func (s *AuthService) Authenticate(ctx context.Context, creds AuthCredentials) (AuthResult, error) {
-	log.Debugf("CREDS: %v", creds)
-	log.Debugf("ClientID: %v", s.KCClientID)
-	log.Debugf("Client Secret: %v", s.KCClientSecret)
-	log.Debugf("Realm: %v", creds.Realm)
+	log.Warnf("CREDS: %v", creds)
+	log.Warnf("ClientID: %v", s.KCClientID)
+	log.Warnf("Client Secret: %v", s.KCClientSecret)
+	log.Warnf("Realm: %v", creds.Realm)
 
 	token, err := s.KCClient.Login(ctx,
-		s.KCClientID,
-		s.KCClientSecret,
-		creds.Realm,
-		creds.Username,
-		creds.Password)
+		strings.TrimSpace(s.KCClientID),
+		strings.TrimSpace(s.KCClientSecret),
+		strings.TrimSpace(creds.Realm),
+		strings.TrimSpace(creds.Username),
+		strings.TrimSpace(creds.Password),
+	)
 
 	if err != nil {
 		return NewFailingAuthResult("", err), err
@@ -135,7 +136,7 @@ func NewFailingAuthResult(token string, err error) AuthResult {
 }
 
 // GetKeyFromClaims iterate over the claims and return the value of the key if found
-func GetKeyFromClaims(claims jwt.MapClaims, key string) interface{} {
+func GetKeyFromClaims(claims jwt.MapClaims, key string) any {
 	for k, v := range claims {
 		if strings.EqualFold(k, key) {
 			return v

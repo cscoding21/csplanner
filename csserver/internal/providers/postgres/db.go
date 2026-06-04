@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"csserver/internal/common"
@@ -28,9 +29,10 @@ func GetDB(ctx context.Context, dbUrl string) (*pgxpool.Pool, error) {
 
 // GetDBFromConfig returns a connection pool from a database config object
 func GetDBFromConfig(ctx context.Context, cfg config.DatabaseConfig) (*pgxpool.Pool, error) {
-	url := fmt.Sprintf("postgres://%s:%s@%s:%v/%s",
+	url := fmt.Sprintf("postgres://%s:%s%s%s:%v/%s",
 		cfg.User,
-		cfg.Password,
+		strings.Trim(cfg.Password, "\n"),
+		"@",
 		cfg.Host,
 		cfg.Port,
 		cfg.Database)
@@ -75,9 +77,9 @@ func UpdateObjectWithParent[T any](
 	}
 
 	sql := fmt.Sprintf(`
-		INSERT INTO %s 
-			(id, parent_id, created_at, created_by, updated_at, updated_by, data) 
-		VALUES ($1, $2, $3, $4, $5, $6, $7) 
+		INSERT INTO %s
+			(id, parent_id, created_at, created_by, updated_at, updated_by, data)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT(id)
 		DO UPDATE SET
 			updated_at = EXCLUDED.updated_at,
@@ -122,7 +124,7 @@ func GetObjectByID[T any](ctx context.Context,
 	sql := fmt.Sprintf(`
 		SELECT id, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
 		FROM %s
-		WHERE true 
+		WHERE true
 			AND deleted_at is null
 			AND id = $1;
 		`, table)
@@ -165,7 +167,7 @@ func FindAllObjects[T any](ctx context.Context,
 	sql := fmt.Sprintf(`
 		SELECT id, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
 		FROM %s
-		WHERE true 
+		WHERE true
 			AND deleted_at is null
 		`, table)
 
@@ -189,7 +191,7 @@ func FindAllChildren[T any](ctx context.Context,
 	sql := fmt.Sprintf(`
 		SELECT id, parent_id, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, data
 		FROM %s
-		WHERE true 
+		WHERE true
 			AND deleted_at is null
 			and parent_id = $1
 		`, table)
@@ -207,7 +209,7 @@ func SoftDelete(
 	usr := config.GetUserEmailFromContext(ctx)
 
 	sql := fmt.Sprintf(`
-			UPDATE %s 
+			UPDATE %s
 			SET deleted_at = $1,
 				deleted_by = $2
 			WHERE true
@@ -244,7 +246,7 @@ func UndoSoftDelete(
 	usr := config.GetUserEmailFromContext(ctx)
 
 	sql := fmt.Sprintf(`
-			UPDATE %s 
+			UPDATE %s
 			SET updated_at = $1,
 				updated_by = $2,
 				deleted_at = null,
@@ -281,7 +283,7 @@ func Delete(
 	id string) error {
 
 	sql := fmt.Sprintf(`
-			DELETE FROM %s 
+			DELETE FROM %s
 			WHERE true
 				AND id = $1;
 			`, table)
